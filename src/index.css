@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: 'DM Sans';
+}
+
+.custom-color{
+  color:#42988E;
+}
+.btn-primary{
+  background-color:#42988E;
+}
+.custom-home-Scroll {
+  cursor :pointer;
+  font-size :20px;
+  font-weight: 600;
+  color: #fff !important;
+}
+
+.custom-home-font {
+cursor :pointer;
+font-size :25px;
+font-weight: 500;
+color: #151747 !important;
+}
+animate-style{
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+.custom-size{
+  font-size: 3.563rem;
+}
+.card-img{
+  height: 253px;
+  width: 470px !important;
+  object-fit: cover;
+}
+@media (min-width: 1400px) {
+  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+      max-width: 1861px !important;
+  }
+}
