@@ -1,7 +1,7 @@
 import React from 'react'
 import blog from '../../Images/blog.png'
 import symbol from '../../Images/Symbol.png'
-import sideblog from '../../Images/Group 184.png'
+import sideblog from '../../Images/sideBlog.png'
 const Blog = () => {
     return (
         <div className='m-5'>

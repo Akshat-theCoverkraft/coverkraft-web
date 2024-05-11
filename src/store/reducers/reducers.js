@@ -1,6 +1,7 @@
 const initialState = {
  
     customerregstionData:null,
+    getPolicyType:[],
     ocrData:null,
     saveData:null,
     loading: false,
@@ -96,7 +97,29 @@ const initialState = {
             loading: false,
             error: action.payload,
           };        
-          //ocr extract data end
+          //SAVE DOCUMENT end
+
+          //GETALLPOLICYTYPE 
+        case "GETPOLICYTYPE_DATA_REQUEST":
+          return {
+            ...state,
+            loading: true,
+            error: null,
+          };
+        case "GETPOLICYTYPE_DATA_SUCCESS":
+          return {
+            ...state,
+            getPolicyType: action.payload,
+            loading: false,
+            error: null,
+          };
+        case "GETPOLICYTYPE_DATA_FAILURE":
+          return {
+            ...state,
+            loading: false,
+            error: action.payload,
+          };        
+          //GETALLPOLICYTYPE DOCUMENT end
       default:
         return state;
     }

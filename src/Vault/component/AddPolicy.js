@@ -3,7 +3,6 @@ import Navbar from '../../component/Navbar'
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Footer from '../../Landing/component/Footer';
-import bar from '../../Images/75.png';
 import PropTypes from 'prop-types';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
@@ -18,6 +17,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import API_URL from '../../ServiceModule/Service';
 import { saveDocument } from '../../store/action/action';
 import { useNavigate } from 'react-router-dom'
+
+//function for progress bar start
 function CircularProgressWithLabel(props) {
     return (
         <Box sx={{ position: 'relative', display: 'inline-flex' }}>
@@ -102,6 +103,8 @@ const AddPolicy = () => {
     const [previous, setPrevious] = useState(false)
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    //useEffect
     useEffect(() => {
 
         const nonNullFields = Object.values(ocrTextObject).filter(value => value !== null);
@@ -127,7 +130,7 @@ const AddPolicy = () => {
         setProgress(percentage);
     }, [filledFields, totalFields]);
 
-    // Update filledFields when any input field is changed
+    // Update filledFields when any input field is changed start
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
@@ -263,11 +266,9 @@ const AddPolicy = () => {
         });
         console.log('after setitng field', filledFields)
     };
+     // Update filledFields when any input field is changed end
 
-
-
-
-
+    //save api for health insurance form 
     const handleHealthInsurance = () => {
         const formData = new FormData();
         const userId = localStorage.getItem('userId');
@@ -297,6 +298,7 @@ const AddPolicy = () => {
 
     }
 
+    //save api for life insurance
     const handleLifeInsurance = () => {
         const formData = new FormData();
         const userId = localStorage.getItem('userId');
@@ -324,8 +326,9 @@ const AddPolicy = () => {
         formData.append('hospitalCare', hospitalCare);
         formData.append('terminalIllness', terminalIllness);
         dispatch(saveDocument(API_URL, formData))
-
     }
+
+    //save api for motor insurance
     const handleMotorInsurance = () => {
         const formData = new FormData();
         const userId = localStorage.getItem('userId');

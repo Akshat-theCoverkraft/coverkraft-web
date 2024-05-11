@@ -21,6 +21,11 @@ export const SAVE_DATA_REQUEST = "SAVE_DATA_REQUEST"
 export const SAVE_DATA_SUCCESS = "SAVE_DATA_SUCCESS"
 export const SAVE_DATA_FAILURE = "SAVE_DATA_FAILURE"
 
+//getall policytype doucment
+export const GETPOLICYTYPE_DATA_REQUEST = "GETPOLICYTYPE_DATA_REQUEST"
+export const GETPOLICYTYPE_DATA_SUCCESS = "GETPOLICYTYPE_DATA_SUCCESS"
+export const GETPOLICYTYPE_DATA_FAILURE = "GETPOLICYTYPE_DATA_FAILURE"
+
 // register start
 export const registrationCustomer = (API_URL, data) => {
     return (dispatch) => {
@@ -81,6 +86,22 @@ export const saveDocument = (API_URL, data) => {
             })
             .catch((error) => {
                 dispatch({ type: SAVE_DATA_FAILURE, payload: error.message });
+            });
+    };
+}
+
+// get all Policytype data 
+export const getAllPolicyType = (API_URL, data) => {
+    return (dispatch) => {
+        dispatch({ type: GETPOLICYTYPE_DATA_REQUEST });
+        axios
+            .get(API_URL + `policyType/getAll`,data)
+            .then((response) => {
+                dispatch({ type: GETPOLICYTYPE_DATA_SUCCESS, payload: response.data });
+                return response.data;
+            })
+            .catch((error) => {
+                dispatch({ type: GETPOLICYTYPE_DATA_FAILURE, payload: error.message });
             });
     };
 }

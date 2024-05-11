@@ -6,11 +6,10 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import digit from '../../Images/Group 94.png'
 import scooty from '../../Images/Scooty.png';
 import car from '../../Images/Car.png';
 import family from '../../Images/Family.png'
-import arrow from '../../Images/Group 249.png'
+import arrow from '../../Images/right-arrow.png'
 import red from '../../Images/red-bg.png'
 import './policy.css'
 export default function PolicyTabs() {

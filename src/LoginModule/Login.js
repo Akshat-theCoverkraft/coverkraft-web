@@ -41,6 +41,30 @@ const Login = () => {
         }
     }, [!valid]);
 
+    useEffect(() => {
+        if (
+          localStorage.getItem("responsedata") !== null &&
+          localStorage.getItem("responseData") !== undefined
+        ) {
+          if (User !== null && User !== undefined) {
+            if (User.customerregstionData !== null && User.customerregstionData !== undefined) {
+              if (
+                User.customerregstionData !== null &&
+                User.customerregstionData !== undefined &&
+                User.customerregstionData.message !== "User not found"
+              ) {
+                const itemdata = User.customerregstionData.data;
+                console.log("itemdata", itemdata)
+                setitem(itemdata.userId);
+                localStorage.setItem("userId", itemdata.userId);
+                // localStorage.setItem("username", itemdata.username);
+                navigate('/');
+              }
+            }
+          }
+        }
+      }, [User, navigate]);
+
     //function for handle phone number input field start
     const handlephonechange = (e) => {
         let number = e.target.value.replace(/\D/g, '');
@@ -84,29 +108,7 @@ const Login = () => {
     }
      //function to handle login and integrate verify number API and recaptcha end
     
-     useEffect(() => {
-        if (
-          localStorage.getItem("responsedata") !== null &&
-          localStorage.getItem("responseData") !== undefined
-        ) {
-          if (User !== null && User !== undefined) {
-            if (User.customerregstionData !== null && User.customerregstionData !== undefined) {
-              if (
-                User.customerregstionData !== null &&
-                User.customerregstionData !== undefined &&
-                User.customerregstionData.message !== "User not found"
-              ) {
-                const itemdata = User.customerregstionData.data;
-                console.log("itemdata", itemdata)
-                setitem(itemdata.userId);
-                localStorage.setItem("userId", itemdata.userId);
-                // localStorage.setItem("username", itemdata.username);
-                navigate('/');
-              }
-            }
-          }
-        }
-      }, [User, navigate]);
+   
     //function to verify otp and login start
     const handleVerify = () => {
         const storedValue = localStorage.getItem('verificationId');

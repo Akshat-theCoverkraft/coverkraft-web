@@ -17,12 +17,12 @@ import share from '../Images/ic-share.png'
 import Button from '../component/Button';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
-import AddIcon from '../Images/Group (19).png'
+import AddIcon from '../Images/addIcon.png'
 import PolicyTabs from './component/PolicyTabs';
 import './vault.css'
 import PolicyDetail from './component/PolicyDetail';
-import uploadPdf from '../Images/Group (20).png';
-import uploadImg from '../Images/Frame (13).png';
+import uploadPdf from '../Images/uploadPdf.png';
+import uploadImg from '../Images/uploadImg.png';
 import { extractData } from '../store/action/action';
 import API_URL from '../ServiceModule/Service';
 import { useDispatch } from 'react-redux';
@@ -102,28 +102,6 @@ const Vault = () => {
     //upload image handle function end
 
     //function to handle ocr data extraction API start
-    // const handleConfirm = async () => {
-    //     const formData = new FormData();
-    //     if (files) {
-    //         for (let i = 0; i < files.length; i++) {
-    //             formData.append('ocrText', files[i]);
-    //         }
-    //     } else if (image) {
-    //         for (let i = 0; i < image.length; i++) {
-    //             formData.append('ocrText', image[i]);
-    //         }
-    //     }
-
-    //     setLoading(true);
-    //     try {
-    //         const response = await dispatch(extractData(API_URL, formData));
-    //         setLoading(false);
-
-    //     } catch (error) {
-    //         setLoading(false);
-    //         toast.error('File is not extracted due to some issue!')
-    //     }
-    // };
     const handleConfirm = async () => {
         const formData = new FormData();
         if (files) {
@@ -161,8 +139,6 @@ const Vault = () => {
             toast.error('File is not extracted due to some issue!')
         }
     };
-
-
     //function to handle ocr data extraction API start
 
     //handle the css on breadcrumbs
@@ -177,24 +153,10 @@ const Vault = () => {
 
     return (
         <>
-            {loading && (
-                <div className="overlay-container">
-                    <div className="fade-screen"></div>
-                    <div className="loader-overlay">
-                        <Spinner className="text-success text-center" style={{ width: '3rem', height: '3rem' }} animation="border" role="status">
-                            {/* <span className="sr-only">Loading...</span> */}
-                        </Spinner>
-
-                    </div>
-                </div>
-            )}
+          
             <div className='overflow-hidden'>
                 <Navbar />
-                {/* {loading && (
-                <LoaderContainer>
-                    <CircularProgress color="primary" />
-                </LoaderContainer>
-            )} */}
+               
                 <div className='bg-color'>
                     <Stack spacing={2} className='p-5'>
                         <div className={classes.breadcrumbsContainer}>
@@ -350,6 +312,7 @@ const Vault = () => {
                     </DialogContent>
                 </BootstrapDialog>
 
+                {/* Dialog box of confirm box start */}
                 <BootstrapDialog
                     onClose={handleConfirmDialogClose}
                     aria-labelledby="confirmation-dialog-title"

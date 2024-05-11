@@ -5,11 +5,11 @@ import Button from '../../component/Button';
 import EditIcon from '../../Images/edit.png'
 import detailScooty from '../../Images/detail-scooty.png'
 import Grid from '@mui/material/Grid';
-import premium from '../../Images/Group 278 (1).png';
-import value from '../../Images/Group 264.png';
-import startDate from '../../Images/Group 260.png';
-import endDate from '../../Images/Group 262.png';
-import redBg from '../../Images/Group 248.png'
+import premium from '../../Images/premium.png';
+import value from '../../Images/value.png';
+import startDate from '../../Images/startDate.png';
+import endDate from '../../Images/endDate.png';
+import redBg from '../../Images/red-img.png'
 import share from '../../Images/ic-share.png'
 import download from '../../Images/download.png'
 const PolicyDetail = () => {

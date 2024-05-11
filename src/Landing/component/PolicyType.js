@@ -1,6 +1,5 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import './CSS/policyType.css';
-
 import HealthInsurance from '../../Images/Health Insurance-1.png';
 import twoWheeler from '../../Images/Two Wheeler Insurance.png';
 import HealthInsurance2 from '../../Images/Health Insurance.png';
@@ -10,9 +9,31 @@ import taxi from '../../Images/Taxi Insurance.png';
 import term from '../../Images/Term Life Insurance.png';
 import family from '../../Images/Family Health Insurance.png';
 import Grid from '@mui/material/Grid';
+import { useDispatch, useSelector } from 'react-redux'
+import { getAllPolicyType } from '../../store/action/action';
+import API_URL from '../../ServiceModule/Service';
 
 
 const PolicyType = () => {
+    const[policyType,setPolicyType]=useState([]);
+    const policyTypes = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getAllPolicyType(API_URL));
+      }, [dispatch]);
+
+      useEffect(()=>{
+        if(policyTypes !== null && policyTypes !== undefined){
+            if(policyTypes.getPolicyType !== null && policyTypes.getPolicyType !== undefined){
+                if(policyTypes.getPolicyType.data !== null && policyTypes.getPolicyType.data !== undefined){
+                      setPolicyType(policyTypes.getPolicyType.data)
+                }
+            }
+        }
+
+      },[policyTypes])
+
     const images = [HealthInsurance, twoWheeler, HealthInsurance2, travel, car, taxi, term, family];
     const texts = ['Health Insurance', 'Two Wheeler Insurance', 'Health Insurance', 'Travel Insurance', 'Car Insurance', 'Taxi Insurance', 'Term Life Insurance', 'Family Health Insurance'];
 
@@ -24,13 +45,13 @@ const PolicyType = () => {
             <Grid container>
                 <Grid item  >
                     <Grid container spacing={4} >
-                        {images.map((image, index) => (
+                        {policyType.map((image, index) => (
                             <Grid item xs={6} md={4} lg={3} xl={3} style={{ width: '80%' }} >
                                 <div key={index}>
                                     <div className='card'>
-                                        <img src={image} alt='' />
+                                        <img src={image.icon} alt={image.policyType} />
                                     </div>
-                                    <h4 className='text-center mt-3 image-text'>{texts[index]}</h4>
+                                    <h4 className='text-center mt-3 image-text'>{image.policyType}</h4>
                                 </div>
                             </Grid>
                         ))}

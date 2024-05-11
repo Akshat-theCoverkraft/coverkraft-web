@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
 import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
 const Register = () => {
     const [fullName, setFullName] = useState();
     const [DOB, setDOB] = useState();
@@ -53,28 +54,28 @@ const Register = () => {
             mobileNumber &&
             email &&
             address
-          ) {
+        ) {
 
-        const formData = new FormData();
-        formData.append('userName', fullName);
-        formData.append('userDob', DOB);
-        formData.append('userPhone', mobileNumber);
-        formData.append('userEmail', email);
-        formData.append('userAddress', address);
-        formData.append('userFcmId', "1001");
+            const formData = new FormData();
+            formData.append('userName', fullName);
+            formData.append('userDob', DOB);
+            formData.append('userPhone', mobileNumber);
+            formData.append('userEmail', email);
+            formData.append('userAddress', address);
+            formData.append('userFcmId', "1001");
 
 
-        dispatch(registrationCustomer(API_URL, formData))
-    } else {
-        toast.error("Please fill all required field", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
+            dispatch(registrationCustomer(API_URL, formData))
+        } else {
+            toast.error("Please fill all required field", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
     }
     //function for register and integrate API end
 
@@ -115,19 +116,22 @@ const Register = () => {
                                             placeholder="DD/MM/YYYY"
 
                                         />
-                                        <div className='d-flex justify-content-between'>
-                                            <CustomInput
-                                                type="number"
-                                                label="Mobile Number"
-                                                value={mobileNumber}
-                                                onChange={handlephonechange}
-                                                placeholder="Enter your mobile number"
-                                                className={!valid ? 'is-invalid' : ''}
-                                                validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
-                                                required
-                                                style={{ width:'88%'}}
+                                        <Grid container spacing={3}>
+                                            <Grid item xs={12} md={6}>
+                                                <CustomInput
+                                                    type="number"
+                                                    label="Mobile Number"
+                                                    value={mobileNumber}
+                                                    onChange={handlephonechange}
+                                                    placeholder="Enter your mobile number"
+                                                    className={!valid ? 'is-invalid' : ''}
+                                                    validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
+                                                    required
+                                                    style={{ width: '88%' }}
 
-                                            />
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} md={6}></Grid>
                                             <CustomInput
                                                 type="email"
                                                 label="Email Address"
@@ -136,22 +140,24 @@ const Register = () => {
                                                 placeholder="Enter your email address "
                                                 className={!isValidEmail ? 'is-invalid' : ''}
                                                 validationMessage={!isValidEmail ? 'Please enter a valid email address containing @.' : ''}
-                                                style={{ width:'48%' }}
+                                                style={{ width: '48%' }}
                                             />
 
-                                        </div>
-                                        <div className='d-flex justify-content-between'>
-                                            <CustomInput
-                                                type="text"
-                                                label="State"
-                                                value={state}
-                                                onChange={(e) => { setState(e.target.value) }}
-                                                placeholder="Enter your state"
-                                                required
+                                        </Grid>
+                                        <Grid container spacing={3}>
+                                            <Grid item xs={12} md={6}>
+                                                <CustomInput
+                                                    type="text"
+                                                    label="State"
+                                                    value={state}
+                                                    onChange={(e) => { setState(e.target.value) }}
+                                                    placeholder="Enter your state"
+                                                    required
 
-                                            />
+                                                />
 
-
+                                            </Grid>
+                                            <Grid item xs={12} md={6}></Grid>
 
                                             <CustomInput
                                                 type="number"
@@ -162,7 +168,7 @@ const Register = () => {
                                                 required
 
                                             />
-                                        </div>
+                                        </Grid>
                                         {/* <CustomInput
                                             type="text"
                                             label="Address"

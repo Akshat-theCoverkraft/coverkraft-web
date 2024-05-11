@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
 import group from '../../Images/Clip path group.png';
-import Frame from "../../Images/Frame (9).png";
-import car from "../../Images/Group (16).png";
-import Frame1 from "../../Images/Group (17).png";
-import Frame2 from "../../Images/Frame (6).png";
-import group4 from "../../Images/Group (12).png"
-import group2 from "../../Images/Group (14).png";
-import group3 from "../../Images/Group (18).png";
+import Frame from "../../Images/frame.png";
+import car from "../../Images/car-1.png";
+import Frame1 from "../../Images/frame1.png";
+import Frame2 from "../../Images/frame-2.png";
+import group4 from "../../Images/luggage.png"
+import group2 from "../../Images/paper.png";
+import group3 from "../../Images/car-2.png";
 const Job = () => {
     const cardsData = [
         { id: 1, imageUrl: group, textColor: "#0F4BA4", company: 'Health Insurance', desgination: 'Get claim guarantee certificate ', imageUrl2: group2, paragraph: 'with your health plans', colorCode: "#CEE4F2" },
