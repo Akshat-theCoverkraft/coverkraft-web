@@ -4,10 +4,11 @@ import checkicon from '../../Images/Check-icon.png'
 import googleicon from '../../Images/Google-icon.png';
 import appleicon from '../../Images/Apple-icon.png';
 import mockup from '../../Images/Coverkraft-mockup.png';
+import Grid from '@mui/material/Grid';
 const Coverkraft = () => {
   return (
-    <div className='bg-image1 d-flex justify-content-around p-5 col-md-12'>
-      <div className='col-md-4'>
+    <Grid container spacing={0} justifyContent='center' className='bg-image1 my-5 p-5'>
+      <Grid item xs={12} md={6} className='ml-2' >
         <h2 className='my-5' style={{fontSize:'50px'}}>Get our <span className='fw-bold'>Coverkraft</span>  app</h2>
         <div className=''>
           <div className='d-flex'>
@@ -31,11 +32,11 @@ const Coverkraft = () => {
           <img src={googleicon} className='mr-3'/>
           <img src={appleicon}/>
         </div>
-      </div>
-      <div className='col-md-4 pl-5'>
+      </Grid>
+      <Grid item xs={12} md={5} className='d-flex justify-content-center' >
         <img src={mockup} alt=''/>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   )
 }
 

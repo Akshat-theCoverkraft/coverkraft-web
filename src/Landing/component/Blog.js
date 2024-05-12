@@ -2,16 +2,17 @@ import React from 'react'
 import blog from '../../Images/blog.png'
 import symbol from '../../Images/Symbol.png'
 import sideblog from '../../Images/sideBlog.png'
+import Grid from '@mui/material/Grid';
 const Blog = () => {
     return (
-        <div className='m-5'>
+        <Grid container justifyContent='center' className='m-5'>
             <h1 className='text-center m-5' style={{fontSize:'60px'}}> <span className='border-bottom'>Latest</span> from the blog</h1>
             
-            <div className='d-flex col-md-12'>
+            <Grid container spacing={0} >
                 
-                    <div class=" col-md-6">
+                    <Grid item xs={12} md={6}>
                         <div class=" hover-overlay mb-3" data-mdb-ripple-init data-mdb-ripple-color="light">
-                            <img src={blog} class="img-fluid" height={2020} width={2020} />
+                            <img src={blog} class="img-fluid" height={920} width={920} />
                             
                         </div>
                         <div class="card-body">
@@ -19,10 +20,10 @@ const Blog = () => {
                             <h2 class="card-text  mb-3">Health Insurance: Family floater  polices  can include <br /> new-borns and children, till they  turn 25</h2>
                             <div className='d-flex '> <p href="#!" class="fw-bold mr-2" data-mdb-ripple-init>Read More</p><img src={symbol} height={15} className='mt-2' /></div>
                         </div>
-                    </div>
+                    </Grid>
                 
                
-                    <div class="  d-flex row col-md-6 " >
+                    <Grid item xs={12} md={6} >
                         <div class="row">
                             <div class="col-md-4">
                                 <img
@@ -71,10 +72,10 @@ const Blog = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Grid>
                
-            </div>
-        </div>
+            </Grid>
+        </Grid>
     )
 }
 

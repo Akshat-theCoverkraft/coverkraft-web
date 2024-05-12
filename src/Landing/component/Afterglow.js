@@ -4,11 +4,11 @@ import mockup from '../../Images/Afterglow-mockup.png';
 import checkicon from '../../Images/Check-icon.png';
 import googleicon from '../../Images/Google-icon.png';
 import appleicon from '../../Images/Apple-icon.png';
-
+import Grid from '@mui/material/Grid';
 const Afterglow = () => {
   return (
-    <div className='container-fluid bg-image d-flex justify-content-around p-5'>
-      <div className='col-md-4'>
+    <Grid container className=' bg-image my-5 p-5'>
+      <Grid item xs={12} md={6} className='ml-5'>
         <h2 className='mb-4' style={{ fontSize: '3rem' }}>Get our another app</h2>
         <h1 className='mb-5' style={{ fontSize: '4.5rem' }}>AfterGlow</h1>
         <div className=''>
@@ -33,11 +33,11 @@ const Afterglow = () => {
           <img src={googleicon} className='mr-3' alt='' />
           <img src={appleicon} alt='' />
         </div>
-      </div>
-      <div className='col-md-4'>
+      </Grid>
+      <Grid item xs={12} md={5} className='d-flex justify-content-center'>
         <img src={mockup} alt='' />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 }
 
