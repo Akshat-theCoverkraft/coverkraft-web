@@ -8,9 +8,9 @@ const Blog = () => {
         <Grid container justifyContent='center' className='m-5'>
             <h1 className='text-center m-5' style={{fontSize:'60px'}}> <span className='border-bottom'>Latest</span> from the blog</h1>
             
-            <Grid container spacing={0} >
+            <Grid container spacing={6} >
                 
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={5} style={{marginLeft:'20px'}}>
                         <div class=" hover-overlay mb-3" data-mdb-ripple-init data-mdb-ripple-color="light">
                             <img src={blog} class="img-fluid" height={920} width={920} />
                             

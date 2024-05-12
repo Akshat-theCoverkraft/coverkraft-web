@@ -78,6 +78,8 @@ function Navbar(props) {
 
     const handleLogout = () => {
         localStorage.removeItem('loggedIn');
+        localStorage.removeItem('verificationId');
+        localStorage.removeItem('userId');
         navigate('/');
     };
     const handleOpenMenu = (event) => {

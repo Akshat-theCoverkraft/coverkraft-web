@@ -250,7 +250,7 @@ const AddPolicy = () => {
         }
 
         // Check if the input field is filled
-        const isFilled = value.trim().length === 1 && !previous;
+        const isFilled = value.trim().length === 1 ;
         setPrevious(value.trim().length > 0);
         setFilledFields((prevCount) => {
             if (isFilled) {
@@ -422,7 +422,7 @@ const AddPolicy = () => {
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="Net Premium"
                                                 value={netPremium}
                                                 onChange={(e) => {
@@ -432,7 +432,7 @@ const AddPolicy = () => {
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="NCB %"
                                                 value={ncb}
                                                 onChange={(e) => {
@@ -442,7 +442,7 @@ const AddPolicy = () => {
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="TP Premium"
                                                 value={tpPremium}
                                                 onChange={(e) => { setTpPremium(e.target.value);
@@ -451,7 +451,7 @@ const AddPolicy = () => {
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="OD Premium"
                                                 value={odPremium}
                                                 onChange={(e) => { setOdPremium(e.target.value);
@@ -689,7 +689,7 @@ const AddPolicy = () => {
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="Net Premium"
                                                 value={netPremium}
                                                 onChange={(e) => { setNetPremium(e.target.value);
@@ -707,7 +707,7 @@ const AddPolicy = () => {
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label=" Premium  Paid"
                                                 value={premiumPaid}
                                                 onChange={(e) => { setPremiumPaid(e.target.value);

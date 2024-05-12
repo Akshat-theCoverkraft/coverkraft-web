@@ -78,7 +78,7 @@ export const extractData = (API_URL, data) => {
 export const saveDocument = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: SAVE_DATA_REQUEST });
-        axios
+        return axios
             .post(API_URL + `policy/create`,data)
             .then((response) => {
                 dispatch({ type: SAVE_DATA_SUCCESS, payload: response.data });
