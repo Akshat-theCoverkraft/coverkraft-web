@@ -169,7 +169,7 @@ const Vault = () => {
                                 </Link>
                                 <Typography className='text-dark cursor-pointer font-size' style={{ fontSize: '21px' }}>My Policies</Typography>
                             </Breadcrumbs>
-                            <img src={share} alt="Share Icon" height={45} className='ml-4' />
+                            <img src={share} alt="Share Icon" height={60} className='ml-4' />
                             <Button
                                 text='Add Policy'
                                 size="md"
