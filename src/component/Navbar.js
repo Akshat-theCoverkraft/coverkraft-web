@@ -119,9 +119,7 @@ function Navbar(props) {
                     </div>
                     <div className="grid gap-5 d-flex align-items-center">
                         <div className={isSticky ? 'nav-item active custom-home-Scroll animate-style' : 'nav-item active custom-home-font animate-style'} onClick={handleHome}>Home</div>
-                        <button className='btn btn-lg py-2 px-5' style={{ color: 'white', backgroundColor: '#42988E' }} onClick={handleVault}>
-                                    Vault
-                                </button>
+                       
 
                         {loggedIn ? (
                             <>

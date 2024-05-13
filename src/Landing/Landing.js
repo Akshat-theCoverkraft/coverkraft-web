@@ -8,6 +8,7 @@ import Coverkraft from './component/Coverkraft'
 import Blog from './component/Blog'
 import Card from './component/Card'
 import About from './component/About'
+import Carousel from './component/Carousel'
 
 const Landing = () => {
   return (
@@ -20,6 +21,7 @@ const Landing = () => {
         <Coverkraft/>
         <Blog/>
         <Afterglow/>
+        <Carousel/>
         <Footer/>
         
     </div>

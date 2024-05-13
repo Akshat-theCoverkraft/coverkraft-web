@@ -45,13 +45,13 @@ const PolicyType = () => {
             <Grid container spacing={6}>
                 <Grid item  xs={12} md={8}  >
                     <Grid container spacing={4} >
-                        {policyType.map((image, index) => (
+                        {policyType.map((policy, index) => (
                             <Grid item xs={6} md={4} lg={3} xl={3} style={{ width: '80%' }} >
                                 <div key={index}>
                                     <div className='card'>
-                                        <img src={image.icon} alt={image.policyType} />
+                                        <img src={policy.icon} alt={policy.policyType} />
                                     </div>
-                                    <h4 className='text-center mt-3 image-text'>{image.policyType}</h4>
+                                    <h4 className='text-center mt-3 image-text'>{policy.policyType}</h4>
                                 </div>
                             </Grid>
                         ))}
