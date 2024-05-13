@@ -26,6 +26,11 @@ export const GETPOLICYTYPE_DATA_REQUEST = "GETPOLICYTYPE_DATA_REQUEST"
 export const GETPOLICYTYPE_DATA_SUCCESS = "GETPOLICYTYPE_DATA_SUCCESS"
 export const GETPOLICYTYPE_DATA_FAILURE = "GETPOLICYTYPE_DATA_FAILURE"
 
+//getall policylist 
+export const GETPOLICYLIST_DATA_REQUEST = "GETPOLICYLIST_DATA_REQUEST"
+export const GETPOLICYLIST_DATA_SUCCESS = "GETPOLICYLIST_DATA_SUCCESS"
+export const GETPOLICYLIST_DATA_FAILURE = "GETPOLICYLIST_DATA_FAILURE"
+
 // register start
 export const registrationCustomer = (API_URL, data) => {
     return (dispatch) => {
@@ -102,6 +107,22 @@ export const getAllPolicyType = (API_URL, data) => {
             })
             .catch((error) => {
                 dispatch({ type: GETPOLICYTYPE_DATA_FAILURE, payload: error.message });
+            });
+    };
+}
+
+// get all policylist data 
+export const getAllPolicyList = (API_URL, data) => {
+    return (dispatch) => {
+        dispatch({ type: GETPOLICYLIST_DATA_REQUEST });
+        axios
+            .get(API_URL + `policy/getAll`,data)
+            .then((response) => {
+                dispatch({ type: GETPOLICYLIST_DATA_SUCCESS, payload: response.data });
+                return response.data;
+            })
+            .catch((error) => {
+                dispatch({ type: GETPOLICYLIST_DATA_FAILURE, payload: error.message });
             });
     };
 }

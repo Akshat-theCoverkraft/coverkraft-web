@@ -2,6 +2,7 @@ const initialState = {
  
     customerregstionData:null,
     getPolicyType:[],
+    getPolicyList:[],
     ocrData:null,
     saveData:null,
     loading: false,
@@ -99,7 +100,7 @@ const initialState = {
           };        
           //SAVE DOCUMENT end
 
-          //GETALLPOLICYTYPE 
+        //GETALLPOLICYTYPE 
         case "GETPOLICYTYPE_DATA_REQUEST":
           return {
             ...state,
@@ -120,6 +121,28 @@ const initialState = {
             error: action.payload,
           };        
           //GETALLPOLICYTYPE DOCUMENT end
+
+          //GETALLPOLICYLIST 
+        case "GETPOLICYLIST_DATA_REQUEST":
+          return {
+            ...state,
+            loading: true,
+            error: null,
+          };
+        case "GETPOLICYLIST_DATA_SUCCESS":
+          return {
+            ...state,
+            getPolicyList: action.payload,
+            loading: false,
+            error: null,
+          };
+        case "GETPOLICYLIST_DATA_FAILURE":
+          return {
+            ...state,
+            loading: false,
+            error: action.payload,
+          };        
+          //GETALLPOLICYLIST DOCUMENT end
       default:
         return state;
     }
