@@ -56,6 +56,17 @@ const AddPolicy = () => {
     //Get the data from ocrExtract data API using props
     const location = useLocation();
     const responseData = location.state?.responseData;
+    const mode = location.state?.mode;
+
+    // Now you can use the responseData and mode in your component
+    let headingText;
+    if (mode === 'add') {
+        headingText = 'Add Policy';
+    } else if (mode === 'edit') {
+        headingText = 'Edit Policy';
+    } else {
+        headingText = 'Unknown Mode';
+    }
     const ocrTextObject = JSON.parse(responseData.ocrText);
     const PolicyType = ocrTextObject.policyType.toLowerCase();
     console.log('PolicyType', PolicyType)
@@ -355,6 +366,12 @@ const AddPolicy = () => {
         formData.append('vehicleType', vehicleType);
 
         dispatch(saveDocument(API_URL, formData))
+
+        // if (mode === 'add') {
+        //     dispatch(saveDocument(API_URL, formData));
+        // } else if (mode === 'edit') {
+        //     dispatch(updateDocument(API_URL, formData)); 
+        // }
     }
 
 
@@ -365,7 +382,7 @@ const AddPolicy = () => {
                 <Grid item xs={12} sm={10} md={8}>
                     <Card className='border  my-4' style={{ padding: '40px 90px', boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
                         <div className='d-flex justify-content-between'>
-                            <Typography variant="h4" component="h2" className='fw-bold'>Add Policy</Typography>
+                            <Typography variant="h4" component="h2" className='fw-bold'>{headingText}</Typography>
                             <CircularProgressWithLabel value={progress} />
                         </div>
                         <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}> Details</p>

@@ -129,7 +129,7 @@ const Vault = () => {
                 const documentId = response.data.documentId;
                 localStorage.setItem('documentId', documentId);
                 console.log('documentid', documentId)
-                navigate('/add-policy', { state: { responseData: response.data } });
+                navigate('/add-policy', { state: { responseData: response.data,mode:'add' } });
 
             } else {
                 toast.error('File is not extracted due to some issue!')
@@ -153,10 +153,10 @@ const Vault = () => {
 
     return (
         <>
-          
+
             <div className='overflow-hidden'>
                 <Navbar />
-               
+
                 <div className='bg-color'>
                     <Stack spacing={2} className='p-5'>
                         <div className={classes.breadcrumbsContainer}>
@@ -218,7 +218,7 @@ const Vault = () => {
                         <CloseIcon />
                     </IconButton>
                     <DialogContent className='p-5'>
-                        <Card className='border mx-3'>
+                        <Card className='border mx-3' style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                             {!files ? (
                                 <React.Fragment>
                                     <input
@@ -235,6 +235,7 @@ const Vault = () => {
                                             backgroundColor: "white",
                                             color: "black",
                                             fontSize: "22px",
+                                            boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px'
                                         }}
                                     >
                                         <img src={uploadPdf} alt='' height={35} className='mr-3' />
@@ -264,7 +265,7 @@ const Vault = () => {
                             )}
                         </Card>
 
-                        <Card className='m-3 border'>
+                        <Card className='m-3 border' style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                             {!image ? (
                                 <React.Fragment>
                                     <input
@@ -275,12 +276,12 @@ const Vault = () => {
                                         ref={imageRef}
                                     />
                                     <Card
-                                        className="d-flex justify-content-center p-3  cursor-pointer"
+                                        className="d-flex justify-content-center card-detail p-3  cursor-pointer"
                                         onClick={() => imageRef.current.click()}
                                         style={{
-                                            backgroundColor: "white",
-                                            color: "black",
+                                           
                                             fontSize: "22px",
+                                            boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' 
                                         }}
                                     >
                                         <img src={uploadImg} alt='' height={40} className='mr-3' />
