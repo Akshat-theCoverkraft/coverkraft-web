@@ -98,7 +98,7 @@ const Register = () => {
                                     <h1 className='text-center'>Register new account</h1>
                                     <h5 className='text-center text-secondary    mb-4'>Please complete your  profile Details to continue.</h5>
 
-                                    <div>
+                                    <div className=''>
                                         <CustomInput
                                             type="text"
                                             label="Full Name"
@@ -131,7 +131,7 @@ const Register = () => {
 
                                                 />
                                             </Grid>
-                                            <Grid item xs={12} md={6}></Grid>
+                                            <Grid item xs={12} md={6}>
                                             <CustomInput
                                                 type="email"
                                                 label="Email Address"
@@ -142,7 +142,7 @@ const Register = () => {
                                                 validationMessage={!isValidEmail ? 'Please enter a valid email address containing @.' : ''}
                                                 style={{ width: '48%' }}
                                             />
-
+</Grid>
                                         </Grid>
                                         <Grid container spacing={3}>
                                             <Grid item xs={12} md={6}>
@@ -157,7 +157,7 @@ const Register = () => {
                                                 />
 
                                             </Grid>
-                                            <Grid item xs={12} md={6}></Grid>
+                                            <Grid item xs={12} md={6}>
 
                                             <CustomInput
                                                 type="number"
@@ -168,6 +168,7 @@ const Register = () => {
                                                 required
 
                                             />
+                                            </Grid>
                                         </Grid>
                                         {/* <CustomInput
                                             type="text"
