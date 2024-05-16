@@ -21,19 +21,17 @@ import emptyImage from '../../Images/ic-empty.png'
 import TabList from '@mui/lab/TabList';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
+
 export default function PolicyTabs() {
     const [value, setValue] = React.useState(0);
     const [page, setPage] = React.useState(1);
     const [cardsPerPage] = React.useState(5);
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
     const [policyList, setPolicyList] = useState([]);
     const policyLists = useSelector((state) => state.user);
     const dispatch = useDispatch();
+    
 
+    //useeffect
     useEffect(() => {
         dispatch(getAllPolicyList(API_URL));
     }, [dispatch]);
@@ -49,6 +47,12 @@ export default function PolicyTabs() {
 
     }, [policyLists]);
 
+    //function for set the value
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    //function for pagination
     const handlePageChange = (event, value) => {
         setPage(value);
     };

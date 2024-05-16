@@ -35,11 +35,13 @@ function Navbar(props) {
     const [englishChecked, setEnglishChecked] = useState(i18n.language === 'en');
     const [hindiChecked, setHindiChecked] = useState(i18n.language === 'hi');
     const [anchorElPop, setAnchorElPop] = React.useState(null);
-
+    const [dialogOpen, setDialogOpen] = React.useState(false);
+    // function to open notification popup
     const handleClick = (event) => {
         setAnchorElPop(event.currentTarget);
     };
 
+     // function to close notification popup
     const handleClose = () => {
         setAnchorElPop(null);
     };
@@ -47,38 +49,22 @@ function Navbar(props) {
     const open = Boolean(anchorElPop);
     const id = open ? 'simple-popover' : undefined;
 
+    //function to close profile pop up
     const handleCloseMenu = () => {
         setAnchorEl(null);
     };
 
-    const [dialogOpen, setDialogOpen] = React.useState(false);
-
+    //function to open language pop up
     const handleClickOpen = () => {
         setDialogOpen(true);
     };
 
+     //function to close language pop up
     const handleClickClose = () => {
         setDialogOpen(false);
     };
 
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 100) {
-                setIsSticky(true);
-            } else {
-                setIsSticky(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        // Clean up the event listener
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
+    //function for navigation on buttons
     function handleLogin() {
         navigate('/login')
     }
@@ -90,6 +76,7 @@ function Navbar(props) {
         navigate('/')
     }
 
+    //function for change the language
     const changeLanguage = (language) => {
         i18n.changeLanguage(language);
     };
@@ -100,12 +87,12 @@ function Navbar(props) {
         localStorage.removeItem('userId');
         navigate('/');
     };
+
     const handleOpenMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
-
-
+    //function for updating language
     const handleLanguageUpdate = () => {
         if (englishChecked) {
             changeLanguage('en');
@@ -116,16 +103,18 @@ function Navbar(props) {
     };
 
 
-
+    //function for english language
     const handleEnglishChange = (event) => {
         setEnglishChecked(event.target.checked);
         setHindiChecked(!event.target.checked);
     };
 
+    //function for hindi language
     const handleHindiChange = (event) => {
         setHindiChecked(event.target.checked);
         setEnglishChecked(!event.target.checked);
     };
+
     return (
         <>
             <div data-animate-on-scroll className='' style={{ padding: '10px 70px', boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px ' }}>
@@ -223,7 +212,7 @@ function Navbar(props) {
             </div>
 
 
-            {/* dialog box for profile icon */}
+            {/* dialog box for language change */}
             <Dialog
                 open={dialogOpen}
                 onClose={handleClickClose}

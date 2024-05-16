@@ -19,8 +19,12 @@ import whatsapp from '../../Images/wtsp.png';
 import email from '../../Images/gmial.png';
 import reddit from '../../Images/reddit.png'
 import { useNavigate } from "react-router-dom";
+
 const PolicyDetail = () => {
+    const [showShareDialog, setShowShareDialog] = useState(false);
     const navigate = useNavigate();
+
+    //share url and msg
     const shareUrl = 'https://example.com';
     const policyDetailsMessage = `
         Policy Details:
@@ -33,16 +37,16 @@ const PolicyDetail = () => {
         Policy End Date: Dec 04, 2023
     `;
 
-    const [showShareDialog, setShowShareDialog] = useState(false);
-
+    //function for share dialog
     const toggleShareDialog = () => {
         setShowShareDialog(!showShareDialog);
     };
 
+    //function for edit button
     const handleEdit=()=>{
-        console.log('heyyy');
+        
         navigate('/add-policy');
-        console.log('hellooo');
+       
     }
 
     const sharePolicyDetails = () => {

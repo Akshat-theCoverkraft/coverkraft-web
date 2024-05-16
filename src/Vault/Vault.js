@@ -32,6 +32,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from 'react-bootstrap';
 import axios from 'axios'
+
+//styling for breadcrumbs
 const useStyles = makeStyles((theme) => ({
     separator: {
         color: '#42988E',
@@ -44,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+//styling for dialog box
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     borderRadius: '300px',
     '& .MuiDialogContent-root': {

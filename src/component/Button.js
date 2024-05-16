@@ -5,11 +5,11 @@ function Button({ onClick, bgcolor, text, color, borderColor, className, size, b
     backgroundColor: bgcolor || '#42988E', 
     color: color ?? 'white',
     borderColor: borderColor,
-    width: block ? '100%' : '', // Set width to 100% if block prop is true
-    display: 'flex', // Ensure content is displayed flexibly
-    alignItems: 'center', // Align content vertically
-    justifyContent: startIcon ? 'space-between' : 'center', // Space between if startIcon exists
-    padding: '15px 20px', // Adjust padding for better icon positioning
+    width: block ? '100%' : '', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: startIcon ? 'space-between' : 'center',
+    padding: '15px 20px', 
 
   };
 

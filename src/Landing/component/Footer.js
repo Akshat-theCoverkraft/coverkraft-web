@@ -83,9 +83,7 @@ const Footer = () => {
                             </div>
 
                             <div className='col-md-2 col-lg-2 col-xl-2 mx-auto'>
-                                {/* <a href="" class="me-4 text-reset">
-                                    <i class="fab fa-facebook-f"></i>
-                                </a> */}
+                               
                                 <img src={twitter} className='mr-2 social-icon' height={45} width={45}/>
                                 <img src={facebook} className='mr-2 social-icon'height={45} width={45}/>
                                 <img src={instagram} className='mr-2 social-icon' height={45} width={45}/>

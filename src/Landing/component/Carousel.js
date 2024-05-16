@@ -7,14 +7,6 @@ import rating from '../../Images/rating.png'
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0); // Starting with the first image
 
-  // const images = [
-  //   "https://images.pexels.com/photos/19682307/pexels-photo-19682307/free-photo-of-pink-flowers-on-a-shrub.jpeg",
-  //   "https://images.pexels.com/photos/17617625/pexels-photo-17617625/free-photo-of-pink-chrysanthemum-flowers.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load",
-  //   "https://images.pexels.com/photos/19598202/pexels-photo-19598202/free-photo-of-pink-hyndrangea-flowers.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load",
-  //   // Add more image URLs here
-  //   "https://images.pexels.com/photos/19598202/pexels-photo-19598202/free-photo-of-pink-hyndrangea-flowers.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load",
-  //   "https://images.pexels.com/photos/19598202/pexels-photo-19598202/free-photo-of-pink-hyndrangea-flowers.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load",
-  // ];
   const cards = [
     {
       "profilePic": "https://example.com/profile1.jpg",
@@ -74,12 +66,6 @@ const Carousel = () => {
                 <Card className='rounded-4' style={{ padding: '20px 40px', borderLeft: '15px solid #42988E' }}>
                   <img className="profile-pic" src={profilePic} alt={`Profile Pic ${index + 1}`} />
                   <h2 className="name mt-3" style={{ color: '#5F5F7E', fontSize: '24px' }}>{card.name}</h2>
-
-                  {/* <div className="rating">
-                    {Array.from({ length: card.rating }, (_, i) => (
-                      <span key={i} className="star">&#9733;</span>
-                    ))}
-                  </div> */}
                   <img src={rating} />
                   <p className="content mt-3" style={{ color: '#5F5F7E', fontSize: '22px' }}>{card.content}</p>
                 </Card>

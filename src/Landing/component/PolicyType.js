@@ -21,6 +21,7 @@ const PolicyType = () => {
     const policyTypes = useSelector((state) => state.user);
     const dispatch = useDispatch();
 
+    //useeffect
     useEffect(() => {
         dispatch(getAllPolicyType(API_URL));
     }, [dispatch]);
@@ -35,10 +36,6 @@ const PolicyType = () => {
         }
 
     }, [policyTypes])
-
-    // const images = [HealthInsurance, twoWheeler, HealthInsurance2, travel, car, taxi, term, family];
-    // const texts = ['Health Insurance', 'Two Wheeler Insurance', 'Health Insurance', 'Travel Insurance', 'Car Insurance', 'Taxi Insurance', 'Term Life Insurance', 'Family Health Insurance'];
-
 
     return (
         <div className=' p-5 d-flex  rounded-4' style={{ backgroundColor: '#E5F0F4', margin: '40px 90px' }}>
@@ -80,14 +77,7 @@ const PolicyType = () => {
 
             </Grid>
 
-            {/* </div> */}
-            {/* 
-            <div className='border-start border-secondary  col-md-3 d-flex flex-column justify-content-center align-items-center'>
-                <button className='btn  rounded-pill  mb-3 policy-btn'>Policy</button>
-                <h3 className='text-center  '  >Let’s get you & your <br />  family insured</h3>
-                <div class="border-element"></div> */}
-
-            {/* </div> */}
+            
         </div>
     );
 }
