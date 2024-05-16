@@ -201,7 +201,7 @@ const Register = () => {
                                             text='Save'
                                             size="lg"
                                             block={true}
-                                            onClick={handleRegister}
+                                            // onClick={handleRegister}
 
                                         />
                                         <p class="medium fw-bold mt-2 pt-1 mb-0 text-center">Already have an account?

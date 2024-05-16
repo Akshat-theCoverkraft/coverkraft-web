@@ -153,7 +153,7 @@ const Login = () => {
                             <img src={LoginImg}
                                 class="img-fluid" alt="Sample image" />
                         </div>
-                        <div class="col-md-4 col-lg-6 col-xl-4 offset-xl-1">
+                        <div class="col-md-4 col-lg-5 col-xl-4 offset-xl-1">
                             <form className='shadow shadow-md ' style={{ padding: '70px' }}>
                                 <div class="d-flex flex-row align-items-center justify-content-center mb-5  ">
                                     <img src={logo} alt='logo' />
@@ -187,7 +187,7 @@ const Login = () => {
                                                 text={loggedIn ? 'Logging in...' : 'Login'}
                                                 size="lg"
                                                 block={true}
-                                                onClick={handleLogin}
+                                                // onClick={handleLogin}
                                                 disabled={!valid || loggedIn}
                                                 className='mt-2'
                                             /> 

@@ -49,7 +49,8 @@ const PolicyType = () => {
                             <Grid item xs={6} md={4} lg={3} xl={3} style={{ width: '80%' }} >
                                 <div key={index}>
                                     <div className='card'>
-                                        <img src={policy.icon} alt={policy.policyType} />
+                                    <img src={process.env.API_URL + policy.icon} alt={policy.policyType} />
+
                                     </div>
                                     <h4 className='text-center mt-3 image-text'>{policy.policyType}</h4>
                                 </div>
