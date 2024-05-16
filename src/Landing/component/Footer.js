@@ -20,17 +20,17 @@ const Footer = () => {
 
                         <div class="row mt-3">
 
-                            <div class="col-md-2 col-lg-2 col-xl-3 mx-auto mb-4">
+                            <div class="col-md-2 col-lg-2 col-xl-3 col-sm-12 mx-auto mb-4">
 
                                 <h6 class="text-uppercase fw-bold mb-4">
-                                    <img src={logo} alt='' />
+                                    <img src={logo} alt='' height={25} />
                                 </h6>
                                 <p className='text-color fs-4 '>
                                     Coverkraft, we offer<br/> incredible tools for  filling out<br/> forms, scanning documents, <br/>and uploading them.
                                 </p>
                             </div>
 
-                            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                            <div class="col-md-2 col-lg-2 col-xl-2  mx-auto mb-4">
 
                                 <h6 class="text-uppercase fw-bold mb-4 fs-5 custom-color"  >
                                     Get in Touch
@@ -51,7 +51,7 @@ const Footer = () => {
 
                             </div>
 
-                            <div class="col-md-1 col-lg-2 col-xl-1 mx-auto mb-4">
+                            <div class="col-md-1 col-lg-2 col-xl-1  mx-auto mb-4">
 
                                 <h6 class="text-uppercase fw-bold mb-4 fs-5 custom-color" >
                                     Service
@@ -82,7 +82,7 @@ const Footer = () => {
 
                             </div>
 
-                            <div className='col-md-2'>
+                            <div className='col-md-2 col-lg-2 col-xl-2 mx-auto'>
                                 {/* <a href="" class="me-4 text-reset">
                                     <i class="fab fa-facebook-f"></i>
                                 </a> */}

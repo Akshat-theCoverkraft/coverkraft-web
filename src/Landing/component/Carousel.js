@@ -59,6 +59,7 @@ const Carousel = () => {
 
   return (
     <>
+    <h1 className='text-center mb-5'>What Our Client Says</h1>
     <div className="carousel-container">
       <h1>Carousel</h1>
       <div className="wiper">

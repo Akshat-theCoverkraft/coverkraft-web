@@ -145,7 +145,7 @@ const Login = () => {
     return (
         <div className='overflow-hidden'>
             <Navbar/>
-            <section class="vh-100 ">
+            <section class=" "style={{margin:'60px 0px'}}>
                 <div class="container-fluid h-custom">
                     <div class="row d-flex justify-content-center align-items-center h-100">
 

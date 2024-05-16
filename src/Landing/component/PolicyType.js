@@ -67,7 +67,7 @@ const PolicyType = () => {
                     </Grid>
 
                 </Grid>
-                <Grid item xs={12} md={4} >
+                <Grid item xs={12} md={4} className='d-flex flex-column justify-content-center align-items-center'>
 
                     <Grid container xs={4} md={8} className='border-start border-secondary d-flex flex-column justify-content-center align-items-center'>
                         <button className='btn  rounded-pill  mb-3 policy-btn'>Policy</button>

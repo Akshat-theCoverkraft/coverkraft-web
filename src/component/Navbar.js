@@ -15,6 +15,11 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
+import ck from '../Images/ck.png';
+import Grid from '@mui/material/Grid';
 
 
 function Navbar(props) {
@@ -29,18 +34,31 @@ function Navbar(props) {
     const { t, i18n } = useTranslation();
     const [englishChecked, setEnglishChecked] = useState(i18n.language === 'en');
     const [hindiChecked, setHindiChecked] = useState(i18n.language === 'hi');
+    const [anchorElPop, setAnchorElPop] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorElPop(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorElPop(null);
+    };
+
+    const open = Boolean(anchorElPop);
+    const id = open ? 'simple-popover' : undefined;
+
     const handleCloseMenu = () => {
         setAnchorEl(null);
     };
 
-    const [open, setOpen] = React.useState(false);
+    const [dialogOpen, setDialogOpen] = React.useState(false);
 
     const handleClickOpen = () => {
-        setOpen(true);
+        setDialogOpen(true);
     };
 
-    const handleClose = () => {
-        setOpen(false);
+    const handleClickClose = () => {
+        setDialogOpen(false);
     };
 
 
@@ -86,7 +104,7 @@ function Navbar(props) {
         setAnchorEl(event.currentTarget);
     };
 
-  
+
 
     const handleLanguageUpdate = () => {
         if (englishChecked) {
@@ -94,7 +112,7 @@ function Navbar(props) {
         } else if (hindiChecked) {
             changeLanguage('hi');
         }
-        handleClose();
+        handleClickClose();
     };
 
 
@@ -110,7 +128,7 @@ function Navbar(props) {
     };
     return (
         <>
-            <div data-animate-on-scroll className='' style={{ padding: '10px 70px',boxShadow:'rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px ' }}>
+            <div data-animate-on-scroll className='' style={{ padding: '10px 70px', boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px ' }}>
                 <div className='sticky nav-style col-md-12 d-flex justify-content-between py-4  ' >
                     <div>
                         <img className="d-inline-block align-top animate-style" alt="" onClick={handleHome} style={{ cursor: 'pointer' }}
@@ -119,7 +137,7 @@ function Navbar(props) {
                     </div>
                     <div className="grid gap-5 d-flex align-items-center">
                         <div className={isSticky ? 'nav-item active custom-home-Scroll animate-style' : 'nav-item active custom-home-font animate-style'} onClick={handleHome}>Home</div>
-                       
+
 
                         {loggedIn ? (
                             <>
@@ -132,7 +150,7 @@ function Navbar(props) {
                                 <div className={isSticky ? 'nav-item active custom-home-Scroll animate-style' : 'nav-item active custom-home-font animate-style'} onClick={scrollToContactBottom}>
                                     Help
                                 </div>
-                                <img src={notification} alt='' />
+                                <img src={notification} alt='' onClick={handleClick} style={{ cursor: 'pointer' }} />
                                 <img src={profile} alt='' onClick={handleOpenMenu} style={{ cursor: 'pointer' }} />
                                 <Menu
                                     style={{
@@ -192,7 +210,7 @@ function Navbar(props) {
 
                             </>
                         ) : (
-                            <button className={`btn btn-lg custom-color py-2 px-5`} style={{ borderColor: '#42988E',color:'#42988E' }} onClick={handleLogin}>
+                            <button className={`btn btn-lg custom-color py-2 px-5`} style={{ borderColor: '#42988E', color: '#42988E' }} onClick={handleLogin}>
                                 Login
                             </button>
                         )}
@@ -204,9 +222,11 @@ function Navbar(props) {
 
             </div>
 
+
+            {/* dialog box for profile icon */}
             <Dialog
-                open={open}
-                onClose={handleClose}
+                open={dialogOpen}
+                onClose={handleClickClose}
                 aria-labelledby="draggable-dialog-title"
                 PaperProps={{
                     style: {
@@ -272,10 +292,10 @@ function Navbar(props) {
                         <div className="col-6">
 
                             <input
-                                 id="hindiCheckbox"
-                                 type="checkbox"
-                                 checked={hindiChecked}
-                                 onChange={handleHindiChange}
+                                id="hindiCheckbox"
+                                type="checkbox"
+                                checked={hindiChecked}
+                                onChange={handleHindiChange}
                                 style={{
                                     width: "20%",
                                     height: "40px",
@@ -289,7 +309,7 @@ function Navbar(props) {
                 <DialogActions className="modal-footer border-0 d-flex justify-content-center mb-5">
                     <Button
                         text='Cancel'
-                        onClick={handleClose}
+                        onClick={handleClickClose}
 
                     />
                     <Button
@@ -300,6 +320,67 @@ function Navbar(props) {
 
                 </DialogActions>
             </Dialog>
+
+            {/* dialog box for notification icon */}
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorElPop}
+                onClose={handleClose}
+                className='mt-3 '
+                
+
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+            >
+                <Typography className='custom-color' sx={{ p: 2, fontSize: '16px', fontWeight: '500' }}>35 new notification</Typography>
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                <Card sx={{ mx: 2, p: 1,backgroundColor:'#F8FFFE' }} >
+                    <Grid container spacing={3} xs={12}>
+                        <Grid item xs={2}>
+                            <img src={ck} />
+                        </Grid>
+                        <Grid item xs={8}>
+                            <p style={{fontSize:'17px',fontWeight:'700'}}>The 3 Benefits of a Retirement plan!</p>
+                            <p style={{color:'#7C7C7C',fontSize:'16px',fontWeight:'400'}}>Invent 10k/month to get 1Lakh monthly pension</p>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <p style={{color:'#A0A0A0',fontSize:'17px'}}>2 days</p>
+                        </Grid>
+                    </Grid>
+                </Card>
+                <Card sx={{ mx: 2, p: 1,backgroundColor:'#F8FFFE' }} >
+                    <Grid container spacing={3} xs={12}>
+                        <Grid item xs={2}>
+                            <img src={ck} />
+                        </Grid>
+                        <Grid item xs={8}>
+                            <p style={{fontSize:'17px',fontWeight:'700'}}>The 3 Benefits of a Retirement plan!</p>
+                            <p style={{color:'#7C7C7C',fontSize:'16px',fontWeight:'400'}}>Invent 10k/month to get 1Lakh monthly pension</p>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <p style={{color:'#A0A0A0',fontSize:'17px'}}>2 days</p>
+                        </Grid>
+                    </Grid>
+                </Card>
+                <Card sx={{ mx: 2,mb:1, p: 1,backgroundColor:'#F8FFFE' }} >
+                    <Grid container spacing={3} xs={12}>
+                        <Grid item xs={2}>
+                            <img src={ck} />
+                        </Grid>
+                        <Grid item xs={8}>
+                            <p style={{fontSize:'17px',fontWeight:'700'}}>The 3 Benefits of a Retirement plan!</p>
+                            <p style={{color:'#7C7C7C',fontSize:'16px',fontWeight:'400'}}>Invent 10k/month to get 1Lakh monthly pension</p>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <p style={{color:'#A0A0A0',fontSize:'17px'}}>2 days</p>
+                        </Grid>
+                    </Grid>
+                </Card>
+                </div>
+            </Popover>
         </>
     )
 }
