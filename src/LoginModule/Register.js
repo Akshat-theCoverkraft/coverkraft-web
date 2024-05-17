@@ -12,8 +12,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
-import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
+import { messaging, getToken } from '../ServiceModule/FirebaseConfig';
 const Register = () => {
     const [fullName, setFullName] = useState();
     const [DOB, setDOB] = useState();
@@ -24,8 +24,28 @@ const Register = () => {
     const [pincode, setPincode] = useState();
     const [valid, setValid] = useState(true);
     const [isValidEmail, setIsValidEmail] = useState(true);
+    const [fcmToken, setFcmToken] = useState(null);
+    // console.log("fcmToken", fcmToken)
+
     const dispatch = useDispatch();
 
+    // useEffect(() => {
+    //     const requestFcmToken = async () => {
+    //         try {
+    //             const token = await getToken(messaging, { vapidKey: 'BHcTGP4Tg96WJexHhweIX-BXTmhJuOvAu583-K6v0eKZ86Ae3bA16xhsKLL3sTosvXytcUqHJmq0I61_P7CafcQ' });
+    //             setFcmToken(token);
+    //         } catch (error) {
+    //             console.error('An error occurred while retrieving token. ', error);
+    //             setFcmToken(null);
+    //         }
+    //     };
+    //     requestFcmToken();
+    // }, []);
+
+
+
+
+  
     //function to handle phone number input field start
     const handlephonechange = (e) => {
         let number = e.target.value.replace(/\D/g, '');
@@ -62,7 +82,9 @@ const Register = () => {
             formData.append('userPhone', mobileNumber);
             formData.append('userEmail', email);
             formData.append('userAddress', address);
-            formData.append('userFcmId', "1001");
+            // formData.append('userFcmId', "1001");
+            formData.append('userFcmId', fcmToken);
+
 
 
             dispatch(registrationCustomer(API_URL, formData))
@@ -132,17 +154,17 @@ const Register = () => {
                                                 />
                                             </Grid>
                                             <Grid item xs={12} md={6}>
-                                            <CustomInput
-                                                type="email"
-                                                label="Email Address"
-                                                value={email}
-                                                onChange={handleEmailChange}
-                                                placeholder="Enter your email address "
-                                                className={!isValidEmail ? 'is-invalid' : ''}
-                                                validationMessage={!isValidEmail ? 'Please enter a valid email address containing @.' : ''}
-                                                style={{ width: '48%' }}
-                                            />
-</Grid>
+                                                <CustomInput
+                                                    type="email"
+                                                    label="Email Address"
+                                                    value={email}
+                                                    onChange={handleEmailChange}
+                                                    placeholder="Enter your email address "
+                                                    className={!isValidEmail ? 'is-invalid' : ''}
+                                                    validationMessage={!isValidEmail ? 'Please enter a valid email address containing @.' : ''}
+                                                    style={{ width: '48%' }}
+                                                />
+                                            </Grid>
                                         </Grid>
                                         <Grid container spacing={3}>
                                             <Grid item xs={12} md={6}>
@@ -159,26 +181,17 @@ const Register = () => {
                                             </Grid>
                                             <Grid item xs={12} md={6}>
 
-                                            <CustomInput
-                                                type="number"
-                                                label="Pin Code"
-                                                value={pincode}
-                                                onChange={(e) => { setPincode(e.target.value) }}
-                                                placeholder="Enter your pin code"
-                                                required
+                                                <CustomInput
+                                                    type="number"
+                                                    label="Pin Code"
+                                                    value={pincode}
+                                                    onChange={(e) => { setPincode(e.target.value) }}
+                                                    placeholder="Enter your pin code"
+                                                    required
 
-                                            />
+                                                />
                                             </Grid>
                                         </Grid>
-                                        {/* <CustomInput
-                                            type="text"
-                                            label="Address"
-                                            value={address}
-                                            onChange={(e) => { setAddress(e.target.value) }}
-                                            placeholder="Enter your  address"
-                                            required
-
-                                        /> */}
                                         <div data-mdb-input-init className="form-outline mb-4">
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Address
@@ -201,7 +214,7 @@ const Register = () => {
                                             text='Save'
                                             size="lg"
                                             block={true}
-                                            // onClick={handleRegister}
+                                            onClick={handleRegister}
 
                                         />
                                         <p class="medium fw-bold mt-2 pt-1 mb-0 text-center">Already have an account?

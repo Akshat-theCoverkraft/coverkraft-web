@@ -5,7 +5,8 @@ import logo from '../Images/Coverkraft-logo.png';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import * as auth from 'firebase/auth';
-import firebaseConfig from '../ServiceModule/FirebaseConfig';
+import { appFire } from '../ServiceModule/FirebaseConfig';
+// import firebaseConfig from '../ServiceModule/FirebaseConfig';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
@@ -18,16 +19,18 @@ import axios from 'axios'
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
 import { useNavigate } from "react-router-dom";
-
+import { getStoredToken } from "../helper";
 
 
 const Login = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [otp, setOtp] = React.useState([]);
+    console.log("otp", otp)
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid, setValid] = useState(false);
-    const app = firebase.initializeApp(firebaseConfig)
-    const auth1 = auth.getAuth(app);
+    // const app = firebase.initializeApp(firebaseConfig)
+    // const appInstance = firebase.initializeApp(appFire);
+    const auth1 = auth.getAuth(appFire);
     const dispatch=useDispatch();
     const navigate = useNavigate();
     const [item, setitem] = useState("");
@@ -122,7 +125,11 @@ const Login = () => {
             .then(() => {
                 const formData = new FormData();
                 formData.append('userPhone', phoneNumber );
-
+                const fcmToken = getStoredToken();
+                console.log("fcmToken", fcmToken)
+                if (fcmToken) {
+                    formData.append('userFcmId', fcmToken);
+                }
                 dispatch(verifyUser(API_URL, formData ))
                 localStorage.setItem('loggedIn', 'true');
                 toast.success('Phone number authentication done');
@@ -187,7 +194,7 @@ const Login = () => {
                                                 text={loggedIn ? 'Logging in...' : 'Login'}
                                                 size="lg"
                                                 block={true}
-                                                // onClick={handleLogin}
+                                                onClick={handleLogin}
                                                 disabled={!valid || loggedIn}
                                                 className='mt-2'
                                             /> 
