@@ -12,6 +12,8 @@ import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllPolicyType } from '../../store/action/action';
 import API_URL from '../../ServiceModule/Service';
+import IMAGE_PATH from '../../ServiceModule/imagePath';
+
 
 
 const PolicyType = () => {
@@ -43,13 +45,19 @@ const PolicyType = () => {
 
             {/* <div className='grid-container col-md-8 mr-5 pr-5'> */}
             <Grid container spacing={6}>
-                <Grid item  xs={12} md={8}  >
+                <Grid item xs={12} md={8}  >
                     <Grid container spacing={4} >
                         {policyType.map((policy, index) => (
                             <Grid item xs={6} md={4} lg={3} xl={3} style={{ width: '80%' }} >
                                 <div key={index}>
                                     <div className='card'>
-                                    <img src={process.env.API_URL + policy.icon} alt={policy.policyType} />
+                                        <img
+                                            src={
+                                                IMAGE_PATH + policy.icon
+                                            }                                            
+                                            alt={policy.policyType} 
+                                            
+                                              />
 
                                     </div>
                                     <h4 className='text-center mt-3 image-text'>{policy.policyType}</h4>
@@ -60,13 +68,13 @@ const PolicyType = () => {
 
                 </Grid>
                 <Grid item xs={12} md={4} >
-                   
-                        <Grid container xs={4} md={8} className='border-start border-secondary d-flex flex-column justify-content-center align-items-center'>
-                            <button className='btn  rounded-pill  mb-3 policy-btn'>Policy</button>
-                            <h3 className='text-center  '  >Let’s get you & your <br />  family insured</h3>
-                            <div class="border-element"></div>
-                        </Grid>
-                   
+
+                    <Grid container xs={4} md={8} className='border-start border-secondary d-flex flex-column justify-content-center align-items-center'>
+                        <button className='btn  rounded-pill  mb-3 policy-btn'>Policy</button>
+                        <h3 className='text-center  '  >Let’s get you & your <br />  family insured</h3>
+                        <div class="border-element"></div>
+                    </Grid>
+
 
                 </Grid>
 

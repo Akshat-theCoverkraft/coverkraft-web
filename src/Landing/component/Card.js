@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
 import group from '../../Images/Clip path group.png';
-import Frame from "../../Images/frame.png";
+import Frame from "../../Images/Frame.png";
 import car from "../../Images/car-1.png";
 import Frame1 from "../../Images/frame1.png";
 import Frame2 from "../../Images/frame-2.png";
