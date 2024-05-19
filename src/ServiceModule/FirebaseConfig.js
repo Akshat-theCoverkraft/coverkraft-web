@@ -1,6 +1,7 @@
+//FirebaseConfig.js
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getMessaging, getToken } from "firebase/messaging";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
  
@@ -17,4 +18,35 @@ const firebaseConfig = {
 };
  
 // Initialize Firebase
-export default firebaseConfig;
+// export default firebaseConfig;
+const appFire = initializeApp(firebaseConfig);
+
+// Initialize Firebase Cloud Messaging
+const messaging = getMessaging(appFire);
+
+
+// Register the service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then((registration) => {
+      console.log('ServiceWorker registration successful:', registration);
+    }).catch((err) => {
+      console.error('ServiceWorker registration failed:', err);
+    });
+} else {
+  console.error('ServiceWorker is not supported in this browser');
+}
+// navigator.serviceWorker.getRegistrations().then((registrations) => {
+//   if (registrations.length) {
+//      [this.registration] = registrations;
+//      return;
+//   }
+//   navigator.serviceWorker
+//     .register("/firebase-messaging-sw.js")
+//     .then((registration) => {
+//        this.registration = registration;
+//     });
+//   });
+
+
+export { appFire, messaging, getToken };
