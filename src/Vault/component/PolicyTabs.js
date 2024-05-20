@@ -22,14 +22,14 @@ import TabList from '@mui/lab/TabList';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 
-export default function PolicyTabs() {
+export default function PolicyTabs({ handleCardClick }) {
     const [value, setValue] = React.useState(0);
     const [page, setPage] = React.useState(1);
     const [cardsPerPage] = React.useState(5);
     const [policyList, setPolicyList] = useState([]);
     const policyLists = useSelector((state) => state.user);
     const dispatch = useDispatch();
-    
+
 
     //useeffect
     useEffect(() => {
@@ -40,7 +40,9 @@ export default function PolicyTabs() {
         if (policyLists !== null && policyLists !== undefined) {
             if (policyLists.getPolicyList !== null && policyLists.getPolicyList !== undefined) {
                 if (policyLists.getPolicyList.data !== null && policyLists.getPolicyList.data !== undefined) {
+
                     setPolicyList(policyLists.getPolicyList.data)
+
                 }
             }
         }
@@ -55,6 +57,9 @@ export default function PolicyTabs() {
     //function for pagination
     const handlePageChange = (event, value) => {
         setPage(value);
+    };
+    const handleClick = (policyId) => {
+        localStorage.setItem('selectedPolicyId', policyId);
     };
 
 
@@ -76,7 +81,7 @@ export default function PolicyTabs() {
                     </Box>
                 </Grid>
 
-                <TabPanel value={0}>
+                {/* <TabPanel value={0}>
                     <>
                         {policyList.length === 0 ? (
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -162,160 +167,151 @@ export default function PolicyTabs() {
                             <Pagination variant='outlined' size='large' count={Math.ceil(policyList.length / cardsPerPage)} page={page} onChange={handlePageChange} />
                         </Box>
                     </>
-                </TabPanel>
+                </TabPanel> */}
 
-                <TabPanel value={1}>
+                <TabPanel value={0} className='policy-card-container'>
                     <>
-                        {
-                            policyList
-                                .slice((page - 1) * cardsPerPage, page * cardsPerPage)
-                                .map((policy, index) => {
-                                    if (!policy) return null;
+                        {policyList.length === 0 ? (
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                                <img src={emptyImage} alt="No Data" />
+                                <p>Add your new policy effortlessly to your account</p>
 
-                                    let endDateParts;
+                            </div>
+                        ) : (
+                            policyList.map((policy, index) => {
+
+
+
+                                let endDate, diffInDays, status;
+
+                                try {
                                     if (policy.policyEndDate) {
-                                        endDateParts = policy.policyEndDate.split(' ');
+                                        // Try to parse the date part of the policy end date
+                                        const datePart = policy.policyEndDate.split(' ')[0];
+                                        const [day, month, year] = datePart.split('/');
 
-                                        if (endDateParts.length !== 2) return null;
-                                    }
+                                        // Create a new Date object with the date components
+                                        endDate = new Date(year, month - 1, day);
 
-                                    // Extract date and time components if endDateParts exists
-                                    let endDate, endDateWithoutTime, diffInDays;
-                                    if (endDateParts) {
-                                        const [day, month, year] = endDateParts[0].split('/');
-                                        const [hour, minute, second] = endDateParts[1].split(':');
+                                        if (isNaN(endDate)) throw new Error('Invalid date');
 
-                                        // Create a new Date object with the components
-                                        endDate = new Date(year, month - 1, day, hour, minute, second);
                                         const now = new Date();
 
                                         // Remove the time component from the dates
-                                        endDateWithoutTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+                                        const endDateWithoutTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
                                         const nowWithoutTime = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
                                         // Calculate the difference in milliseconds between the dates
                                         const diffInMs = endDateWithoutTime.getTime() - nowWithoutTime.getTime();
                                         diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-                                    }
 
-                                    let status;
-                                    if (diffInDays <= 0) {
-                                        status = 'Expired';
-                                    } else if (diffInDays <= 60) {
-                                        return null; // Skip rendering if status is within 60 days
-                                    }
-
-                                    // Render card only if status is 'Expired'
-                                    if (status !== 'Expired') return null;
-
-                                    return (
-                                        <Card className='m-5 rounded card-detail' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
-                                            <CardContent style={{ position: 'relative' }}>
-                                                {status && (
-                                                    <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
-                                                )}
-                                                <Grid container spacing={0}>
-                                                    <Grid item xs={12} md={3}>
-                                                        <img src={policy.policyType === 'car_policy' ? car : scooty} alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
-                                                    </Grid>
-                                                    <Grid item xs={12} md={9} className='d-flex align-items-end justify-content-between'>
-                                                        <div>
-                                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                                <span className="dot" style={{ backgroundColor: '#42988E', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px', marginBottom: '14px' }}></span>
-                                                                <Typography variant="body1" component="p" gutterBottom style={{ color: '#89CFC7' }} className='mb-3'>{policy.policyType === 'car_policy' ? 'Car Insurance' : 'Two Wheeler Insurance'}</Typography>
-                                                            </div>
-                                                            <h4 variant="h4" component="h2" gutterBottom className='fw-bold'>{policy.insuredName}</h4>
-                                                            <h6 className='mb-4' style={{ color: '#585858' }}>{policy.policyNumber}</h6>
-                                                            <h6 variant="h6" component="h2" gutterBottom style={{ color: '#9E9E9E' }}>Expires on {policy.policyEndDate}</h6>
-                                                        </div>
-                                                        <div style={{ alignItems: 'end' }}>
-                                                            <img src={arrow} className='mr-2' height={40} />
-                                                        </div>
-                                                    </Grid>
-                                                </Grid>
-                                                {status && (
-                                                    <div style={{ position: 'absolute', top: 10, right: 30, color: '#ffffff', fontSize: '24px', fontWeight: 'bold' }}>{status}</div>
-                                                )}
-                                            </CardContent>
-                                        </Card>
-                                    );
-                                })
-                        }
-                        {
-                            policyList.some(policy => {
-                                let endDateParts;
-                                if (policy.policyEndDate) {
-                                    endDateParts = policy.policyEndDate.split(' ');
-
-                                    if (endDateParts.length !== 2) return null;
-                                }
-
-                                // Extract date and time components if endDateParts exists
-                                let endDate, endDateWithoutTime, diffInDays;
-                                if (endDateParts) {
-                                    const [day, month, year] = endDateParts[0].split('/');
-                                    const [hour, minute, second] = endDateParts[1].split(':');
-
-                                    // Create a new Date object with the components
-                                    endDate = new Date(year, month - 1, day, hour, minute, second);
-                                    const now = new Date();
-
-                                    // Remove the time component from the dates
-                                    endDateWithoutTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-                                    const nowWithoutTime = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-                                    // Calculate the difference in milliseconds between the dates
-                                    const diffInMs = endDateWithoutTime.getTime() - nowWithoutTime.getTime();
-                                    diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-                                }
-
-                                let status;
-                                if (diffInDays <= 0) {
-                                    status = 'Expired';
-                                }
-
-                                return status === 'Expired';
-                            }) && (
-                                <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
-                                    <Pagination variant='outlined' size='large' count={Math.ceil(policyList.filter(policy => {
-                                        let endDateParts;
-                                        if (policy.policyEndDate) {
-                                            endDateParts = policy.policyEndDate.split(' ');
-
-                                            if (endDateParts.length !== 2) return null;
-                                        }
-
-                                        // Extract date and time components if endDateParts exists
-                                        let endDate, endDateWithoutTime, diffInDays;
-                                        if (endDateParts) {
-                                            const [day, month, year] = endDateParts[0].split('/');
-                                            const [hour, minute, second] = endDateParts[1].split(':');
-
-                                            // Create a new Date object with the components
-                                            endDate = new Date(year, month - 1, day, hour, minute, second);
-                                            const now = new Date();
-
-                                            // Remove the time component from the dates
-                                            endDateWithoutTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-                                            const nowWithoutTime = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-                                            // Calculate the difference in milliseconds between the dates
-                                            const diffInMs = endDateWithoutTime.getTime() - nowWithoutTime.getTime();
-                                            diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-                                        }
-
-                                        let status;
                                         if (diffInDays <= 0) {
                                             status = 'Expired';
+                                        } else if (diffInDays <= 60) {
+                                            status = `${diffInDays} days left`;
                                         }
+                                    }
+                                } catch (error) {
+                                    console.error('Error parsing policy end date:', error);
+                                }
 
-                                        return status === 'Expired';
-                                    }).length / cardsPerPage)} page={page} onChange={handlePageChange} />
-                                </Box>
-                            )
-                        }
+
+                                return (
+                                    <Card className='m-5 rounded card-detail' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',maxHeight:'100vh',overflow:'auto' }} onClick={() => handleCardClick(policy._id)}>
+                                        <CardContent style={{ position: 'relative' }}>
+                                            {status && (
+                                                <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
+                                            )}
+                                            <Grid container spacing={0}>
+                                                <Grid item xs={12} md={3}>
+                                                    <img src={policy.policyType === 'car_policy' ? car : scooty} alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
+                                                </Grid>
+                                                <Grid item xs={12} md={9} className='d-flex align-items-end justify-content-between'>
+                                                    <div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span className="dot" style={{ backgroundColor: '#42988E', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px', marginBottom: '14px' }}></span>
+                                                            <Typography variant="body1" component="p" gutterBottom style={{ color: '#89CFC7' }} className='mb-3'>{policy.policyType === 'car_policy' ? 'Car Insurance' : 'Two Wheeler Insurance'}</Typography>
+                                                        </div>
+                                                        <h4 variant="h4" component="h2" gutterBottom className='fw-bold'>{policy.insuredName}</h4>
+                                                        <h6 className='mb-4' style={{ color: '#585858' }}>{policy.policyNumber}</h6>
+                                                        <h6 variant="h6" component="h2" gutterBottom style={{ color: '#9E9E9E' }}>Expires on {policy.policyEndDate}</h6>
+                                                    </div>
+                                                    <div style={{ alignItems: 'end' }}>
+                                                        <img src={arrow} className='mr-2' height={40} />
+                                                    </div>
+                                                </Grid>
+                                            </Grid>
+                                            {status && (
+                                                <div style={{ position: 'absolute', top: 10, right: 30, color: '#ffffff', fontSize: '24px', fontWeight: 'bold' }}>{status}</div>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+
+                                );
+
+                            })
+                        )}
+                        {/* <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
+                            <Pagination variant='outlined' size='large' count={Math.ceil(policyList.length / cardsPerPage)} page={page} onChange={handlePageChange} />
+                        </Box> */}
                     </>
                 </TabPanel>
+
+                <TabPanel value={1}>
+                    <>
+                        {policyList.length === 0 ? (
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                                <img src={emptyImage} alt="No Data" />
+                                <p>Add your new policy effortlessly to your account</p>
+
+                            </div>
+                        ) : (
+                            policyList.map((policy, index) => {
+
+
+
+
+                                return (
+                                    <Card className='m-5 rounded card-detail' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                                        <CardContent style={{ position: 'relative' }}>
+
+                                            <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
+
+                                            <Grid container spacing={0}>
+                                                <Grid item xs={12} md={3}>
+                                                    <img src={policy.policyType === 'car_policy' ? car : scooty} alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
+                                                </Grid>
+                                                <Grid item xs={12} md={9} className='d-flex align-items-end justify-content-between'>
+                                                    <div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <span className="dot" style={{ backgroundColor: '#42988E', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px', marginBottom: '14px' }}></span>
+                                                            <Typography variant="body1" component="p" gutterBottom style={{ color: '#89CFC7' }} className='mb-3'>{policy.policyType === 'car_policy' ? 'Car Insurance' : 'Two Wheeler Insurance'}</Typography>
+                                                        </div>
+                                                        <h4 variant="h4" component="h2" gutterBottom className='fw-bold'>{policy.insuredName}</h4>
+                                                        <h6 className='mb-4' style={{ color: '#585858' }}>{policy.policyNumber}</h6>
+                                                        <h6 variant="h6" component="h2" gutterBottom style={{ color: '#9E9E9E' }}>Expires on {policy.policyEndDate}</h6>
+                                                    </div>
+                                                    <div style={{ alignItems: 'end' }}>
+                                                        <img src={arrow} className='mr-2' height={40} />
+                                                    </div>
+                                                </Grid>
+                                            </Grid>
+
+                                            <div style={{ position: 'absolute', top: 10, right: 30, color: '#ffffff', fontSize: '24px', fontWeight: 'bold' }}>Expired</div>
+
+                                        </CardContent>
+                                    </Card>
+
+                                );
+
+                            })
+                        )}
+                        {/* <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
+                            <Pagination variant='outlined' size='large' count={Math.ceil(policyList.length / cardsPerPage)} page={page} onChange={handlePageChange} />
+                        </Box> */}
+                    </>
+                </TabPanel>
+
 
 
             </TabContext>

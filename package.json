@@ -16,6 +16,7 @@
     "@types/grecaptcha": "^3.0.9",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
+    "date-fns": "^3.6.0",
     "firebase": "^10.11.1",
     "i18next": "^23.11.3",
     "mui-one-time-password-input": "^2.0.2",

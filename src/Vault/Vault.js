@@ -69,6 +69,12 @@ const Vault = () => {
     const imageRef = useRef();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [selectedPolicyId, setSelectedPolicyId] = React.useState('');
+
+    const handleCardClick = (policyId) => {
+      setSelectedPolicyId(policyId);
+      localStorage.setItem('selectedPolicyId', policyId);
+    };
 
     //add policy dialog box open and close function start
     const handleClickOpen = () => {
@@ -184,10 +190,10 @@ const Vault = () => {
                     </Stack>
                     <Grid container spacing={-4} >
                         <Grid item xs={12} md={7} lg={7} xl={7} >
-                            <PolicyTabs />
+                            <PolicyTabs handleCardClick={handleCardClick}/>
                         </Grid>
                         <Grid item xs={12} md={5} lg={5} xl={5}>
-                            <PolicyDetail />
+                            <PolicyDetail policyId={selectedPolicyId} />
                         </Grid>
                     </Grid>
                 </div>

@@ -3,6 +3,7 @@ const initialState = {
     customerregstionData:null,
     getPolicyType:[],
     getPolicyList:[],
+    getPolicyDetailByID:[],
     ocrData:null,
     saveData:null,
     loading: false,
@@ -143,6 +144,28 @@ const initialState = {
             error: action.payload,
           };        
           //GETALLPOLICYLIST DOCUMENT end
+
+          //GETALLPOLICYBYID
+        case "GETPOLICYDETAIL_DATA_REQUEST":
+          return {
+            ...state,
+            loading: true,
+            error: null,
+          };
+        case "GETPOLICYDETAIL_DATA_SUCCESS":
+          return {
+            ...state,
+            getPolicyDetailByID: action.payload,
+            loading: false,
+            error: null,
+          };
+        case "GETPOLICYDETAIL_DATA_FAILURE":
+          return {
+            ...state,
+            loading: false,
+            error: action.payload,
+          };        
+          //GETALLPOLICYBYID
       default:
         return state;
     }

@@ -93,6 +93,7 @@ function Navbar(props) {
         localStorage.removeItem('loggedIn');
         localStorage.removeItem('verificationId');
         localStorage.removeItem('userId');
+        localStorage.removeItem('policyId')
         navigate('/');
     };
 
