@@ -81,7 +81,7 @@ const PolicyDetail = ({ policyId }) => {
     return (
         <>
             {policyDetails.length === 0 ? (
-                <Card style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',flexDirection:'column', height: '125vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                     <img src={emptyImage} alt="No Data" />
                     <p>Add your new policy effortlessly to your account</p>
 

@@ -21,6 +21,7 @@ import emptyImage from '../../Images/ic-empty.png'
 import TabList from '@mui/lab/TabList';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
+import axios from 'axios'
 
 export default function PolicyTabs({ handleCardClick }) {
     const [value, setValue] = React.useState(0);
@@ -31,23 +32,47 @@ export default function PolicyTabs({ handleCardClick }) {
     const dispatch = useDispatch();
 
 
-    //useeffect
-    useEffect(() => {
-        dispatch(getAllPolicyList(API_URL));
-    }, [dispatch]);
+     //useeffect
+    //  useEffect(() => {
+    //     dispatch(getAllPolicyList(API_URL));
+    // }, [dispatch]);
+
+    // useEffect(() => {
+    //     if (policyLists !== null && policyLists !== undefined) {
+    //         if (policyLists.getPolicyList !== null && policyLists.getPolicyList !== undefined) {
+    //             if (policyLists.getPolicyList.data !== null && policyLists.getPolicyList.data !== undefined) {
+
+    //                 setPolicyList(policyLists.getPolicyList.data)
+
+    //             }
+    //         }
+    //     }
+
+    // }, [policyLists]);
 
     useEffect(() => {
-        if (policyLists !== null && policyLists !== undefined) {
-            if (policyLists.getPolicyList !== null && policyLists.getPolicyList !== undefined) {
-                if (policyLists.getPolicyList.data !== null && policyLists.getPolicyList.data !== undefined) {
-
-                    setPolicyList(policyLists.getPolicyList.data)
-
+        const fetchPolicyList = async () => {
+            try {
+                let status = 'active';
+                if (value === 1) {
+                    status = 'expired';
                 }
-            }
-        }
+                const response = await axios.get(`${API_URL}policy/getAll`, {
+                  params: { policyType: status } 
+                });
+                setPolicyList(response.data);
+               
+              }catch (error) {
+            // setError(error.message);
+           
+          }
+        };
+    
+        fetchPolicyList();
+      }, []);
 
-    }, [policyLists]);
+   
+    
 
     //function for set the value
     const handleChange = (event, newValue) => {
@@ -172,7 +197,7 @@ export default function PolicyTabs({ handleCardClick }) {
                 <TabPanel value={0} className='policy-card-container'>
                     <>
                         {policyList.length === 0 ? (
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',flexDirection:'column', height: '64vh' }}>
                                 <img src={emptyImage} alt="No Data" />
                                 <p>Add your new policy effortlessly to your account</p>
 
@@ -217,7 +242,7 @@ export default function PolicyTabs({ handleCardClick }) {
 
 
                                 return (
-                                    <Card className='m-5 rounded card-detail' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',maxHeight:'100vh',overflow:'auto' }} onClick={() => handleCardClick(policy._id)}>
+                                    <Card className='m-5 rounded card-detail ' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',maxHeight:'100vh',overflow:'auto' }} onClick={() => handleCardClick(policy._id)}>
                                         <CardContent style={{ position: 'relative' }}>
                                             {status && (
                                                 <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
