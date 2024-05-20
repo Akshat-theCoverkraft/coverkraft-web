@@ -26,8 +26,10 @@ import { getAllPolicyDetailById } from '../../store/action/action';
 import axios from 'axios'
 import emptyImage from '../../Images/ic-empty.png'
 import car from '../../Images/Car.png';
+import EditPolicy from './EditPolicy';
 const PolicyDetail = ({ policyId }) => {
     const [showShareDialog, setShowShareDialog] = useState(false);
+    const [editPolicy,setEditPolicy]=useState([]);
 
     const navigate = useNavigate();
 
@@ -37,10 +39,13 @@ const PolicyDetail = ({ policyId }) => {
             try {
                 const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`);
                 setPolicyDetails(response.data);
-                // setLoading(false);
+                setEditPolicy(response.data.documentDetails)
+                if (response.status === 200) {
+
+                }
+
             } catch (error) {
-                // setError(error.message);
-                // setLoading(false);
+                console.error(error)
             }
         };
 
@@ -70,7 +75,10 @@ const PolicyDetail = ({ policyId }) => {
     //function for edit button
     const handleEdit = () => {
 
-        navigate('/add-policy');
+        navigate('/edit-policy', { state: { policyDetails: policyDetails } });
+        
+        console.log('poolliiccyy',policyDetails);
+        console.log('dertttaiils',policyDetails.documentDetails)
 
     }
 
@@ -81,7 +89,7 @@ const PolicyDetail = ({ policyId }) => {
     return (
         <>
             {policyDetails.length === 0 ? (
-                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',flexDirection:'column', height: '125vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '125vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                     <img src={emptyImage} alt="No Data" />
                     <p>Add your new policy effortlessly to your account</p>
 
@@ -133,7 +141,8 @@ const PolicyDetail = ({ policyId }) => {
                                     size="sm"
                                     className='fw-bold'
                                     startIcon={EditIcon}
-                                // onClick={handleEdit}
+                                    onClick={handleEdit}
+                                    
                                 />
                             </div>
 

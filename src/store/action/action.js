@@ -21,6 +21,12 @@ export const SAVE_DATA_REQUEST = "SAVE_DATA_REQUEST"
 export const SAVE_DATA_SUCCESS = "SAVE_DATA_SUCCESS"
 export const SAVE_DATA_FAILURE = "SAVE_DATA_FAILURE"
 
+//update doucment
+export const UPDATEDOCUMENT_DATA_REQUEST = "UPDATEDOCUMENT_DATA_REQUEST"
+export const UPDATEDOCUMENT_DATA_SUCCESS = "UPDATEDOCUMENT_DATA_SUCCESS"
+export const UPDATEDOCUMENT_DATA_FAILURE = "UPDATEDOCUMENT_DATA_FAILURE"
+
+
 //getall policytype doucment
 export const GETPOLICYTYPE_DATA_REQUEST = "GETPOLICYTYPE_DATA_REQUEST"
 export const GETPOLICYTYPE_DATA_SUCCESS = "GETPOLICYTYPE_DATA_SUCCESS"
@@ -96,6 +102,22 @@ export const saveDocument = (API_URL, data) => {
             })
             .catch((error) => {
                 dispatch({ type: SAVE_DATA_FAILURE, payload: error.message });
+            });
+    };
+}
+
+//update data 
+export const updateDocument = (API_URL, data) => {
+    return (dispatch) => {
+        dispatch({ type: UPDATEDOCUMENT_DATA_REQUEST });
+        return axios
+            .post(API_URL + `policy/update`,data)
+            .then((response) => {
+                dispatch({ type: UPDATEDOCUMENT_DATA_SUCCESS, payload: response.data });
+                return response.data;
+            })
+            .catch((error) => {
+                dispatch({ type: UPDATEDOCUMENT_DATA_FAILURE, payload: error.message });
             });
     };
 }

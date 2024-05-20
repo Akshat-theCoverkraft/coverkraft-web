@@ -1,3 +1,5 @@
+import { updateDocument } from "../action/action";
+
 const initialState = {
  
     customerregstionData:null,
@@ -6,6 +8,7 @@ const initialState = {
     getPolicyDetailByID:[],
     ocrData:null,
     saveData:null,
+    updateDocument:null,
     loading: false,
     error: null,
   };
@@ -100,6 +103,28 @@ const initialState = {
             error: action.payload,
           };        
           //SAVE DOCUMENT end
+
+          //update DOCUMENT
+        case "UPDATEDOCUMENT_DATA_REQUEST":
+          return {
+            ...state,
+            loading: true,
+            error: null,
+          };
+        case "UPDATEDOCUMENT_DATA_SUCCESS":
+          return {
+            ...state,
+            updateDocument: action.payload,
+            loading: false,
+            error: null,
+          };
+        case "UPDATEDOCUMENT_DATA_FAILURE":
+          return {
+            ...state,
+            loading: false,
+            error: action.payload,
+          };        
+          //update DOCUMENT end
 
         //GETALLPOLICYTYPE 
         case "GETPOLICYTYPE_DATA_REQUEST":

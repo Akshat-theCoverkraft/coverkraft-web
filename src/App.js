@@ -13,6 +13,7 @@ import Vault from "./Vault/Vault";
 import AddPolicy from "./Vault/component/AddPolicy";
 import { messaging, getToken } from '../src/ServiceModule/FirebaseConfig';
 import { requestForToken } from "./helper";
+import EditPolicy from "./Vault/component/EditPolicy";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false)
@@ -81,6 +82,7 @@ useEffect(() => {
        <Route path='/login' element={<Login/>}/>
        <Route path = '/vault' element={<Vault/>}/>
        <Route path='/add-policy' element={<AddPolicy/>}/>
+       <Route path='/edit-policy' element={<EditPolicy/>}/>
     </Routes>
     </>
   );
