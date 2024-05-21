@@ -47,7 +47,7 @@ const PolicyType = () => {
                         {policyType.map((policy, index) => (
                             <Grid item xs={6} md={4} lg={3} xl={3} style={{ width: '80%' }} >
                                 <div key={index}>
-                                    <div className='card'>
+                                    <div className='card p-5'>
                                         <img
                                             src={
                                                 IMAGE_PATH + policy.icon

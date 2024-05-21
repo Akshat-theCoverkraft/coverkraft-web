@@ -32,23 +32,7 @@ export default function PolicyTabs({ handleCardClick }) {
     const dispatch = useDispatch();
 
 
-     //useeffect
-    //  useEffect(() => {
-    //     dispatch(getAllPolicyList(API_URL));
-    // }, [dispatch]);
 
-    // useEffect(() => {
-    //     if (policyLists !== null && policyLists !== undefined) {
-    //         if (policyLists.getPolicyList !== null && policyLists.getPolicyList !== undefined) {
-    //             if (policyLists.getPolicyList.data !== null && policyLists.getPolicyList.data !== undefined) {
-
-    //                 setPolicyList(policyLists.getPolicyList.data)
-
-    //             }
-    //         }
-    //     }
-
-    // }, [policyLists]);
 
     useEffect(() => {
         const fetchPolicyList = async () => {
@@ -57,22 +41,25 @@ export default function PolicyTabs({ handleCardClick }) {
                 if (value === 1) {
                     status = 'expired';
                 }
+                console.log('headfaoiwdfnaoid')
                 const response = await axios.get(`${API_URL}policy/getAll`, {
-                  params: { policyType: status } 
+                    params: { policyType: status }
                 });
-                setPolicyList(response.data);
-               
-              }catch (error) {
-            // setError(error.message);
-           
-          }
-        };
-    
-        fetchPolicyList();
-      }, []);
+                console.log('bolona', response.data)
+                setPolicyList(response.data)
 
-   
-    
+            } catch (error) {
+                console.log('jhol h')
+                setPolicyList([]);
+
+            }
+        };
+
+        fetchPolicyList();
+    }, [value]);
+
+
+
 
     //function for set the value
     const handleChange = (event, newValue) => {
@@ -97,7 +84,7 @@ export default function PolicyTabs({ handleCardClick }) {
 
                         <Box sx={{ maxWidth: { xs: 370, sm: 530 }, width: '75%', bgcolor: '#EAF0FD', margin: 'auto' }} className='p-2 rounded' alignItems="center">
                             <TabList onChange={handleChange} variant="scrollable" scrollButtons={false}
-                                aria-label="scrollable prevent tabs example" centered textColor="#42988E" TabIndicatorProps={{ style: { display: 'none' } }}>
+                                aria-label="scrollable prevent tabs example" textColor="#42988E" TabIndicatorProps={{ style: { display: 'none' } }}>
                                 <Tab label="Active" value={0} className='m-2 fw-bolder px-5' sx={{ color: value === 0 ? '#42988E' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
                                 <Tab label="Expired" value={1} className='m-2 fw-bolder px-5' sx={{ color: value === 1 ? '#42988E' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
                                 <Tab label="Archive" disabled value='2' className='m-2 fw-bolder px-5' sx={{ color: value === 2 ? '#42988E' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
@@ -194,10 +181,10 @@ export default function PolicyTabs({ handleCardClick }) {
                     </>
                 </TabPanel> */}
 
-                <TabPanel value={0} className='policy-card-container'>
-                    <>
+                <TabPanel value={0} className=''>
+                    <div style={{ minHeight: '70vh', overflowY: 'auto' }}>
                         {policyList.length === 0 ? (
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',flexDirection:'column', height: '64vh' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '79vh' }}>
                                 <img src={emptyImage} alt="No Data" />
                                 <p>Add your new policy effortlessly to your account</p>
 
@@ -242,7 +229,8 @@ export default function PolicyTabs({ handleCardClick }) {
 
 
                                 return (
-                                    <Card className='m-5 rounded card-detail ' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',maxHeight:'100vh',overflow:'auto' }} onClick={() => handleCardClick(policy._id)}>
+
+                                    <Card className='m-5 rounded card-detail policy-card-container' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }} onClick={() => handleCardClick(policy._id)}>
                                         <CardContent style={{ position: 'relative' }}>
                                             {status && (
                                                 <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
@@ -279,13 +267,13 @@ export default function PolicyTabs({ handleCardClick }) {
                         {/* <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
                             <Pagination variant='outlined' size='large' count={Math.ceil(policyList.length / cardsPerPage)} page={page} onChange={handlePageChange} />
                         </Box> */}
-                    </>
+                    </div>
                 </TabPanel>
 
                 <TabPanel value={1}>
-                    <>
+                    <div style={{ minHeight: '70vh', overflowY: 'auto' }}>
                         {policyList.length === 0 ? (
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '79vh' }}>
                                 <img src={emptyImage} alt="No Data" />
                                 <p>Add your new policy effortlessly to your account</p>
 
@@ -297,7 +285,7 @@ export default function PolicyTabs({ handleCardClick }) {
 
 
                                 return (
-                                    <Card className='m-5 rounded card-detail' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                                    <Card className='m-5 rounded card-detail' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }} onClick={() => handleCardClick(policy._id)}>
                                         <CardContent style={{ position: 'relative' }}>
 
                                             <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
@@ -334,7 +322,7 @@ export default function PolicyTabs({ handleCardClick }) {
                         {/* <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
                             <Pagination variant='outlined' size='large' count={Math.ceil(policyList.length / cardsPerPage)} page={page} onChange={handlePageChange} />
                         </Box> */}
-                    </>
+                    </div>
                 </TabPanel>
 
 
