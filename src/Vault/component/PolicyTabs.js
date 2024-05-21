@@ -5,6 +5,7 @@ import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import CardContent from '@mui/material/CardContent';
+import { Checkbox } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import scooty from '../../Images/Scooty.png';
 import car from '../../Images/Car.png';
@@ -23,7 +24,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import axios from 'axios'
 
-export default function PolicyTabs({ handleCardClick }) {
+export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
     const [value, setValue] = React.useState(0);
     const [page, setPage] = React.useState(1);
     const [cardsPerPage] = React.useState(5);
@@ -235,11 +236,16 @@ export default function PolicyTabs({ handleCardClick }) {
                                             {status && (
                                                 <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
                                             )}
-                                            <Grid container spacing={0}>
-                                                <Grid item xs={12} md={3}>
+                                            <Grid container spacing={0} alignItems="center">
+                                                {shareAllPolicy && (
+                                                    <Grid item xs={1}>
+                                                        <Checkbox />
+                                                    </Grid>
+                                                )}
+                                                <Grid item xs={shareAllPolicy ? 2 : 3}>
                                                     <img src={policy.policyType === 'car_policy' ? car : scooty} alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
                                                 </Grid>
-                                                <Grid item xs={12} md={9} className='d-flex align-items-end justify-content-between'>
+                                                <Grid item xs={shareAllPolicy ? 9 : 9} className='d-flex align-items-end justify-content-between'>
                                                     <div>
                                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                                             <span className="dot" style={{ backgroundColor: '#42988E', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px', marginBottom: '14px' }}></span>

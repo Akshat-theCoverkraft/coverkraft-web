@@ -70,10 +70,15 @@ const Vault = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [selectedPolicyId, setSelectedPolicyId] = React.useState('');
+    const [shareAllPolicy, setShareAllPolicy] = useState(false);
+
+    const handleShareIconClick = () => {
+        setShareAllPolicy(prevState => !prevState);
+    };
 
     const handleCardClick = (policyId) => {
-      setSelectedPolicyId(policyId);
-      localStorage.setItem('selectedPolicyId', policyId);
+        setSelectedPolicyId(policyId);
+        localStorage.setItem('selectedPolicyId', policyId);
     };
 
     //add policy dialog box open and close function start
@@ -138,7 +143,7 @@ const Vault = () => {
                 const documentId = response.data.documentId;
                 localStorage.setItem('documentId', documentId);
                 console.log('documentid', documentId)
-                navigate('/add-policy', { state: { responseData: response.data,mode:'add' } });
+                navigate('/add-policy', { state: { responseData: response.data, mode: 'add' } });
 
             } else {
                 toast.error('File is not extracted due to some issue!')
@@ -178,7 +183,7 @@ const Vault = () => {
                                 </Link>
                                 <Typography className='text-dark cursor-pointer font-size' style={{ fontSize: '21px' }}>My Policies</Typography>
                             </Breadcrumbs>
-                            <img src={share} alt="Share Icon" height={60} className='ml-4' />
+                            <img src={share} alt="Share Icon" height={60} className='ml-4' onClick={handleShareIconClick} style={{ cursor: 'pointer' }} />
                             <Button
                                 text='Add Policy'
                                 size="md"
@@ -186,11 +191,29 @@ const Vault = () => {
                                 startIcon={AddIcon}
                                 onClick={handleClickOpen}
                             />
+                            {shareAllPolicy && (
+                                <>
+                                    <Button
+                                        text='Export to Excel'
+                                        size="md"
+                                        className='ml-4 '
+                                        
+                                        onClick={() => { /* Your export to Excel logic */ }}
+                                    />
+                                    <Button
+                                        text='Export to PDF'
+                                        size="md"
+                                        className='ml-4 '
+                                       
+                                        onClick={() => { /* Your export to PDF logic */ }}
+                                    />
+                                </>
+                            )}
                         </div>
                     </Stack>
                     <Grid container spacing={-4} >
                         <Grid item xs={12} md={7} lg={7} xl={7} >
-                            <PolicyTabs handleCardClick={handleCardClick}/>
+                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy}/>
                         </Grid>
                         <Grid item xs={12} md={5} lg={5} xl={5}>
                             <PolicyDetail policyId={selectedPolicyId} />
@@ -288,9 +311,9 @@ const Vault = () => {
                                         className="d-flex justify-content-center card-detail p-3  cursor-pointer"
                                         onClick={() => imageRef.current.click()}
                                         style={{
-                                           
+
                                             fontSize: "22px",
-                                            boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' 
+                                            boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px'
                                         }}
                                     >
                                         <img src={uploadImg} alt='' height={40} className='mr-3' />
