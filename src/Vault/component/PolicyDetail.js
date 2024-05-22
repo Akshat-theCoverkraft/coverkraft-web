@@ -8,7 +8,6 @@ import Grid from '@mui/material/Grid';
 import premium from '../../Images/premium.png';
 import value from '../../Images/value.png';
 import startDate from '../../Images/startDate.png';
-// import endDate from '../../Images/endDate.png';
 import dateEnd from '../../Images/endDate.png'
 import redBg from '../../Images/red-img.png';
 import share from '../../Images/ic-share.png';
@@ -20,27 +19,47 @@ import whatsapp from '../../Images/wtsp.png';
 import email from '../../Images/gmial.png';
 import reddit from '../../Images/reddit.png'
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux'
 import API_URL from '../../ServiceModule/Service';
-import { getAllPolicyDetailById } from '../../store/action/action';
 import axios from 'axios'
 import emptyImage from '../../Images/ic-empty.png'
 import car from '../../Images/Car.png';
-import EditPolicy from './EditPolicy';
 import IMAGE_PATH from '../../ServiceModule/imagePath';
 const PolicyDetail = ({ policyId }) => {
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
+    const [policyDetails, setPolicyDetails] = useState([]);
+    const navigate = useNavigate();
 
+    //useeffect
+    useEffect(() => {
+        const fetchPolicyDetails = async () => {
+            try {
+                const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`);
+                setPolicyDetails(response.data);
+
+
+            } catch (error) {
+                console.error(error)
+            }
+        };
+
+        if (policyId) {
+            fetchPolicyDetails();
+        }
+    }, [policyId]);
+
+
+    //function to view the pdf document
     const handleViewDocument = (documentPath) => {
         setPdfUrl(`${IMAGE_PATH}${documentPath}`);
         window.open(`${IMAGE_PATH}${documentPath}`, '_blank');
     };
 
+
+    //function to download the pdf document
     const handleDownloadDocument = (documentPath) => {
         const url = `${API_URL}${documentPath}`;
     
-        // Try to download the document directly
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -66,39 +85,6 @@ const PolicyDetail = ({ policyId }) => {
             });
     };
     
-    
-    const navigate = useNavigate();
-
-    const [policyDetails, setPolicyDetails] = useState([]);
-    useEffect(() => {
-        const fetchPolicyDetails = async () => {
-            try {
-                const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`);
-                setPolicyDetails(response.data);
-
-
-            } catch (error) {
-                console.error(error)
-            }
-        };
-
-        if (policyId) {
-            fetchPolicyDetails();
-        }
-    }, [policyId]);
-
-    //share url and msg
-    const shareUrl = 'https://example.com';
-    const policyDetailsMessage = `
-        Policy Details:
-        Vehicle: Honda Activa
-        Registration Number: MP-09-UZ-1234
-        Expires on: 04 Dec, 2024
-        Premium Paid: ₹225
-        Value(IDV): ₹1,000,00
-        Policy Start Date: Dec 05, 2023
-        Policy End Date: Dec 04, 2023
-    `;
 
     //function for share dialog
     const toggleShareDialog = () => {
@@ -107,15 +93,17 @@ const PolicyDetail = ({ policyId }) => {
 
     //function for edit button
     const handleEdit = () => {
-
         navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
-
-
     }
 
-    const sharePolicyDetails = () => {
-        // Share logic here
+   
+    //function for share policy document
+    const sharePolicyDocument = (documentPath) => {
+        const url = `${IMAGE_PATH}${documentPath}`;
+        setPdfUrl(url);
+        toggleShareDialog(); 
     };
+    
 
     return (
         <>
@@ -249,7 +237,7 @@ const PolicyDetail = ({ policyId }) => {
                                             <img src={download} alt='download' height={50} onClick={() => handleDownloadDocument(documentPath)}/>
                                         </Grid>
                                         <Grid item xs={2} md={2} style={{ padding: '20px 20px' }}>
-                                            <button className='btn btn-lg' onClick={toggleShareDialog}>
+                                            <button className='btn btn-lg' onClick={() => sharePolicyDocument(documentPath)}>
                                                 <img src={share} alt='' height={52} />
                                             </button>
                                         </Grid>
@@ -258,19 +246,22 @@ const PolicyDetail = ({ policyId }) => {
                                 {showShareDialog && (
                                     <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-20%, -50%)', backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', zIndex: '9999' }}>
                                         <p className='fw-bold '>Share Via</p>
-                                        <FacebookShareButton url={shareUrl} quote={policyDetailsMessage}>
+                                        {/* <FacebookShareButton url={shareUrl} quote={policyDetailsMessage}>
+                                            <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                        </FacebookShareButton> */}
+                                         <FacebookShareButton url={pdfUrl} >
                                             <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </FacebookShareButton>
-                                        <TwitterShareButton url={shareUrl} title={policyDetailsMessage}>
+                                        <TwitterShareButton url={pdfUrl}>
                                             <img src={twitter} alt='twitter' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </TwitterShareButton>
-                                        <WhatsappShareButton url={shareUrl} title={policyDetailsMessage}>
+                                        <WhatsappShareButton url={pdfUrl} >
                                             <img src={whatsapp} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </WhatsappShareButton>
-                                        <EmailShareButton url={shareUrl} title={policyDetailsMessage}>
+                                        <EmailShareButton url={pdfUrl} >
                                             <img src={email} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </EmailShareButton>
-                                        <RedditShareButton url={shareUrl} title={policyDetailsMessage}>
+                                        <RedditShareButton url={pdfUrl} >
                                             <img src={reddit} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </RedditShareButton>
                                     </div>

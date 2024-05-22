@@ -64,7 +64,6 @@ const Vault = () => {
     const [loading, setLoading] = useState(false);
     const [responseData, setResponseData] = useState(null);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-    let [color, setColor] = useState("#ffffff");
     const inputRef = useRef();
     const imageRef = useRef();
     const dispatch = useDispatch();
@@ -72,10 +71,12 @@ const Vault = () => {
     const [selectedPolicyId, setSelectedPolicyId] = React.useState('');
     const [shareAllPolicy, setShareAllPolicy] = useState(false);
 
+    //function for share icon
     const handleShareIconClick = () => {
         setShareAllPolicy(prevState => !prevState);
     };
 
+    //function for checkbox selected for sharing card
     const handleCardClick = (policyId) => {
         setSelectedPolicyId(policyId);
         localStorage.setItem('selectedPolicyId', policyId);
@@ -90,6 +91,7 @@ const Vault = () => {
     };
     //add policy dialog box open and close function end
 
+
     //confirm box open and close function start
     const handleConfirmDialogOpen = () => {
         setConfirmDialogOpen(true);
@@ -101,12 +103,14 @@ const Vault = () => {
     };
     //confirm box open and close function end
 
+
     //upload pdf handle function start
     const handleFile = (e) => {
         setFiles(e.target.files);
         setConfirmDialogOpen(true);
     }
     //upload pdf handle function end
+
 
     //upload image handle function start
     const handleImage = (e) => {
@@ -115,6 +119,7 @@ const Vault = () => {
     }
     //upload image handle function end
 
+    
     //function to handle ocr data extraction API start
     const handleConfirm = async () => {
         const formData = new FormData();

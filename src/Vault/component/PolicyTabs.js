@@ -14,10 +14,8 @@ import arrow from '../../Images/right-arrow.png'
 import red from '../../Images/red-bg.png'
 import './policy.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllPolicyList } from '../../store/action/action';
 import API_URL from '../../ServiceModule/Service';
 import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
 import emptyImage from '../../Images/ic-empty.png'
 import TabList from '@mui/lab/TabList';
 import TabContext from '@mui/lab/TabContext';
@@ -29,12 +27,8 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
     const [page, setPage] = React.useState(1);
     const [cardsPerPage] = React.useState(5);
     const [policyList, setPolicyList] = useState([]);
-    const policyLists = useSelector((state) => state.user);
-    const dispatch = useDispatch();
 
-
-
-
+    //useEffect
     useEffect(() => {
         const fetchPolicyList = async () => {
             try {
@@ -60,8 +54,6 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
     }, [value]);
 
 
-
-
     //function for set the value
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -71,10 +63,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
     const handlePageChange = (event, value) => {
         setPage(value);
     };
-    const handleClick = (policyId) => {
-        localStorage.setItem('selectedPolicyId', policyId);
-    };
-
+   
 
     return (
         <Card className='mx-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
