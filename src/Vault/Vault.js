@@ -143,7 +143,7 @@ const Vault = () => {
                 const documentId = response.data.documentId;
                 localStorage.setItem('documentId', documentId);
                 console.log('documentid', documentId)
-                navigate('/add-policy', { state: { responseData: response.data, mode: 'add' } });
+                navigate('/coverkraft/add-policy', { state: { responseData: response.data, mode: 'add' } });
 
             } else {
                 toast.error('File is not extracted due to some issue!')
@@ -178,7 +178,7 @@ const Vault = () => {
                                 separator={<span className={classes.separator}>.</span>}
                                 aria-label="breadcrumb"
                             >
-                                <Link key="1" href="/" className='text-decoration-none font-size text-secondary' onClick={handleClick} style={{ fontSize: '21px' }}>
+                                <Link key="1"  className='text-decoration-none font-size text-secondary' onClick={handleClick} style={{ fontSize: '21px' }}>
                                     Vault
                                 </Link>
                                 <Typography className='text-dark cursor-pointer font-size' style={{ fontSize: '21px' }}>My Policies</Typography>

@@ -108,7 +108,7 @@ const PolicyDetail = ({ policyId }) => {
     //function for edit button
     const handleEdit = () => {
 
-        navigate('/edit-policy', { state: { policyDetails: policyDetails } });
+        navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
 
 
     }

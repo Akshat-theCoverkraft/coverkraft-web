@@ -299,7 +299,7 @@ const EditPolicy = () => {
         formData.append('consumables', consumables);
         formData.append('coPayment', coPayment);
         dispatch(updateDocument(API_URL, formData));
-        navigate('/vault')
+        navigate('/coverkraft/vault')
 
     }
 

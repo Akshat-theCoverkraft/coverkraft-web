@@ -36,7 +36,7 @@ function App() {
         if (logoutTimer) {
           clearTimeout(logoutTimer);
         }
-        const excludedPages = ['/','/login'];
+        const excludedPages = ['/coverkraft','/coverkraft/login'];
 
         if (!excludedPages.includes(window.location.pathname)) {
           logoutTimer = setTimeout(() => {
@@ -58,17 +58,17 @@ useEffect(() => {
   const handleLogout = () => {
     setLogout(true)
     setIsLoggedIn(false)
-    navigate("/")
+    navigate("/coverkraft")
   }
 // Function for logout end
 
 // Function for refresh start
   const handleRefresh = () => { 
-    const excludedPages = ['/','/login'];
+    const excludedPages = ['/coverkraft','/coverkraft/login'];
     if (!excludedPages.includes(window.location.pathname)) {
       setLogout(true)
       setIsLoggedIn(false)
-      navigate("/")
+      navigate("/coverkraft")
     }
   }
 // Function for refreshing start
@@ -77,12 +77,12 @@ useEffect(() => {
     <>
      <ToastContainer />
     <Routes>
-       <Route path="/" element={<Landing/>}/>
-       <Route path='/register' element={<Register/>}/>
-       <Route path='/login' element={<Login/>}/>
-       <Route path = '/vault' element={<Vault/>}/>
-       <Route path='/add-policy' element={<AddPolicy/>}/>
-       <Route path='/edit-policy' element={<EditPolicy/>}/>
+       <Route path="/coverkraft" element={<Landing/>}/>
+       <Route path='/coverkraft/register' element={<Register/>}/>
+       <Route path='/coverkraft/login' element={<Login/>}/>
+       <Route path = '/coverkraft/vault' element={<Vault/>}/>
+       <Route path='/coverkraft/add-policy' element={<AddPolicy/>}/>
+       <Route path='/coverkraft/edit-policy' element={<EditPolicy/>}/>
     </Routes>
     </>
   );

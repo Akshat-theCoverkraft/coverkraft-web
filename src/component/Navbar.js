@@ -73,14 +73,14 @@ function Navbar(props) {
 
     //function for navigation on buttons
     function handleLogin() {
-        navigate('/login')
+        navigate('/coverkraft/login')
     }
     function handleVault() {
-        navigate('/vault')
+        navigate('/coverkraft/vault')
     }
 
     function handleHome() {
-        navigate('/')
+        navigate('/coverkraft')
     }
 
     //function for change the language
@@ -94,7 +94,7 @@ function Navbar(props) {
         localStorage.removeItem('verificationId');
         localStorage.removeItem('userId');
         localStorage.removeItem('policyId')
-        navigate('/');
+        navigate('/coverkraft');
     };
 
     //function for open dialog
