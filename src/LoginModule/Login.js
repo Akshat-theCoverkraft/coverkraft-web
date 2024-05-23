@@ -25,7 +25,6 @@ import { getStoredToken } from "../helper";
 const Login = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [otp, setOtp] = React.useState([]);
-    console.log("otp", otp)
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid, setValid] = useState(false);
     // const app = firebase.initializeApp(firebaseConfig)
@@ -57,7 +56,7 @@ const Login = () => {
                 User.customerregstionData.message !== "User not found"
               ) {
                 const itemdata = User.customerregstionData.data;
-                console.log("itemdata", itemdata)
+                
                 setitem(itemdata.userId);
                 localStorage.setItem("userId", itemdata.userId);
                 // localStorage.setItem("username", itemdata.username);
@@ -99,7 +98,7 @@ const Login = () => {
                 const confirmationResult = await auth.signInWithPhoneNumber(auth1, `+91${phoneNumber}`, appVerifier);
                 setLoggedIn(true);
                 localStorage.setItem('verificationId', confirmationResult.verificationId);
-                toast.success('Login successful!');
+                toast.success(' OTP is sent  to your phone number');
             } else {
                 // If status is not 200, display error message
                 toast.error('Phone number verification failed');
@@ -126,7 +125,7 @@ const Login = () => {
                 const formData = new FormData();
                 formData.append('userPhone', phoneNumber );
                 const fcmToken = getStoredToken();
-                console.log("fcmToken", fcmToken)
+                
                 if (fcmToken) {
                     formData.append('userFcmId', fcmToken);
                 }

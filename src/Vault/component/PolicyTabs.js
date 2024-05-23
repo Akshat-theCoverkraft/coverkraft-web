@@ -36,15 +36,15 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
                 if (value === 1) {
                     status = 'expired';
                 }
-                console.log('headfaoiwdfnaoid')
+               
                 const response = await axios.get(`${API_URL}policy/getAll`, {
                     params: { policyType: status }
                 });
-                console.log('bolona', response.data)
+               
                 setPolicyList(response.data)
 
             } catch (error) {
-                console.log('jhol h')
+             
                 setPolicyList([]);
 
             }

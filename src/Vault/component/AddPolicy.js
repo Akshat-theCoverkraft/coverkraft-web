@@ -12,7 +12,7 @@ import Button from '../../component/Button';
 import { useLocation } from 'react-router-dom';
 import Vault from '../Vault';
 import { useDispatch } from 'react-redux'
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import API_URL from '../../ServiceModule/Service';
 import { saveDocument } from '../../store/action/action';
@@ -69,7 +69,7 @@ const AddPolicy = () => {
     }
     const ocrTextObject = JSON.parse(responseData.ocrText);
     const PolicyType = ocrTextObject.policyType.toLowerCase();
-    console.log('PolicyType', PolicyType)
+ 
 
     //useState
     const [policyNumber, setPolicyNumber] = useState(ocrTextObject.policyNumber);
@@ -120,7 +120,6 @@ const AddPolicy = () => {
 
         const nonNullFields = Object.values(ocrTextObject).filter(value => value !== null);
         setFilledFields(nonNullFields.length);
-        console.log('fileeed', filledFields)
 
         let total = 0;
         if (PolicyType === 'health' || PolicyType === 'other_health') {
@@ -136,8 +135,7 @@ const AddPolicy = () => {
     // Update progress percentage when filledFields or totalFields change
     useEffect(() => {
         const percentage = Math.min((filledFields / totalFields) * 100, 100);
-        console.log('totalll', totalFields)
-        console.log('before', filledFields)
+        
         setProgress(percentage);
     }, [filledFields, totalFields]);
 
@@ -261,7 +259,7 @@ const AddPolicy = () => {
         }
 
         // Check if the input field is filled
-        const isFilled = value.trim().length === 1 ;
+        const isFilled = value.trim().length === 1;
         setPrevious(value.trim().length > 0);
         setFilledFields((prevCount) => {
             if (isFilled) {
@@ -275,45 +273,74 @@ const AddPolicy = () => {
                 return prevCount;
             }
         });
-        console.log('after setitng field', filledFields)
+       
     };
-     // Update filledFields when any input field is changed end
+    // Update filledFields when any input field is changed end
 
     //save api for health insurance form 
     const handleHealthInsurance = () => {
-        const formData = new FormData();
         const userId = localStorage.getItem('userId');
         const documentId = localStorage.getItem('documentId');
-        formData.append('userId', userId);
-        formData.append('documentId', documentId);
-        formData.append('policyType', PolicyType);
-        formData.append('dob', dob);
-        formData.append('policyNumber', policyNumber);
-        formData.append('policyName', policyName);
-        formData.append('policyStartDate', startDate);
-        formData.append('policyEndDate', endDate);
-        formData.append('insuredName', insuredName);
-        formData.append('sumInsured', sumInsured);
-        formData.append('insuranceCompany', insuranceCompany);
-        formData.append('totalSumInsured', totalSumInsured);
-        formData.append('type', type);
-        formData.append('idv', idv);
-        formData.append('netPremium', netPremium);
-        formData.append('totalPremium', totalPremium);
-        formData.append('premiumPaid', premiumPaid);
-        formData.append('restoration', restoration);
-        formData.append('consumables', consumables);
-        formData.append('coPayment', coPayment);
-        dispatch(saveDocument(API_URL, formData));
-        navigate('/coverkraft/vault')
+        if (
+            userId &&
+            documentId &&
+            PolicyType &&
+            dob &&
+            policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
+            type && idv && netPremium && totalPremium && premiumPaid && restoration && consumables && coPayment
+        ) {
+            const formData = new FormData();
 
+            formData.append('userId', userId);
+            formData.append('documentId', documentId);
+            formData.append('policyType', PolicyType);
+            formData.append('dob', dob);
+            formData.append('policyNumber', policyNumber);
+            formData.append('policyName', policyName);
+            formData.append('policyStartDate', startDate);
+            formData.append('policyEndDate', endDate);
+            formData.append('insuredName', insuredName);
+            formData.append('sumInsured', sumInsured);
+            formData.append('insuranceCompany', insuranceCompany);
+            formData.append('totalSumInsured', totalSumInsured);
+            formData.append('type', type);
+            formData.append('idv', idv);
+            formData.append('netPremium', netPremium);
+            formData.append('totalPremium', totalPremium);
+            formData.append('premiumPaid', premiumPaid);
+            formData.append('restoration', restoration);
+            formData.append('consumables', consumables);
+            formData.append('coPayment', coPayment);
+            dispatch(saveDocument(API_URL, formData));
+            navigate('/coverkraft/vault')
+        }
+        else {
+            toast.error("Please fill all required fields", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
     }
 
     //save api for life insurance
     const handleLifeInsurance = () => {
-        const formData = new FormData();
         const userId = localStorage.getItem('userId');
         const documentId = localStorage.getItem('documentId');
+        if (
+            userId &&
+            documentId &&
+            PolicyType &&
+            startDate &&
+            renewalDate && policyName  && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
+            sumInsured && others && type && pa && netPremium && totalPremium && illness && disability &&
+            waiverPremium && hospitalCare && terminalIllness
+        ) {
+        const formData = new FormData();
+       
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', PolicyType);
@@ -337,13 +364,34 @@ const AddPolicy = () => {
         formData.append('hospitalCare', hospitalCare);
         formData.append('terminalIllness', terminalIllness);
         dispatch(saveDocument(API_URL, formData))
+        navigate('/coverkraft/vault')
+    }else {
+        toast.error("Please fill all required fields", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
     }
+}
 
     //save api for motor insurance
     const handleMotorInsurance = () => {
-        const formData = new FormData();
         const userId = localStorage.getItem('userId');
         const documentId = localStorage.getItem('documentId');
+        if (
+            userId &&
+            documentId &&
+            PolicyType &&
+            startDate &&
+            endDate && policyNumber  && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
+            assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
+            vehicleType 
+        ) {
+        const formData = new FormData();
+       
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', PolicyType);
@@ -366,6 +414,18 @@ const AddPolicy = () => {
         formData.append('vehicleType', vehicleType);
 
         dispatch(saveDocument(API_URL, formData))
+        navigate('/coverkraft/vault')
+        }else {
+           
+            toast.error("Please fill all required fields", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
 
         // if (mode === 'add') {
         //     dispatch(saveDocument(API_URL, formData));
@@ -378,6 +438,7 @@ const AddPolicy = () => {
     return (
         <div>
             <Navbar />
+            <ToastContainer/>
             <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: '#F9F9F9' }}>
                 <Grid item xs={12} sm={10} md={8}>
                     <Card className='border  my-4' style={{ padding: '40px 90px', boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
@@ -388,7 +449,7 @@ const AddPolicy = () => {
                         <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}> Details</p>
                         <div>
                             {PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle' ? (
-                                
+
                                 <>
                                     {/* motor insurance */}
                                     <Grid container spacing={6}>
@@ -408,12 +469,13 @@ const AddPolicy = () => {
                                             <Grid container spacing={3}>
                                                 <Grid item xs={12} md={6}>
                                                     <CustomInput
-                                                        type="text"
+                                                        type="date"
                                                         label=" Start Date"
                                                         value={startDate}
-                                                        onChange={(e) => { setStartDate(e.target.value);
+                                                        onChange={(e) => {
+                                                            setStartDate(new Date(e.target.value));
                                                             handleInputChange(e);
-                                                         }}
+                                                        }}
                                                         required
                                                     />
                                                 </Grid>
@@ -422,9 +484,10 @@ const AddPolicy = () => {
                                                         type="text"
                                                         label=" End Date"
                                                         value={endDate}
-                                                        onChange={(e) => { setEndDate(e.target.value);
+                                                        onChange={(e) => {
+                                                            setEndDate(new Date(e.target.value));
                                                             handleInputChange(e);
-                                                         }}
+                                                        }}
                                                         required
                                                     />
                                                 </Grid>
@@ -433,9 +496,10 @@ const AddPolicy = () => {
                                                 type="text"
                                                 label="Insured Name"
                                                 value={insuredName}
-                                                onChange={(e) => { setInsuredName(e.target.value);
+                                                onChange={(e) => {
+                                                    setInsuredName(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
@@ -462,27 +526,30 @@ const AddPolicy = () => {
                                                 type="number"
                                                 label="TP Premium"
                                                 value={tpPremium}
-                                                onChange={(e) => { setTpPremium(e.target.value);
+                                                onChange={(e) => {
+                                                    setTpPremium(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="number"
                                                 label="OD Premium"
                                                 value={odPremium}
-                                                onChange={(e) => { setOdPremium(e.target.value);
+                                                onChange={(e) => {
+                                                    setOdPremium(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="Total Premium"
                                                 value={totalPremium}
-                                                onChange={(e) => { setTotalPremium(e.target.value);
+                                                onChange={(e) => {
+                                                    setTotalPremium(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <Button
@@ -512,63 +579,70 @@ const AddPolicy = () => {
                                                 type="text"
                                                 label="Asset Type"
                                                 value={assetType}
-                                                onChange={(e) => { setAssetType(e.target.value);
+                                                onChange={(e) => {
+                                                    setAssetType(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Make / Model"
                                                 value={model}
-                                                onChange={(e) => { setModel(e.target.value);
+                                                onChange={(e) => {
+                                                    setModel(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="number"
                                                 label="Registration Year"
                                                 value={registrationYear}
-                                                onChange={(e) => { setRegistrationYear(e.target.value);
+                                                onChange={(e) => {
+                                                    setRegistrationYear(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Registration Number"
                                                 value={registrationNumber}
-                                                onChange={(e) => { setRegistrationNumber(e.target.value);
+                                                onChange={(e) => {
+                                                    setRegistrationNumber(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Engine CC"
                                                 value={engineCC}
-                                                onChange={(e) => { setEngineCC(e.target.value);
+                                                onChange={(e) => {
+                                                    setEngineCC(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="IDV"
                                                 value={idv}
-                                                onChange={(e) => { setIdv(e.target.value);
+                                                onChange={(e) => {
+                                                    setIdv(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Vehicle Type"
                                                 value={vehicleType}
-                                                onChange={(e) => { setVehicleType(e.target.value);
+                                                onChange={(e) => {
+                                                    setVehicleType(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
 
@@ -588,40 +662,43 @@ const AddPolicy = () => {
                                                 label="Policy Number"
                                                 // placeholder="policy number"
                                                 value={policyNumber}
-                                                onChange={(e) => { setPolicyNumber(e.target.value);
+                                                onChange={(e) => {
+                                                    setPolicyNumber(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="date"
                                                 label=" DOB"
                                                 value={dob}
-                                                onChange={(e) => { setDob(e.target.value);
-                                                    handleInputChange(e);
-                                                 }}
+                                                onChange={(e) => {
+                                                    setDob(new Date(e.target.value));                                                    handleInputChange(e);
+                                                }}
                                                 required
                                             />
                                             <Grid container spacing={3}>
                                                 <Grid item xs={12} md={6}>
                                                     <CustomInput
-                                                        type="text"
+                                                        type="date"
                                                         label=" Start Date"
                                                         value={startDate}
-                                                        onChange={(e) => { setStartDate(e.target.value);
+                                                        onChange={(e) => {
+                                                            setStartDate(new Date(e.target.value));
                                                             handleInputChange(e);
-                                                         }}
+                                                        }}
                                                         required
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} md={6}>
                                                     <CustomInput
-                                                        type="text"
+                                                        type="date"
                                                         label=" End Date"
                                                         value={endDate}
-                                                        onChange={(e) => { setEndDate(e.target.value);
+                                                        onChange={(e) => {
+                                                            setEndDate(new Date(e.target.value));
                                                             handleInputChange(e);
-                                                         }}
+                                                        }}
                                                         required
                                                     />
                                                 </Grid>
@@ -630,45 +707,50 @@ const AddPolicy = () => {
                                                 type="text"
                                                 label="Insured Name"
                                                 value={insuredName}
-                                                onChange={(e) => { setInsuredName(e.target.value);
+                                                onChange={(e) => {
+                                                    setInsuredName(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Insurance Company"
                                                 value={insuranceCompany}
-                                                onChange={(e) => { setInsuranceCompany(e.target.value);
+                                                onChange={(e) => {
+                                                    setInsuranceCompany(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Policy Name"
                                                 value={policyName}
-                                                onChange={(e) => { setPolicyName(e.target.value);
+                                                onChange={(e) => {
+                                                    setPolicyName(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="Sum Insured"
                                                 value={sumInsured}
-                                                onChange={(e) => { setSumInsured(e.target.value);
+                                                onChange={(e) => {
+                                                    setSumInsured(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="Total Sum Insured"
                                                 value={totalSumInsured}
-                                                onChange={(e) => { setTotalSumInsured(e.target.value);
+                                                onChange={(e) => {
+                                                    setTotalSumInsured(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
 
@@ -689,74 +771,82 @@ const AddPolicy = () => {
                                                 type="text"
                                                 label="Type"
                                                 value={type}
-                                                onChange={(e) => { setType(e.target.value);
+                                                onChange={(e) => {
+                                                    setType(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
 
 
                                             <CustomInput
-                                                type="text"
+                                                type="number"
                                                 label="IDV"
                                                 value={idv}
-                                                onChange={(e) => { setIdv(e.target.value);
+                                                onChange={(e) => {
+                                                    setIdv(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="number"
                                                 label="Net Premium"
                                                 value={netPremium}
-                                                onChange={(e) => { setNetPremium(e.target.value);
+                                                onChange={(e) => {
+                                                    setNetPremium(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="number"
                                                 label="Total Premium"
                                                 value={totalPremium}
-                                                onChange={(e) => { setTotalPremium(e.target.value);
+                                                onChange={(e) => {
+                                                    setTotalPremium(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="number"
                                                 label=" Premium  Paid"
                                                 value={premiumPaid}
-                                                onChange={(e) => { setPremiumPaid(e.target.value);
+                                                onChange={(e) => {
+                                                    setPremiumPaid(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Restoration"
                                                 value={restoration}
-                                                onChange={(e) => { setRestoration(e.target.value);
+                                                onChange={(e) => {
+                                                    setRestoration(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Consumables"
                                                 value={consumables}
-                                                onChange={(e) => { setConsumables(e.target.value);
+                                                onChange={(e) => {
+                                                    setConsumables(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Co-Payment"
                                                 value={coPayment}
-                                                onChange={(e) => { setCoPayment(e.target.value);
+                                                onChange={(e) => {
+                                                    setCoPayment(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                         </Grid>
@@ -773,87 +863,96 @@ const AddPolicy = () => {
                                                 type="text"
                                                 label=" Policy Name"
                                                 value={policyName}
-                                                onChange={(e) => { setPolicyName(e.target.value);
+                                                onChange={(e) => {
+                                                    setPolicyName(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <Grid container spacing={3}>
                                                 <Grid item xs={12} md={6}>
                                                     <CustomInput
-                                                        type="text"
+                                                        type="date"
                                                         label=" Start Date"
                                                         value={startDate}
-                                                        onChange={(e) => { setStartDate(e.target.value);
+                                                        onChange={(e) => {
+                                                            setStartDate(new Date(e.target.value));
                                                             handleInputChange(e);
-                                                         }}
+                                                        }}
                                                         required
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} md={6}>
                                                     <CustomInput
-                                                        type="text"
+                                                        type="date"
                                                         label=" Renewal Date"
                                                         value={renewalDate}
-                                                        onChange={(e) => { setRenewalDate(e.target.value);
+                                                        onChange={(e) => {
+                                                            setRenewalDate(new Date(e.target.value));
                                                             handleInputChange(e);
-                                                         }}
+                                                        }}
                                                         required
                                                     />
                                                 </Grid>
                                             </Grid>
                                             <CustomInput
-                                                type="text"
+                                                type="date"
                                                 label=" Maturity Date"
                                                 value={maturityDate}
-                                                onChange={(e) => { setMaturityDate(e.target.value);
+                                                onChange={(e) => {
+                                                    setMaturityDate(new Date(e.target.value));
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="  Days to Renewal"
                                                 value={dayRenewal}
-                                                onChange={(e) => { setDayRenewal(e.target.value);
+                                                onChange={(e) => {
+                                                    setDayRenewal(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Insured Name"
                                                 value={insuredName}
-                                                onChange={(e) => { setInsuredName(e.target.value);
+                                                onChange={(e) => {
+                                                    setInsuredName(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Insurance Company"
                                                 value={insuranceCompany}
-                                                onChange={(e) => { setInsuranceCompany(e.target.value);
+                                                onChange={(e) => {
+                                                    setInsuranceCompany(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
-                                                type="text"
+                                                type="date"
                                                 label="Dob"
                                                 value={dob}
-                                                onChange={(e) => { setDob(e.target.value);
+                                                onChange={(e) => {
+                                                    setDob(new Date(e.target.value));
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="number"
                                                 label="Sum Insured"
                                                 value={sumInsured}
-                                                onChange={(e) => { setSumInsured(e.target.value);
+                                                onChange={(e) => {
+                                                    setSumInsured(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
 
@@ -861,9 +960,10 @@ const AddPolicy = () => {
                                                 type="text"
                                                 label="Others"
                                                 value={others}
-                                                onChange={(e) => { setOthers(e.target.value);
+                                                onChange={(e) => {
+                                                    setOthers(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <Button
@@ -882,9 +982,10 @@ const AddPolicy = () => {
                                                 type="text"
                                                 label="Type"
                                                 value={type}
-                                                onChange={(e) => { setType(e.target.value);
+                                                onChange={(e) => {
+                                                    setType(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
 
@@ -893,72 +994,80 @@ const AddPolicy = () => {
                                                 type="text"
                                                 label="PA"
                                                 value={pa}
-                                                onChange={(e) => { setPa(e.target.value);
+                                                onChange={(e) => {
+                                                    setPa(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="number"
                                                 label="Net Premium"
                                                 value={netPremium}
-                                                onChange={(e) => { setNetPremium(e.target.value);
+                                                onChange={(e) => {
+                                                    setNetPremium(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="number"
                                                 label="Total Premium"
                                                 value={totalPremium}
-                                                onChange={(e) => { setTotalPremium(e.target.value);
+                                                onChange={(e) => {
+                                                    setTotalPremium(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Critical Illness"
                                                 value={illness}
-                                                onChange={(e) => { setIllness(e.target.value);
+                                                onChange={(e) => {
+                                                    setIllness(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Accidental Disability"
                                                 value={disability}
-                                                onChange={(e) => { setDisability(e.target.value);
+                                                onChange={(e) => {
+                                                    setDisability(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Waiver of Premium"
                                                 value={waiverPremium}
-                                                onChange={(e) => { setWaiverPremium(e.target.value);
+                                                onChange={(e) => {
+                                                    setWaiverPremium(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Hospital Care"
                                                 value={hospitalCare}
-                                                onChange={(e) => { setHospitalCare(e.target.value);
+                                                onChange={(e) => {
+                                                    setHospitalCare(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
                                             <CustomInput
                                                 type="text"
                                                 label="Terminal Illness"
                                                 value={terminalIllness}
-                                                onChange={(e) => { setTerminalIllness(e.target.value);
+                                                onChange={(e) => {
+                                                    setTerminalIllness(e.target.value);
                                                     handleInputChange(e);
-                                                 }}
+                                                }}
                                                 required
                                             />
 

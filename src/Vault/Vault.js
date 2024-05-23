@@ -119,7 +119,7 @@ const Vault = () => {
     }
     //upload image handle function end
 
-    
+
     //function to handle ocr data extraction API start
     const handleConfirm = async () => {
         const formData = new FormData();
@@ -141,13 +141,13 @@ const Vault = () => {
                 }
             });
             setLoading(false);
-            console.log("response", response);
+            
             if (response.status === 200) {
                 // Set response data in state
                 setResponseData(response.data);
                 const documentId = response.data.documentId;
                 localStorage.setItem('documentId', documentId);
-                console.log('documentid', documentId)
+               
                 navigate('/coverkraft/add-policy', { state: { responseData: response.data, mode: 'add' } });
 
             } else {
