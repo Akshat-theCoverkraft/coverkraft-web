@@ -36,15 +36,15 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
                 if (value === 1) {
                     status = 'expired';
                 }
-               
+
                 const response = await axios.get(`${API_URL}policy/getAll`, {
                     params: { policyType: status }
                 });
-               
+
                 setPolicyList(response.data)
 
             } catch (error) {
-             
+
                 setPolicyList([]);
 
             }
@@ -63,7 +63,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
     const handlePageChange = (event, value) => {
         setPage(value);
     };
-   
+
 
     return (
         <Card className='mx-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
@@ -232,13 +232,31 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
                                                     </Grid>
                                                 )}
                                                 <Grid item xs={shareAllPolicy ? 2 : 3}>
-                                                    <img src={policy.policyType === 'car_policy' ? car : scooty} alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
+                                                    <img src={policy.policyType === 'car_policy' ? car : 
+                                                     policy.policyType === 'bike_policy' ? scooty :
+                                                     policy.policyType === 'other_vehicle' ? scooty :
+                                                     policy.policyType === 'life' ? 'Life Insurance' :
+                                                     policy.policyType === 'accident' ? 'Accident Insurance' :
+                                                     policy.policyType === 'health' ? 'Health Insurance' :
+                                                     policy.policyType === 'other_health' ? 'Other Health Insurance' : ''
+                                                
+                                                } alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
                                                 </Grid>
                                                 <Grid item xs={shareAllPolicy ? 9 : 9} className='d-flex align-items-end justify-content-between'>
                                                     <div>
                                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                                             <span className="dot" style={{ backgroundColor: '#42988E', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px', marginBottom: '14px' }}></span>
-                                                            <Typography variant="body1" component="p" gutterBottom style={{ color: '#89CFC7' }} className='mb-3'>{policy.policyType === 'car_policy' ? 'Car Insurance' : 'Two Wheeler Insurance'}</Typography>
+                                                            <Typography variant="body1" component="p" gutterBottom style={{ color: '#89CFC7' }} className='mb-3'>
+                                                                {
+                                                                    policy.policyType === 'car_policy' ? 'Car Insurance' :
+                                                                    policy.policyType === 'bike_policy' ? 'Two Wheeler Insurance' :
+                                                                    policy.policyType === 'other_vehicle' ? 'Other Vehicle Insurance' :
+                                                                    policy.policyType === 'life' ? 'Life Insurance' :
+                                                                    policy.policyType === 'accident' ? 'Accident Insurance' :
+                                                                    policy.policyType === 'health' ? 'Health Insurance' :
+                                                                    policy.policyType === 'other_health' ? 'Other Health Insurance' : ''
+                                                                }
+                                                            </Typography>
                                                         </div>
                                                         <h4 variant="h4" component="h2" gutterBottom className='fw-bold'>{policy.insuredName}</h4>
                                                         <h6 className='mb-4' style={{ color: '#585858' }}>{policy.policyNumber}</h6>
