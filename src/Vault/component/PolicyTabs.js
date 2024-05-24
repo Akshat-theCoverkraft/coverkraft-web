@@ -32,13 +32,15 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
     useEffect(() => {
         const fetchPolicyList = async () => {
             try {
+                const userId = localStorage.getItem('userId');
                 let status = 'active';
                 if (value === 1) {
                     status = 'expired';
                 }
 
                 const response = await axios.get(`${API_URL}policy/getAll`, {
-                    params: { policyType: status }
+                    params: {  userId: userId,
+                        policyType: status }
                 });
 
                 setPolicyList(response.data)
@@ -174,7 +176,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
                 <TabPanel value={0} className=''>
                     <div style={{ minHeight: '70vh', overflowY: 'auto' }}>
                         {policyList.length === 0 ? (
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '79vh' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh' }}>
                                 <img src={emptyImage} alt="No Data" />
                                 <p>Add your new policy effortlessly to your account</p>
 
@@ -286,7 +288,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
                 <TabPanel value={1}>
                     <div style={{ minHeight: '70vh', overflowY: 'auto' }}>
                         {policyList.length === 0 ? (
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '79vh' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh' }}>
                                 <img src={emptyImage} alt="No Data" />
                                 <p>Add your new policy effortlessly to your account</p>
 
