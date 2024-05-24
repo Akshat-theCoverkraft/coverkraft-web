@@ -473,7 +473,7 @@ const AddPolicy = () => {
                                                         label=" Start Date"
                                                         value={startDate}
                                                         onChange={(e) => {
-                                                            setStartDate(new Date(e.target.value));
+                                                            setStartDate(e.target.value);
                                                             handleInputChange(e);
                                                         }}
                                                         required
@@ -485,7 +485,7 @@ const AddPolicy = () => {
                                                         label=" End Date"
                                                         value={endDate}
                                                         onChange={(e) => {
-                                                            setEndDate(new Date(e.target.value));
+                                                            setEndDate(e.target.value);
                                                             handleInputChange(e);
                                                         }}
                                                         required
@@ -673,7 +673,7 @@ const AddPolicy = () => {
                                                 label=" DOB"
                                                 value={dob}
                                                 onChange={(e) => {
-                                                    setDob(new Date(e.target.value));                                                    handleInputChange(e);
+                                                    setDob(e.target.value);                                                    handleInputChange(e);
                                                 }}
                                                 required
                                             />
@@ -684,7 +684,7 @@ const AddPolicy = () => {
                                                         label=" Start Date"
                                                         value={startDate}
                                                         onChange={(e) => {
-                                                            setStartDate(new Date(e.target.value));
+                                                            setStartDate(e.target.value);
                                                             handleInputChange(e);
                                                         }}
                                                         required
@@ -696,7 +696,7 @@ const AddPolicy = () => {
                                                         label=" End Date"
                                                         value={endDate}
                                                         onChange={(e) => {
-                                                            setEndDate(new Date(e.target.value));
+                                                            setEndDate(e.target.value);
                                                             handleInputChange(e);
                                                         }}
                                                         required
@@ -876,7 +876,7 @@ const AddPolicy = () => {
                                                         label=" Start Date"
                                                         value={startDate}
                                                         onChange={(e) => {
-                                                            setStartDate(new Date(e.target.value));
+                                                            setStartDate(e.target.value);
                                                             handleInputChange(e);
                                                         }}
                                                         required
@@ -888,7 +888,7 @@ const AddPolicy = () => {
                                                         label=" Renewal Date"
                                                         value={renewalDate}
                                                         onChange={(e) => {
-                                                            setRenewalDate(new Date(e.target.value));
+                                                            setRenewalDate(e.target.value);
                                                             handleInputChange(e);
                                                         }}
                                                         required
@@ -900,7 +900,7 @@ const AddPolicy = () => {
                                                 label=" Maturity Date"
                                                 value={maturityDate}
                                                 onChange={(e) => {
-                                                    setMaturityDate(new Date(e.target.value));
+                                                    setMaturityDate(e.target.value);
                                                     handleInputChange(e);
                                                 }}
                                                 required
@@ -940,7 +940,7 @@ const AddPolicy = () => {
                                                 label="Dob"
                                                 value={dob}
                                                 onChange={(e) => {
-                                                    setDob(new Date(e.target.value));
+                                                    setDob(e.target.value);
                                                     handleInputChange(e);
                                                 }}
                                                 required
