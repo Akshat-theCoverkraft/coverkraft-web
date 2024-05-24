@@ -53,7 +53,7 @@ CircularProgressWithLabel.propTypes = {
 };
 
 const EditPolicy = () => {
-    //Get the data from ocrExtract data API using props
+    //Get the data from policydetail  API using props
     const location = useLocation();
 
     const { policyDetails } = location.state;
@@ -62,8 +62,7 @@ const EditPolicy = () => {
 
     const ocrTextObject = JSON.parse(responseData.ocrText);
     const PolicyType = ocrTextObject.policyType.toLowerCase();
-    console.log('PolicyType', PolicyType)
-    console.log('detailspoiidf', ocrTextObject);
+  
 
     //useState
     const [policyNumber, setPolicyNumber] = useState(ocrTextObject.policyNumber);
@@ -103,37 +102,9 @@ const EditPolicy = () => {
     const [consumables, setConsumables] = useState(ocrTextObject.consumables);
     const [coPayment, setCoPayment] = useState(ocrTextObject.coPayment);
     const [filledFields, setFilledFields] = useState(0);
-    const [totalFields, setTotalFields] = useState(0);
-    const [progress, setProgress] = useState(0);
-    const [previous, setPrevious] = useState(false)
+   
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    //useEffect
-    // useEffect(() => {
-
-    //     const nonNullFields = Object.values(ocrTextObject).filter(value => value !== null);
-    //     setFilledFields(nonNullFields.length);
-    //     console.log('fileeed', filledFields)
-
-    //     let total = 0;
-    //     if (PolicyType === 'health' || PolicyType === 'other_health') {
-    //         total = 17;
-    //     } else if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
-    //         total = 17;
-    //     } else {
-    //         total = 19;
-    //     }
-    //     setTotalFields(total);
-    // }, [EditPolicy]);
-
-    // Update progress percentage when filledFields or totalFields change
-    // useEffect(() => {
-    //     const percentage = Math.min((filledFields / totalFields) * 100, 100);
-    //     console.log('totalll', totalFields)
-    //     console.log('before', filledFields)
-    //     setProgress(percentage);
-    // }, [filledFields, totalFields]);
 
     // Update filledFields when any input field is changed start
     const handleInputChange = (e) => {
