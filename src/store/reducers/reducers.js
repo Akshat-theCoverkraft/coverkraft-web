@@ -3,6 +3,7 @@ import { updateDocument } from "../action/action";
 const initialState = {
  
     customerregstionData:null,
+    loginData: null,
     getPolicyType:[],
     getPolicyList:[],
     getPolicyDetailByID:[],
@@ -48,7 +49,7 @@ const initialState = {
       case "VERIFY_DATA_SUCCESS":
         return {
           ...state,
-          customerregstionData: action.payload,
+          loginData: action.payload,
           loading: false,
           error: null,
         };

@@ -35,6 +35,7 @@ const Login = () => {
     const navigate = useNavigate();
     const [item, setitem] = useState("");
     const User = useSelector ((state) => state.user)
+    console.log("User", User)
     //useeffect
     useEffect(() => {
         if (valid) {
@@ -44,29 +45,29 @@ const Login = () => {
         }
     }, [!valid]);
 
-    useEffect(() => {
-        if (
-          localStorage.getItem("responsedata") !== null &&
-          localStorage.getItem("responseData") !== undefined
-        ) {
-          if (User !== null && User !== undefined) {
-            if (User.customerregstionData !== null && User.customerregstionData !== undefined) {
-              if (
-                User.customerregstionData !== null &&
-                User.customerregstionData !== undefined &&
-                User.customerregstionData.message !== "User not found"
-              ) {
-                const itemdata = User.customerregstionData.data;
-                console.log("itemdata", itemdata)
-                setitem(itemdata.userId);
-                localStorage.setItem("userId", itemdata.userId);
-                // localStorage.setItem("username", itemdata.username);
-                navigate('/coverkraft');
-              }
-            }
-          }
-        }
-      }, [User, navigate]);
+    // useEffect(() => {
+    //     if (
+    //       localStorage.getItem("responsedata") !== null &&
+    //       localStorage.getItem("responseData") !== undefined
+    //     ) {
+    //       if (User !== null && User !== undefined) {
+    //         if (User.loginData !== null && User.loginData !== undefined) {
+    //           if (
+    //             User.loginData !== null &&
+    //             User.loginData !== undefined &&
+    //             User.loginData.message !== "User not found"
+    //           ) {
+    //             const itemdata = User.loginData.data;
+    //             console.log("itemdata", itemdata)
+    //             setitem(itemdata._id);
+    //             localStorage.setItem("userId", itemdata._id);
+    //             // localStorage.setItem("username", itemdata.username);
+    //             navigate('/coverkraft');
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }, [User, navigate]);
 
     //function for handle phone number input field start
     const handlephonechange = (e) => {
@@ -90,9 +91,12 @@ const Login = () => {
             const userPhone = phoneNumber;
         
             const response = await axios.get(`${API_URL}user/verifyPhone?userPhone=${userPhone}`);
-        
+        console.log(response, "response");
             if (response.status === 200) {
-                
+                const userId = response.data.user._id;
+            console.log("userId", userId)
+                // Store the user ID in local storage
+                localStorage.setItem('userId', userId);
                 const appVerifier = new auth.RecaptchaVerifier(auth1, 'recaptcha-container');
                 await appVerifier.render();
                 await appVerifier.verify();
