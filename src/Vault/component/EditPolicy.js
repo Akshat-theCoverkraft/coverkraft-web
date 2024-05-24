@@ -57,50 +57,51 @@ const EditPolicy = () => {
     const location = useLocation();
 
     const { policyDetails } = location.state;
-    const responseData = policyDetails[0].policyDetails;
-
+    const responseData = policyDetails[0];
+   console.log("responseData", responseData)
 
     // const responseData = JSON.parse(responseData.ocrText);
     const PolicyType = responseData.policyType.toLowerCase();
+    console.log("PolicyType", PolicyType)
   
 
     //useState
     const [policyNumber, setPolicyNumber] = useState(responseData.policyNumber);
-    const [registrationNumber, setRegistrationNumber] = useState(responseData.registrationNumber);
+    const [registrationNumber, setRegistrationNumber] = useState(responseData.policyDetails.registrationNumber);
     const [startDate, setStartDate] = useState(responseData.policyStartDate);
     const [endDate, setEndDate] = useState(responseData.policyEndDate);
     const [insuredName, setInsuredName] = useState(responseData.insuredName);
-    const [netPremium, setNetPremium] = useState(responseData.netPremium);
-    const [ncb, setNcb] = useState(responseData.ncpPercentage);
-    const [tpPremium, setTpPremium] = useState(responseData.tpPremium);
-    const [totalPremium, setTotalPremium] = useState(responseData.totalPremium);
-    const [engineCC, setEngineCC] = useState(responseData.vechileEngineNumber);
-    const [registrationYear, setRegistrationYear] = useState(responseData.registrationYear);
-    const [idv, setIdv] = useState(responseData.idv);
-    const [model, setModel] = useState(responseData.make_Model);
-    const [assetType, setAssetType] = useState(responseData.assetType);
-    const [odPremium, setOdPremium] = useState(responseData.odPremium);
-    const [insuranceCompany, setInsuranceCompany] = useState(responseData.insuranceCompany);
-    const [terminalIllness, setTerminalIllness] = useState(responseData.terminalIllness);
-    const [hospitalCare, setHospitalCare] = useState(responseData.hospitalCare);
-    const [waiverPremium, setWaiverPremium] = useState(responseData.waiverOfPremium);
+    const [netPremium, setNetPremium] = useState(responseData.policyDetails.netPremium);
+    const [ncb, setNcb] = useState(responseData.policyDetails.ncpPercentage);
+    const [tpPremium, setTpPremium] = useState(responseData.policyDetails.tpPremium);
+    const [totalPremium, setTotalPremium] = useState(responseData.policyDetails.totalPremium);
+    const [engineCC, setEngineCC] = useState(responseData.policyDetails.vechileEngineNumber);
+    const [registrationYear, setRegistrationYear] = useState(responseData.policyDetails.registrationYear);
+    const [idv, setIdv] = useState(responseData.policyDetails.idv);
+    const [model, setModel] = useState(responseData.policyDetails.make_Model);
+    const [assetType, setAssetType] = useState(responseData.policyDetails.assetType);
+    const [odPremium, setOdPremium] = useState(responseData.policyDetails.odPremium);
+    const [insuranceCompany, setInsuranceCompany] = useState(responseData.policyDetails.insuranceCompany);
+    const [terminalIllness, setTerminalIllness] = useState(responseData.policyDetails.terminalIllness);
+    const [hospitalCare, setHospitalCare] = useState(responseData.policyDetails.hospitalCare);
+    const [waiverPremium, setWaiverPremium] = useState(responseData.policyDetails.waiverOfPremium);
     const [disability, setDisability] = useState(responseData.accidentalIllness);
-    const [illness, setIllness] = useState(responseData.criticalIllness);
-    const [pa, setPa] = useState(responseData.pa);
-    const [type, setType] = useState(responseData.type)
-    const [dayRenewal, setDayRenewal] = useState(responseData.dayRenewal);
-    const [maturityDate, setMaturityDate] = useState(responseData.maturityDate);
-    const [sumInsured, setSumInsured] = useState(responseData.sumInsured);
-    const [vehicleType, setVehicleType] = useState(responseData.vehicleType);
-    const [dob, setDob] = useState(responseData.dob);
-    const [premiumPaid, setPremiumPaid] = useState(responseData.premiumPaid);
-    const [renewalDate, setRenewalDate] = useState(responseData.policyRenewalDate);
-    const [policyName, setPolicyName] = useState(responseData.policyName);
-    const [others, setOthers] = useState(responseData.others);
-    const [totalSumInsured, setTotalSumInsured] = useState(responseData.totalSumInsured);
-    const [restoration, setRestoration] = useState(responseData.restoration);
-    const [consumables, setConsumables] = useState(responseData.consumables);
-    const [coPayment, setCoPayment] = useState(responseData.coPayment);
+    const [illness, setIllness] = useState(responseData.policyDetails.criticalIllness);
+    const [pa, setPa] = useState(responseData.policyDetails.pa);
+    const [type, setType] = useState(responseData.policyDetails.type)
+    const [dayRenewal, setDayRenewal] = useState(responseData.policyDetails.dayRenewal);
+    const [maturityDate, setMaturityDate] = useState(responseData.policyDetails.maturityDate);
+    const [sumInsured, setSumInsured] = useState(responseData.policyDetails.sumInsured);
+    const [vehicleType, setVehicleType] = useState(responseData.policyDetails.vehicleType);
+    const [dob, setDob] = useState(responseData.policyDetails.dob);
+    const [premiumPaid, setPremiumPaid] = useState(responseData.policyDetails.premiumPaid);
+    const [renewalDate, setRenewalDate] = useState(responseData.policyDetails.policyRenewalDate);
+    const [policyName, setPolicyName] = useState(responseData.policyDetails.policyName);
+    const [others, setOthers] = useState(responseData.policyDetails.others);
+    const [totalSumInsured, setTotalSumInsured] = useState(responseData.policyDetails.totalSumInsured);
+    const [restoration, setRestoration] = useState(responseData.policyDetails.restoration);
+    const [consumables, setConsumables] = useState(responseData.policyDetails.consumables);
+    const [coPayment, setCoPayment] = useState(responseData.policyDetails.coPayment);
     const [filledFields, setFilledFields] = useState(0);
    
     const dispatch = useDispatch();
@@ -247,6 +248,7 @@ const EditPolicy = () => {
    //save api for health insurance form 
    const handleHealthInsurance = () => {
     const userId = localStorage.getItem('userId');
+    const policyId = localStorage.getItem('selectedPolicyId');
     const documentId = localStorage.getItem('documentId');
     if (
         userId &&
@@ -257,7 +259,7 @@ const EditPolicy = () => {
         type && idv && netPremium && totalPremium && premiumPaid && restoration && consumables && coPayment
     ) {
         const formData = new FormData();
-
+       formData.append('_id', policyId)
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', PolicyType);
@@ -295,6 +297,7 @@ const EditPolicy = () => {
 
 //save api for life insurance
 const handleLifeInsurance = () => {
+    const policyId = localStorage.getItem('selectedPolicyId');
     const userId = localStorage.getItem('userId');
     const documentId = localStorage.getItem('documentId');
     if (
@@ -307,7 +310,7 @@ const handleLifeInsurance = () => {
         waiverPremium && hospitalCare && terminalIllness
     ) {
     const formData = new FormData();
-   
+    formData.append('_id', policyId)
     formData.append('userId', userId);
     formData.append('documentId', documentId);
     formData.append('policyType', PolicyType);
@@ -346,6 +349,7 @@ const handleLifeInsurance = () => {
 
 //save api for motor insurance
 const handleMotorInsurance = () => {
+    const policyId = localStorage.getItem('selectedPolicyId');
     const userId = localStorage.getItem('userId');
     const documentId = localStorage.getItem('documentId');
     if (
@@ -358,7 +362,7 @@ const handleMotorInsurance = () => {
         vehicleType 
     ) {
     const formData = new FormData();
-   
+    formData.append('_id', policyId)
     formData.append('userId', userId);
     formData.append('documentId', documentId);
     formData.append('policyType', PolicyType);
