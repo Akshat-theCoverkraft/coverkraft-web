@@ -14,6 +14,7 @@ import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
 import Grid from '@mui/material/Grid';
 import { messaging, getToken } from '../ServiceModule/FirebaseConfig';
+import { useNavigate } from "react-router-dom";
 const Register = () => {
     const [fullName, setFullName] = useState();
     const [DOB, setDOB] = useState();
@@ -25,8 +26,7 @@ const Register = () => {
     const [valid, setValid] = useState(true);
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [fcmToken, setFcmToken] = useState(null);
-    // console.log("fcmToken", fcmToken)
-
+    const navigate=useNavigate();
     const dispatch = useDispatch();
 
     // useEffect(() => {
@@ -67,7 +67,7 @@ const Register = () => {
     //function to handle email input field start
 
     //function for register and integrate API start
-    function handleRegister() {
+    const handleRegister = () => {
         if (
             fullName &&
             DOB &&
@@ -75,21 +75,31 @@ const Register = () => {
             email &&
             address
         ) {
-
+            if (!isOldEnough(DOB)) {
+                toast.error('You must be at least 18 years old to register.', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return;
+            }
+    
             const formData = new FormData();
             formData.append('userName', fullName);
             formData.append('userDob', DOB);
             formData.append('userPhone', mobileNumber);
             formData.append('userEmail', email);
             formData.append('userAddress', address);
-            // formData.append('userFcmId', "1001");
             formData.append('userFcmId', fcmToken);
-
-
-
-            dispatch(registrationCustomer(API_URL, formData))
+    
+            dispatch(registrationCustomer(API_URL, formData));
+            toast.success('User registered successfully');
+            navigate('/coverkraft/login')
         } else {
-            toast.error("Please fill all required field", {
+            toast.error("Please fill all required fields", {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -98,8 +108,22 @@ const Register = () => {
                 draggable: true,
             });
         }
-    }
+    };
+    
     //function for register and integrate API end
+
+    //function to check user is above 18 or not
+    const isOldEnough = (dob) => {
+        const today = new Date();
+        const birthDate = new Date(dob);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age >= 18;
+    };
 
     return (
         <div className='overflow-hidden'>

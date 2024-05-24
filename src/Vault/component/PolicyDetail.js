@@ -59,7 +59,7 @@ const PolicyDetail = ({ policyId }) => {
     //function to download the pdf document
     const handleDownloadDocument = (documentPath) => {
         const url = `${API_URL}${documentPath}`;
-    
+
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -84,7 +84,7 @@ const PolicyDetail = ({ policyId }) => {
                 window.open(url, '_blank');
             });
     };
-    
+
 
     //function for share dialog
     const toggleShareDialog = () => {
@@ -96,14 +96,14 @@ const PolicyDetail = ({ policyId }) => {
         navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
     }
 
-   
+
     //function for share policy document
     const sharePolicyDocument = (documentPath) => {
         const url = `${IMAGE_PATH}${documentPath}`;
         setPdfUrl(url);
-        toggleShareDialog(); 
+        toggleShareDialog();
     };
-    
+
 
     return (
         <>
@@ -149,7 +149,7 @@ const PolicyDetail = ({ policyId }) => {
                     }
 
                     const documentPath = policy.documentDetails.documentPath;
-                    console.log('documentpath', documentPath)
+
                     return (
 
                         <Card className='p-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
@@ -226,15 +226,17 @@ const PolicyDetail = ({ policyId }) => {
                                             </div>
                                         </Grid>
                                     </Grid>
-                                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }} >
-                                        <Grid item xs={4} md={4} style={{ padding: '30px 40px' }}>
-                                            <button className='btn btn-lg ' style={{ color: 'white', backgroundColor: '#42988E', padding: '10px 70px' }} >Renew</button>
-                                        </Grid>
+                                    <Grid container rowSpacing={1} className='d-flex justify-content-center' columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
+                                        {status ? (
+                                            <Grid item xs={4} md={4} style={{ padding: '30px 40px' }}>
+                                                <button className='btn btn-lg' style={{ color: 'white', backgroundColor: '#42988E', padding: '10px 70px' }}>Renew</button>
+                                            </Grid>
+                                        ) : null}
                                         <Grid item xs={4} md={4} style={{ padding: '30px 20px' }}>
-                                            <button className={`btn btn-lg custom-color `} style={{ borderColor: '#42988E', color: '#42988E', padding: '10px 80px' }} onClick={() => handleViewDocument(documentPath)}>View</button>
+                                            <button className={`btn btn-lg custom-color`} style={{ borderColor: '#42988E', color: '#42988E', padding: '10px 80px' }} onClick={() => handleViewDocument(documentPath)}>View</button>
                                         </Grid>
                                         <Grid item xs={1} md={1} style={{ padding: '30px 0px' }}>
-                                            <img src={download} alt='download' height={50} onClick={() => handleDownloadDocument(documentPath)}/>
+                                            <img src={download} alt='download' height={50} onClick={() => handleDownloadDocument(documentPath)} />
                                         </Grid>
                                         <Grid item xs={2} md={2} style={{ padding: '20px 20px' }}>
                                             <button className='btn btn-lg' onClick={() => sharePolicyDocument(documentPath)}>
@@ -242,6 +244,7 @@ const PolicyDetail = ({ policyId }) => {
                                             </button>
                                         </Grid>
                                     </Grid>
+
                                 </Card>
                                 {showShareDialog && (
                                     <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-20%, -50%)', backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', zIndex: '9999' }}>
@@ -249,7 +252,7 @@ const PolicyDetail = ({ policyId }) => {
                                         {/* <FacebookShareButton url={shareUrl} quote={policyDetailsMessage}>
                                             <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </FacebookShareButton> */}
-                                         <FacebookShareButton url={pdfUrl} >
+                                        <FacebookShareButton url={pdfUrl} >
                                             <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </FacebookShareButton>
                                         <TwitterShareButton url={pdfUrl}>

@@ -240,17 +240,26 @@ const EditPolicy = () => {
         //         return prevCount;
         //     }
         // });
-        console.log('after setitng field', filledFields)
+      
     };
     // Update filledFields when any input field is changed end
 
-    //save api for health insurance form 
-    const handleHealthInsurance = () => {
+   //save api for health insurance form 
+   const handleHealthInsurance = () => {
+    const userId = localStorage.getItem('userId');
+    const documentId = localStorage.getItem('documentId');
+    if (
+        userId &&
+        documentId &&
+        PolicyType &&
+        dob &&
+        policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
+        type && idv && netPremium && totalPremium && premiumPaid && restoration && consumables && coPayment
+    ) {
         const formData = new FormData();
-        const userId = localStorage.getItem('userId');
-        const policyId =localStorage.getItem('selectedPolicyId')
+
         formData.append('userId', userId);
-        formData.append('selectedPolicyId',policyId);
+        formData.append('documentId', documentId);
         formData.append('policyType', PolicyType);
         formData.append('dob', dob);
         formData.append('policyNumber', policyNumber);
@@ -271,74 +280,127 @@ const EditPolicy = () => {
         formData.append('coPayment', coPayment);
         dispatch(updateDocument(API_URL, formData));
         navigate('/coverkraft/vault')
-
     }
+    else {
+        toast.error("Please fill all required fields", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+    }
+}
 
-    //save api for life insurance
-    const handleLifeInsurance = () => {
-        const formData = new FormData();
-        const userId = localStorage.getItem('userId');
-        const policyId =localStorage.getItem('selectedPolicyId')
-        formData.append('userId', userId);
-        formData.append('selectedPolicyId',policyId);
+//save api for life insurance
+const handleLifeInsurance = () => {
+    const userId = localStorage.getItem('userId');
+    const documentId = localStorage.getItem('documentId');
+    if (
+        userId &&
+        documentId &&
+        PolicyType &&
+        startDate &&
+        renewalDate && policyName  && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
+        sumInsured && others && type && pa && netPremium && totalPremium && illness && disability &&
+        waiverPremium && hospitalCare && terminalIllness
+    ) {
+    const formData = new FormData();
+   
+    formData.append('userId', userId);
+    formData.append('documentId', documentId);
+    formData.append('policyType', PolicyType);
+    formData.append('policyName', policyName);
+    formData.append('policyStartDate', startDate);
+    formData.append('renewalDate', renewalDate);
+    formData.append('insuredName', insuredName);
+    formData.append('maturityDate', maturityDate);
+    formData.append('dayRenewal', dayRenewal);
+    formData.append('dob', dob);
+    formData.append('insuranceCompany', insuranceCompany);
+    formData.append('sumInsured', sumInsured);
+    formData.append('others', others);
+    formData.append('type', type);
+    formData.append('pa', pa);
+    formData.append('netPremium', netPremium);
+    formData.append('totalPremium', totalPremium);
+    formData.append('criticalIllness', illness);
+    formData.append('accidentalIllness', disability);
+    formData.append('waiverOfPremium', waiverPremium);
+    formData.append('hospitalCare', hospitalCare);
+    formData.append('terminalIllness', terminalIllness);
+    dispatch(updateDocument(API_URL, formData))
+    navigate('/coverkraft/vault')
+}else {
+    toast.error("Please fill all required fields", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    });
+}
+}
+
+//save api for motor insurance
+const handleMotorInsurance = () => {
+    const userId = localStorage.getItem('userId');
+    const documentId = localStorage.getItem('documentId');
+    if (
+        userId &&
+        documentId &&
+        PolicyType &&
+        startDate &&
+        endDate && policyNumber  && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
+        assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
+        vehicleType 
+    ) {
+    const formData = new FormData();
+   
+    formData.append('userId', userId);
+    formData.append('documentId', documentId);
+    formData.append('policyType', PolicyType);
+    formData.append('policyNumber', policyNumber);
+    formData.append('policyStartDate', startDate);
+    formData.append('policyEndDate', endDate);
+    formData.append('insuredName', insuredName);
+    formData.append('netPremium', netPremium);
+    formData.append('ncpPercentage', ncb);
+    formData.append('tpPremium', tpPremium);
+    formData.append('odPremium', odPremium);
+    formData.append('totalPremium', totalPremium);
+    formData.append('insuranceCompany', insuranceCompany);
+    formData.append('assetType', assetType);
+    formData.append('make_Model', model);
+    formData.append('registrationYear', registrationYear);
+    formData.append('registrationNumber', registrationNumber);
+    formData.append('vechileEngineNumber', engineCC);
+    formData.append('idv', idv);
+    formData.append('vehicleType', vehicleType);
+
+    dispatch(updateDocument(API_URL, formData))
+    navigate('/coverkraft/vault')
+    }else {
        
-        formData.append('policyType', PolicyType);
-        formData.append('policyName', policyName);
-        formData.append('policyStartDate', startDate);
-        formData.append('renewalDate', renewalDate);
-        formData.append('insuredName', insuredName);
-        formData.append('maturityDate', maturityDate);
-        formData.append('dayRenewal', dayRenewal);
-        formData.append('dob', dob);
-        formData.append('insuranceCompany', insuranceCompany);
-        formData.append('sumInsured', sumInsured);
-        formData.append('others', others);
-        formData.append('type', type);
-        formData.append('pa', pa);
-        formData.append('netPremium', netPremium);
-        formData.append('totalPremium', totalPremium);
-        formData.append('criticalIllness', illness);
-        formData.append('accidentalIllness', disability);
-        formData.append('waiverOfPremium', waiverPremium);
-        formData.append('hospitalCare', hospitalCare);
-        formData.append('terminalIllness', terminalIllness);
-        dispatch(updateDocument(API_URL, formData))
+        toast.error("Please fill all required fields", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
     }
 
-    //save api for motor insurance
-    const handleMotorInsurance = () => {
-        const formData = new FormData();
-        const userId = localStorage.getItem('userId');
-        const policyId =localStorage.getItem('selectedPolicyId')
-        formData.append('userId', userId);
-        formData.append('selectedPolicyId',policyId);
-        formData.append('policyType', PolicyType);
-        formData.append('policyNumber', policyNumber);
-        formData.append('policyStartDate', startDate);
-        formData.append('policyEndDate', endDate);
-        formData.append('insuredName', insuredName);
-        formData.append('netPremium', netPremium);
-        formData.append('ncpPercentage', ncb);
-        formData.append('tpPremium', tpPremium);
-        formData.append('odPremium', odPremium);
-        formData.append('totalPremium', totalPremium);
-        formData.append('insuranceCompany', insuranceCompany);
-        formData.append('assetType', assetType);
-        formData.append('make_Model', model);
-        formData.append('registrationYear', registrationYear);
-        formData.append('registrationNumber', registrationNumber);
-        formData.append('vechileEngineNumber', engineCC);
-        formData.append('idv', idv);
-        formData.append('vehicleType', vehicleType);
+    // if (mode === 'add') {
+    //     dispatch(saveDocument(API_URL, formData));
+    // } else if (mode === 'edit') {
+    //     dispatch(updateDocument(API_URL, formData)); 
+    // }
+}
 
-        dispatch(updateDocument(API_URL, formData))
-
-        // if (mode === 'add') {
-        //     dispatch(saveDocument(API_URL, formData));
-        // } else if (mode === 'edit') {
-        //     dispatch(updateDocument(API_URL, formData)); 
-        // }
-    }
 
 
     return (
