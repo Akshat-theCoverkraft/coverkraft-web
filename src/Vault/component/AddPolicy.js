@@ -305,7 +305,7 @@ const AddPolicy = () => {
         formData.append('consumables', consumables);
         formData.append('coPayment', coPayment);
         dispatch(saveDocument(API_URL, formData));
-        navigate('/vault')
+        navigate('/coverkraft/vault')
 
     }
 

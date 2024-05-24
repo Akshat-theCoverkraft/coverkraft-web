@@ -22,8 +22,16 @@ const firebaseConfig = {
 const appFire = initializeApp(firebaseConfig);
 
 // Initialize Firebase Cloud Messaging
-const messaging = getMessaging(appFire);
+// const messaging = getMessaging(appFire);
 
+let messaging;
+
+try {
+  messaging = getMessaging(appFire);
+  console.log('Firebase Messaging initialized successfully');
+} catch (error) {
+  console.error('Error initializing Firebase Messaging:', error);
+}
 
 // Register the service worker
 if ('serviceWorker' in navigator) {

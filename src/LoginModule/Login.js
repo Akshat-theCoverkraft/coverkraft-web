@@ -61,7 +61,7 @@ const Login = () => {
                 setitem(itemdata.userId);
                 localStorage.setItem("userId", itemdata.userId);
                 // localStorage.setItem("username", itemdata.username);
-                navigate('/');
+                navigate('/coverkraft');
               }
             }
           }
@@ -133,7 +133,7 @@ const Login = () => {
                 dispatch(verifyUser(API_URL, formData ))
                 localStorage.setItem('loggedIn', 'true');
                 toast.success('Phone number authentication done');
-                navigate('/');
+                navigate('/coverkraft');
             })
             .catch((error) => {
                 toast.error('Authentication failed');
@@ -198,7 +198,7 @@ const Login = () => {
                                                 disabled={!valid || loggedIn}
                                                 className='mt-2'
                                             /> 
-                                            <p class="medium fw-bold mt-2 pt-1 mb-0 text-center">Don't have an account? <Link to='/register'
+                                            <p class="medium fw-bold mt-2 pt-1 mb-0 text-center">Don't have an account? <Link to='/coverkraft/register'
                                                 class="custom-color" >Register</Link></p>
                                         </div>
                                     </div>

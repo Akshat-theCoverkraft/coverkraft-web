@@ -27,10 +27,46 @@ import axios from 'axios'
 import emptyImage from '../../Images/ic-empty.png'
 import car from '../../Images/Car.png';
 import EditPolicy from './EditPolicy';
+import IMAGE_PATH from '../../ServiceModule/imagePath';
 const PolicyDetail = ({ policyId }) => {
     const [showShareDialog, setShowShareDialog] = useState(false);
-   
+    const [pdfUrl, setPdfUrl] = useState(null);
 
+    const handleViewDocument = (documentPath) => {
+        setPdfUrl(`${IMAGE_PATH}${documentPath}`);
+        window.open(`${IMAGE_PATH}${documentPath}`, '_blank');
+    };
+
+    const handleDownloadDocument = (documentPath) => {
+        const url = `${API_URL}${documentPath}`;
+    
+        // Try to download the document directly
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    // If direct download fails, open the PDF in a new tab
+                    window.open(url, '_blank');
+                } else {
+                    // If direct download is successful, initiate download
+                    response.blob().then(blob => {
+                        const url = window.URL.createObjectURL(new Blob([blob]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'policy_document.pdf');
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error downloading document:', error);
+                // If download fails, open the PDF in a new tab
+                window.open(url, '_blank');
+            });
+    };
+    
+    
     const navigate = useNavigate();
 
     const [policyDetails, setPolicyDetails] = useState([]);
@@ -39,7 +75,7 @@ const PolicyDetail = ({ policyId }) => {
             try {
                 const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`);
                 setPolicyDetails(response.data);
-              
+
 
             } catch (error) {
                 console.error(error)
@@ -72,8 +108,8 @@ const PolicyDetail = ({ policyId }) => {
     //function for edit button
     const handleEdit = () => {
 
-        navigate('/edit-policy', { state: { policyDetails: policyDetails } });
-    
+        navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
+
 
     }
 
@@ -124,7 +160,8 @@ const PolicyDetail = ({ policyId }) => {
                         console.error('Error parsing policy end date:', error);
                     }
 
-
+                    const documentPath = policy.documentDetails.documentPath;
+                    console.log('documentpath', documentPath)
                     return (
 
                         <Card className='p-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
@@ -137,7 +174,7 @@ const PolicyDetail = ({ policyId }) => {
                                     className='fw-bold'
                                     startIcon={EditIcon}
                                     onClick={handleEdit}
-                                    
+
                                 />
                             </div>
 
@@ -206,10 +243,10 @@ const PolicyDetail = ({ policyId }) => {
                                             <button className='btn btn-lg ' style={{ color: 'white', backgroundColor: '#42988E', padding: '10px 70px' }} >Renew</button>
                                         </Grid>
                                         <Grid item xs={4} md={4} style={{ padding: '30px 20px' }}>
-                                            <button className={`btn btn-lg custom-color `} style={{ borderColor: '#42988E', color: '#42988E', padding: '10px 80px' }} >View</button>
+                                            <button className={`btn btn-lg custom-color `} style={{ borderColor: '#42988E', color: '#42988E', padding: '10px 80px' }} onClick={() => handleViewDocument(documentPath)}>View</button>
                                         </Grid>
                                         <Grid item xs={1} md={1} style={{ padding: '30px 0px' }}>
-                                            <img src={download} alt='download' height={50} />
+                                            <img src={download} alt='download' height={50} onClick={() => handleDownloadDocument(documentPath)}/>
                                         </Grid>
                                         <Grid item xs={2} md={2} style={{ padding: '20px 20px' }}>
                                             <button className='btn btn-lg' onClick={toggleShareDialog}>

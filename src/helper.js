@@ -3,7 +3,7 @@ import { getMessaging, getToken } from "firebase/messaging";
 const messaging=getMessaging();
 
 export const requestForToken = () => {
-    return getToken(messaging, { vapidKey: 'BL7_NqMdbqAZPqZs2FDhbbgu7pBvE4y374HNGBH4SvgK-SW-6WNRVFDe2yFW9u4defdGDuRrNQshF5YvljnXFFs' })
+    return getToken(messaging, { vapidKey: 'BOQdgTuitP7hDi35akXEsWeJ4HW9NhTv4ML85JXJlzqfxyyjhOywoQXgKwLFMMuVRyv1DI-GxJ7_OUUE0IdVwa8' })
         .then((currentToken) => {
             if (currentToken) {
                 console.log('current token for client: ', currentToken);// Perform any other neccessary action with the token
