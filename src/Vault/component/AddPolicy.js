@@ -24,6 +24,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
 
 //function for progress bar start
 function CircularProgressWithLabel(props) {
@@ -82,9 +87,7 @@ const AddPolicy = () => {
     const [policyNumber, setPolicyNumber] = useState(ocrTextObject.policyNumber);
     const [registrationNumber, setRegistrationNumber] = useState(ocrTextObject.registrationNumber);
     const [startDate, setStartDate] = useState(dayjs(ocrTextObject.policyStartDate).format('MM/DD/YYYY'));
-    console.log('startdate', startDate)
     const [endDate, setEndDate] = useState(dayjs(ocrTextObject.policyEndDate).format('MM/DD/YYYY'));
-    console.log('enddate', endDate)
     const [insuredName, setInsuredName] = useState(ocrTextObject.insuredName);
     const [netPremium, setNetPremium] = useState(ocrTextObject.netPremium);
     const [ncb, setNcb] = useState(ocrTextObject.ncpPercentage);
@@ -109,15 +112,13 @@ const AddPolicy = () => {
     const [sumInsured, setSumInsured] = useState(ocrTextObject.sumInsured);
     const [vehicleType, setVehicleType] = useState(ocrTextObject.vehicleType);
     const [dob, setDob] = useState(dayjs(ocrTextObject.dob).format('MM/DD/YYYY'));
-    console.log('dob', dob)
     const [premiumPaid, setPremiumPaid] = useState(ocrTextObject.premiumPaid);
     const [renewalDate, setRenewalDate] = useState(dayjs(ocrTextObject.policyRenewalDate).format('MM/DD/YYYY'));
-    console.log('renewal', renewalDate)
     const [policyName, setPolicyName] = useState(ocrTextObject.policyName);
     const [others, setOthers] = useState(ocrTextObject.others);
     const [totalSumInsured, setTotalSumInsured] = useState(ocrTextObject.totalSumInsured);
-    // const [restoration, setRestoration] = useState(ocrTextObject.restoration);
-    const [restoration, setRestoration] = useState(ocrTextObject.restoration === 'true');
+    // const [registration, setregistration] = useState(ocrTextObject.registration);
+    const [registration, setRegistration] = useState(ocrTextObject.registration);
 
     const [consumables, setConsumables] = useState(ocrTextObject.consumables);
     const [coPayment, setCoPayment] = useState(ocrTextObject.coPayment);
@@ -145,10 +146,6 @@ const AddPolicy = () => {
         setTotalFields(total);
     }, [responseData]);
 
-    useEffect(() => {
-        // Update state if ocrTextObject.restoration changes
-        setRestoration(ocrTextObject.restoration === 'true');
-    }, [ocrTextObject.restoration]);
 
     // Update progress percentage when filledFields or totalFields change
     useEffect(() => {
@@ -160,6 +157,11 @@ const AddPolicy = () => {
     // Update filledFields when any input field is changed start
     const handleInputChange = (e) => {
         let { name, value } = e.target;
+
+        if (typeof value === 'string') {
+            value = value.trim();
+        }
+        
 
         if (name === 'dob' || name === 'startDate' || name === 'endDate') {
             value = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
@@ -262,8 +264,8 @@ const AddPolicy = () => {
             case 'totalSumInsured':
                 setTotalSumInsured(value);
                 break;
-            case 'restoration':
-                setRestoration(value === 'true');
+            case 'registration':
+                setRegistration(value);
                 break;
             case 'consumables':
                 setConsumables(value);
@@ -279,9 +281,12 @@ const AddPolicy = () => {
                 break;
         }
 
+
         // Check if the input field is filled
-        const isFilled = value.trim().length === 1;
-        setPrevious(value.trim().length > 0);
+        // const isFilled = value.trim().length === 1;
+        const isFilled = typeof value === 'string' ? value.length === 1 : value !== '';
+        // setPrevious(value.trim().length > 0);
+        setPrevious(value.length > 0);
         setFilledFields((prevCount) => {
             if (isFilled) {
 
@@ -308,7 +313,7 @@ const AddPolicy = () => {
             PolicyType &&
             dob &&
             policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
-            type && idv && netPremium && totalPremium && premiumPaid && restoration && consumables && coPayment
+            type && idv && netPremium && totalPremium && premiumPaid && registration && consumables && coPayment
         ) {
             const formData = new FormData();
 
@@ -329,7 +334,7 @@ const AddPolicy = () => {
             formData.append('netPremium', netPremium);
             formData.append('totalPremium', totalPremium);
             formData.append('premiumPaid', premiumPaid);
-            formData.append('restoration', restoration);
+            formData.append('registration', registration);
             formData.append('consumables', consumables);
             formData.append('coPayment', coPayment);
             dispatch(saveDocument(API_URL, formData));
@@ -939,27 +944,49 @@ const AddPolicy = () => {
                                             />
                                             {/* <CustomInput
                                                 type="text"
-                                                label="Restoration"
-                                                value={restoration}
+                                                label="registration"
+                                                value={registration}
                                                 onChange={(e) => {
-                                                    setRestoration(e.target.value);
+                                                    setregistration(e.target.value);
                                                     handleInputChange(e);
                                                 }}
                                                 required
                                             /> */}
 
-                                            <CustomInput
-                                                type="select" // Change to 'select' for dropdown
-                                                label="Restoration"
-                                                name="restoration" // Add name attribute to identify the input
-                                                value={restoration.toString()} // Convert boolean to string for select value
+                                            {/* <CustomInput
+                                                type="text" // Change to 'select' for dropdown
+                                                label="registration"
+                                                name="registration" // Add name attribute to identify the input
+                                                value={registration} // Convert boolean to string for select value
                                                 onChange={handleInputChange} // Use custom handler for dropdown
                                                 required
                                             >
                                                 <option value="true">True</option>
                                                 <option value="false">False</option>
-                                            </CustomInput>
-                                            <CustomInput
+                                            </CustomInput> */}
+                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                                Registration <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={registration}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setRegistration(booleanValue);
+                                                            handleInputChange({ target: { name: 'registration', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="Consumables"
                                                 value={consumables}
@@ -968,8 +995,30 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
-                                            <CustomInput
+                                            /> */}
+                                            <label className="form-label fw-bold" htmlFor="inputField">
+                                                Consumables <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={consumables}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setConsumables(booleanValue);
+                                                            handleInputChange({ target: { name: 'consumables', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="Co-Payment"
                                                 value={coPayment}
@@ -978,7 +1027,29 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
+                                            /> */}
+                                            <label className="form-label fw-bold" htmlFor="inputField">
+                                                Co Payment <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={coPayment}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setCoPayment(booleanValue);
+                                                            handleInputChange({ target: { name: 'coPayment', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
                                         </Grid>
                                     </Grid>
                                 </>
@@ -1132,25 +1203,25 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             /> */}
-                                             <label className="form-label fw-bold" htmlFor="inputField">
-                                                         DOB <span className='text-danger'>*</span>
-                                                    </label>
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DemoContainer components={['DatePicker']}>
-                                                            <DatePicker
-                                                                defaultValue={dayjs(dob)}
-                                                                selected={dob}
-                                                                onChange={(newValue) => {
-                                                                    setDob(newValue); // Set the new date directly
-                                                                    handleInputChange({ target: { name: 'dob', value: newValue } });
-                                                                }}
-                                                                selectsStart
-                                                                startDate={dob}
-                                                                placeholderText="MM/DD/YYYY"
-                                                                style={{ width: '100%' }}
-                                                            />
-                                                        </DemoContainer>
-                                                    </LocalizationProvider>
+                                            <label className="form-label fw-bold" htmlFor="inputField">
+                                                DOB <span className='text-danger'>*</span>
+                                            </label>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DemoContainer components={['DatePicker']}>
+                                                    <DatePicker
+                                                        defaultValue={dayjs(dob)}
+                                                        selected={dob}
+                                                        onChange={(newValue) => {
+                                                            setDob(newValue); // Set the new date directly
+                                                            handleInputChange({ target: { name: 'dob', value: newValue } });
+                                                        }}
+                                                        selectsStart
+                                                        startDate={dob}
+                                                        placeholderText="MM/DD/YYYY"
+                                                        style={{ width: '100%' }}
+                                                    />
+                                                </DemoContainer>
+                                            </LocalizationProvider>
                                             <CustomInput
                                                 type="number"
                                                 label="Sum Insured"
