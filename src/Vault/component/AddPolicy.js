@@ -6,6 +6,7 @@ import Footer from '../../Landing/component/Footer';
 import PropTypes from 'prop-types';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box';
 import CustomInput from '../../component/CustomInput';
 import Button from '../../component/Button';
@@ -17,6 +18,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import API_URL from '../../ServiceModule/Service';
 import { saveDocument } from '../../store/action/action';
 import { useNavigate } from 'react-router-dom'
+import moment from 'moment';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 //function for progress bar start
 function CircularProgressWithLabel(props) {
@@ -69,13 +76,15 @@ const AddPolicy = () => {
     }
     const ocrTextObject = JSON.parse(responseData.ocrText);
     const PolicyType = ocrTextObject.policyType.toLowerCase();
- 
+
 
     //useState
     const [policyNumber, setPolicyNumber] = useState(ocrTextObject.policyNumber);
     const [registrationNumber, setRegistrationNumber] = useState(ocrTextObject.registrationNumber);
-    const [startDate, setStartDate] = useState(ocrTextObject.policyStartDate);
-    const [endDate, setEndDate] = useState(ocrTextObject.policyEndDate);
+    const [startDate, setStartDate] = useState(dayjs(ocrTextObject.policyStartDate).format('MM/DD/YYYY'));
+    console.log('startdate', startDate)
+    const [endDate, setEndDate] = useState(dayjs(ocrTextObject.policyEndDate).format('MM/DD/YYYY'));
+    console.log('enddate', endDate)
     const [insuredName, setInsuredName] = useState(ocrTextObject.insuredName);
     const [netPremium, setNetPremium] = useState(ocrTextObject.netPremium);
     const [ncb, setNcb] = useState(ocrTextObject.ncpPercentage);
@@ -99,13 +108,17 @@ const AddPolicy = () => {
     const [maturityDate, setMaturityDate] = useState(ocrTextObject.maturityDate);
     const [sumInsured, setSumInsured] = useState(ocrTextObject.sumInsured);
     const [vehicleType, setVehicleType] = useState(ocrTextObject.vehicleType);
-    const [dob, setDob] = useState(ocrTextObject.dob);
+    const [dob, setDob] = useState(dayjs(ocrTextObject.dob).format('MM/DD/YYYY'));
+    console.log('dob', dob)
     const [premiumPaid, setPremiumPaid] = useState(ocrTextObject.premiumPaid);
-    const [renewalDate, setRenewalDate] = useState(ocrTextObject.policyRenewalDate);
+    const [renewalDate, setRenewalDate] = useState(dayjs(ocrTextObject.policyRenewalDate).format('MM/DD/YYYY'));
+    console.log('renewal', renewalDate)
     const [policyName, setPolicyName] = useState(ocrTextObject.policyName);
     const [others, setOthers] = useState(ocrTextObject.others);
     const [totalSumInsured, setTotalSumInsured] = useState(ocrTextObject.totalSumInsured);
-    const [restoration, setRestoration] = useState(ocrTextObject.restoration);
+    // const [restoration, setRestoration] = useState(ocrTextObject.restoration);
+    const [restoration, setRestoration] = useState(ocrTextObject.restoration === 'true');
+
     const [consumables, setConsumables] = useState(ocrTextObject.consumables);
     const [coPayment, setCoPayment] = useState(ocrTextObject.coPayment);
     const [filledFields, setFilledFields] = useState(0);
@@ -132,17 +145,25 @@ const AddPolicy = () => {
         setTotalFields(total);
     }, [responseData]);
 
+    useEffect(() => {
+        // Update state if ocrTextObject.restoration changes
+        setRestoration(ocrTextObject.restoration === 'true');
+    }, [ocrTextObject.restoration]);
+
     // Update progress percentage when filledFields or totalFields change
     useEffect(() => {
         const percentage = Math.min((filledFields / totalFields) * 100, 100);
-        
+
         setProgress(percentage);
     }, [filledFields, totalFields]);
 
     // Update filledFields when any input field is changed start
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        let { name, value } = e.target;
 
+        if (name === 'dob' || name === 'startDate' || name === 'endDate') {
+            value = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
+        }
         // Update state for the specific input field
         switch (name) {
             case 'policyNumber':
@@ -242,7 +263,7 @@ const AddPolicy = () => {
                 setTotalSumInsured(value);
                 break;
             case 'restoration':
-                setRestoration(value);
+                setRestoration(value === 'true');
                 break;
             case 'consumables':
                 setConsumables(value);
@@ -273,7 +294,7 @@ const AddPolicy = () => {
                 return prevCount;
             }
         });
-       
+
     };
     // Update filledFields when any input field is changed end
 
@@ -335,47 +356,47 @@ const AddPolicy = () => {
             documentId &&
             PolicyType &&
             startDate &&
-            renewalDate && policyName  && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
+            renewalDate && policyName && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
             sumInsured && others && type && pa && netPremium && totalPremium && illness && disability &&
             waiverPremium && hospitalCare && terminalIllness
         ) {
-        const formData = new FormData();
-       
-        formData.append('userId', userId);
-        formData.append('documentId', documentId);
-        formData.append('policyType', PolicyType);
-        formData.append('policyName', policyName);
-        formData.append('policyStartDate', startDate);
-        formData.append('renewalDate', renewalDate);
-        formData.append('insuredName', insuredName);
-        formData.append('maturityDate', maturityDate);
-        formData.append('dayRenewal', dayRenewal);
-        formData.append('dob', dob);
-        formData.append('insuranceCompany', insuranceCompany);
-        formData.append('sumInsured', sumInsured);
-        formData.append('others', others);
-        formData.append('type', type);
-        formData.append('pa', pa);
-        formData.append('netPremium', netPremium);
-        formData.append('totalPremium', totalPremium);
-        formData.append('criticalIllness', illness);
-        formData.append('accidentalIllness', disability);
-        formData.append('waiverOfPremium', waiverPremium);
-        formData.append('hospitalCare', hospitalCare);
-        formData.append('terminalIllness', terminalIllness);
-        dispatch(saveDocument(API_URL, formData))
-        navigate('/coverkraft/vault')
-    }else {
-        toast.error("Please fill all required fields", {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-        });
+            const formData = new FormData();
+
+            formData.append('userId', userId);
+            formData.append('documentId', documentId);
+            formData.append('policyType', PolicyType);
+            formData.append('policyName', policyName);
+            formData.append('policyStartDate', startDate);
+            formData.append('renewalDate', renewalDate);
+            formData.append('insuredName', insuredName);
+            formData.append('maturityDate', maturityDate);
+            formData.append('dayRenewal', dayRenewal);
+            formData.append('dob', dob);
+            formData.append('insuranceCompany', insuranceCompany);
+            formData.append('sumInsured', sumInsured);
+            formData.append('others', others);
+            formData.append('type', type);
+            formData.append('pa', pa);
+            formData.append('netPremium', netPremium);
+            formData.append('totalPremium', totalPremium);
+            formData.append('criticalIllness', illness);
+            formData.append('accidentalIllness', disability);
+            formData.append('waiverOfPremium', waiverPremium);
+            formData.append('hospitalCare', hospitalCare);
+            formData.append('terminalIllness', terminalIllness);
+            dispatch(saveDocument(API_URL, formData))
+            navigate('/coverkraft/vault')
+        } else {
+            toast.error("Please fill all required fields", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
     }
-}
 
     //save api for motor insurance
     const handleMotorInsurance = () => {
@@ -386,37 +407,37 @@ const AddPolicy = () => {
             documentId &&
             PolicyType &&
             startDate &&
-            endDate && policyNumber  && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
+            endDate && policyNumber && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
             assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
-            vehicleType 
+            vehicleType
         ) {
-        const formData = new FormData();
-       
-        formData.append('userId', userId);
-        formData.append('documentId', documentId);
-        formData.append('policyType', PolicyType);
-        formData.append('policyNumber', policyNumber);
-        formData.append('policyStartDate', startDate);
-        formData.append('policyEndDate', endDate);
-        formData.append('insuredName', insuredName);
-        formData.append('netPremium', netPremium);
-        formData.append('ncpPercentage', ncb);
-        formData.append('tpPremium', tpPremium);
-        formData.append('odPremium', odPremium);
-        formData.append('totalPremium', totalPremium);
-        formData.append('insuranceCompany', insuranceCompany);
-        formData.append('assetType', assetType);
-        formData.append('make_Model', model);
-        formData.append('registrationYear', registrationYear);
-        formData.append('registrationNumber', registrationNumber);
-        formData.append('vechileEngineNumber', engineCC);
-        formData.append('idv', idv);
-        formData.append('vehicleType', vehicleType);
+            const formData = new FormData();
 
-        dispatch(saveDocument(API_URL, formData))
-        navigate('/coverkraft/vault')
-        }else {
-           
+            formData.append('userId', userId);
+            formData.append('documentId', documentId);
+            formData.append('policyType', PolicyType);
+            formData.append('policyNumber', policyNumber);
+            formData.append('policyStartDate', startDate);
+            formData.append('policyEndDate', endDate);
+            formData.append('insuredName', insuredName);
+            formData.append('netPremium', netPremium);
+            formData.append('ncpPercentage', ncb);
+            formData.append('tpPremium', tpPremium);
+            formData.append('odPremium', odPremium);
+            formData.append('totalPremium', totalPremium);
+            formData.append('insuranceCompany', insuranceCompany);
+            formData.append('assetType', assetType);
+            formData.append('make_Model', model);
+            formData.append('registrationYear', registrationYear);
+            formData.append('registrationNumber', registrationNumber);
+            formData.append('vechileEngineNumber', engineCC);
+            formData.append('idv', idv);
+            formData.append('vehicleType', vehicleType);
+
+            dispatch(saveDocument(API_URL, formData))
+            navigate('/coverkraft/vault')
+        } else {
+
             toast.error("Please fill all required fields", {
                 position: "top-center",
                 autoClose: 5000,
@@ -438,7 +459,7 @@ const AddPolicy = () => {
     return (
         <div>
             <Navbar />
-            <ToastContainer/>
+            <ToastContainer />
             <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: '#F9F9F9' }}>
                 <Grid item xs={12} sm={10} md={8}>
                     <Card className='border  my-4' style={{ padding: '40px 90px', boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
@@ -468,7 +489,7 @@ const AddPolicy = () => {
 
                                             <Grid container spacing={3}>
                                                 <Grid item xs={12} md={6}>
-                                                    <CustomInput
+                                                    {/* <CustomInput
                                                         type="date"
                                                         label=" Start Date"
                                                         value={startDate}
@@ -477,10 +498,30 @@ const AddPolicy = () => {
                                                             handleInputChange(e);
                                                         }}
                                                         required
-                                                    />
+                                                    /> */}
+                                                    <label className="form-label fw-bold" htmlFor="inputField">
+                                                        Start date <span className='text-danger'>*</span>
+                                                    </label>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DemoContainer components={['DatePicker']}>
+                                                            <DatePicker
+
+                                                                defaultValue={dayjs(startDate)}
+                                                                selected={startDate}
+                                                                onChange={(newValue) => {
+                                                                    setStartDate(newValue); // Set the new date directly
+                                                                    handleInputChange({ target: { name: 'startDate', value: newValue } });
+                                                                }}
+                                                                selectsStart
+                                                                startDate={startDate}
+                                                                placeholderText="MM/DD/YYYY"
+                                                                style={{ width: '100%' }}
+                                                            />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider>
                                                 </Grid>
                                                 <Grid item xs={12} md={6}>
-                                                    <CustomInput
+                                                    {/* <CustomInput
                                                         type="text"
                                                         label=" End Date"
                                                         value={endDate}
@@ -489,7 +530,26 @@ const AddPolicy = () => {
                                                             handleInputChange(e);
                                                         }}
                                                         required
-                                                    />
+                                                    /> */}
+                                                    <label className="form-label fw-bold" htmlFor="inputField">
+                                                        End date <span className='text-danger'>*</span>
+                                                    </label>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DemoContainer components={['DatePicker']}>
+                                                            <DatePicker
+                                                                defaultValue={dayjs(endDate)}
+                                                                selected={endDate}
+                                                                onChange={(newValue) => {
+                                                                    setEndDate(newValue); // Set the new date directly
+                                                                    handleInputChange({ target: { name: 'endDate', value: newValue } });
+                                                                }}
+                                                                selectsStart
+                                                                startDate={endDate}
+                                                                placeholderText="MM/DD/YYYY"
+                                                                style={{ width: '100%' }}
+                                                            />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
                                             <CustomInput
@@ -668,18 +728,38 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             />
-                                            <CustomInput
+                                            {/* <CustomInput
                                                 type="date"
                                                 label=" DOB"
                                                 value={dob}
                                                 onChange={(e) => {
-                                                    setDob(e.target.value);                                                    handleInputChange(e);
+                                                    setDob(e.target.value);
+                                                    handleInputChange(e);
                                                 }}
                                                 required
-                                            />
-                                            <Grid container spacing={3}>
+                                            /> */}<label className="form-label fw-bold" htmlFor="inputField">
+                                                DOB <span className='text-danger'>*</span>
+                                            </label>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DemoContainer components={['DatePicker']}>
+                                                    <DatePicker
+                                                        defaultValue={dayjs(dob)}
+                                                        selected={dob}
+                                                        onChange={(newValue) => {
+                                                            setDob(newValue); // Set the new date directly
+                                                            handleInputChange({ target: { name: 'dob', value: newValue } });
+                                                        }}
+                                                        selectsStart
+                                                        startDate={dob}
+                                                        placeholderText="MM/DD/YYYY"
+                                                        style={{ width: '100%' }}
+                                                        renderInput={(params) => <TextField {...params} />}
+                                                    />
+                                                </DemoContainer>
+                                            </LocalizationProvider>
+                                            <Grid container spacing={3} className='mt-2'>
                                                 <Grid item xs={12} md={6}>
-                                                    <CustomInput
+                                                    {/* <CustomInput
                                                         type="date"
                                                         label=" Start Date"
                                                         value={startDate}
@@ -688,10 +768,29 @@ const AddPolicy = () => {
                                                             handleInputChange(e);
                                                         }}
                                                         required
-                                                    />
+                                                    /> */}
+                                                    <label className="form-label fw-bold" htmlFor="inputField">
+                                                        Start date <span className='text-danger'>*</span>
+                                                    </label>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DemoContainer components={['DatePicker']}>
+                                                            <DatePicker
+                                                                defaultValue={dayjs(startDate)}
+                                                                selected={startDate}
+                                                                onChange={(newValue) => {
+                                                                    setStartDate(newValue); // Set the new date directly
+                                                                    handleInputChange({ target: { name: 'startDate', value: newValue } });
+                                                                }}
+                                                                selectsStart
+                                                                startDate={startDate}
+                                                                placeholderText="MM/DD/YYYY"
+                                                                style={{ width: '100%' }}
+                                                            />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider>
                                                 </Grid>
                                                 <Grid item xs={12} md={6}>
-                                                    <CustomInput
+                                                    {/* <CustomInput
                                                         type="date"
                                                         label=" End Date"
                                                         value={endDate}
@@ -700,7 +799,26 @@ const AddPolicy = () => {
                                                             handleInputChange(e);
                                                         }}
                                                         required
-                                                    />
+                                                    /> */}
+                                                    <label className="form-label fw-bold" htmlFor="inputField">
+                                                        End date <span className='text-danger'>*</span>
+                                                    </label>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DemoContainer components={['DatePicker']}>
+                                                            <DatePicker
+                                                                defaultValue={dayjs(endDate)}
+                                                                selected={endDate}
+                                                                onChange={(newValue) => {
+                                                                    setEndDate(newValue); // Set the new date directly
+                                                                    handleInputChange({ target: { name: 'endDate', value: newValue } });
+                                                                }}
+                                                                selectsStart
+                                                                startDate={endDate}
+                                                                placeholderText="MM/DD/YYYY"
+                                                                style={{ width: '100%' }}
+                                                            />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
                                             <CustomInput
@@ -819,7 +937,7 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             />
-                                            <CustomInput
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="Restoration"
                                                 value={restoration}
@@ -828,7 +946,19 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
+                                            /> */}
+
+                                            <CustomInput
+                                                type="select" // Change to 'select' for dropdown
+                                                label="Restoration"
+                                                name="restoration" // Add name attribute to identify the input
+                                                value={restoration.toString()} // Convert boolean to string for select value
+                                                onChange={handleInputChange} // Use custom handler for dropdown
+                                                required
+                                            >
+                                                <option value="true">True</option>
+                                                <option value="false">False</option>
+                                            </CustomInput>
                                             <CustomInput
                                                 type="text"
                                                 label="Consumables"
@@ -871,7 +1001,7 @@ const AddPolicy = () => {
                                             />
                                             <Grid container spacing={3}>
                                                 <Grid item xs={12} md={6}>
-                                                    <CustomInput
+                                                    {/* <CustomInput
                                                         type="date"
                                                         label=" Start Date"
                                                         value={startDate}
@@ -880,10 +1010,29 @@ const AddPolicy = () => {
                                                             handleInputChange(e);
                                                         }}
                                                         required
-                                                    />
+                                                    /> */}
+                                                    <label className="form-label fw-bold" htmlFor="inputField">
+                                                        Start date <span className='text-danger'>*</span>
+                                                    </label>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DemoContainer components={['DatePicker']}>
+                                                            <DatePicker
+                                                                defaultValue={dayjs(startDate)}
+                                                                selected={startDate}
+                                                                onChange={(newValue) => {
+                                                                    setStartDate(newValue); // Set the new date directly
+                                                                    handleInputChange({ target: { name: 'startDate', value: newValue } });
+                                                                }}
+                                                                selectsStart
+                                                                startDate={startDate}
+                                                                placeholderText="MM/DD/YYYY"
+                                                                style={{ width: '100%' }}
+                                                            />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider>
                                                 </Grid>
                                                 <Grid item xs={12} md={6}>
-                                                    <CustomInput
+                                                    {/* <CustomInput
                                                         type="date"
                                                         label=" Renewal Date"
                                                         value={renewalDate}
@@ -892,10 +1041,29 @@ const AddPolicy = () => {
                                                             handleInputChange(e);
                                                         }}
                                                         required
-                                                    />
+                                                    /> */}
+                                                    <label className="form-label fw-bold" htmlFor="inputField">
+                                                        Renewal date <span className='text-danger'>*</span>
+                                                    </label>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DemoContainer components={['DatePicker']}>
+                                                            <DatePicker
+                                                                defaultValue={dayjs(renewalDate)}
+                                                                selected={renewalDate}
+                                                                onChange={(newValue) => {
+                                                                    setRenewalDate(newValue); // Set the new date directly
+                                                                    handleInputChange({ target: { name: 'renewalDate', value: newValue } });
+                                                                }}
+                                                                selectsStart
+                                                                startDate={renewalDate}
+                                                                placeholderText="MM/DD/YYYY"
+                                                                style={{ width: '100%' }}
+                                                            />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
-                                            <CustomInput
+                                            {/* <CustomInput
                                                 type="date"
                                                 label=" Maturity Date"
                                                 value={maturityDate}
@@ -904,7 +1072,26 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
+                                            /> */}
+                                            <label className="form-label fw-bold" htmlFor="inputField">
+                                                Maturity date <span className='text-danger'>*</span>
+                                            </label>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DemoContainer components={['DatePicker']}>
+                                                    <DatePicker
+                                                        defaultValue={dayjs(maturityDate)}
+                                                        selected={maturityDate}
+                                                        onChange={(newValue) => {
+                                                            setMaturityDate(newValue); // Set the new date directly
+                                                            handleInputChange({ target: { name: 'maturityDate', value: newValue } });
+                                                        }}
+                                                        selectsStart
+                                                        startDate={maturityDate}
+                                                        placeholderText="MM/DD/YYYY"
+                                                        style={{ width: '100%' }}
+                                                    />
+                                                </DemoContainer>
+                                            </LocalizationProvider>
                                             <CustomInput
                                                 type="text"
                                                 label="  Days to Renewal"
@@ -935,7 +1122,7 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             />
-                                            <CustomInput
+                                            {/* <CustomInput
                                                 type="date"
                                                 label="Dob"
                                                 value={dob}
@@ -944,7 +1131,26 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
+                                            /> */}
+                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                                         DOB <span className='text-danger'>*</span>
+                                                    </label>
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DemoContainer components={['DatePicker']}>
+                                                            <DatePicker
+                                                                defaultValue={dayjs(dob)}
+                                                                selected={dob}
+                                                                onChange={(newValue) => {
+                                                                    setDob(newValue); // Set the new date directly
+                                                                    handleInputChange({ target: { name: 'dob', value: newValue } });
+                                                                }}
+                                                                selectsStart
+                                                                startDate={dob}
+                                                                placeholderText="MM/DD/YYYY"
+                                                                style={{ width: '100%' }}
+                                                            />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider>
                                             <CustomInput
                                                 type="number"
                                                 label="Sum Insured"
@@ -1082,7 +1288,7 @@ const AddPolicy = () => {
                 </Grid>
             </Grid>
             <Footer />
-        </div>
+        </div >
     )
 }
 
