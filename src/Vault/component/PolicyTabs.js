@@ -38,7 +38,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
                     status = 'expired';
                 }
 
-                const response = await axios.get(`${API_URL}policy/getAll`, {
+                const response = await axios.get(`${API_URL}policy/getById`, {
                     params: {  userId: userId,
                         policyType: status }
                 });
