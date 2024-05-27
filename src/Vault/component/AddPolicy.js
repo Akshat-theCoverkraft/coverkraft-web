@@ -1267,7 +1267,7 @@ const AddPolicy = () => {
                                             />
 
 
-                                            <CustomInput
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="PA"
                                                 value={pa}
@@ -1276,7 +1276,29 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
+                                            /> */}
+                                            <label className="form-label fw-bold" htmlFor="inputField">
+                                                PA <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={pa}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setPa(pa);
+                                                            handleInputChange({ target: { name: 'pa', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
                                             <CustomInput
                                                 type="number"
                                                 label="Net Premium"
@@ -1297,7 +1319,7 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             />
-                                            <CustomInput
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="Critical Illness"
                                                 value={illness}
@@ -1306,8 +1328,30 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
-                                            <CustomInput
+                                            /> */}
+                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                                Critical Illness <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={illness}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setIllness(illness);
+                                                            handleInputChange({ target: { name: 'illness', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="Accidental Disability"
                                                 value={disability}
@@ -1316,8 +1360,30 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
-                                            <CustomInput
+                                            /> */}
+                                            <label className="form-label fw-bold" htmlFor="inputField">
+                                                Accidental Illness <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={disability}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setDisability(disability);
+                                                            handleInputChange({ target: { name: 'disability', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="Waiver of Premium"
                                                 value={waiverPremium}
@@ -1326,8 +1392,30 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
-                                            <CustomInput
+                                            /> */}
+                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                                Waiver of premium <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={waiverPremium}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setWaiverPremium(booleanValue);
+                                                            handleInputChange({ target: { name: 'waiverPremium', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="Hospital Care"
                                                 value={hospitalCare}
@@ -1336,8 +1424,30 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
-                                            <CustomInput
+                                            /> */}
+                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                                Hospital Care <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={hospitalCare}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setHospitalCare(booleanValue);
+                                                            handleInputChange({ target: { name: 'hospitalCare', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
+                                            {/* <CustomInput
                                                 type="text"
                                                 label="Terminal Illness"
                                                 value={terminalIllness}
@@ -1346,7 +1456,29 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
-                                            />
+                                            /> */}
+                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                                Terminal Illness <span className='text-danger'>*</span>
+                                            </label>
+                                            <Box sx={{ minWidth: 120, mb: 2 }}>
+                                                <FormControl fullWidth>
+                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        value={terminalIllness}
+                                                        onChange={(e) => {
+                                                            const { value } = e.target;
+                                                            const booleanValue = value === 'true';
+                                                            setTerminalIllness(booleanValue);
+                                                            handleInputChange({ target: { name: 'terminalIllness', value: booleanValue } });
+                                                        }}
+                                                    >
+                                                        <MenuItem value={'true'}>True</MenuItem>
+                                                        <MenuItem value={'false'}>False</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Box>
 
                                         </Grid>
                                     </Grid>
