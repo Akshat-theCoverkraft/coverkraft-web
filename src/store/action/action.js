@@ -72,12 +72,15 @@ export const extractData = (API_URL, data) => {
         dispatch({ type: OCR_DATA_REQUEST });
         const token = localStorage.getItem('token');
         axios
-            .post(API_URL + `document/ocrExtractData`,{
-                headers: {
-                    Authorization: `Bearer ${token}`, // Include the token in the headers
-                },
-                params: data // Include additional data as query parameters
-            })
+            .post(
+                API_URL + 'document/ocrExtractData',
+                data, // Pass the data directly as the body of the POST request
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}` // Include the token in the headers
+                    }
+                }
+            )
             .then((response) => {
                 dispatch({ type: OCR_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -86,7 +89,8 @@ export const extractData = (API_URL, data) => {
                 dispatch({ type: OCR_DATA_FAILURE, payload: error.message });
             });
     };
-}
+};
+
 
 //Save data 
 export const saveDocument = (API_URL, data) => {
@@ -94,12 +98,12 @@ export const saveDocument = (API_URL, data) => {
         dispatch({ type: SAVE_DATA_REQUEST });
         const token = localStorage.getItem('token');
         return axios
-            .post(API_URL + `policy/create`,{
+            .post(API_URL + `policy/create`,
+            data,{
                 headers: {
                     Authorization: `Bearer ${token}`, // Include the token in the headers
                 },
-                params: data // Include additional data as query parameters
-            })
+             })
             .then((response) => {
                 dispatch({ type: SAVE_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -116,7 +120,11 @@ export const updateDocument = (API_URL, data) => {
         dispatch({ type: UPDATEDOCUMENT_DATA_REQUEST });
         const token = localStorage.getItem('token');
         return axios
-            .post(API_URL + `policy/update`,data)
+            .post(API_URL + `policy/update`, data,{
+                headers: {
+                    Authorization: `Bearer ${token}`, // Include the token in the headers
+                },
+             })
             .then((response) => {
                 dispatch({ type: UPDATEDOCUMENT_DATA_SUCCESS, payload: response.data });
                 return response.data;

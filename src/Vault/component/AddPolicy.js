@@ -314,14 +314,14 @@ const AddPolicy = () => {
     const handleHealthInsurance = () => {
         const userId = localStorage.getItem('userId');
         const documentId = localStorage.getItem('documentId');
-        if (
-            userId &&
-            documentId &&
-            PolicyType &&
-            dob &&
-            policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
-            type && idv && netPremium && totalPremium && premiumPaid && registration && consumables && coPayment
-        ) {
+        // if (
+        //     userId &&
+        //     documentId &&
+        //     PolicyType &&
+        //     dob &&
+        //     policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
+        //     type && idv && netPremium && totalPremium && premiumPaid && registration && consumables && coPayment
+        // ) {
             const formData = new FormData();
 
             formData.append('userId', userId);
@@ -346,17 +346,17 @@ const AddPolicy = () => {
             formData.append('coPayment', coPayment);
             dispatch(saveDocument(API_URL, formData));
             navigate('/coverkraft/vault')
-        }
-        else {
-            toast.error("Please fill all required fields", {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        }
+        // }
+        // else {
+        //     toast.error("Please fill all required fields", {
+        //         position: "top-center",
+        //         autoClose: 5000,
+        //         hideProgressBar: false,
+        //         closeOnClick: true,
+        //         pauseOnHover: true,
+        //         draggable: true,
+        //     });
+        // }
     }
 
     //save api for life insurance
@@ -414,15 +414,15 @@ const AddPolicy = () => {
     const handleMotorInsurance = () => {
         const userId = localStorage.getItem('userId');
         const documentId = localStorage.getItem('documentId');
-        if (
-            userId &&
-            documentId &&
-            PolicyType &&
-            startDate &&
-            endDate && policyNumber && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
-            assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
-            vehicleType
-        ) {
+        // if (
+        //     userId &&
+        //     documentId &&
+        //     PolicyType &&
+        //     startDate &&
+        //     endDate && policyNumber && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
+        //     assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
+        //     vehicleType
+        // ) {
             const formData = new FormData();
 
             formData.append('userId', userId);
@@ -448,17 +448,17 @@ const AddPolicy = () => {
 
             dispatch(saveDocument(API_URL, formData))
             navigate('/coverkraft/vault')
-        } else {
+        // } else {
 
-            toast.error("Please fill all required fields", {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        }
+        //     toast.error("Please fill all required fields", {
+        //         position: "top-center",
+        //         autoClose: 5000,
+        //         hideProgressBar: false,
+        //         closeOnClick: true,
+        //         pauseOnHover: true,
+        //         draggable: true,
+        //     });
+        // }
 
         // if (mode === 'add') {
         //     dispatch(saveDocument(API_URL, formData));
