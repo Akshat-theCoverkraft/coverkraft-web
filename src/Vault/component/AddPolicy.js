@@ -86,8 +86,8 @@ const AddPolicy = () => {
     //useState
     const [policyNumber, setPolicyNumber] = useState(ocrTextObject.policyNumber);
     const [registrationNumber, setRegistrationNumber] = useState(ocrTextObject.registrationNumber);
-    const [startDate, setStartDate] = useState(dayjs(ocrTextObject.policyStartDate).format('MM/DD/YYYY'));
-    const [endDate, setEndDate] = useState(dayjs(ocrTextObject.policyEndDate).format('MM/DD/YYYY'));
+    const [startDate, setStartDate] = useState(dayjs(ocrTextObject.policyStartDate).format('YYYY-MM-DD'));
+    const [endDate, setEndDate] = useState(dayjs(ocrTextObject.policyEndDate).format('YYYY-MM-DD'));
     const [insuredName, setInsuredName] = useState(ocrTextObject.insuredName);
     const [netPremium, setNetPremium] = useState(ocrTextObject.netPremium);
     const [ncb, setNcb] = useState(ocrTextObject.ncpPercentage);
@@ -111,9 +111,9 @@ const AddPolicy = () => {
     const [maturityDate, setMaturityDate] = useState(ocrTextObject.maturityDate);
     const [sumInsured, setSumInsured] = useState(ocrTextObject.sumInsured);
     const [vehicleType, setVehicleType] = useState(ocrTextObject.vehicleType);
-    const [dob, setDob] = useState(dayjs(ocrTextObject.dob).format('MM/DD/YYYY'));
+    const [dob, setDob] = useState(dayjs(ocrTextObject.dob).format('YYYY-MM-DD'));
     const [premiumPaid, setPremiumPaid] = useState(ocrTextObject.premiumPaid);
-    const [renewalDate, setRenewalDate] = useState(dayjs(ocrTextObject.policyRenewalDate).format('MM/DD/YYYY'));
+    const [renewalDate, setRenewalDate] = useState(dayjs(ocrTextObject.policyRenewalDate).format('YYYY-MM-DD'));
     const [policyName, setPolicyName] = useState(ocrTextObject.policyName);
     const [others, setOthers] = useState(ocrTextObject.others);
     const [totalSumInsured, setTotalSumInsured] = useState(ocrTextObject.totalSumInsured);
@@ -158,13 +158,20 @@ const AddPolicy = () => {
     const handleInputChange = (e) => {
         let { name, value } = e.target;
 
-        if (typeof value === 'string') {
+        if (typeof value === 'string' || typeof value === 'number') {
             value = value.trim();
         }
-        
+
 
         if (name === 'dob' || name === 'startDate' || name === 'endDate') {
-            value = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
+            const formattedDate = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
+            if (moment(formattedDate, 'YYYY-MM-DD', true).isValid()) {
+                value = formattedDate;
+            } else {
+                console.error(`Invalid date format for ${name}: ${value}`);
+                // Handle the invalid date case (e.g., set to empty string or show an error)
+                value = ''; // Or handle it appropriately
+            }
         }
         // Update state for the specific input field
         switch (name) {
@@ -284,7 +291,7 @@ const AddPolicy = () => {
 
         // Check if the input field is filled
         // const isFilled = value.trim().length === 1;
-        const isFilled = typeof value === 'string' ? value.length === 1 : value !== '';
+        const isFilled = typeof value === 'string' || value === 'number' ? value.length === 1 : value !== '';
         // setPrevious(value.trim().length > 0);
         setPrevious(value.length > 0);
         setFilledFields((prevCount) => {
@@ -356,51 +363,51 @@ const AddPolicy = () => {
     const handleLifeInsurance = () => {
         const userId = localStorage.getItem('userId');
         const documentId = localStorage.getItem('documentId');
-        if (
-            userId &&
-            documentId &&
-            PolicyType &&
-            startDate &&
-            renewalDate && policyName && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
-            sumInsured && others && type && pa && netPremium && totalPremium && illness && disability &&
-            waiverPremium && hospitalCare && terminalIllness
-        ) {
-            const formData = new FormData();
+        // if (
+        //     userId &&
+        //     documentId &&
+        //     PolicyType &&
+        //     startDate &&
+        //     renewalDate && policyName && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
+        //     sumInsured && others && type && pa && netPremium && totalPremium && illness && disability &&
+        //     waiverPremium && hospitalCare && terminalIllness
+        // ) {
+        const formData = new FormData();
 
-            formData.append('userId', userId);
-            formData.append('documentId', documentId);
-            formData.append('policyType', PolicyType);
-            formData.append('policyName', policyName);
-            formData.append('policyStartDate', startDate);
-            formData.append('renewalDate', renewalDate);
-            formData.append('insuredName', insuredName);
-            formData.append('maturityDate', maturityDate);
-            formData.append('dayRenewal', dayRenewal);
-            formData.append('dob', dob);
-            formData.append('insuranceCompany', insuranceCompany);
-            formData.append('sumInsured', sumInsured);
-            formData.append('others', others);
-            formData.append('type', type);
-            formData.append('pa', pa);
-            formData.append('netPremium', netPremium);
-            formData.append('totalPremium', totalPremium);
-            formData.append('criticalIllness', illness);
-            formData.append('accidentalIllness', disability);
-            formData.append('waiverOfPremium', waiverPremium);
-            formData.append('hospitalCare', hospitalCare);
-            formData.append('terminalIllness', terminalIllness);
-            dispatch(saveDocument(API_URL, formData))
-            navigate('/coverkraft/vault')
-        } else {
-            toast.error("Please fill all required fields", {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        }
+        formData.append('userId', userId);
+        formData.append('documentId', documentId);
+        formData.append('policyType', PolicyType);
+        formData.append('policyName', policyName);
+        formData.append('policyStartDate', startDate);
+        formData.append('renewalDate', renewalDate);
+        formData.append('insuredName', insuredName);
+        formData.append('maturityDate', maturityDate);
+        formData.append('dayRenewal', dayRenewal);
+        formData.append('dob', dob);
+        formData.append('insuranceCompany', insuranceCompany);
+        formData.append('sumInsured', sumInsured);
+        formData.append('others', others);
+        formData.append('type', type);
+        formData.append('pa', pa);
+        formData.append('netPremium', netPremium);
+        formData.append('totalPremium', totalPremium);
+        formData.append('criticalIllness', illness);
+        formData.append('accidentalIllness', disability);
+        formData.append('waiverOfPremium', waiverPremium);
+        formData.append('hospitalCare', hospitalCare);
+        formData.append('terminalIllness', terminalIllness);
+        dispatch(saveDocument(API_URL, formData))
+        navigate('/coverkraft/vault')
+        // } else {
+        //     toast.error("Please fill all required fields", {
+        //         position: "top-center",
+        //         autoClose: 5000,
+        //         hideProgressBar: false,
+        //         closeOnClick: true,
+        //         pauseOnHover: true,
+        //         draggable: true,
+        //     });
+        // }
     }
 
     //save api for motor insurance
@@ -964,7 +971,7 @@ const AddPolicy = () => {
                                                 <option value="true">True</option>
                                                 <option value="false">False</option>
                                             </CustomInput> */}
-                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                            <label className="form-label fw-bold" htmlFor="inputField">
                                                 Registration <span className='text-danger'>*</span>
                                             </label>
                                             <Box sx={{ minWidth: 120, mb: 2 }}>
@@ -1329,7 +1336,7 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             /> */}
-                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                            <label className="form-label fw-bold" htmlFor="inputField">
                                                 Critical Illness <span className='text-danger'>*</span>
                                             </label>
                                             <Box sx={{ minWidth: 120, mb: 2 }}>
@@ -1393,7 +1400,7 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             /> */}
-                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                            <label className="form-label fw-bold" htmlFor="inputField">
                                                 Waiver of premium <span className='text-danger'>*</span>
                                             </label>
                                             <Box sx={{ minWidth: 120, mb: 2 }}>
@@ -1425,7 +1432,7 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             /> */}
-                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                            <label className="form-label fw-bold" htmlFor="inputField">
                                                 Hospital Care <span className='text-danger'>*</span>
                                             </label>
                                             <Box sx={{ minWidth: 120, mb: 2 }}>
@@ -1457,7 +1464,7 @@ const AddPolicy = () => {
                                                 }}
                                                 required
                                             /> */}
-                                             <label className="form-label fw-bold" htmlFor="inputField">
+                                            <label className="form-label fw-bold" htmlFor="inputField">
                                                 Terminal Illness <span className='text-danger'>*</span>
                                             </label>
                                             <Box sx={{ minWidth: 120, mb: 2 }}>

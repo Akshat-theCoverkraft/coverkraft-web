@@ -32,15 +32,7 @@ export const GETPOLICYTYPE_DATA_REQUEST = "GETPOLICYTYPE_DATA_REQUEST"
 export const GETPOLICYTYPE_DATA_SUCCESS = "GETPOLICYTYPE_DATA_SUCCESS"
 export const GETPOLICYTYPE_DATA_FAILURE = "GETPOLICYTYPE_DATA_FAILURE"
 
-//getall policylist 
-export const GETPOLICYLIST_DATA_REQUEST = "GETPOLICYLIST_DATA_REQUEST"
-export const GETPOLICYLIST_DATA_SUCCESS = "GETPOLICYLIST_DATA_SUCCESS"
-export const GETPOLICYLIST_DATA_FAILURE = "GETPOLICYLIST_DATA_FAILURE"
 
-//getbyid policylist 
-export const GETPOLICYDETAIL_DATA_REQUEST = "GETPOLICYDETAIL_DATA_REQUEST"
-export const GETPOLICYDETAIL_DATA_SUCCESS = "GETPOLICYDETAIL_DATA_SUCCESS"
-export const GETPOLICYDETAIL_DATA_FAILURE = "GETPOLICYDETAIL_DATA_FAILURE"
 
 // register start
 export const registrationCustomer = (API_URL, data) => {
@@ -78,8 +70,14 @@ export const verifyUser = (API_URL, data) => {
 export const extractData = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: OCR_DATA_REQUEST });
+        const token = localStorage.getItem('token');
         axios
-            .post(API_URL + `document/ocrExtractData`,data)
+            .post(API_URL + `document/ocrExtractData`,{
+                headers: {
+                    Authorization: `Bearer ${token}`, // Include the token in the headers
+                },
+                params: data // Include additional data as query parameters
+            })
             .then((response) => {
                 dispatch({ type: OCR_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -94,8 +92,14 @@ export const extractData = (API_URL, data) => {
 export const saveDocument = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: SAVE_DATA_REQUEST });
+        const token = localStorage.getItem('token');
         return axios
-            .post(API_URL + `policy/create`,data)
+            .post(API_URL + `policy/create`,{
+                headers: {
+                    Authorization: `Bearer ${token}`, // Include the token in the headers
+                },
+                params: data // Include additional data as query parameters
+            })
             .then((response) => {
                 dispatch({ type: SAVE_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -110,6 +114,7 @@ export const saveDocument = (API_URL, data) => {
 export const updateDocument = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: UPDATEDOCUMENT_DATA_REQUEST });
+        const token = localStorage.getItem('token');
         return axios
             .post(API_URL + `policy/update`,data)
             .then((response) => {
@@ -138,37 +143,9 @@ export const getAllPolicyType = (API_URL, data) => {
     };
 }
 
-// get all policylist data 
-export const getAllPolicyList = (API_URL, data) => {
-    return (dispatch) => {
-        dispatch({ type: GETPOLICYLIST_DATA_REQUEST });
-        axios
-            .get(API_URL + `policy/getAll`,data)
-            .then((response) => {
-                dispatch({ type: GETPOLICYLIST_DATA_SUCCESS, payload: response.data });
-                return response.data;
-            })
-            .catch((error) => {
-                dispatch({ type: GETPOLICYLIST_DATA_FAILURE, payload: error.message });
-            });
-    };
-}
 
-// get all policylist data by id 
-export const getAllPolicyDetailById = (API_URL, data) => {
-    return (dispatch) => {
-        dispatch({ type: GETPOLICYDETAIL_DATA_REQUEST });
-        axios
-            .get(API_URL + `policy/fetchFullData`,data)
-            .then((response) => {
-                dispatch({ type: GETPOLICYDETAIL_DATA_SUCCESS, payload: response.data });
-                return response.data;
-            })
-            .catch((error) => {
-                dispatch({ type: GETPOLICYDETAIL_DATA_FAILURE, payload: error.message });
-            });
-    };
-}
+
+
 
 
 

@@ -122,6 +122,7 @@ const Vault = () => {
 
     //function to handle ocr data extraction API start
     const handleConfirm = async () => {
+        const token = localStorage.getItem('token');
         const formData = new FormData();
         if (files) {
             for (let i = 0; i < files.length; i++) {
@@ -137,7 +138,8 @@ const Vault = () => {
         try {
             const response = await axios.post(API_URL + 'document/ocrExtractData', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
                 }
             });
             setLoading(false);

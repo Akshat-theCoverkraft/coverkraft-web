@@ -68,12 +68,14 @@ const Register = () => {
 
     //function for register and integrate API start
     const handleRegister = () => {
+        const roleID = 3;
         if (
             fullName &&
             DOB &&
             mobileNumber &&
             email &&
-            address
+            address &&
+            roleID
         ) {
             if (!isOldEnough(DOB)) {
                 toast.error('You must be at least 18 years old to register.', {
@@ -88,12 +90,15 @@ const Register = () => {
             }
     
             const formData = new FormData();
+           
             formData.append('userName', fullName);
             formData.append('userDob', DOB);
             formData.append('userPhone', mobileNumber);
             formData.append('userEmail', email);
             formData.append('userAddress', address);
             formData.append('userFcmId', fcmToken);
+            formData.append('roleID',roleID)
+
     
             dispatch(registrationCustomer(API_URL, formData));
             toast.success('User registered successfully');

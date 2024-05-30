@@ -34,7 +34,12 @@ const PolicyDetail = ({ policyId }) => {
     useEffect(() => {
         const fetchPolicyDetails = async () => {
             try {
-                const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`);
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`,{
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Include token in the headers
+                    }
+                });
                 setPolicyDetails(response.data);
 
 

@@ -30,10 +30,10 @@ const Login = () => {
     // const app = firebase.initializeApp(firebaseConfig)
     // const appInstance = firebase.initializeApp(appFire);
     const auth1 = auth.getAuth(appFire);
-    const dispatch=useDispatch();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [item, setitem] = useState("");
-    const User = useSelector ((state) => state.user)
+    const User = useSelector((state) => state.user)
     console.log("User", User)
     //useeffect
     useEffect(() => {
@@ -83,19 +83,20 @@ const Login = () => {
         setOtp(newValue)
     }
     //function for handle otp input field end
-    
+
     //function to handle login and integrate verify number API and recaptcha start
     const handleLogin = async () => {
         try {
             const userPhone = phoneNumber;
-        
+
             const response = await axios.get(`${API_URL}user/verifyPhone?userPhone=${userPhone}`);
-        console.log(response, "response");
+            console.log(response, "response");
             if (response.status === 200) {
                 const userId = response.data.user._id;
-            console.log("userId", userId)
+                const token = response.data.user.token;
                 // Store the user ID in local storage
                 localStorage.setItem('userId', userId);
+                localStorage.setItem('token',token);
                 const appVerifier = new auth.RecaptchaVerifier(auth1, 'recaptcha-container');
                 await appVerifier.render();
                 await appVerifier.verify();
@@ -112,9 +113,9 @@ const Login = () => {
             toast.error('An error occurred. Please try again later.');
         }
     }
-     //function to handle login and integrate verify number API and recaptcha end
-    
-   
+    //function to handle login and integrate verify number API and recaptcha end
+
+
     //function to verify otp and login start
     const handleVerify = () => {
         const storedValue = localStorage.getItem('verificationId');
@@ -127,13 +128,13 @@ const Login = () => {
         auth.signInWithCredential(auth1, credential)
             .then(() => {
                 const formData = new FormData();
-                formData.append('userPhone', phoneNumber );
+                formData.append('userPhone', phoneNumber);
                 const fcmToken = getStoredToken();
-                
+
                 if (fcmToken) {
                     formData.append('userFcmId', fcmToken);
                 }
-                dispatch(verifyUser(API_URL, formData ))
+                dispatch(verifyUser(API_URL, formData))
                 localStorage.setItem('loggedIn', 'true');
                 toast.success('Phone number authentication done');
                 navigate('/coverkraft');
@@ -154,8 +155,8 @@ const Login = () => {
 
     return (
         <div className='overflow-hidden'>
-            <Navbar/>
-            <section class=" "style={{margin:'60px 0px'}}>
+            <Navbar />
+            <section class=" " style={{ margin: '60px 0px' }}>
                 <div class="container-fluid h-custom">
                     <div class="row d-flex justify-content-center align-items-center h-100">
 
@@ -181,8 +182,8 @@ const Login = () => {
                                                 onChange={handlephonechange}
                                                 onKeyDown={handleKeyPress}
                                                 placeholder="Enter your number"
-                                                className={!valid && phoneNumber.length > 0 ? 'is-invalid' : ''}  
-                                                required         
+                                                className={!valid && phoneNumber.length > 0 ? 'is-invalid' : ''}
+                                                required
                                             />
                                             {!valid && phoneNumber.length > 0 && (
                                                 <div className="invalid-feedback">
@@ -200,7 +201,7 @@ const Login = () => {
                                                 onClick={handleLogin}
                                                 disabled={!valid || loggedIn}
                                                 className='mt-2'
-                                            /> 
+                                            />
                                             <p class="medium fw-bold mt-2 pt-1 mb-0 text-center">Don't have an account? <Link to='/coverkraft/register'
                                                 class="custom-color" >Register</Link></p>
                                         </div>
@@ -224,20 +225,20 @@ const Login = () => {
                                                         width: '100%',
                                                         height: '100%',
                                                         margin: '17px',
-                                                        padding:'17px'
+                                                        padding: '17px'
                                                     }}
                                                 />
                                             )}
                                         />
-                                        
+
 
                                         <div class="text-center text-lg-start mt-4 pt-2">
-                                        <Button
+                                            <Button
                                                 text='Verify'
                                                 size="lg"
                                                 block={true}
-                                                onClick={handleVerify}  
-                                            /> 
+                                                onClick={handleVerify}
+                                            />
                                         </div>
                                     </div>
                                 )}
@@ -247,7 +248,7 @@ const Login = () => {
                 </div>
 
             </section>
-            <Footer/>
+            <Footer />
 
         </div>
     )

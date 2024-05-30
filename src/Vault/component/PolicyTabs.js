@@ -32,6 +32,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
     useEffect(() => {
         const fetchPolicyList = async () => {
             try {
+                const token = localStorage.getItem('token');
                 const userId = localStorage.getItem('userId');
                 let status = 'active';
                 if (value === 1) {
@@ -39,8 +40,13 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
                 }
 
                 const response = await axios.get(`${API_URL}policy/getById`, {
-                    params: {  userId: userId,
-                        policyType: status }
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    },
+                    params: {
+                        userId: userId,
+                        policyType: status
+                    }
                 });
 
                 setPolicyList(response.data)
