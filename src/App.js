@@ -14,6 +14,9 @@ import AddPolicy from "./Vault/component/AddPolicy";
 import { messaging, getToken } from '../src/ServiceModule/FirebaseConfig';
 import { requestForToken } from "./helper";
 import EditPolicy from "./Vault/component/EditPolicy";
+import MotorPolicyForm from "./Vault/policyForms/MotorPolicyForm";
+import HealthPolicyForm from "./Vault/policyForms/HealthPolicyForm";
+import LifePolicyForm from "./Vault/policyForms/LifePolicyForm";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false)
@@ -81,6 +84,9 @@ useEffect(() => {
        <Route path='/coverkraft/register' element={<Register/>}/>
        <Route path='/coverkraft/login' element={<Login/>}/>
        <Route path='/coverkraft/vault' element={<Vault/>}/>
+       <Route path="/coverkraft/motor-policy" element={<MotorPolicyForm/>}/>
+       <Route path="/coverkraft/health-policy" element={<HealthPolicyForm/>}/>
+       <Route path="/coverkraft/life-policy" element={<LifePolicyForm/>}/>
        <Route path='/coverkraft/add-policy' element={<AddPolicy/>}/>
        <Route path='/coverkraft/edit-policy' element={<EditPolicy/>}/>
     </Routes>

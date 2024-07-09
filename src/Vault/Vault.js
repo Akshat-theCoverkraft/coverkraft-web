@@ -143,14 +143,25 @@ const Vault = () => {
                 }
             });
             setLoading(false);
-            
+
             if (response.status === 200) {
                 // Set response data in state
                 setResponseData(response.data);
                 const documentId = response.data.documentId;
                 localStorage.setItem('documentId', documentId);
-               
-                navigate('/coverkraft/add-policy', { state: { responseData: response.data, mode: 'add' } });
+                const ocrTextObject = JSON.parse(responseData.ocrText);
+                const PolicyType = ocrTextObject.policyType.toLowerCase();
+                if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
+                    navigate('/coverkraft/motor-policy', { state: { responseData: ocrTextObject } })
+                }
+                else if (PolicyType === 'health' || PolicyType === 'other_health') {
+                    console.log('heyy',ocrTextObject)
+                    navigate('/coverkraft/health-policy', { state: { responseData: ocrTextObject } })
+                }
+                else if (PolicyType === 'life' || PolicyType === 'accident') {
+                    navigate('/coverkraft/life-policy', { state: { responseData: ocrTextObject } })
+                }
+                // navigate('/coverkraft/add-policy', { state: { responseData: response.data, mode: 'add' } });
 
             } else {
                 toast.error('File is not extracted due to some issue!')
@@ -185,7 +196,7 @@ const Vault = () => {
                                 separator={<span className={classes.separator}>.</span>}
                                 aria-label="breadcrumb"
                             >
-                                <Link key="1"  className='text-decoration-none font-size text-secondary' onClick={handleClick} style={{ fontSize: '21px' }}>
+                                <Link key="1" className='text-decoration-none font-size text-secondary' onClick={handleClick} style={{ fontSize: '21px' }}>
                                     Vault
                                 </Link>
                                 <Typography className='text-dark cursor-pointer font-size' style={{ fontSize: '21px' }}>My Policies</Typography>
@@ -204,14 +215,14 @@ const Vault = () => {
                                         text='Export to Excel'
                                         size="md"
                                         className='ml-4 '
-                                        
+
                                         onClick={() => { /* Your export to Excel logic */ }}
                                     />
                                     <Button
                                         text='Export to PDF'
                                         size="md"
                                         className='ml-4 '
-                                       
+
                                         onClick={() => { /* Your export to PDF logic */ }}
                                     />
                                 </>
@@ -220,7 +231,7 @@ const Vault = () => {
                     </Stack>
                     <Grid container spacing={-4} >
                         <Grid item xs={12} md={7} lg={7} xl={7} >
-                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy}/>
+                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy} />
                         </Grid>
                         <Grid item xs={12} md={5} lg={5} xl={5}>
                             <PolicyDetail policyId={selectedPolicyId} />
