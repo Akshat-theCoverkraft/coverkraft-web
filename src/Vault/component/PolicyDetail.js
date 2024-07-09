@@ -24,6 +24,8 @@ import axios from 'axios'
 import emptyImage from '../../Images/ic-empty.png'
 import car from '../../Images/Car.png';
 import IMAGE_PATH from '../../ServiceModule/imagePath';
+import moment from 'moment';
+import { formatDate } from '../../utils/dateUtils';
 const PolicyDetail = ({ policyId }) => {
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
@@ -40,11 +42,16 @@ const PolicyDetail = ({ policyId }) => {
                         Authorization: `Bearer ${token}`, // Include token in the headers
                     }
                 });
-                setPolicyDetails(response.data);
-
+                if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                    setPolicyDetails(response.data.data);
+                } else {
+                    console.error('Expected an array but got:', response.data);
+                    setPolicyDetails([]);
+                }
 
             } catch (error) {
-                console.error(error)
+                console.error('Error fetching policy list:', error);
+                setPolicyDetails([]);
             }
         };
 
@@ -98,7 +105,20 @@ const PolicyDetail = ({ policyId }) => {
 
     //function for edit button
     const handleEdit = () => {
-        navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
+       
+        console.log('eheyyyyy',policyDetails[0].policyType)
+        const responseData = policyDetails[0];
+        const PolicyType= policyDetails[0].policyType;
+        if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
+            navigate('/coverkraft/motor-policy', { state: { responseData: responseData,mode:'edit' } })
+        }
+        else if (PolicyType === 'health' || PolicyType === 'other_health') {
+            navigate('/coverkraft/health-policy', { state: { responseData: responseData,mode:'edit' } })
+        }
+        else if (PolicyType === 'life' || PolicyType === 'accident') {
+            navigate('/coverkraft/life-policy', { state: { responseData: responseData,mode:'edit' } })
+        }
+        // navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
     }
 
 
@@ -218,7 +238,7 @@ const PolicyDetail = ({ policyId }) => {
                                             </div>
                                             <div>
                                                 <h5 style={{ color: '#585858' }}>Policy Start Date</h5>
-                                                <h5 className='fw-bolder'>{policy.policyStartDate}</h5>
+                                                <h5 className='fw-bolder'>{formatDate(policy.policyStartDate)}</h5>
                                             </div>
                                         </Grid>
                                         <Grid item xs={6} md={6} className='d-flex' style={{ padding: '30px 40px' }}>
@@ -227,7 +247,7 @@ const PolicyDetail = ({ policyId }) => {
                                             </div>
                                             <div>
                                                 <h5 style={{ color: '#585858' }}>Policy End Date</h5>
-                                                <h5 className='fw-bolder'>{policy.policyEndDate}</h5>
+                                                <h5 className='fw-bolder'>{formatDate(policy.policyEndDate)}</h5>
                                             </div>
                                         </Grid>
                                     </Grid>

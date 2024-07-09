@@ -46,6 +46,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         }
 
     }, [states])
+    
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         dispatch(getBYIDUsers(API_URL, userId));
@@ -213,12 +214,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
                             </div>
                             <div className="col-6">
-                                {states.getAllState && (
+                                {states.getAllState && states.getAllState.data && (
                                     <GlobalDropdown
                                         label="State"
                                         value={state}
                                         onChange={(e) => setstate(e.target.value)}
                                         options={states.getAllState.data.map(state => ({ value: state._id, label: state.stateNameEnglish }))}
+
                                     />
                                 )}
                             </div>
