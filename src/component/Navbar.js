@@ -23,6 +23,8 @@ import Grid from '@mui/material/Grid';
 import { IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import ProfileDrawer from "../component/profile";
+
 import './footer.css';
 
 
@@ -154,6 +156,16 @@ function Navbar(props) {
         setShowMenu(false);
     };
 
+    
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const handleDrawerClose = () => {
+        setDrawerOpen(false);
+    };
+    const handleDrawerOpen = () => {
+        handleCloseMenu();
+        setDrawerOpen(true);
+    };
+
     return (
         <>
             <div
@@ -262,7 +274,7 @@ function Navbar(props) {
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                                         transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                                     >
-                                        <MenuItem>
+                                        <MenuItem  onClick={handleDrawerOpen}>
                                             <AccountCircleOutlinedIcon />{' '}
                                             <span
                                                 style={{
@@ -275,6 +287,7 @@ function Navbar(props) {
                                                 {' '}
                                                 My Profile
                                             </span>
+
                                         </MenuItem>
                                         <MenuItem onClick={handleClickOpen}>
                                             <TranslateOutlinedIcon />{' '}
@@ -415,7 +428,6 @@ function Navbar(props) {
 
                 </DialogActions>
             </Dialog>
-
             {/* dialog box for notification icon */}
             <Popover
                 id={id}
@@ -478,6 +490,8 @@ function Navbar(props) {
                     </Card>
                 </div>
             </Popover>
+            <ProfileDrawer open={drawerOpen} onClose={handleDrawerClose}  />
+
         </>
     )
 }

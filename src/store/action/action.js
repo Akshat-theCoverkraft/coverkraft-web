@@ -32,8 +32,20 @@ export const GETPOLICYTYPE_DATA_REQUEST = "GETPOLICYTYPE_DATA_REQUEST"
 export const GETPOLICYTYPE_DATA_SUCCESS = "GETPOLICYTYPE_DATA_SUCCESS"
 export const GETPOLICYTYPE_DATA_FAILURE = "GETPOLICYTYPE_DATA_FAILURE"
 
+//getbyId Users 
+export const GETBYID_USERS_DATA_REQUEST = "GETBYID_USERS_DATA_REQUEST"
+export const GETBYID_USERS_DATA_SUCCESS = "GETBYID_USERS_DATA_SUCCESS"
+export const GETBYID_USERS_DATA_FAILURE = "GETBYID_USERS_DATA_FAILURE"
 
+//update user 
+export const UPDATEUSER_DATA_REQUEST = "UPDATEUSER_DATA_REQUEST"
+export const UPDATEUSER_DATA_SUCCESS = "UPDATEUSER_DATA_SUCCESS"
+export const UPDATEUSER_DATA_FAILURE = "UPDATEUSER_DATA_FAILURE"
 
+//state 
+export const STATE_DATA_REQUEST = "STATE_DATA_REQUEST"
+export const STATE_DATA_SUCCESS = "STATE_DATA_SUCCESS"
+export const STATE_DATA_FAILURE = "STATE_DATA_FAILURE"
 // register start
 export const registrationCustomer = (API_URL, data) => {
     return (dispatch) => {
@@ -151,9 +163,55 @@ export const getAllPolicyType = (API_URL, data) => {
     };
 }
 
+//get by Id user data
+export const getBYIDUsers = (API_URL, userId) => {
+    return (dispatch) => {
+        dispatch({ type: GETBYID_USERS_DATA_REQUEST });
+        axios
+            .get(API_URL + `user/getUserById`, {
+                params: { _id: userId }
+            })
+            .then((response) => {
+                dispatch({ type: GETBYID_USERS_DATA_SUCCESS, payload: response.data });
+                return response.data;
+            })
+            .catch((error) => {
+                dispatch({ type: GETBYID_USERS_DATA_FAILURE, payload: error.message });
+            });
+    };
+}
 
 
+//update user 
+export const updateUser = (API_URL, data) => {
+    return (dispatch) => {
+        dispatch({ type: UPDATEUSER_DATA_REQUEST });
+        const token = localStorage.getItem('token');
+        return axios
+            .post(API_URL + `USER/updateUser`, data)
+            .then((response) => {
+                dispatch({ type: UPDATEUSER_DATA_SUCCESS, payload: response.data });
+                const userId = data.get('_id');
+                return dispatch(getBYIDUsers(API_URL, userId));           })
+            .catch((error) => {
+                dispatch({ type: UPDATEUSER_DATA_FAILURE, payload: error.message });
+            });
+    };
+}
 
 
-
-
+// get all state data 
+export const getAllState = (API_URL, data) => {
+    return (dispatch) => {
+        dispatch({ type: STATE_DATA_REQUEST });
+        axios
+            .get(API_URL + `state/getAll`,data)
+            .then((response) => {
+                dispatch({ type: STATE_DATA_SUCCESS, payload: response.data });
+                return response.data;
+            })
+            .catch((error) => {
+                dispatch({ type: STATE_DATA_FAILURE, payload: error.message });
+            });
+    };
+}

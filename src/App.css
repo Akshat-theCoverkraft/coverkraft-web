@@ -50,3 +50,100 @@
   z-index: 1000; 
 
 }
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.background-image-container {
+  width: 100%;
+  height: 37vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+}
+
+.profile-details {
+  text-align: center;
+}
+
+.profile-image {
+  width: 100px; /* Adjust size as needed */
+  height: 100px; /* Adjust size as needed */
+  border-radius: 50%;
+}
+
+.spacer {
+  height: 1vh;
+}
+
+.spacer-small {
+  height: 0.5vh;
+}
+
+.text-header {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.register-text {
+  font-size: 16px;
+  color: gray;
+}
+
+.border-button {
+  border: 1px solid #000;
+  background-color: transparent;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.profile-list-card {
+  position: absolute;
+  top: 32vh;
+  left: 3%;
+  right: 3%;
+  background-color: white;
+  padding: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.profile-item {
+  margin: 10px 0;
+}
+
+.profile-image-container {
+  position: relative;
+  width: 150px; /* Adjust size as needed */
+  height: 150px; /* Adjust size as needed */
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  cursor: pointer;
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+}
+
+.spacer {
+  height: 10px;
+}
+.card-img-top {
+  width: 50%;
+  height: 200px;
+}

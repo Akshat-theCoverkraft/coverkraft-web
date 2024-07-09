@@ -14,6 +14,7 @@ import AddPolicy from "./Vault/component/AddPolicy";
 import { messaging, getToken } from '../src/ServiceModule/FirebaseConfig';
 import { requestForToken } from "./helper";
 import EditPolicy from "./Vault/component/EditPolicy";
+import ProfileDrawer from "./component/profile";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false)
@@ -83,6 +84,7 @@ useEffect(() => {
        <Route path='/coverkraft/vault' element={<Vault/>}/>
        <Route path='/coverkraft/add-policy' element={<AddPolicy/>}/>
        <Route path='/coverkraft/edit-policy' element={<EditPolicy/>}/>
+       <Route path='/coverkraft/profile' element={<ProfileDrawer/>}/>
     </Routes>
     </>
   );
