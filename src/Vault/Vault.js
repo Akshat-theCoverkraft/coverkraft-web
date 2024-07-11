@@ -32,6 +32,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from 'react-bootstrap';
 import axios from 'axios'
+import IMAGE_PATH from '../ServiceModule/imagePath';
 
 //styling for breadcrumbs
 const useStyles = makeStyles((theme) => ({
@@ -70,7 +71,7 @@ const Vault = () => {
     const navigate = useNavigate();
     const [selectedPolicyId, setSelectedPolicyId] = React.useState('');
     const [shareAllPolicy, setShareAllPolicy] = useState(false);
-
+    const [selectedPolicies, setSelectedPolicies] = useState([]);
     //function for share icon
     const handleShareIconClick = () => {
         setShareAllPolicy(prevState => !prevState);
@@ -155,7 +156,7 @@ const Vault = () => {
                     navigate('/coverkraft/motor-policy', { state: { responseData: ocrTextObject } })
                 }
                 else if (PolicyType === 'health' || PolicyType === 'other_health') {
-                    console.log('heyy',ocrTextObject)
+                    console.log('heyy', ocrTextObject)
                     navigate('/coverkraft/health-policy', { state: { responseData: ocrTextObject } })
                 }
                 else if (PolicyType === 'life' || PolicyType === 'accident') {
@@ -182,6 +183,45 @@ const Vault = () => {
         console.info('You clicked a breadcrumb.');
     }
     // function to handle breadcrumbs end
+
+    const handleShareClick = async () => {
+        console.log('policyids---------', selectedPolicies)
+        try {
+            const token = localStorage.getItem('token');
+            const queryParams = selectedPolicies.map(id => `_id=${id}`).join('&');
+
+
+
+            const response = await axios.get(`${API_URL}policy/excelTable?${queryParams}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+
+
+            });
+            const filePath = response.data.filePath;
+            console.log('file path:', IMAGE_PATH + filePath);
+
+           
+            const link = document.createElement('a');
+            link.href = IMAGE_PATH + filePath;
+            link.setAttribute('download', 'policies.xlsx'); 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error fetching policy list:', error);
+        }
+    }
+
+
+    const handleCheckboxChange = (policyId) => {
+        setSelectedPolicies(prevSelected =>
+            prevSelected.includes(policyId)
+                ? prevSelected.filter(id => id !== policyId)
+                : [...prevSelected, policyId]
+        );
+    };
 
     return (
         <>
@@ -216,7 +256,7 @@ const Vault = () => {
                                         size="md"
                                         className='ml-4 '
 
-                                        onClick={() => { /* Your export to Excel logic */ }}
+                                        onClick={handleShareClick}
                                     />
                                     <Button
                                         text='Export to PDF'
@@ -231,7 +271,7 @@ const Vault = () => {
                     </Stack>
                     <Grid container spacing={-4} >
                         <Grid item xs={12} md={7} lg={7} xl={7} >
-                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy} />
+                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy} selectedPolicies={selectedPolicies} handleCheckboxChange={handleCheckboxChange} />
                         </Grid>
                         <Grid item xs={12} md={5} lg={5} xl={5}>
                             <PolicyDetail policyId={selectedPolicyId} />

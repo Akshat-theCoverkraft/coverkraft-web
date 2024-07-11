@@ -8,10 +8,11 @@ import CardContent from '@mui/material/CardContent';
 import { Checkbox } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import scooty from '../../Images/Scooty.png';
+import HealthInsurance from '../../Images/Health Insurance.png'
 import car from '../../Images/Car.png';
-import family from '../../Images/Family.png'
 import arrow from '../../Images/right-arrow.png'
 import red from '../../Images/red-bg.png'
+import family from '../../Images/Family.png'
 import './policy.css'
 import { useDispatch, useSelector } from 'react-redux'
 import API_URL from '../../ServiceModule/Service';
@@ -22,7 +23,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import axios from 'axios'
 
-export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
+export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPolicies,handleCheckboxChange }) {
     const [value, setValue] = React.useState(0);
     const [page, setPage] = React.useState(1);
     const [cardsPerPage] = React.useState(5);
@@ -155,17 +156,19 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy }) {
                                             <Grid container spacing={0} alignItems="center">
                                                 {shareAllPolicy && (
                                                     <Grid item xs={1}>
-                                                        <Checkbox />
+                                                        <Checkbox 
+                                                        checked={selectedPolicies.includes(policy._id)}
+                                                        onChange={() => handleCheckboxChange(policy._id)}/>
                                                     </Grid>
                                                 )}
                                                 <Grid item xs={shareAllPolicy ? 2 : 3}>
                                                     <img src={policy.policyType === 'car_policy' ? car : 
                                                      policy.policyType === 'bike_policy' ? scooty :
                                                      policy.policyType === 'other_vehicle' ? scooty :
-                                                     policy.policyType === 'life' ? 'Life Insurance' :
-                                                     policy.policyType === 'accident' ? 'Accident Insurance' :
-                                                     policy.policyType === 'health' ? 'Health Insurance' :
-                                                     policy.policyType === 'other_health' ? 'Other Health Insurance' : ''
+                                                     policy.policyType === 'life' ? family :
+                                                     policy.policyType === 'accident' ? family :
+                                                     policy.policyType === 'health' ? HealthInsurance :
+                                                     policy.policyType === 'other_health' ? HealthInsurance : ''
                                                 
                                                 } alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
                                                 </Grid>
