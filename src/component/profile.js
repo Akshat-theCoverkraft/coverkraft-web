@@ -18,8 +18,17 @@ import communication from '../Images/ic_communication_pref.png'
 import help from '../Images/ic_help.png'
 import logout from '../Images/ic_logout.png'
 import rightArrow from '../Images/right-arrow.png'
+import Family from '../profile/Family';
+import Communication from '../profile/Communication';
+import Help from '../profile/Help';
+import About from '../profile/About';
+import { useNavigate } from 'react-router-dom';
 const ProfileDrawer = ({ open, onClose, userName }) => {
     const dispatch = useDispatch();
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [communicationDrawerOpen,setCommunicationDrawerOpen]=useState(false);
+    const [aboutDrawerOpen,setAboutDrawerOpen]=useState(false);
+    const [helpDrawerOpen,setHelpDrawerOpen]=useState(false)
     const userEmail = localStorage.getItem('userEmail');
     const [profileImage, setProfileImage] = useState(icDefaultProfile);
     console.log("profileImage", profileImage)
@@ -38,7 +47,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const userbyId = useSelector((state) => state.user);
     const states = useSelector((state) => state.user);
     const [update, setUpdate] = useState(false);
-
+    const navigate=useNavigate();
     //useeffect
     useEffect(() => {
         dispatch(getAllState(API_URL));
@@ -131,9 +140,47 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const toggleImageInput = () => {
         setShowImageInput(!showImageInput);
     };
+
     const handleEdit = () => {
         setUpdate(!update);
     }
+
+    const handleFamilyClose = () => {
+        setDrawerOpen(false);
+
+    }
+    const handleCommunicationclose = () => {
+        setCommunicationDrawerOpen(false);
+
+    }
+    const handleHelpclose = () => {
+        setHelpDrawerOpen(false);
+
+    }
+    const handleAboutClose = () => {
+        setAboutDrawerOpen(false);
+
+    }
+    const handleFamilyOpen = () => {
+        setDrawerOpen(true);
+    };
+    const handleCommunicationOpen = () => {
+        setCommunicationDrawerOpen(true);
+    };
+    const handleAboutOpen = () => {
+        setAboutDrawerOpen(true);
+    };
+    const handleHelpOpen = () => {
+        setHelpDrawerOpen(true);
+    };
+    const handleLogout = () => {
+        localStorage.removeItem('loggedIn');
+        localStorage.removeItem('verificationId');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('policyId')
+        navigate('/coverkraft');
+    };
+
 
 
     return (
@@ -184,31 +231,31 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
                     </div>
 
-                 
+
                 </div>
                 {!update ? (
                     <Card className='main-container m-4 p-4'>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleFamilyOpen}>
                             <Grid item xs={1}><img src={family} /></Grid>
                             <Grid item xs={10}>Family member</Grid>
                             <Grid item xs={1}><img src={rightArrow} /></Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleCommunicationOpen}>
                             <Grid item xs={1}><img src={communication} /></Grid>
                             <Grid item xs={10}>Communication preferances </Grid>
                             <Grid item xs={1}><img src={rightArrow} /></Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleHelpOpen}>
                             <Grid item xs={1}><img src={help} /></Grid>
                             <Grid item xs={10}>Help</Grid>
                             <Grid item xs={1}><img src={rightArrow} /></Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleAboutOpen}>
                             <Grid item xs={1}><img src={about} /></Grid>
                             <Grid item xs={10}>About</Grid>
                             <Grid item xs={1}><img src={rightArrow} /></Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleLogout}>
                             <Grid item xs={1}><img src={logout} /></Grid>
                             <Grid item xs={10}>Logout</Grid>
                             <Grid item xs={1}><img src={rightArrow} /></Grid>
@@ -302,6 +349,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                     </div>
                 )}
             </Box>
+            <Family family={drawerOpen} onfamilyclose={handleFamilyClose} />
+            <Communication communication={communicationDrawerOpen} onCommunicationClose={handleCommunicationclose} />
+            <Help help={helpDrawerOpen} onHelpClose={handleHelpclose} />
+            <About about={aboutDrawerOpen} onAboutclose={handleAboutClose} />
         </Drawer>
     );
 };
