@@ -33,7 +33,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from 'react-bootstrap';
 import axios from 'axios'
 import IMAGE_PATH from '../ServiceModule/imagePath';
-
+import { FacebookShareButton, TwitterShareButton, WhatsappShareButton, EmailShareButton, RedditShareButton } from 'react-share';
+import twitter from '../Images/twiter.png';
+import facebook from '../Images/fb.png';
+import whatsapp from '../Images/wtsp.png';
+import email from '../Images/gmial.png';
+import reddit from '../Images/reddit.png'
 //styling for breadcrumbs
 const useStyles = makeStyles((theme) => ({
     separator: {
@@ -72,15 +77,23 @@ const Vault = () => {
     const [selectedPolicyId, setSelectedPolicyId] = React.useState('');
     const [shareAllPolicy, setShareAllPolicy] = useState(false);
     const [selectedPolicies, setSelectedPolicies] = useState([]);
+    const [showShareDialog, setShowShareDialog] = useState(false);
+    const [pdfUrl,setPdfUrl]=useState(null)
     //function for share icon
     const handleShareIconClick = () => {
         setShareAllPolicy(prevState => !prevState);
+        setShowShareDialog(false);
     };
 
     //function for checkbox selected for sharing card
     const handleCardClick = (policyId) => {
         setSelectedPolicyId(policyId);
         localStorage.setItem('selectedPolicyId', policyId);
+    };
+    //function for share dialog
+    const toggleShareDialog = () => {
+        setShowShareDialog(!showShareDialog);
+        console.log('dialog of share',showShareDialog)
     };
 
     //add policy dialog box open and close function start
@@ -201,14 +214,16 @@ const Vault = () => {
             });
             const filePath = response.data.filePath;
             console.log('file path:', IMAGE_PATH + filePath);
+            setPdfUrl(IMAGE_PATH + filePath);
+            console.log('pdfurl',pdfUrl)
 
-           
-            const link = document.createElement('a');
-            link.href = IMAGE_PATH + filePath;
-            link.setAttribute('download', 'policies.xlsx'); 
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // const link = document.createElement('a');
+            // link.href = IMAGE_PATH + filePath;
+            // link.setAttribute('download', 'policies.xlsx');
+            // document.body.appendChild(link);
+            // link.click();
+            // document.body.removeChild(link);
+            toggleShareDialog();
         } catch (error) {
             console.error('Error fetching policy list:', error);
         }
@@ -448,6 +463,31 @@ const Vault = () => {
                         />
                     </DialogActions>
                 </BootstrapDialog>
+
+                {/* dialog  box for share functionality */}
+                {showShareDialog && (
+                    <div style={{ position: 'absolute', top: '32%', left: '30%', transform: 'translate(-20%, -50%)', backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', zIndex: '9999' }}>
+                        <p className='fw-bold '>Share Via</p>
+                        {/* <FacebookShareButton url={shareUrl} quote={policyDetailsMessage}>
+                                            <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                        </FacebookShareButton> */}
+                        <FacebookShareButton url={pdfUrl} >
+                            <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                        </FacebookShareButton>
+                        <TwitterShareButton url={pdfUrl}>
+                            <img src={twitter} alt='twitter' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                        </TwitterShareButton>
+                        <WhatsappShareButton url={pdfUrl} >
+                            <img src={whatsapp} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                        </WhatsappShareButton>
+                        <EmailShareButton url={pdfUrl} >
+                            <img src={email} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                        </EmailShareButton>
+                        <RedditShareButton url={pdfUrl} >
+                            <img src={reddit} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                        </RedditShareButton>
+                    </div>
+                )}
             </div>
         </>
     );

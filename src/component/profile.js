@@ -11,6 +11,13 @@ import API_URL from '../ServiceModule/Service';
 import IMAGE_PATH from '../ServiceModule/imagePath';
 import { getAllState } from '../store/action/action';
 import GlobalDropdown from '../component/GlobalDropdown';
+import { Card, Grid } from '@material-ui/core';
+import family from '../Images/ic_family_member.png'
+import about from '../Images/ic_about.png'
+import communication from '../Images/ic_communication_pref.png'
+import help from '../Images/ic_help.png'
+import logout from '../Images/ic_logout.png'
+import rightArrow from '../Images/right-arrow.png'
 const ProfileDrawer = ({ open, onClose, userName }) => {
     const dispatch = useDispatch();
     const userEmail = localStorage.getItem('userEmail');
@@ -30,6 +37,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     console.log("userImgFile", userImgFile)
     const userbyId = useSelector((state) => state.user);
     const states = useSelector((state) => state.user);
+    const [update, setUpdate] = useState(false);
 
     //useeffect
     useEffect(() => {
@@ -46,7 +54,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         }
 
     }, [states])
-    
+
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         dispatch(getBYIDUsers(API_URL, userId));
@@ -123,13 +131,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const toggleImageInput = () => {
         setShowImageInput(!showImageInput);
     };
+    const handleEdit = () => {
+        setUpdate(!update);
+    }
 
 
     return (
         <Drawer anchor="right" open={open} onClose={onClose}>
             <Box sx={{ width: 750, padding: 0 }} role="presentation">
                 <div className="main-container">
-                    <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "30vh" }}>
+                    <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "35vh" }}>
                         <div className="profile-details">
 
                             <div className="profile-image-container">
@@ -161,9 +172,49 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                             <h2 className="text-header">{username}</h2>
                             <div className="spacer-small" />
                             <p className="register-text">{useremail}</p>
-
+                            <div class="text-center text-lg-start ">
+                                <Button
+                                    text={!update ? 'Edit Profile' : 'View'}
+                                    size="sm"
+                                    block={true}
+                                    onClick={handleEdit}
+                                />
+                            </div>
                         </div>
+
                     </div>
+
+                 
+                </div>
+                {!update ? (
+                    <Card className='main-container m-4 p-4'>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                            <Grid item xs={1}><img src={family} /></Grid>
+                            <Grid item xs={10}>Family member</Grid>
+                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                        </Grid>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                            <Grid item xs={1}><img src={communication} /></Grid>
+                            <Grid item xs={10}>Communication preferances </Grid>
+                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                        </Grid>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                            <Grid item xs={1}><img src={help} /></Grid>
+                            <Grid item xs={10}>Help</Grid>
+                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                        </Grid>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                            <Grid item xs={1}><img src={about} /></Grid>
+                            <Grid item xs={10}>About</Grid>
+                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                        </Grid>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4'>
+                            <Grid item xs={1}><img src={logout} /></Grid>
+                            <Grid item xs={10}>Logout</Grid>
+                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                        </Grid>
+                    </Card>
+                ) : (
                     <div className="main-container mt-4 p-4">
                         <div className='row'>
                             <div className="col-6">
@@ -249,7 +300,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                         <div className="spacer-small" />
                         <Button paddingHorizontal={10} text="Update" onClick={handleUpateProfile} />
                     </div>
-                </div>
+                )}
             </Box>
         </Drawer>
     );

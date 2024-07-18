@@ -27,14 +27,12 @@ const Login = () => {
     const [otp, setOtp] = React.useState([]);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid, setValid] = useState(false);
-    // const app = firebase.initializeApp(firebaseConfig)
-    // const appInstance = firebase.initializeApp(appFire);
+   
     const auth1 = auth.getAuth(appFire);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [item, setitem] = useState("");
+   
     const User = useSelector((state) => state.user)
-    console.log("User", User)
     //useeffect
     useEffect(() => {
         if (valid) {
@@ -44,29 +42,7 @@ const Login = () => {
         }
     }, [!valid]);
 
-    // useEffect(() => {
-    //     if (
-    //       localStorage.getItem("responsedata") !== null &&
-    //       localStorage.getItem("responseData") !== undefined
-    //     ) {
-    //       if (User !== null && User !== undefined) {
-    //         if (User.loginData !== null && User.loginData !== undefined) {
-    //           if (
-    //             User.loginData !== null &&
-    //             User.loginData !== undefined &&
-    //             User.loginData.message !== "User not found"
-    //           ) {
-    //             const itemdata = User.loginData.data;
-    //             console.log("itemdata", itemdata)
-    //             setitem(itemdata._id);
-    //             localStorage.setItem("userId", itemdata._id);
-    //             // localStorage.setItem("username", itemdata.username);
-    //             navigate('/coverkraft');
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }, [User, navigate]);
+   
 
     //function for handle phone number input field start
     const handlephonechange = (e) => {

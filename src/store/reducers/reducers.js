@@ -1,7 +1,7 @@
 import { getAllState, updateDocument } from "../action/action";
 
 const initialState = {
-
+  getAllNotification: [],
   customerregstionData: null,
   loginData: null,
   getPolicyType: [],
@@ -17,6 +17,26 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
+     //GETALLPOLICYTYPE 
+     case "GETALLNOTIFICATION_DATA_REQUEST":
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case "GETALLNOTIFICATION_DATA_SUCCESS":
+      return {
+        ...state,
+        getAllNotification: action.payload,
+        loading: false,
+        error: null,
+      };
+    case "GETALLNOTIFICATION_DATA_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     //customer registion start
     case "REGISTER_DATA_REQUEST":
       return {

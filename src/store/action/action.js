@@ -26,6 +26,10 @@ export const UPDATEDOCUMENT_DATA_REQUEST = "UPDATEDOCUMENT_DATA_REQUEST"
 export const UPDATEDOCUMENT_DATA_SUCCESS = "UPDATEDOCUMENT_DATA_SUCCESS"
 export const UPDATEDOCUMENT_DATA_FAILURE = "UPDATEDOCUMENT_DATA_FAILURE"
 
+//getall notification 
+export const GETALLNOTIFICATION_DATA_REQUEST = "GETALLNOTIFICATION_DATA_REQUEST"
+export const GETALLNOTIFICATION_DATA_SUCCESS = "GETALLNOTIFICATION_DATA_SUCCESS"
+export const GETALLNOTIFICATION_DATA_FAILURE = "GETALLNOTIFICATION_DATA_FAILURE"
 
 //getall policytype doucment
 export const GETPOLICYTYPE_DATA_REQUEST = "GETPOLICYTYPE_DATA_REQUEST"
@@ -46,6 +50,24 @@ export const UPDATEUSER_DATA_FAILURE = "UPDATEUSER_DATA_FAILURE"
 export const STATE_DATA_REQUEST = "STATE_DATA_REQUEST"
 export const STATE_DATA_SUCCESS = "STATE_DATA_SUCCESS"
 export const STATE_DATA_FAILURE = "STATE_DATA_FAILURE"
+
+
+// get all NOTIFICATION data 
+export const getAllNotification = (API_URL, data) => {
+    return (dispatch) => {
+        dispatch({ type: GETALLNOTIFICATION_DATA_REQUEST });
+        axios
+            .get(API_URL + `notification/getAll`,data)
+            .then((response) => {
+                dispatch({ type: GETALLNOTIFICATION_DATA_SUCCESS, payload: response.data });
+                return response.data;
+            })
+            .catch((error) => {
+                dispatch({ type: GETALLNOTIFICATION_DATA_FAILURE, payload: error.message });
+            });
+    };
+}
+
 // register start
 export const registrationCustomer = (API_URL, data) => {
     return (dispatch) => {
