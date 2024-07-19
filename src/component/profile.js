@@ -5,7 +5,7 @@ import Button from "../component/Button";
 import CustomInput from '../component/CustomInput';
 import icProfileBg from '../Images/ic_profile_bg.png';
 import icDefaultProfile from '../Images/ic_default_profile.png';
-import editIcon from '../Images/ic_edit.png';
+import editIcon from '../Images/edit-icon.png';
 import { getBYIDUsers, updateUser } from '../store/action/action';
 import API_URL from '../ServiceModule/Service';
 import IMAGE_PATH from '../ServiceModule/imagePath';
