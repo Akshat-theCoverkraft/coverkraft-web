@@ -15,11 +15,11 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
 
 
     const familyOption = [
-        { value: 1, label: 'Spouse' },
-        { value: 2, label: 'Son' },
-        { value: 3, label: 'Daughter' },
-        { value: 4, label: 'Father' },
-        { value: 5, label: 'Mother' },
+        { value: 'Spouse', label: 'Spouse' },
+        { value: 'Son', label: 'Son' },
+        { value: 'Daughter', label: 'Daughter' },
+        { value: 'Father', label: 'Father' },
+        { value: 'Mother', label: 'Mother' },
 
 
     ]
@@ -30,7 +30,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
 
         formData.append('userId',userId);
         formData.append('fullName',fullName);
-        formData.append('familyMember',familyOption);
+        formData.append('familyMember',familyMember);
         formData.append('mobile',userPhone);
         formData.append('email',useremail)
         const response = await axios.post(`${API_URL}family/create`, formData, {

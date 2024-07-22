@@ -54,15 +54,15 @@ const Family = ({ family, onfamilyclose }) => {
     return (
         <Drawer anchor="right" open={family} onClose={onfamilyclose}>
             <Box sx={{ width: 800, padding: 0 }} role="presentation">
-                <Grid container spacing={2} className='d-flex m-5'>
-                <Grid item>
+                <Grid container spacing={2} className='d-flex m-3'>
+                    <Grid item>
                         <img src={backArrow} alt="Back" onClick={onfamilyclose} />
                     </Grid>
                     <Grid item>
                         <Typography variant="h4">Plans for your family</Typography>
                     </Grid>
-                     </Grid>
-                <Grid container xs={12} spacing={3}>
+                </Grid>
+                <Grid container xs={12} spacing={2}>
                     {familyData.map((profile, index) => (
                         <Grid item xs={6} key={index}>
                             <Card style={styles.card}>
@@ -80,15 +80,15 @@ const Family = ({ family, onfamilyclose }) => {
                                 <Typography variant="h5" className={styles.name}>
                                     {profile.fullName}
                                 </Typography>
-                                <div className={styles.infoContainer}>
+                                <div className='d-flex'>
                                     <EmailIcon />
-                                    <Typography variant="body2" className={styles.infoText}>
+                                    <Typography variant="body2" className='ml-2'>
                                         {profile.email}
                                     </Typography>
                                 </div>
-                                <div className={styles.infoContainer}>
+                                <div className='d-flex'>
                                     <CallIcon />
-                                    <Typography variant="body2" className={styles.infoText}>
+                                    <Typography variant="body2" className='ml-2'>
                                         {profile.mobile}
                                     </Typography>
                                 </div>
@@ -96,7 +96,7 @@ const Family = ({ family, onfamilyclose }) => {
                         </Grid>
                     ))}
                 </Grid>
-                <Grid container xs={12} justifyContent='center' alignItems='center' onClick={handleFamilyOpen}>
+                <Grid container xs={12} justifyContent='center' alignItems='center' className='mt-5' onClick={handleFamilyOpen}>
 
                     <Card style={styles.card}>
                         <img height={70} src={addMember} />

@@ -326,7 +326,61 @@ function Navbar(props) {
                                 </button>
                             )}
                         </div>
+
                     )}
+                    <img src={profile} alt='' onClick={handleOpenMenu} style={{ cursor: 'pointer' }} />
+                                    <Menu
+                                        style={{
+                                            marginTop: '70px',
+                                        }}
+                                        anchorEl={anchorEl}
+                                        open={Boolean(anchorEl)}
+                                        onClose={handleCloseMenu}
+                                        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                                        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                                    >
+                                        <MenuItem  onClick={handleDrawerOpen}>
+                                            <AccountCircleOutlinedIcon />{' '}
+                                            <span
+                                                style={{
+                                                    paddingLeft: '10px',
+                                                    padding: '9px',
+                                                    fontSize: '20px',
+                                                    fontFamily: 'Poppins',
+                                                }}
+                                            >
+                                                {' '}
+                                                My Profile
+                                            </span>
+
+                                        </MenuItem>
+                                        <MenuItem onClick={handleClickOpen}>
+                                            <TranslateOutlinedIcon />{' '}
+                                            <span
+                                                style={{
+                                                    padding: '9px',
+                                                    fontSize: '20px',
+                                                    fontFamily: 'Poppins',
+                                                }}
+                                            >
+                                                {' '}
+                                                Language
+                                            </span>
+                                        </MenuItem>
+                                        <MenuItem onClick={handleLogout}>
+                                            <LogoutIcon />{' '}
+                                            <span
+                                                style={{
+                                                    padding: '9px',
+                                                    fontSize: '20px',
+                                                    fontFamily: 'Poppins',
+                                                }}
+                                            >
+                                                {' '}
+                                                Logout
+                                            </span>
+                                        </MenuItem>
+                                    </Menu>
                 </div>
             </div>
 
