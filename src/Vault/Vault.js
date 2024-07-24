@@ -230,6 +230,40 @@ const Vault = () => {
         }
     }
 
+    const handleSharePdf = async () => {
+        console.log('policyids---------', selectedPolicies)
+        try {
+            const token = localStorage.getItem('token');
+            const queryParams = selectedPolicies.map(id => `_id=${id}`).join('&');
+
+
+
+            const response = await axios.get(`${API_URL}policy/pdfTable?${queryParams}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+
+
+            });
+            const filePath = response.data.filePath;
+            console.log('file path:', IMAGE_PATH + filePath);
+            setPdfUrl(IMAGE_PATH + filePath);
+            console.log('pdfurl',pdfUrl)
+
+            // const link = document.createElement('a');
+            // link.href = IMAGE_PATH + filePath;
+            // link.setAttribute('download', 'policies.xlsx');
+            // document.body.appendChild(link);
+            // link.click();
+            // document.body.removeChild(link);
+            toggleShareDialog();
+        } catch (error) {
+            console.error('Error fetching policy list:', error);
+        }
+    }
+
+    
+
 
     const handleCheckboxChange = (policyId) => {
         setSelectedPolicies(prevSelected =>
@@ -279,7 +313,7 @@ const Vault = () => {
                                         size="md"
                                         className='ml-4 '
 
-                                        onClick={() => { /* Your export to PDF logic */ }}
+                                        onClick={handleSharePdf}
                                     />
                                 </>
                             )}

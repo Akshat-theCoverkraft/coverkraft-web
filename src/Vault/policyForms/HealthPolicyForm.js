@@ -37,19 +37,19 @@ const HealthPolicyForm = () => {
     headingText = 'Add Policy';
   }
   // const responseData = JSON.parse(responseData.ocrText);
-  const PolicyType = responseData.policyType.toLowerCase();
+  // const PolicyType = responseData.policyType.toLowerCase();
 
-  const [policyNumber, setPolicyNumber] = useState(responseData.policyNumber || policyDetails?.policyNumber || "");
-  const [policyStartDate, setPolicyStartDate] = useState(responseData.policyStartDate || policyDetails?.policyStartDate || "");
-  const [policyEndDate, setPolicyEndDate] = useState(responseData.policyEndDate || policyDetails?.policyEndDate || "");
-  const [sumAssured, setSumAssured] = useState(responseData.sumInsured || policyDetails?.policyDetails?.sumInsured || "");
-  const [totalSumAssured, setTotalSumAssured] = useState(responseData.totalSumInsured || policyDetails?.policyDetails?.totalSumInsured || '')
-  const [premiumPaid, setPremiumPaid] = useState(responseData.premiumPaid || policyDetails?.premiumPaid || "");
-  const [netPremium, setNetPremium] = useState(responseData.netPremium || policyDetails?.policyDetails?.netPremium || "");
-  const [insuredName, setInsuredName] = useState(responseData.insuredName || policyDetails?.insuredName || "");
-  const [insuredCompany, setInsuredCompany] = useState(responseData.insuranceCompany || policyDetails?.insuredCompany || "");
-  const [dob, setDob] = useState(responseData.dob || "");
-  const [policyName, setPolicyName] = useState(responseData.policyName || "");
+  const [policyNumber, setPolicyNumber] = useState(responseData?.policyNumber || policyDetails?.policyNumber || "");
+  const [policyStartDate, setPolicyStartDate] = useState(responseData?.policyStartDate || policyDetails?.policyStartDate || "");
+  const [policyEndDate, setPolicyEndDate] = useState(responseData?.policyEndDate || policyDetails?.policyEndDate || "");
+  const [sumAssured, setSumAssured] = useState(responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || "");
+  const [totalSumAssured, setTotalSumAssured] = useState(responseData?.totalSumInsured || policyDetails?.policyDetails?.totalSumInsured || '')
+  const [premiumPaid, setPremiumPaid] = useState(responseData?.premiumPaid || policyDetails?.premiumPaid || "");
+  const [netPremium, setNetPremium] = useState(responseData?.netPremium || policyDetails?.policyDetails?.netPremium || "");
+  const [insuredName, setInsuredName] = useState(responseData?.insuredName || policyDetails?.insuredName || "");
+  const [insuredCompany, setInsuredCompany] = useState(responseData?.insuranceCompany || policyDetails?.insuredCompany || "");
+  const [dob, setDob] = useState(responseData?.dob || "");
+  const [policyName, setPolicyName] = useState(responseData?.policyName || policyDetails?.policyDetails?.policyName || '');
   // const [idv, setIdv] = useState(responseData.idv || "");
 
   const [loading, setLoading] = useState(false);
@@ -167,7 +167,7 @@ const HealthPolicyForm = () => {
 
     formData.append('userId', userId);
     formData.append('documentId', documentId);
-    formData.append('policyType', PolicyType);
+    formData.append('policyType', responseData?.policyType.toLowerCase());
     formData.append('policyNumber', policyNumber);
     formData.append('policyStartDate', policyStartDate);
     formData.append('policyEndDate', policyEndDate);
@@ -190,7 +190,7 @@ const HealthPolicyForm = () => {
 
     formData.append('userId', userId);
     formData.append('documentId', documentId);
-    formData.append('policyType', PolicyType);
+    formData.append('policyType', policyDetails?.policyType.toLowerCase());
     formData.append('policyNumber', policyNumber);
     formData.append('policyStartDate', policyStartDate);
     formData.append('policyEndDate', policyEndDate);
@@ -345,7 +345,7 @@ const HealthPolicyForm = () => {
 
                  
                   <CustomInput
-                    type="number"
+                    type="text"
                     label="Net Premium"
                     value={netPremium}
                     onChange={(e) => {
@@ -355,7 +355,7 @@ const HealthPolicyForm = () => {
                    
                   />
                   <CustomInput
-                    type="number"
+                    type="text"
                     label="Total Premium"
                     value={premiumPaid}
                     onChange={(e) => {

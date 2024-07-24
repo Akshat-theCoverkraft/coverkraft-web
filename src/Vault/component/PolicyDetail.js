@@ -26,18 +26,21 @@ import car from '../../Images/Car.png';
 import IMAGE_PATH from '../../ServiceModule/imagePath';
 import moment from 'moment';
 import { formatDate } from '../../utils/dateUtils';
+import { updateDocument } from '../../store/action/action';
+import { useDispatch } from 'react-redux'
+
 const PolicyDetail = ({ policyId }) => {
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [policyDetails, setPolicyDetails] = useState([]);
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
     //useeffect
     useEffect(() => {
         const fetchPolicyDetails = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`,{
+                const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`, // Include token in the headers
                     }
@@ -105,19 +108,19 @@ const PolicyDetail = ({ policyId }) => {
 
     //function for edit button
     const handleEdit = () => {
-       
-        console.log('eheyyyyy',policyDetails[0].policyType)
+
+        console.log('eheyyyyy', policyDetails[0].policyType)
         const responseData = policyDetails[0];
-        const PolicyType= policyDetails[0].policyType;
-        console.log('polcyytype',PolicyType)
+        const PolicyType = policyDetails[0].policyType;
+        console.log('polcyytype', PolicyType)
         if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
-            navigate('/coverkraft/motor-policy', { state: { policyDetails: responseData,mode:'edit' } })
+            navigate('/coverkraft/motor-policy', { state: { policyDetails: responseData, mode: 'edit' } })
         }
         else if (PolicyType === 'health' || PolicyType === 'other_health') {
-            navigate('/coverkraft/health-policy', { state: { policyDetails: responseData,mode:'edit' } })
+            navigate('/coverkraft/health-policy', { state: { policyDetails: responseData, mode: 'edit' } })
         }
         else if (PolicyType === 'life' || PolicyType === 'accident') {
-            navigate('/coverkraft/life-policy', { state: { policyDetails: responseData,mode:'edit' } })
+            navigate('/coverkraft/life-policy', { state: { policyDetails: responseData, mode: 'edit' } })
         }
         // navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
     }
@@ -130,6 +133,12 @@ const PolicyDetail = ({ policyId }) => {
         toggleShareDialog();
     };
 
+    const handleArchieve = () => {
+        const formData = new FormData();
+        formData.append('_id', policyId);
+        formData.append('status', 'archieve')
+        dispatch(updateDocument(API_URL, formData))
+    }
 
     return (
         <>
@@ -197,7 +206,7 @@ const PolicyDetail = ({ policyId }) => {
                                     <Typography variant="h5" component="h2" gutterBottom className='fw-bold pl-4'>
                                         {policy.policyDetails.make_Model || policy.insuredName}
                                     </Typography>
-                                    <Typography variant="h6" component="h2" gutterBottom style={{ color: '#585858' }} className='pl-4'>{policy.registrationNumber || policy.policyNumber}</Typography>
+                                    <Typography variant="h6" component="h2" gutterBottom style={{ color: '#585858' }} className='pl-4'>{policy.policyDetails.registrationNumber || policy.policyNumber}</Typography>
                                     <Typography variant="h6" component="h2" gutterBottom style={{ color: '#9E9E9E' }} className='pl-4'>Expires on  {policy.policyEndDate}</Typography>
                                 </div>
                                 <div>
@@ -221,7 +230,7 @@ const PolicyDetail = ({ policyId }) => {
                                             </div>
                                             <div>
                                                 <h5 style={{ color: '#585858' }}>Premium Paid</h5>
-                                                <h5 className='fw-bolder'>{policy.totalPremium}</h5>
+                                                <h5 className='fw-bolder'>{policy.premiumPaid}</h5>
                                             </div>
                                         </Grid>
                                         <Grid item xs={6} md={6} className='d-flex' style={{ padding: '30px 40px' }}>
@@ -230,7 +239,7 @@ const PolicyDetail = ({ policyId }) => {
                                             </div>
                                             <div>
                                                 <h5 style={{ color: '#585858' }}>Value(IDV)</h5>
-                                                <h5 className='fw-bolder'>{policy.idv || policy.policyDetails.sumInsured}</h5>
+                                                <h5 className='fw-bolder'>{policy.policyDetails.idv || policy.policyDetails.sumInsured}</h5>
                                             </div>
                                         </Grid>
                                         <Grid item xs={6} md={6} className='d-flex' style={{ padding: '30px 40px' }}>
@@ -253,11 +262,14 @@ const PolicyDetail = ({ policyId }) => {
                                         </Grid>
                                     </Grid>
                                     <Grid container rowSpacing={1} className='d-flex justify-content-center' columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
-                                        {status ? (
+                                        {/* {status ? (
                                             <Grid item xs={4} md={4} style={{ padding: '30px 40px' }}>
                                                 <button className='btn btn-lg' style={{ color: 'white', backgroundColor: '#42988E', padding: '10px 70px' }}>Renew</button>
                                             </Grid>
-                                        ) : null}
+                                        ) : null} */}
+                                        <Grid item xs={4} md={4} style={{ padding: '30px 40px' }}>
+                                            <button className='btn btn-lg' style={{ color: 'white', backgroundColor: '#8AC642', padding: '10px 70px' }} onClick={handleArchieve}>Archieve</button>
+                                        </Grid>
                                         <Grid item xs={4} md={4} style={{ padding: '30px 20px' }}>
                                             <button className={`btn btn-lg custom-color`} style={{ borderColor: '#8AC642', color: '#8AC642', padding: '10px 80px' }} onClick={() => handleViewDocument(documentPath)}>View</button>
                                         </Grid>
