@@ -27,6 +27,7 @@ const MotorPolicyForm = () => {
     const location = useLocation();
     const responseData = location.state?.responseData;
     const mode = location.state?.mode;
+    const policyDetails = location.state?.policyDetails;
 
     // Now you can use the responseData and mode in your component
     let headingText;
@@ -35,22 +36,26 @@ const MotorPolicyForm = () => {
     } else {
         headingText = 'Add Policy';
     }
-    const PolicyType = responseData.policyType.toLowerCase();
+    const PolicyType = responseData?.policyType.toLowerCase();
 
-    const [policyNumber, setPolicyNumber] = useState(responseData.policyNumber || "");
-    const [policyStartDate, setPolicyStartDate] = useState(responseData.policyStartDate || "");
-    const [policyEndDate, setPolicyEndDate] = useState(responseData.policyEndDate || "");
-    const [assetType, setAssetType] = useState(responseData.assetType || '')
-    const [vehicleEngineNumber, setVehicleEngineNumber] = useState(responseData.vehicleEngineNumber || '');
-    const [idv, setIdv] = useState(responseData.idv || '');
-    const [netPremium, setNetPremium] = useState(responseData.netPremium || '');
-    const [sumAssured, setSumAssured] = useState(responseData.premiumCoverAmount || "");
-    const [premiumPaid, setPremiumPaid] = useState(responseData.totalPremium || "");
-    const [insuredName, setInsuredName] = useState(responseData.insuredName || "");
-    const [insuredCompany, setInsuredCompany] = useState(responseData.insuranceCompany || "");
-    const [registrationNumber, setRegistrationNumber] = useState(responseData.registrationNumber || "");
-    const [registrationYear, setRegistrationYear] = useState(responseData.registrationYear || "");
-    const [makeModel, setMakeModel] = useState(responseData.make_Model || "");
+    const [policyNumber, setPolicyNumber] = useState(responseData?.policyNumber || policyDetails?.policyNumber || "");
+    const [policyStartDate, setPolicyStartDate] = useState(responseData?.policyStartDate || policyDetails?.policyStartDate || "");
+    const [policyEndDate, setPolicyEndDate] = useState(responseData?.policyEndDate || policyDetails?.policyEndDate || "");
+    const [assetType, setAssetType] = useState(responseData?.assetType || policyDetails?.policyDetails?.assetType || '')
+    const [vehicleEngineNumber, setVehicleEngineNumber] = useState(responseData?.vehicleEngineNumber || policyDetails?.policyDetails?.vehicleEngineNumber || '');
+    const [idv, setIdv] = useState(responseData?.idv || policyDetails?.policyDetails?.idv || '');
+    const [netPremium, setNetPremium] = useState(responseData?.netPremium || policyDetails?.policyDetails?.netPremium || '');
+    // const [sumAssured, setSumAssured] = useState(responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || "");
+    const [premiumPaid, setPremiumPaid] = useState(responseData?.totalPremium || policyDetails?.premiumPaid || "");
+    const [ncb, setNcb] = useState(responseData?.ncpPercentage || policyDetails?.policyDetails?.ncpPercentage || '');
+    const [tpPremium, setTpPremium] = useState(responseData?.tpPremium || policyDetails?.policyDetails?.tpPremium || '');
+    const [odPremium, setOdpremium] = useState(responseData?.odPremium || policyDetails?.policyDetails?.odPremium || '')
+    const [insuredName, setInsuredName] = useState(responseData?.insuredName || policyDetails?.insuredName || "");
+    const [insuredCompany, setInsuredCompany] = useState(responseData?.insuranceCompany || policyDetails?.insuredCompany || "");
+    const [registrationNumber, setRegistrationNumber] = useState(responseData?.registrationNumber || policyDetails?.policyDetails?.registrationNumber || "");
+    const [registrationYear, setRegistrationYear] = useState(responseData?.registrationYear || policyDetails?.policyDetails?.registrationYear || "");
+    const [make, setMake] = useState(responseData?.make || policyDetails?.policyDetails?.make || "");
+    const [model, setModel] = useState(responseData?.model || policyDetails?.policyDetails?.model || '');
 
     const [loading, setLoading] = useState(false);
     const userId = localStorage.getItem('userId');
@@ -58,38 +63,37 @@ const MotorPolicyForm = () => {
     const token = localStorage.getItem('token')
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    useEffect(() => {
-        if (mode === 'edit' && responseData) {
-            setPolicyNumber(responseData.policyNumber || "");
-            setPolicyStartDate(responseData.policyStartDate || "");
-            setPolicyEndDate(responseData.policyEndDate || "");
-            setAssetType(responseData.policyDetails.assetType || "");
-            setVehicleEngineNumber(responseData.policyDetails.vehicleEngineNumber || "");
-            setSumAssured(responseData.policyDetails.sumAssured || "");
-            setNetPremium(responseData.policyDetails.netPremium || "");
-            setPremiumPaid(responseData.policyDetails.totalPremium || "");
-            setInsuredName(responseData.insuredName || "");
-            setInsuredCompany(responseData.policyDetails.insuranceCompany || "");
-            setRegistrationNumber(responseData.policyDetails.registrationNumber || "");
-            setRegistrationYear(responseData.policyDetails.policyName || "");
-            setIdv(responseData.policyDetails.registrationYear || "");
-            setMakeModel(responseData.policyDetails.make_Model || "");
-        }
-    }, [mode, responseData]);
+    // useEffect(() => {
+    //     if (mode === 'edit' && responseData) {
+    //         setPolicyNumber(responseData.policyNumber || "");
+    //         setPolicyStartDate(responseData.policyStartDate || "");
+    //         setPolicyEndDate(responseData.policyEndDate || "");
+    //         setAssetType(responseData.policyDetails.assetType || "");
+    //         setVehicleEngineNumber(responseData.policyDetails.vehicleEngineNumber || "");
+    //         setSumAssured(responseData.policyDetails.sumAssured || "");
+    //         setNetPremium(responseData.policyDetails.netPremium || "");
+    //         setPremiumPaid(responseData.policyDetails.totalPremium || "");
+    //         setInsuredName(responseData.insuredName || "");
+    //         setInsuredCompany(responseData.policyDetails.insuranceCompany || "");
+    //         setRegistrationNumber(responseData.policyDetails.registrationNumber || "");
+    //         setRegistrationYear(responseData.policyDetails.policyName || "");
+    //         setIdv(responseData.policyDetails.registrationYear || "");
+    //         setMakeModel(responseData.policyDetails.make_Model || "");
+    //     }
+    // }, [mode, responseData]);
     const inputFields = [
         policyNumber,
         policyStartDate,
         policyEndDate,
         premiumPaid,
-        sumAssured,
         insuredName,
         insuredCompany,
         registrationNumber,
-        registrationYear,
-        makeModel,
+        make,
+        model,
         assetType,
         vehicleEngineNumber,
-        idv, netPremium
+        idv
     ];
     const calculateProgress = () => {
         const filledFields = inputFields.filter((field) => field !== "").length;
@@ -112,15 +116,14 @@ const MotorPolicyForm = () => {
         policyStartDate,
         policyEndDate,
         premiumPaid,
-        sumAssured,
         insuredName,
         insuredCompany,
         registrationNumber,
-        registrationYear,
-        makeModel,
+        make,
+        model,
         assetType,
         vehicleEngineNumber,
-        idv, netPremium
+        idv
     ]);
     const handleSubmit = async () => {
         try {
@@ -131,15 +134,14 @@ const MotorPolicyForm = () => {
                 policyStartDate,
                 policyEndDate,
                 premiumPaid,
-                sumAssured,
                 insuredName,
                 insuredCompany,
                 registrationNumber,
-                registrationYear,
-                makeModel,
+                make,
+                model,
                 assetType,
                 vehicleEngineNumber,
-                idv, netPremium
+                idv
             };
 
             if (validateFields(payload)) {
@@ -167,14 +169,12 @@ const MotorPolicyForm = () => {
             payload.policyNumber &&
             payload.policyStartDate &&
             payload.policyEndDate &&
-            payload.premiumPaid &&
             payload.sumAssured &&
             payload.insuredName &&
             payload.insuredCompany &&
-            payload.netPremium &&
             payload.registrationNumber &&
-            payload.registrationYear &&
-            payload.makeModel &&
+            payload.make &&
+            payload.model &&
             payload.assetType &&
             payload.vehicleEngineNumber &&
             payload.idv
@@ -192,7 +192,6 @@ const MotorPolicyForm = () => {
         formData.append('policyNumber', policyNumber);
         formData.append('policyStartDate', policyStartDate);
         formData.append('policyEndDate', policyEndDate);
-        formData.append('sumInsured', sumAssured);
         formData.append('premiumPaid', premiumPaid);
         formData.append('netPremium', netPremium);
         formData.append('insuredName', insuredName);
@@ -201,7 +200,11 @@ const MotorPolicyForm = () => {
         formData.append('registrationYear', registrationYear);
         formData.append('assetType', assetType);
         formData.append('vehicleEngineNumber', vehicleEngineNumber);
-        formData.append('make_Model', makeModel)
+        formData.append('make', make);
+        formData.append('model', model);
+        formData.append('ncpPercentage', ncb);
+        formData.append('tpPremium', tpPremium);
+        formData.append('odPremium', odPremium)
         formData.append('idv', idv);
         dispatch(saveDocument(API_URL, formData));
         navigate('/coverkraft/vault')
@@ -217,7 +220,6 @@ const MotorPolicyForm = () => {
         formData.append('policyNumber', policyNumber);
         formData.append('policyStartDate', policyStartDate);
         formData.append('policyEndDate', policyEndDate);
-        formData.append('sumInsured', sumAssured);
         formData.append('premiumPaid', premiumPaid);
         formData.append('netPremium', netPremium);
         formData.append('insuredName', insuredName);
@@ -226,7 +228,11 @@ const MotorPolicyForm = () => {
         formData.append('registrationYear', registrationYear);
         formData.append('assetType', assetType);
         formData.append('vehicleEngineNumber', vehicleEngineNumber);
-        formData.append('make_Model', makeModel)
+        formData.append('make', make);
+        formData.append('model', model);
+        formData.append('ncpPercentage', ncb);
+        formData.append('tpPremium', tpPremium);
+        formData.append('odPremium', odPremium)
         formData.append('idv', idv);
         dispatch(updateDocument(API_URL, formData));
         navigate('/coverkraft/vault')
@@ -340,7 +346,7 @@ const MotorPolicyForm = () => {
                                             setRegistrationYear(e.target.value);
 
                                         }}
-                                        required
+                                       
                                     />
                                     <CustomInput
                                         type="number"
@@ -353,7 +359,16 @@ const MotorPolicyForm = () => {
                                         required
                                     />
 
+                                    <CustomInput
+                                        type="text"
+                                        label="NCB%"
+                                        value={ncb}
+                                        onChange={(e) => {
+                                            setNcb(e.target.value);
 
+                                        }}
+                                       
+                                    />
                                     <Button
                                         text={mode === 'edit' ? 'Update' : 'Save'}
                                         size="lg"
@@ -361,6 +376,7 @@ const MotorPolicyForm = () => {
                                         onClick={handleSubmit}
 
                                     />
+
 
                                 </Grid>
                                 <Grid item xs={12} md={6}>
@@ -378,7 +394,7 @@ const MotorPolicyForm = () => {
                                             setNetPremium(e.target.value);
 
                                         }}
-                                        required
+                                        
                                     />
                                     <CustomInput
                                         type="number"
@@ -389,18 +405,9 @@ const MotorPolicyForm = () => {
                                         }}
                                         required
                                     />
+
                                     <CustomInput
                                         type="text"
-                                        label="Sum Assured"
-                                        value={sumAssured}
-                                        onChange={(e) => {
-                                            setSumAssured(e.target.value);
-
-                                        }}
-                                        required
-                                    />
-                                    <CustomInput
-                                        type="number"
                                         label="Asset type"
                                         value={assetType}
                                         onChange={(e) => {
@@ -415,16 +422,45 @@ const MotorPolicyForm = () => {
                                         onChange={(e) => {
                                             setVehicleEngineNumber(e.target.value);
                                         }}
+                                        
+                                    />
+                                    <CustomInput
+                                        type="text"
+                                        label="Make "
+                                        value={make}
+                                        onChange={(e) => {
+                                            setMake(e.target.value);
+                                        }}
                                         required
                                     />
                                     <CustomInput
                                         type="text"
-                                        label="Make  Model"
-                                        value={makeModel}
+                                        label="Model "
+                                        value={model}
                                         onChange={(e) => {
-                                            setMakeModel(e.target.value);
+                                            setModel(e.target.value);
                                         }}
                                         required
+                                    />
+                                    <CustomInput
+                                        type="text"
+                                        label="Tp premium"
+                                        value={tpPremium}
+                                        onChange={(e) => {
+                                            setTpPremium(e.target.value);
+
+                                        }}
+                                        
+                                    />
+                                    <CustomInput
+                                        type="text"
+                                        label="Od Premium"
+                                        value={odPremium}
+                                        onChange={(e) => {
+                                            setOdpremium(e.target.value);
+
+                                        }}
+                                        
                                     />
 
                                 </Grid>

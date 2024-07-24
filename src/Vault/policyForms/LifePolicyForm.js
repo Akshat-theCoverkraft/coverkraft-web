@@ -27,6 +27,7 @@ const LifePolicyForm = () => {
   const location = useLocation();
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
+  const policyDetails = location.state?.policyDetails;
 
   // Now you can use the responseData and mode in your component
   let headingText;
@@ -35,25 +36,25 @@ const LifePolicyForm = () => {
   } else {
     headingText = 'Add Policy';
   }
-  const PolicyType = responseData.policyType.toLowerCase();
-
-  const [policyNumber, setPolicyNumber] = useState(responseData.policyNumber || "");
-  const [policyStartDate, setPolicyStartDate] = useState(responseData.policyStartDate || "");
-  const [policyEndDate, setPolicyEndDate] = useState(responseData.policyEndDate || "");
-  const [sumAssured, setSumAssured] = useState(responseData.sumAssured || "");
-  const [premiumPaid, setPremiumPaid] = useState(responseData.totalPremium || "");
-  const [insuredName, setInsuredName] = useState(responseData.insuredName || "");
-  const [insuredCompany, setInsuredCompany] = useState(responseData.insuranceCompany || "");
-  const [netPremium, setNetPremium] = useState(responseData.netPremium || "");
-  const [criticalIllness, setCriticalIllness] = useState(responseData.criticalIllness || "");
-  const [accidentalDisability, setAccidentalDisability] = useState(responseData.accidentalDisability || "")
-  const [pa, setPa] = useState(responseData.pa || "");
-  const [policyRenewalDate, setPolicyRenewalDate] = useState(responseData.policyRenewalDate || "");
-  const [maturityDate, setMaturityDate] = useState(responseData.maturityDate || "")
-  const [others, setOthers] = useState(responseData.others || "");
-  const [dob, setDob] = useState(responseData.dob || "");
-  const [policyName, setPolicyName] = useState(responseData.policyName || "");
-  const [idv, setIdv] = useState(responseData.idv || "");
+//   const PolicyType = responseData.policyType.toLowerCase();
+// console.log('pollcitype',PolicyType)
+  const [policyNumber, setPolicyNumber] = useState(responseData?.policyNumber || policyDetails?.policyNumber || "");
+  const [policyStartDate, setPolicyStartDate] = useState(responseData?.policyStartDate || policyDetails?.policyStartDate || "");
+  const [policyEndDate, setPolicyEndDate] = useState(responseData?.policyEndDate || policyDetails?.policyEndDate || "");
+  const [sumAssured, setSumAssured] = useState(responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || "");
+  const [premiumPaid, setPremiumPaid] = useState(responseData?.totalPremium || policyDetails?.premiumPaid || "");
+  const [insuredName, setInsuredName] = useState(responseData?.insuredName || policyDetails?.insuredName || "");
+  const [insuredCompany, setInsuredCompany] = useState(responseData?.insuranceCompany || policyDetails?.insuredCompany || "");
+  const [netPremium, setNetPremium] = useState(responseData?.netPremium || policyDetails?.policyDetails?.netPremium || "");
+  const [criticalIllness, setCriticalIllness] = useState(responseData?.criticalIllness || policyDetails?.policyDetails?.criticalIllness || "");
+  const [accidentalDisability, setAccidentalDisability] = useState(responseData?.accidentalDisability || policyDetails?.policyDetails?.accidentalDisability || "")
+  const [terminalIllness, setTerminalIllness] = useState(responseData?.terminalIllness || policyDetails?.policyDetails?.terminalIllness || '')
+  const [pa, setPa] = useState(responseData?.pa || "");
+  const [policyRenewalDate, setPolicyRenewalDate] = useState(responseData?.policyRenewalDate || "");
+  const [maturityDate, setMaturityDate] = useState(responseData?.maturityDate || "")
+  const [others, setOthers] = useState(responseData?.others || policyDetails?.others || "");
+  const [dob, setDob] = useState(responseData?.dob || "");
+  const [policyName, setPolicyName] = useState(responseData?.policyName || policyDetails?.policyDetails?.policyName || "");
 
   const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem('userId');
@@ -61,24 +62,25 @@ const LifePolicyForm = () => {
   const token = localStorage.getItem('token')
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  useEffect(() => {
-    if (mode === 'edit' && responseData) {
-      setPolicyNumber(responseData.policyNumber || "");
-      setPolicyStartDate(responseData.policyStartDate || "");
-      setPolicyEndDate(responseData.policyEndDate || "");
-      setSumAssured(responseData.policyDetails.sumAssured || "");
-      setPremiumPaid(responseData.policyDetails.totalPremium || "");
-      setInsuredName(responseData.insuredName || "");
-      setInsuredCompany(responseData.policyDetails.insuranceCompany || "");
-      setNetPremium(responseData.netPremium || "");
-      setCriticalIllness(responseData.criticalIllness || "")
-      setAccidentalDisability(responseData.accidentalDisability || '');
-      setPolicyRenewalDate(responseData.policyRenewalDate || '');
-      setMaturityDate(responseData.maturityDate || '');
-      setOthers(responseData.others || '');
-      setIdv(responseData.policyDetails.idv || "");
-    }
-  }, [mode, responseData]);
+  // useEffect(() => {
+  //   if (mode === 'edit' && responseData) {
+  //     setPolicyNumber(responseData.policyNumber || "");
+  //     setPolicyStartDate(responseData.policyStartDate || "");
+  //     setPolicyEndDate(responseData.policyEndDate || "");
+  //     setSumAssured(responseData.policyDetails.sumAssured || "");
+  //     setPremiumPaid(responseData.policyDetails.totalPremium || "");
+  //     setInsuredName(responseData.insuredName || "");
+  //     setInsuredCompany(responseData.policyDetails.insuranceCompany || "");
+  //     setNetPremium(responseData.netPremium || "");
+  //     setCriticalIllness(responseData.criticalIllness || "")
+  //     setAccidentalDisability(responseData.accidentalDisability || '');
+  //     setPolicyRenewalDate(responseData.policyRenewalDate || '');
+  //     setMaturityDate(responseData.maturityDate || '');
+  //     setOthers(responseData.others || '');
+  //     setIdv(responseData.policyDetails.idv || "");
+  //   }
+  // }, [mode, responseData]);
+
   const inputFields = [
     policyNumber,
     policyStartDate,
@@ -86,13 +88,8 @@ const LifePolicyForm = () => {
     premiumPaid,
     insuredName,
     insuredCompany,
-    netPremium,
-    criticalIllness,
-    accidentalDisability,
-    pa,
-    others,
     policyName,
-    idv
+
   ];
   const calculateProgress = () => {
     const filledFields = inputFields.filter((field) => field !== "").length;
@@ -113,16 +110,12 @@ const LifePolicyForm = () => {
   }, [
     policyNumber,
     policyStartDate,
+    sumAssured,
     policyEndDate,
     premiumPaid,
     insuredName,
     insuredCompany,
-    netPremium,
-    criticalIllness,
-    accidentalDisability,
-    pa,
     policyName,
-    idv
   ]);
   const handleSubmit = async () => {
     try {
@@ -131,17 +124,12 @@ const LifePolicyForm = () => {
       const payload = {
         policyNumber,
         policyStartDate,
+        sumAssured,
         policyEndDate,
         premiumPaid,
         insuredName,
         insuredCompany,
-        netPremium,
-        criticalIllness,
-        accidentalDisability,
-        pa,
-        others,
         policyName,
-        idv
       };
 
       if (validateFields(payload)) {
@@ -172,13 +160,9 @@ const LifePolicyForm = () => {
       payload.premiumPaid &&
       payload.insuredName &&
       payload.insuredCompany &&
-      payload.netPremium &&
-      payload.criticalIllness &&
-      payload.accidentalDisability &&
-      payload.pa &&
-      payload.others &&
-      payload.policyName &&
-      payload.idv
+      payload.sumAssured &&
+      payload.policyName 
+     
     );
   };
 
@@ -189,7 +173,7 @@ const LifePolicyForm = () => {
 
     formData.append('userId', userId);
     formData.append('documentId', documentId);
-    formData.append('policyType', PolicyType);
+    formData.append('policyType', responseData?.policyType.toLowerCase());
     formData.append('policyNumber', policyNumber);
     formData.append('policyStartDate', policyStartDate);
     formData.append('policyEndDate', policyEndDate);
@@ -200,13 +184,13 @@ const LifePolicyForm = () => {
     formData.append('insuranceCompany', insuredCompany);
     formData.append('criticalIllness', criticalIllness);
     formData.append('accidentalDisability', accidentalDisability);
+    formData.append('terminalIllness',terminalIllness)
     formData.append('pa', pa);
     formData.append('policyRenewalDate', policyRenewalDate);
     formData.append('maturityDate', maturityDate);
-    formData.append('others',others);
-    formData.append('dob',dob);
-    formData.append('policyName',policyName)
-    formData.append('idv', idv);
+    formData.append('others', others);
+    formData.append('dob', dob);
+    formData.append('policyName', policyName)
     dispatch(saveDocument(API_URL, formData));
     navigate('/coverkraft/vault')
   }
@@ -217,7 +201,7 @@ const LifePolicyForm = () => {
 
     formData.append('userId', userId);
     formData.append('documentId', documentId);
-    formData.append('policyType', PolicyType);
+    formData.append('policyType', policyDetails?.policyType.toLowerCase());
     formData.append('policyNumber', policyNumber);
     formData.append('policyStartDate', policyStartDate);
     formData.append('policyEndDate', policyEndDate);
@@ -228,13 +212,13 @@ const LifePolicyForm = () => {
     formData.append('insuranceCompany', insuredCompany);
     formData.append('criticalIllness', criticalIllness);
     formData.append('accidentalDisability', accidentalDisability);
+    formData.append('terminalIllness',terminalIllness)
     formData.append('pa', pa);
     formData.append('policyRenewalDate', policyRenewalDate);
     formData.append('maturityDate', maturityDate);
-    formData.append('others',others);
-    formData.append('dob',dob);
-    formData.append('policyName',policyName)
-    formData.append('idv', idv);
+    formData.append('others', others);
+    formData.append('dob', dob);
+    formData.append('policyName', policyName)
     dispatch(updateDocument(API_URL, formData));
     navigate('/coverkraft/vault')
   }
@@ -313,7 +297,7 @@ const LifePolicyForm = () => {
                     <Grid item xs={12} md={6}>
 
                       <label className="form-label fw-bold" htmlFor="inputField">
-                        Policy Renewal date <span className='text-danger'>*</span>
+                        Policy Renewal date 
                       </label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']}>
@@ -334,7 +318,7 @@ const LifePolicyForm = () => {
                     <Grid item xs={12} md={6}>
 
                       <label className="form-label fw-bold" htmlFor="inputField">
-                        Maturity date <span className='text-danger'>*</span>
+                        Maturity date 
                       </label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']}>
@@ -353,27 +337,27 @@ const LifePolicyForm = () => {
                       </LocalizationProvider>
                     </Grid>
                   </Grid>
-                  <Grid  xs={12} md={6}>
+                  <Grid xs={12} md={6}>
 
-                      <label className="form-label fw-bold" htmlFor="inputField">
-                        DOB <span className='text-danger'>*</span>
-                      </label>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
-                          <DatePicker
-                            defaultValue={dayjs(dob)}
-                            selected={dob}
-                            onChange={(newValue) => {
-                              setDob(newValue); // Set the new date directly
-                            }}
-                            selectsStart
-                            startDate={dob}
-                            placeholderText="MM/DD/YYYY"
-                            style={{ width: '100%' }}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
-                    </Grid>
+                    <label className="form-label fw-bold" htmlFor="inputField">
+                      DOB 
+                    </label>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer components={['DatePicker']}>
+                        <DatePicker
+                          defaultValue={dayjs(dob)}
+                          selected={dob}
+                          onChange={(newValue) => {
+                            setDob(newValue); // Set the new date directly
+                          }}
+                          selectsStart
+                          startDate={dob}
+                          placeholderText="MM/DD/YYYY"
+                          style={{ width: '100%' }}
+                        />
+                      </DemoContainer>
+                    </LocalizationProvider>
+                  </Grid>
                   <CustomInput
                     type="text"
                     label="Insured Name"
@@ -402,7 +386,6 @@ const LifePolicyForm = () => {
                       setCriticalIllness(e.target.value);
 
                     }}
-                    required
                   />
                   <CustomInput
                     type="number"
@@ -412,18 +395,19 @@ const LifePolicyForm = () => {
                       setAccidentalDisability(e.target.value);
 
                     }}
-                    required
+                    
                   />
-                  <CustomInput
+                   <CustomInput
                     type="number"
-                    label="IDV"
-                    value={idv}
+                    label="Terminal illness"
+                    value={terminalIllness}
                     onChange={(e) => {
-                      setIdv(e.target.value);
+                      setTerminalIllness(e.target.value);
 
                     }}
-                    required
+                    
                   />
+                  
 
 
                   <Button
@@ -450,7 +434,7 @@ const LifePolicyForm = () => {
                       setNetPremium(e.target.value);
 
                     }}
-                    required
+                    
                   />
                   <CustomInput
                     type="number"
@@ -478,7 +462,7 @@ const LifePolicyForm = () => {
                     onChange={(e) => {
                       setPa(e.target.value);
                     }}
-                    required
+                    
                   />
                   <CustomInput
                     type="text"
@@ -487,7 +471,7 @@ const LifePolicyForm = () => {
                     onChange={(e) => {
                       setOthers(e.target.value);
                     }}
-                    required
+                    
                   />
                   <CustomInput
                     type="text"

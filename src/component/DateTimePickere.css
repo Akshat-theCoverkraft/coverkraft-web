@@ -1,0 +1,32 @@
+.datetime-picker-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    padding: 10px;
+    margin-top: 10px;
+    position: relative;
+}
+
+.datetime-picker-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    color: #000; /* Adjust to your desired font color */
+    padding: 10px;
+    border-radius: 25px;
+}
+
+.calendar-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    position: absolute;
+    right: 10px;
+}
+
+.calendar-button:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Optional: Add a hover effect */
+    border-radius: 50%;
+}

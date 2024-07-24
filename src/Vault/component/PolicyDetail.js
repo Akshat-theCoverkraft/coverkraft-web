@@ -109,14 +109,15 @@ const PolicyDetail = ({ policyId }) => {
         console.log('eheyyyyy',policyDetails[0].policyType)
         const responseData = policyDetails[0];
         const PolicyType= policyDetails[0].policyType;
+        console.log('polcyytype',PolicyType)
         if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
-            navigate('/coverkraft/motor-policy', { state: { responseData: responseData,mode:'edit' } })
+            navigate('/coverkraft/motor-policy', { state: { policyDetails: responseData,mode:'edit' } })
         }
         else if (PolicyType === 'health' || PolicyType === 'other_health') {
-            navigate('/coverkraft/health-policy', { state: { responseData: responseData,mode:'edit' } })
+            navigate('/coverkraft/health-policy', { state: { policyDetails: responseData,mode:'edit' } })
         }
         else if (PolicyType === 'life' || PolicyType === 'accident') {
-            navigate('/coverkraft/life-policy', { state: { responseData: responseData,mode:'edit' } })
+            navigate('/coverkraft/life-policy', { state: { policyDetails: responseData,mode:'edit' } })
         }
         // navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
     }
