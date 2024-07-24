@@ -2,7 +2,7 @@ import React from 'react';
 
 function Button({ onClick, bgcolor, text, color, borderColor, className, size, block, startIcon }) {
   const buttonStyle = {
-    backgroundColor: bgcolor || '#42988E', 
+    backgroundColor: bgcolor || '#8AC642', 
     color: color ?? 'white',
     borderColor: borderColor,
     width: block ? '100%' : '', 
@@ -10,6 +10,7 @@ function Button({ onClick, bgcolor, text, color, borderColor, className, size, b
     alignItems: 'center', 
     justifyContent: startIcon ? 'space-between' : 'center',
     padding: '15px 20px', 
+    borderRadius:'30px'
 
   };
 

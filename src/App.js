@@ -19,6 +19,7 @@ import MotorPolicyForm from "./Vault/policyForms/MotorPolicyForm";
 import HealthPolicyForm from "./Vault/policyForms/HealthPolicyForm";
 import LifePolicyForm from "./Vault/policyForms/LifePolicyForm";
 import Family from "./profile/Family";
+import About from "./About/About";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false)
@@ -93,6 +94,7 @@ useEffect(() => {
        <Route path='/coverkraft/edit-policy' element={<EditPolicy/>}/>
        <Route path='/coverkraft/profile' element={<ProfileDrawer/>}/>
        <Route path='/coverkraft/family' element={<Family/>}/>
+       <Route path="/coverkraft/about" element={<About/>}/>
     </Routes>
     </>
   );

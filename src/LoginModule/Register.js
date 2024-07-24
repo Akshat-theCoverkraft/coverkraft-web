@@ -15,18 +15,21 @@ import Footer from '../Landing/component/Footer';
 import Grid from '@mui/material/Grid';
 import { messaging, getToken } from '../ServiceModule/FirebaseConfig';
 import { useNavigate } from "react-router-dom";
+import GlobalDropdown from '../component/GlobalDropdown';
+import axios from 'axios';
 const Register = () => {
     const [fullName, setFullName] = useState();
     const [DOB, setDOB] = useState();
     const [mobileNumber, setMobileNumber] = useState();
     const [email, setEmail] = useState();
     const [address, setAddress] = useState();
-    const [state, setState] = useState();
+    const [state, setState] = useState('');
+    const [city,setCity]=useState('');
     const [pincode, setPincode] = useState();
     const [valid, setValid] = useState(true);
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [fcmToken, setFcmToken] = useState(null);
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     // useEffect(() => {
@@ -45,7 +48,7 @@ const Register = () => {
 
 
 
-  
+
     //function to handle phone number input field start
     const handlephonechange = (e) => {
         let number = e.target.value.replace(/\D/g, '');
@@ -66,6 +69,25 @@ const Register = () => {
     };
     //function to handle email input field start
 
+
+    const [stateOptions, setStateOptions] = useState([]);
+    useEffect(() => {
+        // Function to fetch state options from the API
+        const fetchStateOptions = async () => {
+            try {
+                const response = await axios.get(`${API_URL}state/getAll`); // Adjust the URL to your API endpoint
+                const options = response.data.data.map(state => ({
+                    value: state.id, // Adjust based on your API response
+                    label: state.stateNameEnglish, // Adjust based on your API response
+                }));
+                setStateOptions(options);
+            } catch (error) {
+                console.error('Error fetching state options:', error);
+            }
+        };
+
+        fetchStateOptions();
+    }, []);
     //function for register and integrate API start
     const handleRegister = () => {
         const roleID = 3;
@@ -88,18 +110,18 @@ const Register = () => {
                 });
                 return;
             }
-    
+
             const formData = new FormData();
-           
+
             formData.append('userName', fullName);
             formData.append('userDob', DOB);
             formData.append('userPhone', mobileNumber);
             formData.append('userEmail', email);
             formData.append('userAddress', address);
             formData.append('userFcmId', fcmToken);
-            formData.append('roleID',roleID)
+            formData.append('roleID', roleID)
 
-    
+
             dispatch(registrationCustomer(API_URL, formData));
             toast.success('User registered successfully');
             navigate('/coverkraft/login')
@@ -114,7 +136,7 @@ const Register = () => {
             });
         }
     };
-    
+
     //function for register and integrate API end
 
     //function to check user is above 18 or not
@@ -197,7 +219,7 @@ const Register = () => {
                                         </Grid>
                                         <Grid container spacing={3}>
                                             <Grid item xs={12} md={6}>
-                                                <CustomInput
+                                                {/* <CustomInput
                                                     type="text"
                                                     label="State"
                                                     value={state}
@@ -205,22 +227,36 @@ const Register = () => {
                                                     placeholder="Enter your state"
                                                     required
 
+                                                /> */}
+                                                <GlobalDropdown
+                                                    label="State"
+                                                    options={stateOptions}
+                                                    value={state}
+                                                    onChange={(e) => setState(e.target.value)}
+                                                    placeholder="select"
                                                 />
 
                                             </Grid>
                                             <Grid item xs={12} md={6}>
-
-                                                <CustomInput
-                                                    type="number"
-                                                    label="Pin Code"
-                                                    value={pincode}
-                                                    onChange={(e) => { setPincode(e.target.value) }}
-                                                    placeholder="Enter your pin code"
-                                                    required
-
+                                                <GlobalDropdown
+                                                    label="City"
+                                                    options={stateOptions}
+                                                    value={city}
+                                                    onChange={(e) => setCity(e.target.value)}
+                                                    placeholder="select"
                                                 />
+
                                             </Grid>
                                         </Grid>
+                                        <CustomInput
+                                            type="number"
+                                            label="Pin Code"
+                                            value={pincode}
+                                            onChange={(e) => { setPincode(e.target.value) }}
+                                            placeholder="Enter your pin code"
+                                            required
+
+                                        />
                                         <div data-mdb-input-init className="form-outline mb-4">
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Address

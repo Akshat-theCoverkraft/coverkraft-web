@@ -168,7 +168,9 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         setCommunicationDrawerOpen(true);
     };
     const handleAboutOpen = () => {
-        setAboutDrawerOpen(true);
+        // setAboutDrawerOpen(true);
+        onClose();
+        navigate('/coverkraft/about')
     };
     const handleHelpOpen = () => {
         setHelpDrawerOpen(true);
@@ -190,30 +192,31 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                     <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "35vh" }}>
                         <div className="profile-details">
 
-                            <div className="profile-image-container">
-                                <img
-                                    src={profileImage}
-                                    alt="Profile"
-                                    className="profile-image"
-                                />
-                                <label htmlFor="profile-image-upload">
-                                    <img
-                                        src={editIcon}
-                                        alt="Edit"
-                                        className="edit-icon"
-                                        onClick={toggleImageInput}
-                                    />
-                                </label>
-                                {showImageInput && (
-                                    <input
-                                        id="profile-image-upload"
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        style={{ display: "none" }}
-                                    />
-                                )}
-                            </div>
+                           <div className="profile-image-container">
+    <img
+        src={profileImage}
+        alt="Profile"
+        className="profile-image"
+    />
+    <label htmlFor="profile-image-upload">
+        <img
+            src={editIcon}
+            alt="Edit"
+            className="edit-icon"
+            onClick={toggleImageInput}
+        />
+    </label>
+    {showImageInput && (
+        <input
+            id="profile-image-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ display: "none" }}
+        />
+    )}
+</div>
+
 
                             <div className="spacer" />
                             <h2 className="text-header">{username}</h2>

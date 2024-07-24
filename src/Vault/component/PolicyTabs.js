@@ -89,9 +89,9 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPol
                         <Box sx={{ maxWidth: { xs: 370, sm: 530 }, width: '75%', bgcolor: '#EAF0FD', margin: 'auto' }} className='p-2 rounded' alignItems="center">
                             <TabList onChange={handleChange} variant="scrollable" scrollButtons={false}
                                 aria-label="scrollable prevent tabs example" textColor="#42988E" TabIndicatorProps={{ style: { display: 'none' } }}>
-                                <Tab label="Active" value={0} className='m-2 fw-bolder px-5' sx={{ color: value === 0 ? '#42988E' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
-                                <Tab label="Expired" value={1} className='m-2 fw-bolder px-5' sx={{ color: value === 1 ? '#42988E' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
-                                <Tab label="Archive" disabled value='2' className='m-2 fw-bolder px-5' sx={{ color: value === 2 ? '#42988E' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
+                                <Tab label="Active" value={0} className='m-2 fw-bolder px-5' sx={{ color: value === 0 ? '#8AC642' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
+                                <Tab label="Expired" value={1} className='m-2 fw-bolder px-5' sx={{ color: value === 1 ? '#8AC642' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
+                                <Tab label="Archive" disabled value='2' className='m-2 fw-bolder px-5' sx={{ color: value === 2 ? '#8AC642' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
                             </TabList>
                         </Box>
                     </Box>
@@ -175,8 +175,8 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPol
                                                 <Grid item xs={shareAllPolicy ? 9 : 9} className='d-flex align-items-end justify-content-between'>
                                                     <div>
                                                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                            <span className="dot" style={{ backgroundColor: '#42988E', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px', marginBottom: '14px' }}></span>
-                                                            <Typography variant="body1" component="p" gutterBottom style={{ color: '#89CFC7' }} className='mb-3'>
+                                                            <span className="dot" style={{ backgroundColor: '#8AC642', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px', marginBottom: '14px' }}></span>
+                                                            <Typography variant="body1" component="p" gutterBottom style={{ color: '#8AC642' }} className='mb-3'>
                                                                 {
                                                                     policy.policyType === 'car_policy' ? 'Car Insurance' :
                                                                     policy.policyType === 'bike_policy' ? 'Two Wheeler Insurance' :

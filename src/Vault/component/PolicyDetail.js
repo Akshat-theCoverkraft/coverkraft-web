@@ -258,7 +258,7 @@ const PolicyDetail = ({ policyId }) => {
                                             </Grid>
                                         ) : null}
                                         <Grid item xs={4} md={4} style={{ padding: '30px 20px' }}>
-                                            <button className={`btn btn-lg custom-color`} style={{ borderColor: '#42988E', color: '#42988E', padding: '10px 80px' }} onClick={() => handleViewDocument(documentPath)}>View</button>
+                                            <button className={`btn btn-lg custom-color`} style={{ borderColor: '#8AC642', color: '#8AC642', padding: '10px 80px' }} onClick={() => handleViewDocument(documentPath)}>View</button>
                                         </Grid>
                                         <Grid item xs={1} md={1} style={{ padding: '30px 0px' }}>
                                             <img src={download} alt='download' height={50} onClick={() => handleDownloadDocument(documentPath)} />

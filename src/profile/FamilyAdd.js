@@ -20,9 +20,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
         { value: 'Daughter', label: 'Daughter' },
         { value: 'Father', label: 'Father' },
         { value: 'Mother', label: 'Mother' },
-
-
     ]
+    
      async function handleSubmit(){
         const formData=new FormData();
         const token = localStorage.getItem('token');

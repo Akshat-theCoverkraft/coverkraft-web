@@ -165,6 +165,7 @@ const Vault = () => {
                 localStorage.setItem('documentId', documentId);
                 const ocrTextObject = JSON.parse(responseData.ocrText);
                 const PolicyType = ocrTextObject.policyType.toLowerCase();
+                console.log('policyytyype',PolicyType)
                 if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
                     navigate('/coverkraft/motor-policy', { state: { responseData: ocrTextObject } })
                 }
@@ -434,7 +435,7 @@ const Vault = () => {
                             <div className="overlay-container">
                                 <div className="fade-screen"></div>
                                 <div className="loader-overlay d-flex justify-content-center">
-                                    <Spinner className="text-success text-center" style={{ width: '3rem', height: '3rem' }} animation="border" role="status">
+                                    <Spinner className=" text-center" style={{ width: '3rem', height: '3rem',color:'#8AC642' }} animation="border" role="status">
                                         <span className="sr-only">Loading...</span>
                                     </Spinner>
 
