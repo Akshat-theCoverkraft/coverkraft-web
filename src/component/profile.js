@@ -26,9 +26,9 @@ import { useNavigate } from 'react-router-dom';
 const ProfileDrawer = ({ open, onClose, userName }) => {
     const dispatch = useDispatch();
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [communicationDrawerOpen,setCommunicationDrawerOpen]=useState(false);
-    const [aboutDrawerOpen,setAboutDrawerOpen]=useState(false);
-    const [helpDrawerOpen,setHelpDrawerOpen]=useState(false)
+    const [communicationDrawerOpen, setCommunicationDrawerOpen] = useState(false);
+    const [aboutDrawerOpen, setAboutDrawerOpen] = useState(false);
+    const [helpDrawerOpen, setHelpDrawerOpen] = useState(false)
     const userEmail = localStorage.getItem('userEmail');
     const [profileImage, setProfileImage] = useState(icDefaultProfile);
     console.log("profileImage", profileImage)
@@ -47,7 +47,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const userbyId = useSelector((state) => state.user);
     const states = useSelector((state) => state.user);
     const [update, setUpdate] = useState(false);
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     //useeffect
     useEffect(() => {
         dispatch(getAllState(API_URL));
@@ -192,30 +192,30 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                     <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "35vh" }}>
                         <div className="profile-details">
 
-                           <div className="profile-image-container">
-    <img
-        src={profileImage}
-        alt="Profile"
-        className="profile-image"
-    />
-    <label htmlFor="profile-image-upload">
-        <img
-            src={editIcon}
-            alt="Edit"
-            className="edit-icon"
-            onClick={toggleImageInput}
-        />
-    </label>
-    {showImageInput && (
-        <input
-            id="profile-image-upload"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{ display: "none" }}
-        />
-    )}
-</div>
+                            <div className="profile-image-container">
+                                <img
+                                    src={profileImage}
+                                    alt="Profile"
+                                    className="profile-image"
+                                />
+                                <label htmlFor="profile-image-upload">
+                                    <img
+                                        src={editIcon}
+                                        alt="Edit"
+                                        className="edit-icon"
+                                        onClick={toggleImageInput}
+                                    />
+                                </label>
+                                {showImageInput && (
+                                    <input
+                                        id="profile-image-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        style={{ display: "none" }}
+                                    />
+                                )}
+                            </div>
 
 
                             <div className="spacer" />
