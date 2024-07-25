@@ -233,7 +233,10 @@ function Navbar(props) {
                             >
                                 Home
                             </div>
-                            <div
+                           
+                            {loggedIn ? (
+                                <>
+                                    <div
                                         className={
                                             isSticky
                                                 ? 'nav-item active custom-home-Scroll animate-style'
@@ -243,28 +246,13 @@ function Navbar(props) {
                                     >
                                         About Us
                                     </div>
-                                    <button className='btn btn-lg py-2 px-5' style={{ color: 'white', backgroundColor: '#8AC642',borderRadius:'25px' }} onClick={handleVault}>
-                                        Vault
-                                    </button>
-                            {loggedIn ? (
-                                <>
                                     <div
                                         className={
                                             isSticky
                                                 ? 'nav-item active custom-home-Scroll animate-style'
                                                 : 'nav-item active custom-home-font animate-style'
                                         }
-                                        onClick={scrollToAboutBottom}
-                                    >
-                                        About Us
-                                    </div>
-                                    <div
-                                        className={
-                                            isSticky
-                                                ? 'nav-item active custom-home-Scroll animate-style'
-                                                : 'nav-item active custom-home-font animate-style'
-                                        }
-                                        onClick={scrollToServiceBottom}
+                                        onClick={handleVault}
                                     >
                                         Policy
                                     </div>
@@ -344,59 +332,7 @@ function Navbar(props) {
                         </div>
 
                     )}
-                    <img src={profile} alt='' onClick={handleOpenMenu} style={{ cursor: 'pointer' }} />
-                                    <Menu
-                                        style={{
-                                            marginTop: '70px',
-                                        }}
-                                        anchorEl={anchorEl}
-                                        open={Boolean(anchorEl)}
-                                        onClose={handleCloseMenu}
-                                        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                                        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                                    >
-                                        <MenuItem  onClick={handleDrawerOpen}>
-                                            <AccountCircleOutlinedIcon />{' '}
-                                            <span
-                                                style={{
-                                                    paddingLeft: '10px',
-                                                    padding: '9px',
-                                                    fontSize: '20px',
-                                                    fontFamily: 'Poppins',
-                                                }}
-                                            >
-                                                {' '}
-                                                My Profile
-                                            </span>
-
-                                        </MenuItem>
-                                        <MenuItem onClick={handleClickOpen}>
-                                            <TranslateOutlinedIcon />{' '}
-                                            <span
-                                                style={{
-                                                    padding: '9px',
-                                                    fontSize: '20px',
-                                                    fontFamily: 'Poppins',
-                                                }}
-                                            >
-                                                {' '}
-                                                Language
-                                            </span>
-                                        </MenuItem>
-                                        <MenuItem onClick={handleLogout}>
-                                            <LogoutIcon />{' '}
-                                            <span
-                                                style={{
-                                                    padding: '9px',
-                                                    fontSize: '20px',
-                                                    fontFamily: 'Poppins',
-                                                }}
-                                            >
-                                                {' '}
-                                                Logout
-                                            </span>
-                                        </MenuItem>
-                                    </Menu>
+                   
                 </div>
             </div>
 

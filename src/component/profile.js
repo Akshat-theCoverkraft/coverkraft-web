@@ -10,7 +10,7 @@ import { getBYIDUsers, updateUser } from '../store/action/action';
 import API_URL from '../ServiceModule/Service';
 import IMAGE_PATH from '../ServiceModule/imagePath';
 import { getAllState } from '../store/action/action';
-import GlobalDropdown from '../component/GlobalDropdown';
+import GlobalDropdown from './StateDropdown';
 import { Card, Grid } from '@material-ui/core';
 import family from '../Images/ic_family_member.png'
 import about from '../Images/ic_about.png'

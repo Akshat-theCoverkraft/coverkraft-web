@@ -73,13 +73,14 @@ const Login = () => {
                 // Store the user ID in local storage
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('token',token);
-                const appVerifier = new auth.RecaptchaVerifier(auth1, 'recaptcha-container');
-                await appVerifier.render();
-                await appVerifier.verify();
-                const confirmationResult = await auth.signInWithPhoneNumber(auth1, `+91${phoneNumber}`, appVerifier);
+                // const appVerifier = new auth.RecaptchaVerifier(auth1, 'recaptcha-container');
+                // await appVerifier.render();
+                // await appVerifier.verify();
+                // const confirmationResult = await auth.signInWithPhoneNumber(auth1, `+91${phoneNumber}`, appVerifier);
                 setLoggedIn(true);
-                localStorage.setItem('verificationId', confirmationResult.verificationId);
-                toast.success(' OTP is sent  to your phone number');
+
+                // localStorage.setItem('verificationId', confirmationResult.verificationId);
+                // toast.success(' OTP is sent  to your phone number');
             } else {
                 // If status is not 200, display error message
                 toast.error('Phone number verification failed');
@@ -94,30 +95,30 @@ const Login = () => {
 
     //function to verify otp and login start
     const handleVerify = () => {
-        const storedValue = localStorage.getItem('verificationId');
-        const phoneProvider = new auth.PhoneAuthProvider(auth1);
-        const credential = auth.PhoneAuthProvider.credential(
-            storedValue,
-            otp
-        )
+        // const storedValue = localStorage.getItem('verificationId');
+        // const phoneProvider = new auth.PhoneAuthProvider(auth1);
+        // const credential = auth.PhoneAuthProvider.credential(
+        //     storedValue,
+        //     otp
+        // )
 
-        auth.signInWithCredential(auth1, credential)
-            .then(() => {
-                const formData = new FormData();
-                formData.append('userPhone', phoneNumber);
-                const fcmToken = getStoredToken();
+        // auth.signInWithCredential(auth1, credential)
+        //     .then(() => {
+        //         const formData = new FormData();
+        //         formData.append('userPhone', phoneNumber);
+        //         const fcmToken = getStoredToken();
 
-                if (fcmToken) {
-                    formData.append('userFcmId', fcmToken);
-                }
-                dispatch(verifyUser(API_URL, formData))
+        //         if (fcmToken) {
+        //             formData.append('userFcmId', fcmToken);
+        //         }
+        //         dispatch(verifyUser(API_URL, formData))
                 localStorage.setItem('loggedIn', 'true');
-                toast.success('Phone number authentication done');
+        //         toast.success('Phone number authentication done');
                 navigate('/coverkraft');
-            })
-            .catch((error) => {
-                toast.error('Authentication failed');
-            })
+            // })
+            // .catch((error) => {
+            //     toast.error('Authentication failed');
+            // })
     }
     //function to verify otp and login end
 

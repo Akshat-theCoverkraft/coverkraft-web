@@ -23,12 +23,12 @@ import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import axios from 'axios'
 
-export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPolicies,handleCheckboxChange }) {
+export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPolicies, handleCheckboxChange }) {
     const [value, setValue] = React.useState(0);
     const [page, setPage] = React.useState(1);
     const [cardsPerPage] = React.useState(5);
     const [policyList, setPolicyList] = useState([]);
-    const [archieveList,setArchieveList]=useState([])
+    const [archieveList, setArchieveList] = useState([])
     //useEffect
     useEffect(() => {
         const fetchPolicyList = async () => {
@@ -42,7 +42,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPol
 
                 const response = await axios.get(`${API_URL}policy/getById`, {
                     headers: {
-                        Authorization: `Bearer ${token}`, 
+                        Authorization: `Bearer ${token}`,
                     },
                     params: {
                         userId: userId,
@@ -72,11 +72,11 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPol
             try {
                 const token = localStorage.getItem('token');
                 const userId = localStorage.getItem('userId');
-               
+
 
                 const response = await axios.get(`${API_URL}policy/archiveData`, {
                     headers: {
-                        Authorization: `Bearer ${token}`, 
+                        Authorization: `Bearer ${token}`,
                     },
                     params: {
                         userId: userId,
@@ -125,13 +125,13 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPol
                                 aria-label="scrollable prevent tabs example" textColor="#42988E" TabIndicatorProps={{ style: { display: 'none' } }}>
                                 <Tab label="Active" value={0} className='m-2 fw-bolder px-5' sx={{ color: value === 0 ? '#8AC642' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
                                 <Tab label="Expired" value={1} className='m-2 fw-bolder px-5' sx={{ color: value === 1 ? '#8AC642' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
-                                <Tab label="Archive" value={2}  className='m-2 fw-bolder px-5' sx={{ color: value === 2 ? '#8AC642' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
+                                <Tab label="Archive" value={2} className='m-2 fw-bolder px-5' sx={{ color: value === 2 ? '#8AC642' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
                             </TabList>
                         </Box>
                     </Box>
                 </Grid>
 
-        
+
 
                 <TabPanel value={0} className=''>
                     <div style={{ minHeight: '70vh', overflowY: 'auto' }}>
@@ -190,21 +190,21 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPol
                                             <Grid container spacing={0} alignItems="center">
                                                 {shareAllPolicy && (
                                                     <Grid item xs={1}>
-                                                        <Checkbox 
-                                                        checked={selectedPolicies.includes(policy._id)}
-                                                        onChange={() => handleCheckboxChange(policy._id)}/>
+                                                        <Checkbox
+                                                            checked={selectedPolicies.includes(policy._id)}
+                                                            onChange={() => handleCheckboxChange(policy._id)} />
                                                     </Grid>
                                                 )}
                                                 <Grid item xs={shareAllPolicy ? 2 : 3}>
-                                                    <img src={policy.policyType === 'car_policy' ? car : 
-                                                     policy.policyType === 'bike_policy' ? scooty :
-                                                     policy.policyType === 'other_vehicle' ? scooty :
-                                                     policy.policyType === 'life' ? family :
-                                                     policy.policyType === 'accident' ? family :
-                                                     policy.policyType === 'health' ? HealthInsurance :
-                                                     policy.policyType === 'other_health' ? HealthInsurance : ''
-                                                
-                                                } alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
+                                                    <img src={policy.policyType === 'car_policy' ? car :
+                                                        policy.policyType === 'bike_policy' ? scooty :
+                                                            policy.policyType === 'other_vehicle' ? scooty :
+                                                                policy.policyType === 'life' ? family :
+                                                                    policy.policyType === 'accident' ? family :
+                                                                        policy.policyType === 'health' ? HealthInsurance :
+                                                                            policy.policyType === 'other_health' ? HealthInsurance : ''
+
+                                                    } alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
                                                 </Grid>
                                                 <Grid item xs={shareAllPolicy ? 9 : 9} className='d-flex align-items-end justify-content-between'>
                                                     <div>
@@ -213,12 +213,12 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy,selectedPol
                                                             <Typography variant="body1" component="p" gutterBottom style={{ color: '#8AC642' }} className='mb-3'>
                                                                 {
                                                                     policy.policyType === 'car_policy' ? 'Car Insurance' :
-                                                                    policy.policyType === 'bike_policy' ? 'Two Wheeler Insurance' :
-                                                                    policy.policyType === 'other_vehicle' ? 'Other Vehicle Insurance' :
-                                                                    policy.policyType === 'life' ? 'Life Insurance' :
-                                                                    policy.policyType === 'accident' ? 'Accident Insurance' :
-                                                                    policy.policyType === 'health' ? 'Health Insurance' :
-                                                                    policy.policyType === 'other_health' ? 'Other Health Insurance' : ''
+                                                                        policy.policyType === 'bike_policy' ? 'Two Wheeler Insurance' :
+                                                                            policy.policyType === 'other_vehicle' ? 'Other Vehicle Insurance' :
+                                                                                policy.policyType === 'life' ? 'Life Insurance' :
+                                                                                    policy.policyType === 'accident' ? 'Accident Insurance' :
+                                                                                        policy.policyType === 'health' ? 'Health Insurance' :
+                                                                                            policy.policyType === 'other_health' ? 'Other Health Insurance' : ''
                                                                 }
                                                             </Typography>
                                                         </div>

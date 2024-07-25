@@ -136,7 +136,7 @@ const PolicyDetail = ({ policyId }) => {
     const handleArchieve = () => {
         const formData = new FormData();
         formData.append('_id', policyId);
-        formData.append('status', 'archieve')
+        formData.append('status', 'archive')
         dispatch(updateDocument(API_URL, formData))
     }
 

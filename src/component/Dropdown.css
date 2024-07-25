@@ -1,0 +1,30 @@
+.dropdown-container {
+    margin: 1em 0;
+    padding: 0.5em;
+  }
+  
+  .dropdown-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  
+  .dropdown-select {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+  }
+  
+  .dropdown-select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .dropdown-error {
+    color: red;
+    font-size: 0.875em;
+  }
+  

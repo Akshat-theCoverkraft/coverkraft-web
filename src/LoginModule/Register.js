@@ -15,8 +15,14 @@ import Footer from '../Landing/component/Footer';
 import Grid from '@mui/material/Grid';
 import { messaging, getToken } from '../ServiceModule/FirebaseConfig';
 import { useNavigate } from "react-router-dom";
-import GlobalDropdown from '../component/GlobalDropdown';
+import GlobalDropdown from '../component/StateDropdown';
 import axios from 'axios';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import CityDropdown from '../component/CityDropdown';
 const Register = () => {
     const [fullName, setFullName] = useState();
     const [DOB, setDOB] = useState();
@@ -24,11 +30,14 @@ const Register = () => {
     const [email, setEmail] = useState();
     const [address, setAddress] = useState();
     const [state, setState] = useState('');
-    const [city,setCity]=useState('');
+    const [city, setCity] = useState('');
     const [pincode, setPincode] = useState();
     const [valid, setValid] = useState(true);
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [fcmToken, setFcmToken] = useState(null);
+    const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -71,23 +80,54 @@ const Register = () => {
 
 
     const [stateOptions, setStateOptions] = useState([]);
+    const [options, setOptions] = useState([]);
+    const [selectedValue, setSelectedValue] = useState('');
+    const [selectedStateId, setSelectedStateId] = useState('');
+    const [selectedCityId, setSelectedCityId] = useState('');
+    const handleStateSelect = (stateId) => {
+      setSelectedStateId(stateId);
+    };
+    const handleCitySelect = (cityId) => {
+        setSelectedCityId(cityId);
+      };
     useEffect(() => {
-        // Function to fetch state options from the API
-        const fetchStateOptions = async () => {
-            try {
-                const response = await axios.get(`${API_URL}state/getAll`); // Adjust the URL to your API endpoint
-                const options = response.data.data.map(state => ({
-                    value: state.id, // Adjust based on your API response
-                    label: state.stateNameEnglish, // Adjust based on your API response
-                }));
-                setStateOptions(options);
-            } catch (error) {
-                console.error('Error fetching state options:', error);
-            }
+        const fetchOptions = async () => {
+          try {
+            const response = await axios.get(`${API_URL}state/getAll`);
+            const optionsData = response.data.data.map((item) => ({
+              value: item.id,
+              label: item.stateNameEnglish,
+            }));
+            setOptions(optionsData);
+           
+          } catch (error) {
+            console.error('Error fetching options:', error);
+            setError('Failed to load options');
+          } finally {
+            setLoading(false);
+          }
         };
+    
+        fetchOptions();
+      }, []);
+    
+    
+  
+    const handleValueChange = (value) => {
+      setSelectedValue(value);
+      console.log('value selected',selectedValue)
+    };
+    const handleChange = (event) => {
+        const value = event.target.value;
+        const label = options.find(option => option.value === value)?.label || '';
+        setSelectedValue(value);
+        // setSelectedLabel(label);
+      };
+    console.log('selectedvaluee',selectedValue)
+  
 
-        fetchStateOptions();
-    }, []);
+
+
     //function for register and integrate API start
     const handleRegister = () => {
         const roleID = 3;
@@ -120,7 +160,8 @@ const Register = () => {
             formData.append('userAddress', address);
             formData.append('userFcmId', fcmToken);
             formData.append('roleID', roleID)
-
+            formData.append('state', selectedStateId)
+            formData.append('city',selectedCityId)
 
             dispatch(registrationCustomer(API_URL, formData));
             toast.success('User registered successfully');
@@ -141,16 +182,22 @@ const Register = () => {
 
     //function to check user is above 18 or not
     const isOldEnough = (dob) => {
-        const today = new Date();
-        const birthDate = new Date(dob);
-        const age = today.getFullYear() - birthDate.getFullYear();
+        const today = new Date(); // Get today's date
+        const birthDate = new Date(dob); // Convert dob to a Date object
+        let age = today.getFullYear() - birthDate.getFullYear(); // Calculate age
+
+        // Calculate the month difference
         const monthDifference = today.getMonth() - birthDate.getMonth();
 
+        // If the birth month hasn't occurred yet this year, or it's the birth month but the birth day hasn't occurred yet, subtract one year from age
         if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
+
+        // Return true if age is 18 or older
         return age >= 18;
     };
+
 
     return (
         <div className='overflow-hidden'>
@@ -219,32 +266,19 @@ const Register = () => {
                                         </Grid>
                                         <Grid container spacing={3}>
                                             <Grid item xs={12} md={6}>
-                                                {/* <CustomInput
-                                                    type="text"
-                                                    label="State"
-                                                    value={state}
-                                                    onChange={(e) => { setState(e.target.value) }}
-                                                    placeholder="Enter your state"
-                                                    required
-
-                                                /> */}
-                                                <GlobalDropdown
-                                                    label="State"
-                                                    options={stateOptions}
-                                                    value={state}
-                                                    onChange={(e) => setState(e.target.value)}
-                                                    placeholder="select"
-                                                />
-
+                                               
+                                                <GlobalDropdown onStateSelect={handleStateSelect} />
+                              
                                             </Grid>
                                             <Grid item xs={12} md={6}>
-                                                <GlobalDropdown
+                                                {/* <GlobalDropdown
                                                     label="City"
                                                     options={stateOptions}
                                                     value={city}
                                                     onChange={(e) => setCity(e.target.value)}
                                                     placeholder="select"
-                                                />
+                                                /> */}
+                                                 <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
 
                                             </Grid>
                                         </Grid>

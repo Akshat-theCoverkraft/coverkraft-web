@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Drawer, Box, Grid,Card,Typography } from '@mui/material';
-import GlobalDropdown from '../component/GlobalDropdown';
+import GlobalDropdown from '../component/StateDropdown';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
 import backArrow from '../Images/ic_back_button.png';
