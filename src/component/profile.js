@@ -82,7 +82,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             setstate(data.state.stateNameEnglish);
             setpinCode(data.pinCode);
             setgender(data.gender);
-            // setProfileImage(IMAGE_PATH + data.userImg || icDefaultProfile);
             setProfileImage(data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile);
 
         }

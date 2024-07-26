@@ -210,7 +210,7 @@ export const updateUser = (API_URL, data) => {
         dispatch({ type: UPDATEUSER_DATA_REQUEST });
         const token = localStorage.getItem('token');
         return axios
-            .post(API_URL + `USER/updateUser`, data)
+            .post(API_URL + `user/updateUser`, data)
             .then((response) => {
                 dispatch({ type: UPDATEUSER_DATA_SUCCESS, payload: response.data });
                 const userId = data.get('_id');
