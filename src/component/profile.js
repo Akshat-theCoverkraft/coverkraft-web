@@ -23,6 +23,7 @@ import Communication from '../profile/Communication';
 import Help from '../profile/Help';
 import About from '../profile/About';
 import { useNavigate } from 'react-router-dom';
+import CityDropdown from './CityDropdown';
 const ProfileDrawer = ({ open, onClose, userName }) => {
     const dispatch = useDispatch();
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -48,6 +49,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const states = useSelector((state) => state.user);
     const [update, setUpdate] = useState(false);
     const navigate = useNavigate();
+    const [selectedStateId, setSelectedStateId] = useState('');
+    const [selectedCityId, setSelectedCityId] = useState('');
+
+    const handleCitySelect = (cityId) => {
+        setSelectedCityId(cityId);
+    };
     //useeffect
     useEffect(() => {
         dispatch(getAllState(API_URL));
@@ -87,6 +94,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         }
     }, [userbyId]);
 
+    const handleStateSelect = (stateId) => {
+        setSelectedStateId(stateId);
+      };
+      
     function handleUpateProfile() {
 
         const formData = new FormData();
@@ -98,7 +109,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         formData.append("userPhone", userPhone);
         formData.append("userDob", userDob);
         formData.append("userAddress", userAddress);
-        formData.append("state", state);
+        formData.append("state", selectedStateId);
+        formData.append('city',selectedCityId)
         formData.append("pinCode", pinCode);
         formData.append("gender", gender);
         if (userImgFile) {
@@ -197,6 +209,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     alt="Profile"
                                     className="profile-image"
                                 />
+                                {update && (
                                 <label htmlFor="profile-image-upload">
                                     <img
                                         src={editIcon}
@@ -205,6 +218,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                         onClick={toggleImageInput}
                                     />
                                 </label>
+                                 )}
                                 {showImageInput && (
                                     <input
                                         id="profile-image-upload"
@@ -214,6 +228,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                         style={{ display: "none" }}
                                     />
                                 )}
+                           
                             </div>
 
 
@@ -265,8 +280,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                     </Card>
                 ) : (
                     <div className="main-container mt-4 p-4">
-                        <div className='row'>
-                            <div className="col-6">
+                        <Grid container spacing={4} xs={12} >
+                            <Grid item xs={6}>
                                 <CustomInput
                                     label="UserName"
                                     placeholder="Enter your UserName"
@@ -274,18 +289,18 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     onChange={(e) => setuserName(e.target.value)}
                                 />
 
-                            </div>
-                            <div className="col-6">
+                            </Grid>
+                            <Grid item xs={6}>
                                 <CustomInput
                                     label="UserEmail"
                                     placeholder="Enter your UserEmail"
                                     value={useremail}
                                     onChange={(e) => setuserEmail(e.target.value)}
                                 />
-                            </div>
-                        </div>
-                        <div className='row'>
-                            <div className="col-6">
+                            </Grid>
+                        </Grid>
+                        <Grid container xs={12} spacing={4}>
+                            <Grid item xs={6}>
                                 <CustomInput
                                     label="UserPhone"
                                     placeholder="Enter your UserPhone"
@@ -293,18 +308,18 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     onChange={(e) => setuserPhone(e.target.value)}
                                 />
 
-                            </div>
-                            <div className="col-6">
+                            </Grid>
+                            <Grid item xs={6}>
                                 <CustomInput
                                     label="UserDOB"
                                     placeholder="Enter your UserDOB"
                                     value={userDob}
                                     onChange={(e) => setuserDob(e.target.value)}
                                 />
-                            </div>
-                        </div>
-                        <div className='row'>
-                            <div className="col-6">
+                            </Grid>
+                        </Grid>
+                       
+                            <div className="col-12">
                                 <CustomInput
                                     label="UserAddress"
                                     placeholder="Enter your UserAddress"
@@ -313,8 +328,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                 />
 
                             </div>
-                            <div className="col-6">
-                                {states.getAllState && states.getAllState.data && (
+                           
+                                {/* {states.getAllState && states.getAllState.data && (
                                     <GlobalDropdown
                                         label="State"
                                         value={state}
@@ -322,11 +337,24 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                         options={states.getAllState.data.map(state => ({ value: state._id, label: state.stateNameEnglish }))}
 
                                     />
-                                )}
-                            </div>
-                        </div>
-                        <div className='row'>
-                            <div className="col-6">
+                                )} */}
+                              <Grid container spacing={3}>
+                                            <Grid item xs={12} md={6}>
+
+                                                <GlobalDropdown onStateSelect={handleStateSelect} />
+
+                                            </Grid>
+                                            <Grid item xs={12} md={6}>
+                                              
+                                                <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
+
+                                            </Grid>
+                                        </Grid>
+
+                          
+                        
+                        <Grid container xs={12} spacing={4}>
+                            <Grid item xs={6}>
                                 <CustomInput
                                     label="PinCode"
                                     placeholder="Enter your PinCode"
@@ -334,8 +362,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     onChange={(e) => setpinCode(e.target.value)}
                                 />
 
-                            </div>
-                            <div className="col-6">
+                            </Grid>
+                            <Grid item xs={6}>
                                 <CustomInput
                                     label="Gender"
                                     placeholder="Enter your gender"
@@ -343,8 +371,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     onChange={(e) => setgender(e.target.value)}
 
                                 />
-                            </div>
-                        </div>
+                            </Grid>
+                        </Grid>
 
                         <div className="spacer-small" />
                         <Button paddingHorizontal={10} text="Update" onClick={handleUpateProfile} />

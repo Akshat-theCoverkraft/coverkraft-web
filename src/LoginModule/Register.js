@@ -36,7 +36,7 @@ const Register = () => {
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [fcmToken, setFcmToken] = useState(null);
     const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -84,47 +84,48 @@ const Register = () => {
     const [selectedValue, setSelectedValue] = useState('');
     const [selectedStateId, setSelectedStateId] = useState('');
     const [selectedCityId, setSelectedCityId] = useState('');
+    
     const handleStateSelect = (stateId) => {
-      setSelectedStateId(stateId);
+        setSelectedStateId(stateId);
     };
     const handleCitySelect = (cityId) => {
         setSelectedCityId(cityId);
-      };
+    };
     useEffect(() => {
         const fetchOptions = async () => {
-          try {
-            const response = await axios.get(`${API_URL}state/getAll`);
-            const optionsData = response.data.data.map((item) => ({
-              value: item.id,
-              label: item.stateNameEnglish,
-            }));
-            setOptions(optionsData);
-           
-          } catch (error) {
-            console.error('Error fetching options:', error);
-            setError('Failed to load options');
-          } finally {
-            setLoading(false);
-          }
+            try {
+                const response = await axios.get(`${API_URL}state/getAll`);
+                const optionsData = response.data.data.map((item) => ({
+                    value: item.id,
+                    label: item.stateNameEnglish,
+                }));
+                setOptions(optionsData);
+
+            } catch (error) {
+                console.error('Error fetching options:', error);
+                setError('Failed to load options');
+            } finally {
+                setLoading(false);
+            }
         };
-    
+
         fetchOptions();
-      }, []);
-    
-    
-  
+    }, []);
+
+
+
     const handleValueChange = (value) => {
-      setSelectedValue(value);
-      console.log('value selected',selectedValue)
+        setSelectedValue(value);
+        console.log('value selected', selectedValue)
     };
     const handleChange = (event) => {
         const value = event.target.value;
         const label = options.find(option => option.value === value)?.label || '';
         setSelectedValue(value);
         // setSelectedLabel(label);
-      };
-    console.log('selectedvaluee',selectedValue)
-  
+    };
+    console.log('selectedvaluee', selectedValue)
+
 
 
 
@@ -161,7 +162,7 @@ const Register = () => {
             formData.append('userFcmId', fcmToken);
             formData.append('roleID', roleID)
             formData.append('state', selectedStateId)
-            formData.append('city',selectedCityId)
+            formData.append('city', selectedCityId)
 
             dispatch(registrationCustomer(API_URL, formData));
             toast.success('User registered successfully');
@@ -266,19 +267,13 @@ const Register = () => {
                                         </Grid>
                                         <Grid container spacing={3}>
                                             <Grid item xs={12} md={6}>
-                                               
+
                                                 <GlobalDropdown onStateSelect={handleStateSelect} />
-                              
+
                                             </Grid>
                                             <Grid item xs={12} md={6}>
-                                                {/* <GlobalDropdown
-                                                    label="City"
-                                                    options={stateOptions}
-                                                    value={city}
-                                                    onChange={(e) => setCity(e.target.value)}
-                                                    placeholder="select"
-                                                /> */}
-                                                 <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
+                                              
+                                                <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
 
                                             </Grid>
                                         </Grid>
