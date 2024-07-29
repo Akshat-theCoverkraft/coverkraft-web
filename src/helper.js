@@ -1,20 +1,20 @@
-import { getMessaging, getToken } from "firebase/messaging";
+// import { getMessaging, getToken } from "firebase/messaging";
 
-const messaging=getMessaging();
+// const messaging=getMessaging();
 
-export const requestForToken = () => {
-    return getToken(messaging, { vapidKey: 'BOQdgTuitP7hDi35akXEsWeJ4HW9NhTv4ML85JXJlzqfxyyjhOywoQXgKwLFMMuVRyv1DI-GxJ7_OUUE0IdVwa8' })
-        .then((currentToken) => {
-            if (currentToken) {
-                console.log('current token for client: ', currentToken);// Perform any other neccessary action with the token
-                localStorage.setItem('fcmToken', currentToken);
-            } else {// Show permission request UI        
-                console.log('No registration token available. Request permission to generate one.');
-            }
-        }).catch((err) => { console.log('An error occurred while retrieving token. ', err); });
-};
+// export const requestForToken = () => {
+//     return getToken(messaging, { vapidKey: 'BOQdgTuitP7hDi35akXEsWeJ4HW9NhTv4ML85JXJlzqfxyyjhOywoQXgKwLFMMuVRyv1DI-GxJ7_OUUE0IdVwa8' })
+//         .then((currentToken) => {
+//             if (currentToken) {
+//                 console.log('current token for client: ', currentToken);// Perform any other neccessary action with the token
+//                 localStorage.setItem('fcmToken', currentToken);
+//             } else {// Show permission request UI        
+//                 console.log('No registration token available. Request permission to generate one.');
+//             }
+//         }).catch((err) => { console.log('An error occurred while retrieving token. ', err); });
+// };
 
-// To retrieve the token from local storage later
-export const getStoredToken = () => {
-    return localStorage.getItem('fcmToken');
-};
+// // To retrieve the token from local storage later
+// export const getStoredToken = () => {
+//     return localStorage.getItem('fcmToken');
+// };

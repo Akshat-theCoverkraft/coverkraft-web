@@ -197,8 +197,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
 
     return (
-        <Drawer anchor="right" open={open} onClose={onClose}>
-            <Box sx={{ width: 750, padding: 0 }} role="presentation">
+        <Drawer anchor="right" open={open} onClose={onClose} className='overflow-hidden'>
+            <Box sx={{ width: 750, padding: 0 }} role="presentation" className='overflow-hidden'>
                 <div className="main-container">
                     <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "35vh" }}>
                         <div className="profile-details">

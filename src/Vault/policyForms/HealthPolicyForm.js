@@ -23,6 +23,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import ProgressBarCircle from '../../component/ProgressBarCircle';
+import { dateformat, formatDate } from '../../utils/dateUtils';
+import DateTimePicker from '../../component/DateTimePicker';
 const HealthPolicyForm = () => {
   const location = useLocation();
   const responseData = location.state?.responseData;
@@ -155,8 +157,8 @@ const HealthPolicyForm = () => {
       payload.premiumPaid &&
       payload.insuredName &&
       payload.insuredCompany &&
-      payload.policyName 
-      
+      payload.policyName
+
     );
   };
 
@@ -172,14 +174,14 @@ const HealthPolicyForm = () => {
     formData.append('policyStartDate', policyStartDate);
     formData.append('policyEndDate', policyEndDate);
     formData.append('sumInsured', sumAssured);
-    formData.append('totalSumInsured',totalSumAssured)
+    formData.append('totalSumInsured', totalSumAssured)
     formData.append('premiumPaid', premiumPaid);
     formData.append('netPremium', netPremium);
     formData.append('insuredName', insuredName);
     formData.append('insuranceCompany', insuredCompany);
     formData.append('dob', dob);
     formData.append('policyName', policyName)
-    
+
     dispatch(saveDocument(API_URL, formData));
     navigate('/coverkraft/vault')
   }
@@ -195,14 +197,14 @@ const HealthPolicyForm = () => {
     formData.append('policyStartDate', policyStartDate);
     formData.append('policyEndDate', policyEndDate);
     formData.append('sumInsured', sumAssured);
-    formData.append('totalSumInsured',totalSumAssured)
+    formData.append('totalSumInsured', totalSumAssured)
     formData.append('totalPremium', premiumPaid);
     formData.append('netPremium', netPremium);
     formData.append('insuredName', insuredName);
     formData.append('insuranceCompany', insuredCompany);
     formData.append('dob', dob);
     formData.append('policyName', policyName)
-    
+
     dispatch(updateDocument(API_URL, formData));
     navigate('/coverkraft/vault')
   }
@@ -235,64 +237,40 @@ const HealthPolicyForm = () => {
                   <label className="form-label fw-bold" htmlFor="inputField">
                     DOB <span className='text-danger'>*</span>
                   </label>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DatePicker']}>
-                      <DatePicker
-                        defaultValue={dayjs(dob)}
-                        selected={dob}
-                        onChange={(newValue) => {
-                          setDob(newValue); // Set the new date directly
-                        }}
-                        selectsStart
-                        startDate={dob}
-                        placeholderText="MM/DD/YYYY"
-                        style={{ width: '100%' }}
-                        renderInput={(params) => <TextField {...params} />}
+                  <DateTimePicker
+                        height={50}
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(dob)}
+                        onChange={handleDobChange}
                       />
-                    </DemoContainer>
-                  </LocalizationProvider>
-                  <Grid container spacing={3} className='mt-2'>
+                  <Grid container spacing={3} className='mt-2 mb-2'>
                     <Grid item xs={12} md={6}>
 
                       <label className="form-label fw-bold" htmlFor="inputField">
                         Start date <span className='text-danger'>*</span>
                       </label>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
-                          <DatePicker
-                            defaultValue={dayjs(policyStartDate)}
-                            selected={policyStartDate}
-                            onChange={(newValue) => {
-                              setPolicyStartDate(newValue); // Set the new date directly
-                            }}
-                            selectsStart
-                            startDate={policyStartDate}
-                            placeholderText="MM/DD/YYYY"
-                            style={{ width: '100%' }}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
+                      <DateTimePicker
+                        height={50}
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyStartDate)}
+                        onChange={handleStartDateChange}
+                      />
                     </Grid>
                     <Grid item xs={12} md={6}>
 
-                      <label className="form-label fw-bold" htmlFor="inputField">
+                       <label className="form-label fw-bold" htmlFor="inputField">
                         End date <span className='text-danger'>*</span>
                       </label>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
-                          <DatePicker
-                            defaultValue={dayjs(policyEndDate)}
-                            selected={policyEndDate}
-                            onChange={(newValue) => {
-                              setPolicyEndDate(newValue); // Set the new date directly
-                            }}
-                            selectsStart
-                            startDate={policyEndDate}
-                            placeholderText="MM/DD/YYYY"
-                            style={{ width: '100%' }}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
+                   
+                      <DateTimePicker
+                        height={50}
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyEndDate)}
+                        onChange={handleEndDateChange}
+                      />
                     </Grid>
                   </Grid>
                   <CustomInput
@@ -315,16 +293,7 @@ const HealthPolicyForm = () => {
                     }}
                     required
                   />
-                   <CustomInput
-                    type="text"
-                    label="Total Sum Insured"
-                    value={totalSumAssured}
-                    onChange={(e) => {
-                      setTotalSumAssured(e.target.value);
-
-                    }} 
-                   
-                  />
+                 
 
 
 
@@ -343,7 +312,7 @@ const HealthPolicyForm = () => {
 
 
 
-                 
+
                   <CustomInput
                     type="text"
                     label="Net Premium"
@@ -352,7 +321,7 @@ const HealthPolicyForm = () => {
                       setNetPremium(e.target.value);
 
                     }}
-                   
+
                   />
                   <CustomInput
                     type="text"
@@ -381,6 +350,16 @@ const HealthPolicyForm = () => {
                       setSumAssured(e.target.value);
                     }}
                     required
+                  />
+                   <CustomInput
+                    type="text"
+                    label="Total Sum Insured"
+                    value={totalSumAssured}
+                    onChange={(e) => {
+                      setTotalSumAssured(e.target.value);
+
+                    }}
+
                   />
 
                 </Grid>

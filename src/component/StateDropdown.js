@@ -48,7 +48,7 @@ const GlobalDropdown = ({ onStateSelect, initialValue }) => {
       ) : (
         <select
           id="stateDropdown"
-          className="dropdown-select"
+          className="dropdown-select rounded-5 p-3"
           value={selectedValue}
           onChange={handleChange}
         >

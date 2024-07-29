@@ -53,7 +53,7 @@ const Family = ({ family, onfamilyclose }) => {
 
     return (
         <Drawer anchor="right" open={family} onClose={onfamilyclose}>
-            <Box sx={{ width: 800, padding: 0 }} role="presentation">
+            <Box sx={{ width: 800, padding: 0 }} role="presentation" style={{overflowX:'hidden'}}>
                 <Grid container spacing={2} className='d-flex m-3'>
                     <Grid item>
                         <img src={backArrow} alt="Back" onClick={onfamilyclose} />

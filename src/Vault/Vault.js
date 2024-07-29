@@ -78,7 +78,7 @@ const Vault = () => {
     const [shareAllPolicy, setShareAllPolicy] = useState(false);
     const [selectedPolicies, setSelectedPolicies] = useState([]);
     const [showShareDialog, setShowShareDialog] = useState(false);
-    const [pdfUrl,setPdfUrl]=useState(null)
+    const [pdfUrl, setPdfUrl] = useState(null)
     //function for share icon
     const handleShareIconClick = () => {
         setShareAllPolicy(prevState => !prevState);
@@ -93,7 +93,7 @@ const Vault = () => {
     //function for share dialog
     const toggleShareDialog = () => {
         setShowShareDialog(!showShareDialog);
-        console.log('dialog of share',showShareDialog)
+        console.log('dialog of share', showShareDialog)
     };
 
     //add policy dialog box open and close function start
@@ -157,15 +157,16 @@ const Vault = () => {
                 }
             });
             setLoading(false);
-
+            setResponseData(response.data)
             if (response.status === 200) {
                 // Set response data in state
                 setResponseData(response.data);
+                console.log('responsedata',responseData)
                 const documentId = response.data.documentId;
                 localStorage.setItem('documentId', documentId);
                 const ocrTextObject = JSON.parse(responseData.ocrText);
                 const PolicyType = ocrTextObject.policyType.toLowerCase();
-                console.log('policyytyype',PolicyType)
+                console.log('policyytyype', PolicyType)
                 if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
                     navigate('/coverkraft/motor-policy', { state: { responseData: ocrTextObject } })
                 }
@@ -179,7 +180,7 @@ const Vault = () => {
                 // navigate('/coverkraft/add-policy', { state: { responseData: response.data, mode: 'add' } });
 
             } else {
-                toast.error('File is not extracted due to some issue!')
+                toast.error('File is not 200 status due to some issue!')
             }
         } catch (error) {
             setLoading(false);
@@ -216,7 +217,7 @@ const Vault = () => {
             const filePath = response.data.filePath;
             console.log('file path:', IMAGE_PATH + filePath);
             setPdfUrl(IMAGE_PATH + filePath);
-            console.log('pdfurl',pdfUrl)
+            console.log('pdfurl', pdfUrl)
 
             // const link = document.createElement('a');
             // link.href = IMAGE_PATH + filePath;
@@ -248,7 +249,7 @@ const Vault = () => {
             const filePath = response.data.filePath;
             console.log('file path:', IMAGE_PATH + filePath);
             setPdfUrl(IMAGE_PATH + filePath);
-            console.log('pdfurl',pdfUrl)
+            console.log('pdfurl', pdfUrl)
 
             // const link = document.createElement('a');
             // link.href = IMAGE_PATH + filePath;
@@ -262,7 +263,7 @@ const Vault = () => {
         }
     }
 
-    
+
 
 
     const handleCheckboxChange = (policyId) => {
@@ -291,7 +292,9 @@ const Vault = () => {
                                 </Link>
                                 <Typography className='text-dark cursor-pointer font-size' style={{ fontSize: '21px' }}>My Policies</Typography>
                             </Breadcrumbs>
-                            <img src={share} alt="Share Icon" height={60} className='ml-4' onClick={handleShareIconClick} style={{ cursor: 'pointer' }} />
+                            {selectedPolicies.length > 0 && (
+                                <img src={share} alt="Share Icon" height={60} className='ml-4' onClick={handleShareIconClick} style={{ cursor: 'pointer' }} />
+                            )}
                             <Button
                                 text='Add Policy'
                                 size="md"
@@ -469,7 +472,7 @@ const Vault = () => {
                             <div className="overlay-container">
                                 <div className="fade-screen"></div>
                                 <div className="loader-overlay d-flex justify-content-center">
-                                    <Spinner className=" text-center" style={{ width: '3rem', height: '3rem',color:'#8AC642' }} animation="border" role="status">
+                                    <Spinner className=" text-center" style={{ width: '3rem', height: '3rem', color: '#8AC642' }} animation="border" role="status">
                                         <span className="sr-only">Loading...</span>
                                     </Spinner>
 

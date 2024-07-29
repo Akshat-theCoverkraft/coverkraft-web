@@ -104,7 +104,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
   return (
     <Drawer anchor="right" open={communication} onClose={onCommunicationClose}>
-      <Box sx={{ width: 750, padding: 0, overflowX: 'hidden' }} role="presentation">
+      <Box sx={{ width: 750, padding: 0, overflowX: 'hidden' }} role="presentation" className='overflow-hidden'>
         <div style={{ backgroundColor: "#FFFEFE" }}>
           <Grid container spacing={2} className='d-flex m-3'>
             <Grid item>

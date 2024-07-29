@@ -52,7 +52,7 @@ function CustomInput({ type, label, value, onChange, isValid, className, placeho
         <input
           type={type}
           id="inputField"
-          className={`form-control form-control-lg ${className} `}
+          className={`form-control form-control-lg rounded-5 ${className} `}
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}

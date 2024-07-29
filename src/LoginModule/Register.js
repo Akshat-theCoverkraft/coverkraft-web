@@ -265,13 +265,13 @@ const Register = () => {
                                                 />
                                             </Grid>
                                         </Grid>
-                                        <Grid container spacing={3}>
-                                            <Grid item xs={12} md={6}>
+                                        <Grid container spacing={3} className='pt-0'>
+                                            <Grid item xs={12} md={6} className='pt-0'>
 
                                                 <GlobalDropdown onStateSelect={handleStateSelect} />
 
                                             </Grid>
-                                            <Grid item xs={12} md={6}>
+                                            <Grid item xs={12} md={6}  className='pt-0'>
                                               
                                                 <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
 
@@ -292,7 +292,7 @@ const Register = () => {
                                             </label>
                                             <textarea
 
-                                                className={`form-control form-control-lg `}
+                                                className={`form-control form-control-lg rounded-5`}
                                                 value={address}
                                                 onChange={(e) => { setAddress(e.target.value) }}
                                                 placeholder='Enter Your Address'

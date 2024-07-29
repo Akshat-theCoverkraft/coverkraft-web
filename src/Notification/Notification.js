@@ -65,7 +65,7 @@ const Notification = () => {
     };
 
     return (
-        <>
+        <div className='overflow-hidden'>
             <Navbar />
             <div className='m-5 p-5'>
                 <Typography className='custom-color mb-3' sx={{ p: 2, fontSize: '17px', fontWeight: '500' }}>{sentNotificationsCount} new notification</Typography>
@@ -100,7 +100,7 @@ const Notification = () => {
                     <Button onClick={handleClose} color="primary">Close</Button>
                 </DialogActions>
             </Dialog>
-        </>
+        </div>
     )
 }
 

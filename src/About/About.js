@@ -6,7 +6,7 @@ import mission from '../Images/ic_mission.png'
 import { Card, Grid } from '@mui/material';
 const About = () => {
     return (
-        <div>
+        <div className='overflow-hidden'>
             <Navbar />
             <div className="content">
                 <div className="padding-container">

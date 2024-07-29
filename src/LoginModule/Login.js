@@ -5,7 +5,7 @@ import logo from '../Images/coverkraft_logo.png';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import * as auth from 'firebase/auth';
-import { appFire } from '../ServiceModule/FirebaseConfig';
+// import { appFire } from '../ServiceModule/FirebaseConfig';
 // import firebaseConfig from '../ServiceModule/FirebaseConfig';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
@@ -19,7 +19,7 @@ import axios from 'axios'
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
 import { useNavigate } from "react-router-dom";
-import { getStoredToken } from "../helper";
+// import { getStoredToken } from "../helper";
 
 
 const Login = () => {
@@ -28,7 +28,7 @@ const Login = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid, setValid] = useState(false);
    
-    const auth1 = auth.getAuth(appFire);
+    // const auth1 = auth.getAuth(appFire);
     const dispatch = useDispatch();
     const navigate = useNavigate();
    
