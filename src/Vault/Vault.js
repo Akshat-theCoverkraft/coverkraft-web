@@ -39,6 +39,7 @@ import facebook from '../Images/fb.png';
 import whatsapp from '../Images/wtsp.png';
 import email from '../Images/gmial.png';
 import reddit from '../Images/reddit.png'
+import GradientButton from '../component/GradientButton';
 //styling for breadcrumbs
 const useStyles = makeStyles((theme) => ({
     separator: {
@@ -161,7 +162,7 @@ const Vault = () => {
             if (response.status === 200) {
                 // Set response data in state
                 setResponseData(response.data);
-                console.log('responsedata',responseData)
+                console.log('responsedata', responseData)
                 const documentId = response.data.documentId;
                 localStorage.setItem('documentId', documentId);
                 const ocrTextObject = JSON.parse(responseData.ocrText);
@@ -273,7 +274,13 @@ const Vault = () => {
                 : [...prevSelected, policyId]
         );
     };
+    console.log('selected policiedddd',selectedPolicies)
+    const [policyListLength, setPolicyListLength] = useState(0);
 
+    const handlePolicyListLengthChange = (length) => {
+        setPolicyListLength(length);
+        console.log('policylistlength',policyListLength)
+    };  
     return (
         <>
 
@@ -292,10 +299,10 @@ const Vault = () => {
                                 </Link>
                                 <Typography className='text-dark cursor-pointer font-size' style={{ fontSize: '21px' }}>My Policies</Typography>
                             </Breadcrumbs>
-                            {selectedPolicies.length > 0 && (
+                            {policyListLength > 0 && (
                                 <img src={share} alt="Share Icon" height={60} className='ml-4' onClick={handleShareIconClick} style={{ cursor: 'pointer' }} />
                             )}
-                            <Button
+                            <GradientButton
                                 text='Add Policy'
                                 size="md"
                                 className='ml-4 '
@@ -324,7 +331,7 @@ const Vault = () => {
                     </Stack>
                     <Grid container spacing={-4} >
                         <Grid item xs={12} md={7} lg={7} xl={7} >
-                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy} selectedPolicies={selectedPolicies} handleCheckboxChange={handleCheckboxChange} />
+                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy} selectedPolicies={selectedPolicies} handleCheckboxChange={handleCheckboxChange} onPolicyListLengthChange={handlePolicyListLengthChange}/>
                         </Grid>
                         <Grid item xs={12} md={5} lg={5} xl={5}>
                             <PolicyDetail policyId={selectedPolicyId} />

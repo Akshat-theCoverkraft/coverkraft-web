@@ -23,6 +23,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import ProgressBarCircle from '../../component/ProgressBarCircle';
+import DateTimePicker from '../../component/DateTimePicker';
+import { formatDate } from '../../utils/dateUtils';
 const MotorPolicyForm = () => {
     const location = useLocation();
     const responseData = location.state?.responseData;
@@ -154,7 +156,7 @@ const MotorPolicyForm = () => {
                 }
                 navigate('/')
             } else {
-                toast.error("error", "Please fill all required fields!");
+                toast.error("errorii", "Please fill all required fields!");
             }
         } catch (error) {
             console.error('Failed to save policy:', error);
@@ -169,7 +171,6 @@ const MotorPolicyForm = () => {
             payload.policyNumber &&
             payload.policyStartDate &&
             payload.policyEndDate &&
-            payload.sumAssured &&
             payload.insuredName &&
             payload.insuredCompany &&
             payload.registrationNumber &&
@@ -264,48 +265,32 @@ const MotorPolicyForm = () => {
                                         required
                                     />
 
-                                    <Grid container spacing={3} className='mt-2'>
+                                    <Grid container spacing={3} className='mb-2'>
                                         <Grid item xs={12} md={6}>
 
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Start date <span className='text-danger'>*</span>
                                             </label>
-                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <DemoContainer components={['DatePicker']}>
-                                                    <DatePicker
-                                                        defaultValue={dayjs(policyStartDate)}
-                                                        selected={policyStartDate}
-                                                        onChange={(newValue) => {
-                                                            setPolicyStartDate(newValue); // Set the new date directly
-                                                        }}
-                                                        selectsStart
-                                                        startDate={policyStartDate}
-                                                        placeholderText="MM/DD/YYYY"
-                                                        style={{ width: '100%' }}
-                                                    />
-                                                </DemoContainer>
-                                            </LocalizationProvider>
+                                            <DateTimePicker
+                                                height={50}
+                                                isIcon={false}
+                                                label="DD/MM/YYYY"
+                                                value={formatDate(policyStartDate)}
+                                                onChange={handleStartDateChange}
+                                            />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
 
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 End date <span className='text-danger'>*</span>
                                             </label>
-                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <DemoContainer components={['DatePicker']}>
-                                                    <DatePicker
-                                                        defaultValue={dayjs(policyEndDate)}
-                                                        selected={policyEndDate}
-                                                        onChange={(newValue) => {
-                                                            setPolicyEndDate(newValue); // Set the new date directly
-                                                        }}
-                                                        selectsStart
-                                                        startDate={policyEndDate}
-                                                        placeholderText="MM/DD/YYYY"
-                                                        style={{ width: '100%' }}
-                                                    />
-                                                </DemoContainer>
-                                            </LocalizationProvider>
+                                            <DateTimePicker
+                                                height={50}
+                                                isIcon={false}
+                                                label="DD/MM/YYYY"
+                                                value={formatDate(policyEndDate)}
+                                                onChange={handleEndDateChange}
+                                            />
                                         </Grid>
                                     </Grid>
                                     <CustomInput
@@ -346,7 +331,7 @@ const MotorPolicyForm = () => {
                                             setRegistrationYear(e.target.value);
 
                                         }}
-                                       
+
                                     />
                                     <CustomInput
                                         type="number"
@@ -367,7 +352,7 @@ const MotorPolicyForm = () => {
                                             setNcb(e.target.value);
 
                                         }}
-                                       
+
                                     />
                                     <Button
                                         text={mode === 'edit' ? 'Update' : 'Save'}
@@ -394,7 +379,7 @@ const MotorPolicyForm = () => {
                                             setNetPremium(e.target.value);
 
                                         }}
-                                        
+
                                     />
                                     <CustomInput
                                         type="number"
@@ -422,7 +407,7 @@ const MotorPolicyForm = () => {
                                         onChange={(e) => {
                                             setVehicleEngineNumber(e.target.value);
                                         }}
-                                        
+
                                     />
                                     <CustomInput
                                         type="text"
@@ -450,7 +435,7 @@ const MotorPolicyForm = () => {
                                             setTpPremium(e.target.value);
 
                                         }}
-                                        
+
                                     />
                                     <CustomInput
                                         type="text"
@@ -460,7 +445,7 @@ const MotorPolicyForm = () => {
                                             setOdpremium(e.target.value);
 
                                         }}
-                                        
+
                                     />
 
                                 </Grid>

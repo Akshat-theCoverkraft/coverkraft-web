@@ -23,6 +23,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import ProgressBarCircle from '../../component/ProgressBarCircle';
+import DateTimePicker from '../../component/DateTimePicker';
+import { formatDate } from '../../utils/dateUtils';
 const LifePolicyForm = () => {
   const location = useLocation();
   const responseData = location.state?.responseData;
@@ -191,7 +193,8 @@ const LifePolicyForm = () => {
     formData.append('others', others);
     formData.append('dob', dob);
     formData.append('policyName', policyName)
-    dispatch(saveDocument(API_URL, formData));
+    dispatch(saveDocument(API_URL, formData))
+    
     navigate('/coverkraft/vault')
   }
 
@@ -255,42 +258,26 @@ const LifePolicyForm = () => {
                       <label className="form-label fw-bold" htmlFor="inputField">
                         Start date <span className='text-danger'>*</span>
                       </label>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
-                          <DatePicker
-                            defaultValue={dayjs(policyStartDate)}
-                            selected={policyStartDate}
-                            onChange={(newValue) => {
-                              setPolicyStartDate(newValue); // Set the new date directly
-                            }}
-                            selectsStart
-                            startDate={policyStartDate}
-                            placeholderText="MM/DD/YYYY"
-                            style={{ width: '100%' }}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
+                      <DateTimePicker
+                        height={50}
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyStartDate)}
+                        onChange={handleStartDateChange}
+                      />
                     </Grid>
                     <Grid item xs={12} md={6}>
 
                       <label className="form-label fw-bold" htmlFor="inputField">
                         End date <span className='text-danger'>*</span>
                       </label>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
-                          <DatePicker
-                            defaultValue={dayjs(policyEndDate)}
-                            selected={policyEndDate}
-                            onChange={(newValue) => {
-                              setPolicyEndDate(newValue); // Set the new date directly
-                            }}
-                            selectsStart
-                            startDate={policyEndDate}
-                            placeholderText="MM/DD/YYYY"
-                            style={{ width: '100%' }}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
+                      <DateTimePicker
+                        height={50}
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyEndDate)}
+                        onChange={handleEndDateChange}
+                      />
                     </Grid>
                   </Grid>
                   <Grid container spacing={3} className='mt-2'>
