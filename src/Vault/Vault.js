@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import { makeStyles } from '@mui/styles';
-import share from '../Images/ic-share.png'
+import share from '../Images/ic-share1.png'
 import Button from '../component/Button';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';

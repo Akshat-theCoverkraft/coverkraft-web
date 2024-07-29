@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../../Images/Coverkraft-logo.png'
+import logo from '../../Images/coverkraft_logo.png'
 import './CSS/footer.css'
 import twitter from '../../Images/twitter.png';
 import facebook from '../../Images/facebook.png';
@@ -23,7 +23,7 @@ const Footer = () => {
                             <div class="col-md-2 col-lg-2 col-xl-3 col-sm-12 mx-auto mb-4">
 
                                 <h6 class="text-uppercase fw-bold mb-4">
-                                    <img src={logo} alt='' height={25} />
+                                    <img src={logo} alt=''  />
                                 </h6>
                                 <p className='text-color fs-4 '>
                                     Coverkraft, we offer<br/> incredible tools for  filling out<br/> forms, scanning documents, <br/>and uploading them.

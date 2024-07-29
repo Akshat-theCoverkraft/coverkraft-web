@@ -47,7 +47,8 @@ function Navbar(props) {
 
     // function to open notification popup
     const handleClick = (event) => {
-        setAnchorElPop(event.currentTarget);
+        navigate('/coverkraft/notification')
+        // setAnchorElPop(event.currentTarget);
     };
 
     // function to close notification popup

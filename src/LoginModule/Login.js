@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CSS/login.css'
-import LoginImg from '../Images/Login-img.png';
-import logo from '../Images/Coverkraft-logo.png';
+import LoginImg from '../Images/img_phone_login.png';
+import logo from '../Images/coverkraft_logo.png';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import * as auth from 'firebase/auth';
@@ -139,7 +139,7 @@ const Login = () => {
 
                         <div class="col-md-9 col-lg-6 col-xl-5">
                             <img src={LoginImg}
-                                class="img-fluid" alt="Sample image" />
+                                class="img-fluid" alt="Sample image" height={1000} width={1000}/>
                         </div>
                         <div class="col-md-4 col-lg-5 col-xl-4 offset-xl-1">
                             <form className='shadow shadow-md ' style={{ padding: '70px' }}>

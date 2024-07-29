@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CSS/login.css'
-import LoginImg from '../Images/Login-img.png';
-import logo from '../Images/Coverkraft-logo.png';
+import LoginImg from '../Images/img_phone_login.png';
+import logo from '../Images/coverkraft_logo.png';
 import { Link } from 'react-router-dom';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
@@ -208,7 +208,7 @@ const Register = () => {
                     <div class="row d-flex justify-content-center align-items-center ">
                         <div class="col-md-8  col-lg-6 col-xl-5">
                             <img src={LoginImg}
-                                class="img-fluid" alt="Sample image" />
+                                class="img-fluid" alt="Sample image" height={1000} width={1000}/>
                         </div>
                         <div class="col-md-5 col-lg-4 col-xl-5">
                             <form className='shadow shadow-md m-4' style={{ padding: '20px 70px' }}>
