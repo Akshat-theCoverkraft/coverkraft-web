@@ -160,7 +160,7 @@ const Register = () => {
             formData.append('userEmail', email);
             formData.append('userAddress', address);
             formData.append('userFcmId', fcmToken);
-            formData.append('roleID', roleID)
+            formData.append('roleId', roleID)
             formData.append('state', selectedStateId)
             formData.append('city', selectedCityId)
 

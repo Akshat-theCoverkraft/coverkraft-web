@@ -44,7 +44,7 @@ function CustomInput({ type, label, value, onChange, isValid, className, placeho
           value={value}
           onChange={onChange}
           name={name}
-          style={{ padding: '28px 15px' }}
+          style={{ padding: '0px 0px' }}
         >
           {children}
         </select>

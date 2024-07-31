@@ -40,6 +40,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const [userAddress, setuserAddress] = useState();
     const [state, setstate] = useState('');
     console.log("state", state);
+    const [city,setCity]=useState('')
     const [userPhone, setuserPhone] = useState();
     const [pinCode, setpinCode] = useState();
     const [gender, setgender] = useState();
@@ -87,6 +88,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             setuserDob(data.userDob);
             setuserAddress(data.userAddress);
             setstate(data.state.stateNameEnglish);
+            setCity(data.city.cityNameEnglish);
             setpinCode(data.pinCode);
             setgender(data.gender);
             setProfileImage(data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile);
@@ -123,6 +125,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             userDob ||
             userAddress ||
             state ||
+            city ||
             pinCode ||
             gender ||
             userImgFile
@@ -197,8 +200,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
 
     return (
-        <Drawer anchor="right" open={open} onClose={onClose} className='overflow-hidden'>
-            <Box sx={{ width: 750, padding: 0 }} role="presentation" className='overflow-hidden'>
+        <Drawer anchor="right" open={open} onClose={onClose} className='' >
+            <Box sx={{ width: 750, padding: 0,overflowX:'hidden' }} role="presentation" className=''>
                 <div className="main-container">
                     <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "35vh" }}>
                         <div className="profile-details">
@@ -382,7 +385,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             <Family family={drawerOpen} onfamilyclose={handleFamilyClose} />
             <Communication communication={communicationDrawerOpen} onCommunicationClose={handleCommunicationclose} />
             <Help help={helpDrawerOpen} onHelpClose={handleHelpclose} />
-            <About about={aboutDrawerOpen} onAboutclose={handleAboutClose} />
+            {/* <About about={aboutDrawerOpen} onAboutclose={handleAboutClose} /> */}
         </Drawer>
     );
 };

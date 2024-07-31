@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Logo from '../Images/coverkraft_logo.png'
+import Logo from '../Images/coverkraft_logo_1.png'
 import Button from './Button';
 import profile from '../Images/ic-profile.png'
 import notification from '../Images/ic-notification.png'
@@ -206,6 +206,8 @@ function Navbar(props) {
                             onClick={handleHome}
                             style={{ cursor: 'pointer' }}
                             src={Logo}
+                            height={21}
+                            width={21}
                         />
                     </div>
 
@@ -238,11 +240,11 @@ function Navbar(props) {
                     ) : (
 
                         <div
-                            className={`grid gap-5 d-flex align-items-center ${showMenu ? 'show-menu' : 'hide-menu'
+                            className={`grid gap-5 d-flex align-items-center  ${showMenu ? 'show-menu' : 'hide-menu'
                                 }`}
                         >
                             <div
-                                className={`nav-item ${activeItem === 'home' ? 'active' : ''}`}
+                                className={`nav-item active ${activeItem === 'home' ? 'active' : ''}`}
                                 onClick={() => handleItemClick('home')}
                             >
                                 Home
@@ -325,7 +327,7 @@ function Navbar(props) {
                                             </span>
                                         </MenuItem>
                                     </Menu>
-                                    <button className='btn btn-lg py-2 px-5' style={{ color: 'white', backgroundColor: '#8AC642' }} onClick={handleVault}>
+                                    <button className='btn btn-lg rounded-5 py-2 px-5' style={{ color: 'white', backgroundColor: '#8AC642' }} onClick={handleVault}>
                                         Vault
                                     </button>
                                 </>

@@ -49,6 +49,8 @@ const PolicyDetail = ({ policyId }) => {
                 });
                 if (response.data && response.data.data && Array.isArray(response.data.data)) {
                     setPolicyDetails(response.data.data);
+                    console.log('policydetails',policyDetails)
+                    localStorage.setItem('policyId',policyId)
                 } else {
                     console.error('Expected an array but got:', response.data);
                     setPolicyDetails([]);
@@ -114,7 +116,8 @@ const PolicyDetail = ({ policyId }) => {
         console.log('eheyyyyy', policyDetails[0].policyType)
         const responseData = policyDetails[0];
         const PolicyType = policyDetails[0].policyType;
-        console.log('polcyytype', PolicyType)
+        
+        console.log('polcyytype', responseData)
         if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
             navigate('/coverkraft/motor-policy', { state: { policyDetails: responseData, mode: 'edit' } })
         }
@@ -146,7 +149,7 @@ const PolicyDetail = ({ policyId }) => {
     return (
         <>
             {policyDetails.length === 0 ? (
-                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '87vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '95vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                     <img src={emptyImage} alt="No Data" />
                     <p>Add your new policy effortlessly to your account</p>
 

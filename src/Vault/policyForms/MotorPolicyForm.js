@@ -30,7 +30,8 @@ const MotorPolicyForm = () => {
     const responseData = location.state?.responseData;
     const mode = location.state?.mode;
     const policyDetails = location.state?.policyDetails;
-
+    console.log('responsethedata',responseData)
+console.log('policydetails',policyDetails)
     // Now you can use the responseData and mode in your component
     let headingText;
     if (mode === 'edit') {
@@ -38,8 +39,8 @@ const MotorPolicyForm = () => {
     } else {
         headingText = 'Add Policy';
     }
-    const PolicyType = responseData?.policyType.toLowerCase();
-
+    const PolicyType = policyDetails?.policyType.toLowerCase();
+    console.log('policythe tpe',PolicyType)
     const [policyNumber, setPolicyNumber] = useState(responseData?.policyNumber || policyDetails?.policyNumber || "");
     const [policyStartDate, setPolicyStartDate] = useState(responseData?.policyStartDate || policyDetails?.policyStartDate || "");
     const [policyEndDate, setPolicyEndDate] = useState(responseData?.policyEndDate || policyDetails?.policyEndDate || "");
@@ -62,6 +63,8 @@ const MotorPolicyForm = () => {
     const [loading, setLoading] = useState(false);
     const userId = localStorage.getItem('userId');
     const documentId = localStorage.getItem('documentId');
+    const policyId = localStorage.getItem('policyId')
+
     const token = localStorage.getItem('token')
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -189,7 +192,7 @@ const MotorPolicyForm = () => {
 
         formData.append('userId', userId);
         formData.append('documentId', documentId);
-        formData.append('policyType', PolicyType);
+        formData.append('policyType', responseData?.policyType.toLowerCase());
         formData.append('policyNumber', policyNumber);
         formData.append('policyStartDate', policyStartDate);
         formData.append('policyEndDate', policyEndDate);
@@ -207,14 +210,20 @@ const MotorPolicyForm = () => {
         formData.append('tpPremium', tpPremium);
         formData.append('odPremium', odPremium)
         formData.append('idv', idv);
-        dispatch(saveDocument(API_URL, formData));
-        navigate('/coverkraft/vault')
+        dispatch(saveDocument(API_URL, formData))
+            .then(() => {
+                toast.success("Successfully Created");
+                navigate('/coverkraft/vault')
+            })
+            .catch((error) => {
+                toast.error("Error creating policy");
+            });
     }
 
     const updatePolicy = (payload) => {
         console.log('================')
         const formData = new FormData();
-
+        formData.append('_id', policyId)
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', PolicyType);
@@ -235,8 +244,14 @@ const MotorPolicyForm = () => {
         formData.append('tpPremium', tpPremium);
         formData.append('odPremium', odPremium)
         formData.append('idv', idv);
-        dispatch(updateDocument(API_URL, formData));
-        navigate('/coverkraft/vault')
+        dispatch(updateDocument(API_URL, formData))
+            .then(() => {
+                toast.success("Successfully Updated");
+                navigate('/coverkraft/vault')
+            })
+            .catch((error) => {
+                toast.error("Error updating policy");
+            });
     }
 
     return (

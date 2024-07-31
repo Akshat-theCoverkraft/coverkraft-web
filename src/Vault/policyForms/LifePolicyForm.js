@@ -38,8 +38,8 @@ const LifePolicyForm = () => {
   } else {
     headingText = 'Add Policy';
   }
-//   const PolicyType = responseData.policyType.toLowerCase();
-// console.log('pollcitype',PolicyType)
+  //   const PolicyType = responseData.policyType.toLowerCase();
+  // console.log('pollcitype',PolicyType)
   const [policyNumber, setPolicyNumber] = useState(responseData?.policyNumber || policyDetails?.policyNumber || "");
   const [policyStartDate, setPolicyStartDate] = useState(responseData?.policyStartDate || policyDetails?.policyStartDate || "");
   const [policyEndDate, setPolicyEndDate] = useState(responseData?.policyEndDate || policyDetails?.policyEndDate || "");
@@ -61,6 +61,8 @@ const LifePolicyForm = () => {
   const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem('userId');
   const documentId = localStorage.getItem('documentId');
+  const policyId = localStorage.getItem('policyId')
+
   const token = localStorage.getItem('token')
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -163,8 +165,8 @@ const LifePolicyForm = () => {
       payload.insuredName &&
       payload.insuredCompany &&
       payload.sumAssured &&
-      payload.policyName 
-     
+      payload.policyName
+
     );
   };
 
@@ -186,7 +188,7 @@ const LifePolicyForm = () => {
     formData.append('insuranceCompany', insuredCompany);
     formData.append('criticalIllness', criticalIllness);
     formData.append('accidentalDisability', accidentalDisability);
-    formData.append('terminalIllness',terminalIllness)
+    formData.append('terminalIllness', terminalIllness)
     formData.append('pa', pa);
     formData.append('policyRenewalDate', policyRenewalDate);
     formData.append('maturityDate', maturityDate);
@@ -194,8 +196,14 @@ const LifePolicyForm = () => {
     formData.append('dob', dob);
     formData.append('policyName', policyName)
     dispatch(saveDocument(API_URL, formData))
-    
-    navigate('/coverkraft/vault')
+
+      .then(() => {
+        toast.success("Successfully Created");
+        navigate('/coverkraft/vault')
+      })
+      .catch((error) => {
+        toast.error("Error creating policy");
+      });
   }
 
   const updatePolicy = (payload) => {
@@ -204,6 +212,7 @@ const LifePolicyForm = () => {
 
     formData.append('userId', userId);
     formData.append('documentId', documentId);
+    formData.append('_id', policyId)
     formData.append('policyType', policyDetails?.policyType.toLowerCase());
     formData.append('policyNumber', policyNumber);
     formData.append('policyStartDate', policyStartDate);
@@ -215,15 +224,21 @@ const LifePolicyForm = () => {
     formData.append('insuranceCompany', insuredCompany);
     formData.append('criticalIllness', criticalIllness);
     formData.append('accidentalDisability', accidentalDisability);
-    formData.append('terminalIllness',terminalIllness)
+    formData.append('terminalIllness', terminalIllness)
     formData.append('pa', pa);
     formData.append('policyRenewalDate', policyRenewalDate);
     formData.append('maturityDate', maturityDate);
     formData.append('others', others);
     formData.append('dob', dob);
     formData.append('policyName', policyName)
-    dispatch(updateDocument(API_URL, formData));
-    navigate('/coverkraft/vault')
+    dispatch(updateDocument(API_URL, formData))
+      .then(() => {
+        toast.success("Successfully Updated");
+        navigate('/coverkraft/vault')
+      })
+      .catch((error) => {
+        toast.error("Error updating policy");
+      });
   }
 
   return (
@@ -284,7 +299,7 @@ const LifePolicyForm = () => {
                     <Grid item xs={12} md={6}>
 
                       <label className="form-label fw-bold" htmlFor="inputField">
-                        Policy Renewal date 
+                        Policy Renewal date
                       </label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']}>
@@ -305,7 +320,7 @@ const LifePolicyForm = () => {
                     <Grid item xs={12} md={6}>
 
                       <label className="form-label fw-bold" htmlFor="inputField">
-                        Maturity date 
+                        Maturity date
                       </label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']}>
@@ -327,7 +342,7 @@ const LifePolicyForm = () => {
                   <Grid xs={12} md={6}>
 
                     <label className="form-label fw-bold" htmlFor="inputField">
-                      DOB 
+                      DOB
                     </label>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DemoContainer components={['DatePicker']}>
@@ -382,9 +397,9 @@ const LifePolicyForm = () => {
                       setAccidentalDisability(e.target.value);
 
                     }}
-                    
+
                   />
-                   <CustomInput
+                  <CustomInput
                     type="number"
                     label="Terminal illness"
                     value={terminalIllness}
@@ -392,9 +407,9 @@ const LifePolicyForm = () => {
                       setTerminalIllness(e.target.value);
 
                     }}
-                    
+
                   />
-                  
+
 
 
                   <Button
@@ -421,7 +436,7 @@ const LifePolicyForm = () => {
                       setNetPremium(e.target.value);
 
                     }}
-                    
+
                   />
                   <CustomInput
                     type="number"
@@ -449,7 +464,7 @@ const LifePolicyForm = () => {
                     onChange={(e) => {
                       setPa(e.target.value);
                     }}
-                    
+
                   />
                   <CustomInput
                     type="text"
@@ -458,7 +473,7 @@ const LifePolicyForm = () => {
                     onChange={(e) => {
                       setOthers(e.target.value);
                     }}
-                    
+
                   />
                   <CustomInput
                     type="text"

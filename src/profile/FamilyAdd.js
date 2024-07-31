@@ -6,6 +6,7 @@ import Button from '../component/Button';
 import backArrow from '../Images/ic_back_button.png';
 import axios from 'axios';
 import API_URL from '../ServiceModule/Service';
+import Dropdown from '../component/Dropdown';
 
 const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
     const [familyMember, setFamilyMember] = useState('');
@@ -62,7 +63,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
                     </Grid>
                 </Grid>
                 <Box sx={{ marginTop: 3, width: '100%' }}>
-                    <GlobalDropdown
+                    <Dropdown
                         label="Family Member"
                         options={familyOption}
                         value={familyMember}

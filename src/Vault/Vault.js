@@ -148,7 +148,7 @@ const Vault = () => {
                 formData.append('ocrText', image[i]);
             }
         }
-
+    
         setLoading(true);
         try {
             const response = await axios.post(API_URL + 'document/ocrExtractData', formData, {
@@ -158,36 +158,33 @@ const Vault = () => {
                 }
             });
             setLoading(false);
-            setResponseData(response.data)
+            
             if (response.status === 200) {
-                // Set response data in state
-                setResponseData(response.data);
-                console.log('responsedata', responseData)
-                const documentId = response.data.documentId;
+                const responseData = response.data; // Use the response data directly here
+                setResponseData(responseData);
+                console.log('responsedata', responseData);
+                const documentId = responseData.documentId;
                 localStorage.setItem('documentId', documentId);
                 const ocrTextObject = JSON.parse(responseData.ocrText);
                 const PolicyType = ocrTextObject.policyType.toLowerCase();
-                console.log('policyytyype', PolicyType)
+                console.log('policyytyype', PolicyType);
                 if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
-                    navigate('/coverkraft/motor-policy', { state: { responseData: ocrTextObject } })
+                    navigate('/coverkraft/motor-policy', { state: { responseData: ocrTextObject } });
+                } else if (PolicyType === 'health' || PolicyType === 'other_health') {
+                    console.log('heyy', ocrTextObject);
+                    navigate('/coverkraft/health-policy', { state: { responseData: ocrTextObject } });
+                } else if (PolicyType === 'life' || PolicyType === 'accident') {
+                    navigate('/coverkraft/life-policy', { state: { responseData: ocrTextObject } });
                 }
-                else if (PolicyType === 'health' || PolicyType === 'other_health') {
-                    console.log('heyy', ocrTextObject)
-                    navigate('/coverkraft/health-policy', { state: { responseData: ocrTextObject } })
-                }
-                else if (PolicyType === 'life' || PolicyType === 'accident') {
-                    navigate('/coverkraft/life-policy', { state: { responseData: ocrTextObject } })
-                }
-                // navigate('/coverkraft/add-policy', { state: { responseData: response.data, mode: 'add' } });
-
             } else {
-                toast.error('File is not 200 status due to some issue!')
+                toast.error('File is not 200 status due to some issue!');
             }
         } catch (error) {
             setLoading(false);
-            toast.error('File is not extracted due to some issue!')
+            toast.error('File is not extracted due to some issue!');
         }
     };
+    
     //function to handle ocr data extraction API start
 
     //handle the css on breadcrumbs

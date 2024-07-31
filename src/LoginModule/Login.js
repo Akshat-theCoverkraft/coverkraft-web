@@ -73,7 +73,7 @@ const Login = () => {
                 const token = response.data.user.token;
                 // Store the user ID in local storage
                 localStorage.setItem('userId', userId);
-                localStorage.setItem('token',auth1);
+                localStorage.setItem('token',token);
             //     const appVerifier = new RecaptchaVerifier(auth1, 'recaptcha-container', {});
             //     await appVerifier.render();
             //     await appVerifier.verify();

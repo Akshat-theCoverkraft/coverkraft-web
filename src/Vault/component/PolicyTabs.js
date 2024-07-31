@@ -29,7 +29,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
     const [pageArchive, setPageArchive] = useState(1);
     const itemsPerPage = 10;
     const [policyList, setPolicyList] = useState([]);
-    const [pageActive, setPageActive] = useState([])
+    const [pageActive, setPageActive] = useState(1)
     const [archieveList, setArchieveList] = useState([]);
     
     const handlePageChangePolicy = (event, value) => {
@@ -72,6 +72,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
 
                 // Assuming response.data is the whole response object
                 if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                    
                     setPolicyList(response.data.data);
                     onPolicyListLengthChange(response.data.data.length); // Update parent with policyList length
                     console.log('length btade',response.data.data.length)

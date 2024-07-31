@@ -57,6 +57,7 @@ const HealthPolicyForm = () => {
   const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem('userId');
   const documentId = localStorage.getItem('documentId');
+  const policyId = localStorage.getItem('policyId')
   const token = localStorage.getItem('token')
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -182,14 +183,20 @@ const HealthPolicyForm = () => {
     formData.append('dob', dob);
     formData.append('policyName', policyName)
 
-    dispatch(saveDocument(API_URL, formData));
-    navigate('/coverkraft/vault')
+    dispatch(saveDocument(API_URL, formData))
+      .then(() => {
+        toast.success("Successfully Created");
+        navigate('/coverkraft/vault')
+      })
+      .catch((error) => {
+        toast.error("Error creating policy");
+      });
   }
 
   const updatePolicy = (payload) => {
     console.log('================')
     const formData = new FormData();
-
+    formData.append('_id', policyId)
     formData.append('userId', userId);
     formData.append('documentId', documentId);
     formData.append('policyType', policyDetails?.policyType.toLowerCase());
@@ -205,8 +212,15 @@ const HealthPolicyForm = () => {
     formData.append('dob', dob);
     formData.append('policyName', policyName)
 
-    dispatch(updateDocument(API_URL, formData));
-    navigate('/coverkraft/vault')
+    dispatch(updateDocument(API_URL, formData))
+      .then(() => {
+        toast.success("Successfully Updated");
+        navigate('/coverkraft/vault')
+      })
+      .catch((error) => {
+        toast.error("Error updating policy");
+      });
+
   }
 
   return (
@@ -238,12 +252,12 @@ const HealthPolicyForm = () => {
                     DOB <span className='text-danger'>*</span>
                   </label>
                   <DateTimePicker
-                        height={50}
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(dob)}
-                        onChange={handleDobChange}
-                      />
+                    height={50}
+                    isIcon={false}
+                    label="DD/MM/YYYY"
+                    value={formatDate(dob)}
+                    onChange={handleDobChange}
+                  />
                   <Grid container spacing={3} className='mt-2 mb-2'>
                     <Grid item xs={12} md={6}>
 
@@ -260,10 +274,10 @@ const HealthPolicyForm = () => {
                     </Grid>
                     <Grid item xs={12} md={6}>
 
-                       <label className="form-label fw-bold" htmlFor="inputField">
+                      <label className="form-label fw-bold" htmlFor="inputField">
                         End date <span className='text-danger'>*</span>
                       </label>
-                   
+
                       <DateTimePicker
                         height={50}
                         isIcon={false}
@@ -293,7 +307,7 @@ const HealthPolicyForm = () => {
                     }}
                     required
                   />
-                 
+
 
 
 
@@ -351,7 +365,7 @@ const HealthPolicyForm = () => {
                     }}
                     required
                   />
-                   <CustomInput
+                  <CustomInput
                     type="text"
                     label="Total Sum Insured"
                     value={totalSumAssured}
