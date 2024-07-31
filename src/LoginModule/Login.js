@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './CSS/login.css'
 import LoginImg from '../Images/img_phone_login.png';
 import logo from '../Images/coverkraft_logo.png';
+import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
 import { Link } from 'react-router-dom';
 import * as firebase from 'firebase/app';
-import * as auth from 'firebase/auth';
-// import { appFire } from '../ServiceModule/FirebaseConfig';
-// import firebaseConfig from '../ServiceModule/FirebaseConfig';
+//import * as auth from 'firebase/auth';
+import { appFire } from '../ServiceModule/FirebaseConfig';
+import firebaseConfig from '../ServiceModule/FirebaseConfig';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
@@ -19,7 +20,7 @@ import axios from 'axios'
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
 import { useNavigate } from "react-router-dom";
-// import { getStoredToken } from "../helper";
+import { getStoredToken } from "../helper";
 
 
 const Login = () => {
@@ -28,7 +29,7 @@ const Login = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid, setValid] = useState(false);
    
-    // const auth1 = auth.getAuth(appFire);
+    const auth1 = getAuth(appFire);
     const dispatch = useDispatch();
     const navigate = useNavigate();
    
@@ -72,15 +73,17 @@ const Login = () => {
                 const token = response.data.user.token;
                 // Store the user ID in local storage
                 localStorage.setItem('userId', userId);
-                localStorage.setItem('token',token);
-                // const appVerifier = new auth.RecaptchaVerifier(auth1, 'recaptcha-container');
-                // await appVerifier.render();
-                // await appVerifier.verify();
-                // const confirmationResult = await auth.signInWithPhoneNumber(auth1, `+91${phoneNumber}`, appVerifier);
+                localStorage.setItem('token',auth1);
+            //     const appVerifier = new RecaptchaVerifier(auth1, 'recaptcha-container', {});
+            //     await appVerifier.render();
+            //     await appVerifier.verify();
+            //     console.log('appVerifier', appVerifier);
+            //    // signInWithPopup(auth1,
+            //     const confirmationResult = await signInWithPhoneNumber(auth1,'+919893079903', appVerifier);
                 setLoggedIn(true);
 
                 // localStorage.setItem('verificationId', confirmationResult.verificationId);
-                // toast.success(' OTP is sent  to your phone number');
+                toast.success(' OTP is sent  to your phone number');
             } else {
                 // If status is not 200, display error message
                 toast.error('Phone number verification failed');
@@ -96,24 +99,26 @@ const Login = () => {
     //function to verify otp and login start
     const handleVerify = () => {
         // const storedValue = localStorage.getItem('verificationId');
-        // const phoneProvider = new auth.PhoneAuthProvider(auth1);
-        // const credential = auth.PhoneAuthProvider.credential(
+        // const phoneProvider = new PhoneAuthProvider(auth1);
+        // const credential1 = PhoneAuthProvider.credential(
         //     storedValue,
         //     otp
         // )
-
-        // auth.signInWithCredential(auth1, credential)
+        // console.log('cred1', credential1)
+        // const credential=signInWithPopup(auth1, phoneProvider )
+        // console.log('cred',credential)
+        // signInWithCredential(auth1, credential)
         //     .then(() => {
-        //         const formData = new FormData();
-        //         formData.append('userPhone', phoneNumber);
+                const formData = new FormData();
+                formData.append('userPhone', phoneNumber);
         //         const fcmToken = getStoredToken();
 
         //         if (fcmToken) {
         //             formData.append('userFcmId', fcmToken);
         //         }
-        //         dispatch(verifyUser(API_URL, formData))
+                dispatch(verifyUser(API_URL, formData))
                 localStorage.setItem('loggedIn', 'true');
-        //         toast.success('Phone number authentication done');
+                toast.success('Phone number authentication done');
                 navigate('/coverkraft');
             // })
             // .catch((error) => {
@@ -214,7 +219,7 @@ const Login = () => {
                                                 text='Verify'
                                                 size="lg"
                                                 block={true}
-                                                onClick={handleVerify}
+                                                 onClick={handleVerify}
                                             />
                                         </div>
                                     </div>

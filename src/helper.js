@@ -3,7 +3,7 @@
 // const messaging=getMessaging();
 
 // export const requestForToken = () => {
-//     return getToken(messaging, { vapidKey: 'BOQdgTuitP7hDi35akXEsWeJ4HW9NhTv4ML85JXJlzqfxyyjhOywoQXgKwLFMMuVRyv1DI-GxJ7_OUUE0IdVwa8' })
+//     return getToken(messaging, { vapidKey: 'BCsWZhl3fwUo54ZwpXywRcXFu32NqM5XpWMriAsgIEGMYRoID1l_GCjjs4fgyXLieUpfZ041-Al3qfHSgqhgZfE' })
 //         .then((currentToken) => {
 //             if (currentToken) {
 //                 console.log('current token for client: ', currentToken);// Perform any other neccessary action with the token

@@ -4,6 +4,8 @@ import Footer from '../Landing/component/Footer'
 import vision from '../Images/ic_vision.png';
 import mission from '../Images/ic_mission.png'
 import { Card, Grid } from '@mui/material';
+import '../profile/about.css'
+
 const About = () => {
     return (
         <div className='overflow-hidden'>

@@ -162,3 +162,11 @@
   width: 50%;
   height: 200px;
 }
+.nav-item {
+  /* Your existing styles */
+  cursor: pointer;
+}
+
+.nav-item.active {
+  color: green; /* Change this to your desired active color */
+}

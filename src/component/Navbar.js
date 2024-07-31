@@ -44,7 +44,21 @@ function Navbar(props) {
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [anchorElToggle, setAnchorElToggle] = useState(null);
+    const [activeItem, setActiveItem] = useState('');
 
+    const handleItemClick = (item) => {
+        setActiveItem(item);
+        // Call the respective handlers based on the item
+        if (item === 'home') {
+            handleHome();
+        } else if (item === 'about') {
+            handleAbout();
+        } else if (item === 'vault') {
+            handleVault();
+        } else if (item === 'help') {
+            scrollToContactBottom();
+        }
+    };
     // function to open notification popup
     const handleClick = (event) => {
         navigate('/coverkraft/notification')
@@ -79,13 +93,16 @@ function Navbar(props) {
         navigate('/coverkraft/login')
     }
     function handleVault() {
+        setActiveItem('vault');
         navigate('/coverkraft/vault')
     }
 
     function handleHome() {
+        setActiveItem('home');
         navigate('/coverkraft')
     }
-    function handleAbout(){
+    function handleAbout() {
+        setActiveItem('about');
         navigate('/coverkraft/about')
     }
 
@@ -160,7 +177,7 @@ function Navbar(props) {
         setShowMenu(false);
     };
 
-    
+
     const [drawerOpen, setDrawerOpen] = useState(false);
     const handleDrawerClose = () => {
         setDrawerOpen(false);
@@ -193,7 +210,7 @@ function Navbar(props) {
                     </div>
 
                     {windowWidth < 1260 ? (
-                        
+
                         <>
                             <IconButton onClick={handleMenuClick}>
                                 {showMenu ? <CloseIcon /> : <MenuIcon />}
@@ -225,44 +242,31 @@ function Navbar(props) {
                                 }`}
                         >
                             <div
-                                className={
-                                    isSticky
-                                        ? 'nav-item active custom-home-Scroll animate-style'
-                                        : 'nav-item active custom-home-font animate-style'
-                                }
-                                onClick={handleHome}
+                                className={`nav-item ${activeItem === 'home' ? 'active' : ''}`}
+                                onClick={() => handleItemClick('home')}
                             >
                                 Home
                             </div>
-                           
+
                             {loggedIn ? (
                                 <>
                                     <div
-                                        className={
-                                            isSticky
-                                                ? 'nav-item active custom-home-Scroll animate-style'
-                                                : 'nav-item active custom-home-font animate-style'
-                                        }
+                                        className={activeItem === 'about' ? 'nav-item active' : 'nav-item'}
+
                                         onClick={handleAbout}
                                     >
                                         About Us
                                     </div>
                                     <div
-                                        className={
-                                            isSticky
-                                                ? 'nav-item active custom-home-Scroll animate-style'
-                                                : 'nav-item active custom-home-font animate-style'
-                                        }
+                                        className={activeItem === 'vault' ? 'nav-item active' : 'nav-item'}
+
                                         onClick={handleVault}
                                     >
                                         Policy
                                     </div>
                                     <div
-                                        className={
-                                            isSticky
-                                                ? 'nav-item active custom-home-Scroll animate-style'
-                                                : 'nav-item active custom-home-font animate-style'
-                                        }
+                                        className={activeItem === 'help' ? 'nav-item active' : 'nav-item'}
+
                                         onClick={scrollToContactBottom}
                                     >
                                         Help
@@ -279,7 +283,7 @@ function Navbar(props) {
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                                         transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                                     >
-                                        <MenuItem  onClick={handleDrawerOpen}>
+                                        <MenuItem onClick={handleDrawerOpen}>
                                             <AccountCircleOutlinedIcon />{' '}
                                             <span
                                                 style={{
@@ -326,14 +330,14 @@ function Navbar(props) {
                                     </button>
                                 </>
                             ) : (
-                                <button className={`btn btn-lg custom-color py-2 px-5 `} style={{ borderColor: '#8AC642', color: '#8AC642',borderRadius:'25px' }} onClick={handleLogin}>
+                                <button className={`btn btn-lg custom-color py-2 px-5 `} style={{ borderColor: '#8AC642', color: '#8AC642', borderRadius: '25px' }} onClick={handleLogin}>
                                     Login
                                 </button>
                             )}
                         </div>
 
                     )}
-                   
+
                 </div>
             </div>
 
@@ -451,7 +455,7 @@ function Navbar(props) {
             >
                 <Typography className='custom-color' sx={{ p: 2, fontSize: '17px', fontWeight: '500' }}>35 new notification</Typography>
                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    <Card className='rounded' sx={{ mx: 2,my:1, p: 1, backgroundColor: '#F8FFFE' ,boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px'}} >
+                    <Card className='rounded' sx={{ mx: 2, my: 1, p: 1, backgroundColor: '#F8FFFE', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }} >
                         <Grid container spacing={3} xs={12}>
                             <Grid item xs={2}>
                                 <img src={ck} />
@@ -465,7 +469,7 @@ function Navbar(props) {
                             </Grid>
                         </Grid>
                     </Card>
-                    <Card className='rounded' sx={{ mx: 2,my:1, p: 1, backgroundColor: '#F8FFFE' ,boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px'}} >
+                    <Card className='rounded' sx={{ mx: 2, my: 1, p: 1, backgroundColor: '#F8FFFE', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }} >
 
                         <Grid container spacing={3} xs={12}>
                             <Grid item xs={2}>
@@ -480,7 +484,7 @@ function Navbar(props) {
                             </Grid>
                         </Grid>
                     </Card>
-                    <Card className='rounded' sx={{ mx: 2,my:1, p: 1, backgroundColor: '#F8FFFE' ,boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px'}} >
+                    <Card className='rounded' sx={{ mx: 2, my: 1, p: 1, backgroundColor: '#F8FFFE', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }} >
 
                         <Grid container spacing={3} xs={12}>
                             <Grid item xs={2}>
@@ -497,7 +501,7 @@ function Navbar(props) {
                     </Card>
                 </div>
             </Popover>
-            <ProfileDrawer open={drawerOpen} onClose={handleDrawerClose}  />
+            <ProfileDrawer open={drawerOpen} onClose={handleDrawerClose} />
 
         </>
     )

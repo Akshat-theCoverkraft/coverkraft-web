@@ -4,15 +4,15 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-route
 import Login from "./LoginModule/Login";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from "./LoginModule/Register";
-// import firebaseConfig from "./ServiceModule/FirebaseConfig";
-// import { appFire } from "./ServiceModule/FirebaseConfig";
+import firebaseConfig from "./ServiceModule/FirebaseConfig";
+import { appFire } from "./ServiceModule/FirebaseConfig";
 import { initializeApp } from "firebase/app";
 import { ToastContainer } from 'react-toastify';
 import Landing from "./Landing/Landing";
 import Vault from "./Vault/Vault";
 import AddPolicy from "./Vault/component/AddPolicy";
 import { messaging, getToken } from '../src/ServiceModule/FirebaseConfig';
-// import { requestForToken } from "./helper";
+import { requestForToken } from "./helper";
 import EditPolicy from "./Vault/component/EditPolicy";
 import ProfileDrawer from "./component/profile";
 import MotorPolicyForm from "./Vault/policyForms/MotorPolicyForm";
@@ -27,8 +27,8 @@ function App() {
   const navigate = useNavigate()
   // const firebaseApp = initializeApp(appFire); // Use the named export correctly
   // console.log('app', firebaseApp);
-  // const app = initializeApp(firebaseConfig);
-  // console.log('app',app);
+  const app = initializeApp(firebaseConfig);
+  console.log('app',app);
   // if (!appFire.apps.length) {
   //   appFire.initializeApp(appFire);
   //   console.log('firebaseee',appFire)
@@ -58,9 +58,9 @@ function App() {
   }, []);
   
 // Function for sessin time out start
-// useEffect(() => {
-//   requestForToken();
-// }, []);
+useEffect(() => {
+  //requestForToken();
+}, []);
 // Function for logout start
   const handleLogout = () => {
     setLogout(true)
