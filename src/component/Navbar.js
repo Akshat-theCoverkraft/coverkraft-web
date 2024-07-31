@@ -206,8 +206,9 @@ function Navbar(props) {
                             onClick={handleHome}
                             style={{ cursor: 'pointer' }}
                             src={Logo}
-                            height={21}
-                            width={21}
+                            height={65}
+                            width={214}
+
                         />
                     </div>
 

@@ -77,14 +77,22 @@ const Register = () => {
         setIsValidEmail(isValid);
     };
     //function to handle email input field start
-
+    const handlePinCodeChange = (e) => {
+        const pin = e.target.value;
+        setPincode(pin);
+        setIsValidPinCode(validatePinCode(pin));
+    };
+    const validatePinCode = (pin) => {
+        // Simple pin code validation (assuming 5 or 6 digit pin codes)
+        return /^\d{5,6}$/.test(pin);
+    };
 
     const [stateOptions, setStateOptions] = useState([]);
     const [options, setOptions] = useState([]);
     const [selectedValue, setSelectedValue] = useState('');
     const [selectedStateId, setSelectedStateId] = useState('');
     const [selectedCityId, setSelectedCityId] = useState('');
-    
+    const [isValidPinCode, setIsValidPinCode] = useState(true);
     const handleStateSelect = (stateId) => {
         setSelectedStateId(stateId);
     };
@@ -208,7 +216,7 @@ const Register = () => {
                     <div class="row d-flex justify-content-center align-items-center ">
                         <div class="col-md-8  col-lg-6 col-xl-5">
                             <img src={LoginImg}
-                                class="img-fluid" alt="Sample image" height={1000} width={1000}/>
+                                class="img-fluid" alt="Sample image" height={1000} width={1000} />
                         </div>
                         <div class="col-md-5 col-lg-4 col-xl-5">
                             <form className='shadow shadow-md m-4' style={{ padding: '20px 70px' }}>
@@ -271,20 +279,20 @@ const Register = () => {
                                                 <GlobalDropdown onStateSelect={handleStateSelect} />
 
                                             </Grid>
-                                            <Grid item xs={12} md={6}  className='pt-0'>
-                                              
+                                            <Grid item xs={12} md={6} className='pt-0'>
+
                                                 <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
 
                                             </Grid>
                                         </Grid>
                                         <CustomInput
-                                            type="number"
-                                            label="Pin Code"
+                                            label="PinCode"
+                                            placeholder="Enter your Pin Code"
                                             value={pincode}
-                                            onChange={(e) => { setPincode(e.target.value) }}
-                                            placeholder="Enter your pin code"
+                                            onChange={handlePinCodeChange}
+                                            className={!isValidPinCode ? 'is-invalid' : ''}
+                                            validationMessage={!isValidPinCode ? 'Please enter a valid pin code (5 or 6 digits).' : ''}
                                             required
-
                                         />
                                         <div data-mdb-input-init className="form-outline mb-4">
                                             <label className="form-label fw-bold" htmlFor="inputField">

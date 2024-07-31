@@ -40,7 +40,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const [userAddress, setuserAddress] = useState();
     const [state, setstate] = useState('');
     console.log("state", state);
-    const [city,setCity]=useState('')
+    const [city, setCity] = useState('')
     const [userPhone, setuserPhone] = useState();
     const [pinCode, setpinCode] = useState();
     const [gender, setgender] = useState();
@@ -52,7 +52,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const navigate = useNavigate();
     const [selectedStateId, setSelectedStateId] = useState('');
     const [selectedCityId, setSelectedCityId] = useState('');
-
+    const [isValidPinCode, setIsValidPinCode] = useState(true);
+    const [valid, setValid] = useState(true);
+    const [isValidEmail, setIsValidEmail] = useState(true);
+    
     const handleCitySelect = (cityId) => {
         setSelectedCityId(cityId);
     };
@@ -87,8 +90,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             setuserPhone(data.userPhone);
             setuserDob(data.userDob);
             setuserAddress(data.userAddress);
-            setstate(data.state.stateNameEnglish);
-            setCity(data.city.cityNameEnglish);
+            setstate(data.state._id);
+            setCity(data.city._id);
             setpinCode(data.pinCode);
             setgender(data.gender);
             setProfileImage(data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile);
@@ -98,8 +101,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
     const handleStateSelect = (stateId) => {
         setSelectedStateId(stateId);
-      };
-      
+    };
+
     function handleUpateProfile() {
 
         const formData = new FormData();
@@ -112,7 +115,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         formData.append("userDob", userDob);
         formData.append("userAddress", userAddress);
         formData.append("state", selectedStateId);
-        formData.append('city',selectedCityId)
+        formData.append('city', selectedCityId)
         formData.append("pinCode", pinCode);
         formData.append("gender", gender);
         if (userImgFile) {
@@ -196,12 +199,40 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         localStorage.removeItem('policyId')
         navigate('/coverkraft');
     };
+    const handlePinCodeChange = (e) => {
+        const pin = e.target.value;
+        setpinCode(pin);
+        setIsValidPinCode(validatePinCode(pin));
+    };
+    const validatePinCode = (pin) => {
+        // Simple pin code validation (assuming 5 or 6 digit pin codes)
+        return /^\d{5,6}$/.test(pin);
+    };
+    //function to handle email input field start
+    const handleEmailChange = (e) => {
+        const emailId = e.target.value;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const isValid = emailRegex.test(useremail);
+        setuserEmail(emailId);
+        setIsValidEmail(isValid);
+    };
+    //function to handle email input field start
+     //function to handle phone number input field start
+     const handlephonechange = (e) => {
+        let number = e.target.value.replace(/\D/g, '');
+        number = number.slice(0, 10);
+        setuserPhone(number);
+        const isValid = /^\d{10}$/.test(number.replace('+91', ''));
+        setValid(isValid);
+    }
+    //function to handle phone number input field end
+
 
 
 
     return (
         <Drawer anchor="right" open={open} onClose={onClose} className='' >
-            <Box sx={{ width: 750, padding: 0,overflowX:'hidden' }} role="presentation" className=''>
+            <Box sx={{ width: 750, padding: 0, overflowX: 'hidden' }} role="presentation" className=''>
                 <div className="main-container">
                     <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "35vh" }}>
                         <div className="profile-details">
@@ -213,15 +244,15 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     className="profile-image"
                                 />
                                 {update && (
-                                <label htmlFor="profile-image-upload">
-                                    <img
-                                        src={editIcon}
-                                        alt="Edit"
-                                        className="edit-icon"
-                                        onClick={toggleImageInput}
-                                    />
-                                </label>
-                                 )}
+                                    <label htmlFor="profile-image-upload">
+                                        <img
+                                            src={editIcon}
+                                            alt="Edit"
+                                            className="edit-icon"
+                                            onClick={toggleImageInput}
+                                        />
+                                    </label>
+                                )}
                                 {showImageInput && (
                                     <input
                                         id="profile-image-upload"
@@ -231,7 +262,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                         style={{ display: "none" }}
                                     />
                                 )}
-                           
+
                             </div>
 
 
@@ -290,25 +321,36 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     placeholder="Enter your UserName"
                                     value={username}
                                     onChange={(e) => setuserName(e.target.value)}
+                                    required
                                 />
 
                             </Grid>
                             <Grid item xs={6}>
                                 <CustomInput
-                                    label="UserEmail"
-                                    placeholder="Enter your UserEmail"
+                                    type="email"
+                                    label="Email Address"
                                     value={useremail}
-                                    onChange={(e) => setuserEmail(e.target.value)}
+                                    onChange={handleEmailChange}
+                                    placeholder="Enter your email address "
+                                    className={!isValidEmail ? 'is-invalid' : ''}
+                                    validationMessage={!isValidEmail ? 'Please enter a valid email address containing @.' : ''}
+                                    style={{ width: '48%' }}
                                 />
                             </Grid>
                         </Grid>
                         <Grid container xs={12} spacing={4}>
                             <Grid item xs={6}>
                                 <CustomInput
-                                    label="UserPhone"
-                                    placeholder="Enter your UserPhone"
+                                    type="number"
+                                    label="Mobile Number"
                                     value={userPhone}
-                                    onChange={(e) => setuserPhone(e.target.value)}
+                                    onChange={handlephonechange}
+                                    placeholder="Enter your mobile number"
+                                    className={!valid ? 'is-invalid' : ''}
+                                    validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
+                                    required
+                                    style={{ width: '88%' }}
+
                                 />
 
                             </Grid>
@@ -321,18 +363,18 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                 />
                             </Grid>
                         </Grid>
-                       
-                            <div className="col-12">
-                                <CustomInput
-                                    label="UserAddress"
-                                    placeholder="Enter your UserAddress"
-                                    value={userAddress}
-                                    onChange={(e) => setuserAddress(e.target.value)}
-                                />
 
-                            </div>
-                           
-                                {/* {states.getAllState && states.getAllState.data && (
+                        <div className="col-12">
+                            <CustomInput
+                                label="UserAddress"
+                                placeholder="Enter your UserAddress"
+                                value={userAddress}
+                                onChange={(e) => setuserAddress(e.target.value)}
+                            />
+
+                        </div>
+
+                        {/* {states.getAllState && states.getAllState.data && (
                                     <GlobalDropdown
                                         label="State"
                                         value={state}
@@ -341,21 +383,21 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
                                     />
                                 )} */}
-                              <Grid container spacing={3}>
-                                            <Grid item xs={12} md={6}>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} md={6}>
 
-                                                <GlobalDropdown onStateSelect={handleStateSelect} />
+                                <GlobalDropdown onStateSelect={handleStateSelect} initialValue={state}/>
 
-                                            </Grid>
-                                            <Grid item xs={12} md={6}>
-                                              
-                                                <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
+                            </Grid>
+                            <Grid item xs={12} md={6}>
 
-                                            </Grid>
-                                        </Grid>
+                                <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} initialValue={city}/>
 
-                          
-                        
+                            </Grid>
+                        </Grid>
+
+
+
                         <Grid container xs={12} spacing={4}>
                             <Grid item xs={6}>
                                 <CustomInput

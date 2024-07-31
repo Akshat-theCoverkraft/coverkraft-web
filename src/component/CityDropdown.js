@@ -3,9 +3,9 @@ import axios from 'axios';
 import './Dropdown.css'; // Import the CSS file
 import API_URL from '../ServiceModule/Service';
 
-const CityDropdown = ({ selectedStateId,onCitySelect }) => {
+const CityDropdown = ({ selectedStateId,onCitySelect,initialValue }) => {
   const [options, setOptions] = useState([]);
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState(initialValue);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -33,6 +33,11 @@ const CityDropdown = ({ selectedStateId,onCitySelect }) => {
       fetchOptions();
     }
   }, [selectedStateId]);
+
+  useEffect(() => {
+    setSelectedValue(initialValue);
+  }, [initialValue]);
+
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);

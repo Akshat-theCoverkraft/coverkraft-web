@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Drawer, Box, Grid,Card,Typography } from '@mui/material';
+import { Drawer, Box, Grid, Card, Typography } from '@mui/material';
 import GlobalDropdown from '../component/StateDropdown';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
@@ -10,9 +10,11 @@ import Dropdown from '../component/Dropdown';
 
 const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
     const [familyMember, setFamilyMember] = useState('');
-    const [fullName,setFullName]=useState('')
+    const [fullName, setFullName] = useState('')
     const [userPhone, setuserPhone] = useState('');
     const [useremail, setuserEmail] = useState('');
+    const [valid, setValid] = useState(true);
+    const [isValidEmail, setIsValidEmail] = useState(true);
 
 
     const familyOption = [
@@ -22,17 +24,37 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
         { value: 'Father', label: 'Father' },
         { value: 'Mother', label: 'Mother' },
     ]
-    
-     async function handleSubmit(){
-        const formData=new FormData();
+
+   //function to handle phone number input field start
+   const handlephonechange = (e) => {
+    let number = e.target.value.replace(/\D/g, '');
+    number = number.slice(0, 10);
+    setuserPhone(number);
+    const isValid = /^\d{10}$/.test(number.replace('+91', ''));
+    setValid(isValid);
+}
+//function to handle phone number input field end
+
+//function to handle email input field start
+const handleEmailChange = (e) => {
+    const emailId = e.target.value;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const isValid = emailRegex.test(useremail);
+    setuserEmail(emailId);
+    setIsValidEmail(isValid);
+};
+//function to handle email input field start
+
+    async function handleSubmit() {
+        const formData = new FormData();
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
 
-        formData.append('userId',userId);
-        formData.append('fullName',fullName);
-        formData.append('familyMember',familyMember);
-        formData.append('mobile',userPhone);
-        formData.append('email',useremail)
+        formData.append('userId', userId);
+        formData.append('fullName', fullName);
+        formData.append('familyMember', familyMember);
+        formData.append('mobile', userPhone);
+        formData.append('email', useremail)
         const response = await axios.post(`${API_URL}family/create`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`, // Include token in the headers
@@ -69,6 +91,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
                         value={familyMember}
                         onChange={(e) => setFamilyMember(e.target.value)}
                         placeholder="select"
+                        required
                     />
                 </Box>
                 <Box sx={{ marginTop: 2, width: '100%' }}>
@@ -77,14 +100,19 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
                         placeholder="Enter your full name"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
+                        required
                     />
                 </Box>
                 <Box sx={{ marginTop: 2, width: '100%' }}>
                     <CustomInput
                         label="UserPhone"
+                        type='number'
                         placeholder="Enter your UserPhone"
                         value={userPhone}
-                        onChange={(e) => setuserPhone(e.target.value)}
+                        onChange={handlephonechange}
+                        className={!valid ? 'is-invalid' : ''}
+                        validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
+                        required
                     />
                 </Box>
                 <Box sx={{ marginTop: 2, width: '100%' }}>
@@ -92,7 +120,10 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
                         label="UserEmail"
                         placeholder="Enter your UserEmail"
                         value={useremail}
-                        onChange={(e) => setuserEmail(e.target.value)}
+                        onChange={handleEmailChange}
+                        className={!isValidEmail ? 'is-invalid' : ''}
+                        validationMessage={!isValidEmail ? 'Please enter a valid email address containing @.' : ''}
+                       required
                     />
                 </Box>
                 <Box sx={{ marginTop: 3, width: '100%' }}>
@@ -100,7 +131,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
                         text='Continue'
                         size="sm"
                         block={true}
-                    onClick={handleSubmit}
+                        onClick={handleSubmit}
                     />
                 </Box>
             </Box>

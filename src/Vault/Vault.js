@@ -273,11 +273,17 @@ const Vault = () => {
     };
     console.log('selected policiedddd',selectedPolicies)
     const [policyListLength, setPolicyListLength] = useState(0);
+    const [archieveList,setArchieveList]=useState(0)
 
     const handlePolicyListLengthChange = (length) => {
         setPolicyListLength(length);
         console.log('policylistlength',policyListLength)
     };  
+
+    const handleArchieveListChange=(length)=>{
+        setArchieveList(length);
+
+    }
     return (
         <>
 
@@ -296,9 +302,10 @@ const Vault = () => {
                                 </Link>
                                 <Typography className='text-dark cursor-pointer font-size' style={{ fontSize: '21px' }}>My Policies</Typography>
                             </Breadcrumbs>
-                            {policyListLength > 0 && (
+                            {policyListLength > 0  && (
                                 <img src={share} alt="Share Icon" height={60} className='ml-4' onClick={handleShareIconClick} style={{ cursor: 'pointer' }} />
                             )}
+                             
                             <GradientButton
                                 text='Add Policy'
                                 size="md"
@@ -328,7 +335,7 @@ const Vault = () => {
                     </Stack>
                     <Grid container spacing={-4} >
                         <Grid item xs={12} md={7} lg={7} xl={7} >
-                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy} selectedPolicies={selectedPolicies} handleCheckboxChange={handleCheckboxChange} onPolicyListLengthChange={handlePolicyListLengthChange}/>
+                            <PolicyTabs handleCardClick={handleCardClick} shareAllPolicy={shareAllPolicy} selectedPolicies={selectedPolicies} handleCheckboxChange={handleCheckboxChange} onPolicyListLengthChange={handlePolicyListLengthChange} onArchieveListLength={handleArchieveListChange}/>
                         </Grid>
                         <Grid item xs={12} md={5} lg={5} xl={5}>
                             <PolicyDetail policyId={selectedPolicyId} />
