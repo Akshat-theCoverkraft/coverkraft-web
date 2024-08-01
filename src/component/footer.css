@@ -1,7 +1,26 @@
-.show-menu {
-    display: block;
-}
-
-.hide-menu {
+.nav-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  /* .nav-item.active {
+    color: #ffffff;
+    background-color: #007bff; 
+  } */
+  
+  .nav-item:active{
+    color:purple;
+  }
+  .nav-item:visited{
+    color:red;
+  }
+  
+  .show-menu {
+    display: flex;
+  }
+  
+  .hide-menu {
     display: none;
-}
+  }
+  

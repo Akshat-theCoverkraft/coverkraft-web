@@ -245,7 +245,7 @@ function Navbar(props) {
                                 }`}
                         >
                             <div
-                                className={`nav-item active ${activeItem === 'home' ? 'active' : ''}`}
+                                className={`nav-item  ${activeItem === 'home' ? 'active' : ''}`}
                                 onClick={() => handleItemClick('home')}
                             >
                                 Home
@@ -254,22 +254,19 @@ function Navbar(props) {
                             {loggedIn ? (
                                 <>
                                     <div
-                                        className={activeItem === 'about' ? 'nav-item active' : 'nav-item'}
-
+                                        className={`nav-item ${activeItem === 'about' ? 'active' : ''}`}
                                         onClick={handleAbout}
                                     >
                                         About Us
                                     </div>
                                     <div
-                                        className={activeItem === 'vault' ? 'nav-item active' : 'nav-item'}
-
+                                        className={`nav-item ${activeItem === 'vault' ? 'active' : ''}`}
                                         onClick={handleVault}
                                     >
                                         Policy
                                     </div>
                                     <div
-                                        className={activeItem === 'help' ? 'nav-item active' : 'nav-item'}
-
+                                        className={`nav-item ${activeItem === 'help' ? 'active' : ''}`}
                                         onClick={scrollToContactBottom}
                                     >
                                         Help
