@@ -5,39 +5,22 @@ import checkicon from '../../Images/Check-icon.png';
 import googleicon from '../../Images/Google-icon.png';
 import appleicon from '../../Images/Apple-icon.png';
 import Grid from '@mui/material/Grid';
+import Carousel1 from '../Carousel1';
+
 const Afterglow = () => {
   return (
-    <Grid container className=' bg-image my-5 p-5'>
-      <Grid item xs={12} md={6} className='ml-5'>
-        <h2 className='mb-4' style={{ fontSize: '3rem' }}>Get our another app</h2>
-        <h1 className='mb-5' style={{ fontSize: '4.5rem' }}>AfterGlow</h1>
-        <div className=''>
-          <div className='d-flex mb-3'>
-            <img src={checkicon} height={30} alt='' />
-            <p className='ml-2 fs-5'>Schedule messages for convenience.</p>
-          </div>
-          <div className='d-flex mb-3'>
-            <img src={checkicon} height={30} alt='' />
-            <p className='ml-2 fs-5'>Easily connect with family members.</p>
-          </div>
-          <div className='d-flex mb-3'>
-            <img src={checkicon} height={30} alt='' />
-            <p className='ml-2 fs-5'>Effortless communication with loved ones.</p>
-          </div>
-          <div className='d-flex'>
-            <img src={checkicon} height={30} alt='' />
-            <p className='ml-2 fs-5'>Personalized profiles and preferences.</p>
-          </div>
-        </div>
-        <div className='mt-5'>
-          <img src={googleicon} className='mr-3' alt='' />
-          <img src={appleicon} alt='' />
-        </div>
-      </Grid>
-      <Grid item xs={12} md={5} className='d-flex justify-content-center'>
-        <img src={mockup} alt='' />
-      </Grid>
-    </Grid>
+    <div className=' bg-image my-5 p-5' style={{ height: '50vh' }}>
+      <div className='text-center text-white'>
+        <h3>BENEFITS</h3>
+        <h1 className='mt-5'>Comprehensive Coverage Options</h1>
+        <p className='mt-3'>Our insurance plans offer extensive coverage,ensuring you and your loved ones are protected in <br />
+          any situation. Enjoy peace of mind with our reliable and tailored solutions.</p>
+        <button className='btn btn-lg rounded-5 mt-5 py-3 px-5' style={{ color: 'white', borderColor: 'white' }} >
+          View all
+        </button>
+      </div>
+      <Carousel1 />
+    </div>
   );
 }
 

@@ -21,7 +21,7 @@ const Landing = () => {
         <Coverkraft/>
         <Blog/>
         <Afterglow/>
-        <Carousel/>
+        {/* <Carousel/> */}
         <Footer/>
         
     </div>
