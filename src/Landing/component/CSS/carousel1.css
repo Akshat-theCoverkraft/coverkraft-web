@@ -37,7 +37,7 @@
   }
   
   .carousel__wrap {
-    margin-top: 2%;
+    margin-top: 1%;
     align-items: center;
     display: flex;
     flex: 1;
@@ -46,6 +46,11 @@
     width: 90%;
     left: 50%;
     transform: translateX(-50%);
+  }
+  .carousel__btn-arrow {
+    font-size: 2rem;
+    color: #fff;
+    margin-top: 0.5rem;
   }
   
   .carousel__inner {

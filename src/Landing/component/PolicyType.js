@@ -28,27 +28,32 @@ const PolicyType = () => {
     }, [policyTypes])
 
     return (
-        <div className='p-5  rounded-4' style={{ backgroundColor: '#E5F0F4', margin: '0px 90px' }}>
-            <h3 className='text-center mb-3'>
+        <div className='p-5  rounded-5 gradient-background'
+            style={{
+                margin: '0px 90px',
+                // background: 'linear-gradient(122.01deg, #42CDC9 7.48%, #B4E498 86.54%)'
+            }}>
+            <h3 className='text-center mb-4 fs-1 fw-bold'>
                 Reliable <span style={{ color: '#FF9906' }}>Insurance</span> for every need.
             </h3>
             <div>
-                <Grid container spacing={0} className='mt-2'>
+                <div className='mt-2' style={{ display: 'flex' ,alignContent:'center',alignItems:'center'}}>
                     {policyType.map((policy, index) => (
-                        <Grid item xs={2} md={2} lg={2} xl={2} key={index}>
-                            <div className='item-container'>
-                                <div className='item-content mb-3'>
-                                    <img
-                                        src={IMAGE_PATH + policy.icon}
-                                        alt={policy.policyType}
-                                        className='policy-icon'
-                                    />
-                                </div>
-                                <h4 className='image-text'>{policy.policyType}</h4>
+                        <div
+                            key={index}
+                            className={`item-container ${index === 0 ? 'first-item' : index === policyType.length - 1 ? 'last-item' : ''}`}
+                        >
+                            <div className='item-content mb-3'>
+                                <img
+                                    src={IMAGE_PATH + policy.icon}
+                                    alt={policy.policyType}
+                                    className='policy-icon'
+                                />
                             </div>
-                        </Grid>
+                            <h4 className='image-text'>{policy.policyType}</h4>
+                        </div>
                     ))}
-                </Grid>
+                </div>
             </div>
 
         </div>
