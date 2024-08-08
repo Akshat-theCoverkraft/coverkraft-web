@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './CSS/login.css'
 import LoginImg from '../Images/img_phone_login.png';
 import logo from '../Images/coverkraft_logo.png';
 import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
 import { Link } from 'react-router-dom';
-import * as firebase from 'firebase/app';
-//import * as auth from 'firebase/auth';
-import { appFire } from '../ServiceModule/FirebaseConfig';
-import firebaseConfig from '../ServiceModule/FirebaseConfig';
+
+import firebase from '../ServiceModule/FirebaseConfig';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
@@ -20,19 +18,22 @@ import axios from 'axios'
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
 import { useNavigate } from "react-router-dom";
-import { getStoredToken } from "../helper";
+// import { requestForToken } from '../helper';
+
 
 
 const Login = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [otp, setOtp] = React.useState([]);
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [verificationId, setVerificationId] = useState('')
+    const [verificationCode, setVerificationCode] = useState('')
     const [valid, setValid] = useState(false);
-   
-    const auth1 = getAuth(appFire);
+    const recaptchRef = useRef(null)
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
-   
+
     const User = useSelector((state) => state.user)
     //useeffect
     useEffect(() => {
@@ -43,7 +44,7 @@ const Login = () => {
         }
     }, [!valid]);
 
-   
+
 
     //function for handle phone number input field start
     const handlephonechange = (e) => {
@@ -73,13 +74,29 @@ const Login = () => {
                 const token = response.data.user.token;
                 // Store the user ID in local storage
                 localStorage.setItem('userId', userId);
-                localStorage.setItem('token',token);
-            //     const appVerifier = new RecaptchaVerifier(auth1, 'recaptcha-container', {});
-            //     await appVerifier.render();
-            //     await appVerifier.verify();
-            //     console.log('appVerifier', appVerifier);
-            //    // signInWithPopup(auth1,
-            //     const confirmationResult = await signInWithPhoneNumber(auth1,'+919893079903', appVerifier);
+                localStorage.setItem('token', token);
+                //     const appVerifier = new RecaptchaVerifier(auth1, 'recaptcha-container', {});
+                //     await appVerifier.render();
+                //     await appVerifier.verify();
+                //     console.log('appVerifier', appVerifier);
+                //    // signInWithPopup(auth1,
+                //     const confirmationResult = await signInWithPhoneNumber(auth1,'+919893079903', appVerifier);
+                if (recaptchRef.current) {
+                    recaptchRef.current.innerHTML = '<div id="recaptcha-container"></div>'
+                }
+                const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                    size: 'invisible'
+                })
+                console.log('verifer', verifier)
+                firebase.auth().signInWithPhoneNumber(phoneNumber, verifier)
+
+                    .then(confirmationResult => {
+                        setVerificationId(confirmationResult.verificationId)
+                        alert('Phone verification done')
+                    })
+                    .catch(error => {
+                        console.error('Error sending OTP:', error)
+                    })
                 setLoggedIn(true);
 
                 // localStorage.setItem('verificationId', confirmationResult.verificationId);
@@ -108,22 +125,24 @@ const Login = () => {
         // const credential=signInWithPopup(auth1, phoneProvider )
         // console.log('cred',credential)
         // signInWithCredential(auth1, credential)
-        //     .then(() => {
+        const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
+        firebase.auth().signInWithCredential(credential)
+            .then(() => {
                 const formData = new FormData();
                 formData.append('userPhone', phoneNumber);
-        //         const fcmToken = getStoredToken();
+                // const fcmToken = requestForToken();
 
-        //         if (fcmToken) {
-        //             formData.append('userFcmId', fcmToken);
-        //         }
+                // if (fcmToken) {
+                //     formData.append('userFcmId', fcmToken);
+                // }
                 dispatch(verifyUser(API_URL, formData))
                 localStorage.setItem('loggedIn', 'true');
                 toast.success('Phone number authentication done');
                 navigate('/coverkraft');
-            // })
-            // .catch((error) => {
-            //     toast.error('Authentication failed');
-            // })
+            })
+            .catch((error) => {
+                toast.error('Authentication failed');
+            })
     }
     //function to verify otp and login end
 
@@ -144,7 +163,7 @@ const Login = () => {
 
                         <div class="col-md-9 col-lg-6 col-xl-5">
                             <img src={LoginImg}
-                                class="img-fluid" alt="Sample image" height={1000} width={1000}/>
+                                class="img-fluid" alt="Sample image" height={1000} width={1000} />
                         </div>
                         <div class="col-md-4 col-lg-5 col-xl-4 offset-xl-1">
                             <form className='shadow shadow-md ' style={{ padding: '70px' }}>
@@ -219,7 +238,7 @@ const Login = () => {
                                                 text='Verify'
                                                 size="lg"
                                                 block={true}
-                                                 onClick={handleVerify}
+                                                onClick={handleVerify}
                                             />
                                         </div>
                                     </div>
