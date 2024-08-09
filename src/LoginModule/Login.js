@@ -18,7 +18,7 @@ import axios from 'axios'
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
 import { useNavigate } from "react-router-dom";
-// import { requestForToken } from '../helper';
+import { requestForToken } from '../helper';
 
 
 
@@ -81,22 +81,22 @@ const Login = () => {
                 //     console.log('appVerifier', appVerifier);
                 //    // signInWithPopup(auth1,
                 //     const confirmationResult = await signInWithPhoneNumber(auth1,'+919893079903', appVerifier);
-                if (recaptchRef.current) {
-                    recaptchRef.current.innerHTML = '<div id="recaptcha-container"></div>'
-                }
-                const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                    size: 'invisible'
-                })
-                console.log('verifer', verifier)
-                firebase.auth().signInWithPhoneNumber(phoneNumber, verifier)
+                // if (recaptchRef.current) {
+                //     recaptchRef.current.innerHTML = '<div id="recaptcha-container"></div>'
+                // }
+                // const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                //     size: 'invisible'
+                // })
+                // console.log('verifer', verifier)
+                // firebase.auth().signInWithPhoneNumber(phoneNumber, verifier)
 
-                    .then(confirmationResult => {
-                        setVerificationId(confirmationResult.verificationId)
-                        alert('Phone verification done')
-                    })
-                    .catch(error => {
-                        console.error('Error sending OTP:', error)
-                    })
+                //     .then(confirmationResult => {
+                //         setVerificationId(confirmationResult.verificationId)
+                //         alert('Phone verification done')
+                //     })
+                //     .catch(error => {
+                //         console.error('Error sending OTP:', error)
+                //     })
                 setLoggedIn(true);
 
                 // localStorage.setItem('verificationId', confirmationResult.verificationId);
@@ -125,24 +125,24 @@ const Login = () => {
         // const credential=signInWithPopup(auth1, phoneProvider )
         // console.log('cred',credential)
         // signInWithCredential(auth1, credential)
-        const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
-        firebase.auth().signInWithCredential(credential)
-            .then(() => {
+        // const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
+        // firebase.auth().signInWithCredential(credential)
+        //     .then(() => {
                 const formData = new FormData();
                 formData.append('userPhone', phoneNumber);
-                // const fcmToken = requestForToken();
+                const fcmToken = requestForToken();
 
-                // if (fcmToken) {
-                //     formData.append('userFcmId', fcmToken);
-                // }
+                if (fcmToken) {
+                    formData.append('userFcmId', fcmToken);
+                }
                 dispatch(verifyUser(API_URL, formData))
                 localStorage.setItem('loggedIn', 'true');
                 toast.success('Phone number authentication done');
                 navigate('/coverkraft');
-            })
-            .catch((error) => {
-                toast.error('Authentication failed');
-            })
+            // })
+            // .catch((error) => {
+            //     toast.error('Authentication failed');
+            // })
     }
     //function to verify otp and login end
 
