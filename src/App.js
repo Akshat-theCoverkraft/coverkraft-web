@@ -25,7 +25,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false)
   const navigate = useNavigate()
-  const [fcmToken, setFcmToken] = useState('');
+  const [fcmToken, setFcmToken] = useState(null);
 
   useEffect(() => {
     const fetchFCMToken = async () => {
@@ -33,8 +33,6 @@ function App() {
         const token = await requestForToken();
         setFcmToken(token);
         console.log('FCM Token:', token);
-        console.log('hello tokne',fcmToken)
-        localStorage.setItem('fcmToken',token)
       } catch (err) {
         console.error('Error fetching FCM token:', err);
       }

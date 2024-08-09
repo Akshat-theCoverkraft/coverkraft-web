@@ -76,26 +76,27 @@ const Login = () => {
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('token', token);
                 
-                // if (recaptchRef.current) {
-                //     recaptchRef.current.innerHTML = '<div id="recaptcha-container"></div>'
-                // }
-                // const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                //     size: 'invisible'
-                // })
-                // console.log('verifer', verifier)
-                // firebase.auth().signInWithPhoneNumber(phoneNumber, verifier)
+                if (recaptchRef.current) {
+                    recaptchRef.current.innerHTML = '<div id="recaptcha-container"></div>'
+                }
+                const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                    size: 'invisible'
+                })
+                console.log('verifer', verifier)
+                firebase.auth().signInWithPhoneNumber(phoneNumber, verifier)
 
-                //     .then(confirmationResult => {
-                //         setVerificationId(confirmationResult.verificationId)
-                //         alert('Phone verification done')
-                //     })
-                //     .catch(error => {
-                //         console.error('Error sending OTP:', error)
-                //     })
-                setLoggedIn(true);
+                    .then(confirmationResult => {
+                        setVerificationId(confirmationResult.verificationId)
+                        alert('Phone verification done')
+                        setLoggedIn(true);
+                    })
+                    .catch(error => {
+                        console.error('Error sending OTP:', error)
+                    })
+               
 
                 // localStorage.setItem('verificationId', confirmationResult.verificationId);
-                toast.success(' OTP is sent  to your phone number');
+                // toast.success(' OTP is sent  to your phone number');
             } else {
                 // If status is not 200, display error message
                 toast.error('Phone number verification failed');
@@ -111,9 +112,9 @@ const Login = () => {
     //function to verify otp and login start
     const handleVerify = () => {
         
-        // const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
-        // firebase.auth().signInWithCredential(credential)
-        //     .then(() => {
+        const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
+        firebase.auth().signInWithCredential(credential)
+            .then(() => {
                 const formData = new FormData();
                 formData.append('userPhone', phoneNumber);
                 // const fcmToken =  requestForToken();
@@ -126,10 +127,10 @@ const Login = () => {
                 localStorage.setItem('loggedIn', 'true');
                 toast.success('Phone number authentication done');
                 navigate('/coverkraft');
-            // })
-            // .catch((error) => {
-            //     toast.error('Authentication failed');
-            // })
+            })
+            .catch((error) => {
+                toast.error('Authentication failed');
+            })
     }
     //function to verify otp and login end
 
