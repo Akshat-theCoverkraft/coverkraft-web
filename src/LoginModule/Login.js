@@ -75,12 +75,7 @@ const Login = () => {
                 // Store the user ID in local storage
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('token', token);
-                //     const appVerifier = new RecaptchaVerifier(auth1, 'recaptcha-container', {});
-                //     await appVerifier.render();
-                //     await appVerifier.verify();
-                //     console.log('appVerifier', appVerifier);
-                //    // signInWithPopup(auth1,
-                //     const confirmationResult = await signInWithPhoneNumber(auth1,'+919893079903', appVerifier);
+                
                 // if (recaptchRef.current) {
                 //     recaptchRef.current.innerHTML = '<div id="recaptcha-container"></div>'
                 // }
@@ -115,23 +110,15 @@ const Login = () => {
 
     //function to verify otp and login start
     const handleVerify = () => {
-        // const storedValue = localStorage.getItem('verificationId');
-        // const phoneProvider = new PhoneAuthProvider(auth1);
-        // const credential1 = PhoneAuthProvider.credential(
-        //     storedValue,
-        //     otp
-        // )
-        // console.log('cred1', credential1)
-        // const credential=signInWithPopup(auth1, phoneProvider )
-        // console.log('cred',credential)
-        // signInWithCredential(auth1, credential)
+        
         // const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
         // firebase.auth().signInWithCredential(credential)
         //     .then(() => {
                 const formData = new FormData();
                 formData.append('userPhone', phoneNumber);
-                const fcmToken = requestForToken();
-
+                // const fcmToken =  requestForToken();
+                const fcmToken=localStorage.getItem('fcmToken')
+                console.log('fcmToken')
                 if (fcmToken) {
                     formData.append('userFcmId', fcmToken);
                 }
