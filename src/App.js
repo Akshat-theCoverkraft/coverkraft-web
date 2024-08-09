@@ -32,6 +32,7 @@ function App() {
       try {
         const token = await requestForToken();
         setFcmToken(token);
+        localStorage.getItem('fcmToken',token)
         console.log('FCM Token:', token);
       } catch (err) {
         console.error('Error fetching FCM token:', err);

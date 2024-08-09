@@ -9,13 +9,14 @@ import Blog from './component/Blog'
 import Card from './component/Card'
 import About from './component/About'
 import Carousel from './component/Carousel'
-
+import Cards3d from './component/3dCard'
 const Landing = () => {
   return (
     <div className='overflow-hidden'>
         <Navbar/>
         <HeroSection/>
         <PolicyType/>
+        <Cards3d/>
         <About/>
         <Card/>
         <Coverkraft/>
