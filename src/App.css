@@ -163,3 +163,9 @@
   height: 200px;
 }
 
+.gradient-background {
+  background: linear-gradient(to bottom, #42CDC9, #B4E498);
+  background-size: 100% 300px; /* Optional: adds a subtle gradient effect */
+  background-position: 0% 100%; /* Optional: adds a subtle gradient effect */
+}
+
