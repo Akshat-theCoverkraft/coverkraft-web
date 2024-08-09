@@ -25,16 +25,22 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false)
   const navigate = useNavigate()
-  // const firebaseApp = initializeApp(appFire); // Use the named export correctly
-  // console.log('app', firebaseApp);
-  const app = initializeApp(firebaseConfig);
-  console.log('app',app);
-  // if (!appFire.apps.length) {
-  //   appFire.initializeApp(appFire);
-  //   console.log('firebaseee',appFire)
-  // //  const analytics = getAnalytics(app);
-  // }
-// Function for sessin time out start
+  const [fcmToken, setFcmToken] = useState(null);
+
+  useEffect(() => {
+    const fetchFCMToken = async () => {
+      try {
+        const token = await requestForToken();
+        setFcmToken(token);
+        localStorage.getItem('fcmToken',token)
+        console.log('FCM Token:', token);
+      } catch (err) {
+        console.error('Error fetching FCM token:', err);
+      }
+    };
+
+    fetchFCMToken();
+  }, []);
   useEffect(() => {
     let logoutTimer;
     let loginTime;

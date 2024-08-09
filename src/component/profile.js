@@ -90,8 +90,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             setuserPhone(data.userPhone);
             setuserDob(data.userDob);
             setuserAddress(data.userAddress);
-            setstate(data.state._id);
-            setCity(data.city._id);
+            setstate(data.state === null ? null : data.state._id);
+            setCity(data.city === null ? null : data.city._id);
             setpinCode(data.pinCode);
             setgender(data.gender);
             setProfileImage(data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile);
