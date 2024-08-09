@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import './CSS/login.css'
 import LoginImg from '../Images/img_phone_login.png';
 import logo from '../Images/coverkraft_logo.png';
 import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
 import { Link } from 'react-router-dom';
-import * as firebase from 'firebase/app';
-//import * as auth from 'firebase/auth';
-import { appFire } from '../ServiceModule/FirebaseConfig';
-import firebaseConfig from '../ServiceModule/FirebaseConfig';
+import firebase from '../ServiceModule/FirebaseConfig';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
@@ -29,8 +26,12 @@ const Login = () => {
     const [otp, setOtp] = React.useState([]);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid, setValid] = useState(false);
+    const [verificationId,setVerificationId]=useState('')
+    const [verificationCode,setVerificationCode]=useState('')
    
-    const auth1 = getAuth(appFire);
+  
+    const recaptchRef=useRef(null)
+    
     const dispatch = useDispatch();
     const navigate = useNavigate();
    
@@ -76,23 +77,23 @@ const Login = () => {
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('token', token);
                 
-                if (recaptchRef.current) {
-                    recaptchRef.current.innerHTML = '<div id="recaptcha-container"></div>'
+                if(recaptchRef.current){
+                    recaptchRef.current.innerHTML='<div id="recaptcha-container"></div>'
                 }
-                const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                    size: 'invisible'
+                const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container',{
+                    size:'invisible'
                 })
-                console.log('verifer', verifier)
-                firebase.auth().signInWithPhoneNumber(phoneNumber, verifier)
-
-                    .then(confirmationResult => {
-                        setVerificationId(confirmationResult.verificationId)
-                        alert('Phone verification done')
-                        setLoggedIn(true);
-                    })
-                    .catch(error => {
-                        console.error('Error sending OTP:', error)
-                    })
+                console.log('verifer',verifier)
+                firebase.auth().signInWithPhoneNumber(phoneNumber,verifier)
+                
+                .then(confirmationResult =>{
+                    setVerificationId(confirmationResult.verificationId)
+                    alert('Phone verification done')
+                    setLoggedIn(true);
+                })
+                .catch(error =>{
+                    console.error('Error sending OTP:',error)
+                })
                
 
                 // localStorage.setItem('verificationId', confirmationResult.verificationId);
@@ -112,7 +113,7 @@ const Login = () => {
     //function to verify otp and login start
     const handleVerify = () => {
         
-        const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
+        const credential =  firebase.auth.PhoneAuthProvider.credential(verificationId,verificationCode);
         firebase.auth().signInWithCredential(credential)
             .then(() => {
                 const formData = new FormData();
