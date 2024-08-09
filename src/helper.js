@@ -1,14 +1,14 @@
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 const firebaseConfig = {
-  apiKey: "AIzaSyDZ0QvjCUx3oDtL6prUC1u4xwxyAjNqe0s",
-  authDomain: "festivaloutfitter-54b95.firebaseapp.com",
-  projectId: "festivaloutfitter-54b95",
-  storageBucket: "festivaloutfitter-54b95.appspot.com",
-  messagingSenderId: "172595882590",
-  appId: "1:172595882590:web:0a5d53fcb47228d67f22cf",
-  measurementId: "G-CCNXGC4XH2"
-};
+    apiKey: "AIzaSyCx901Va2ohHAC71K_SbNqrKxQ3TCpKCDc",
+    authDomain: "coverkraft-f26e1.firebaseapp.com",
+    projectId: "coverkraft-f26e1",
+    storageBucket: "coverkraft-f26e1.appspot.com",
+    messagingSenderId: "317342762",
+    appId: "1:317342762:web:eccecf45cf81536e67ef53",
+    measurementId: "G-V2WBZB474V"
+  };
 
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
@@ -36,7 +36,7 @@ export const requestForToken = async () => {
     const permission = await Notification.requestPermission();
     console.log(permission,'permission')
     if (permission === 'granted') {
-      const token = await getToken(messaging, { vapidKey: 'BDSFbAvMLzZyc9IER72FPPzb8tFT2946Hi9Ywb0ovj7O0A_mY87WskI0gnMgCRkXPONr0IMHtxhrq0khIcr6Ogk' });
+      const token = await getToken(messaging, { vapidKey: 'BDrN5XQ29CF4CxOtr5YVlQ333d2wwR_Wc3JZCMo1kILS9r4_Nw5qaETy8nD78ikHsIIrtVHi9KPLJCsNjm-uekM' });
       console.log('kys h token',token)
       return token;
     } else {

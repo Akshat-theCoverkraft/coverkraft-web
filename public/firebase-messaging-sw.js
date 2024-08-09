@@ -3,14 +3,14 @@ importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js')
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDZ0QvjCUx3oDtL6prUC1u4xwxyAjNqe0s",
-  authDomain: "festivaloutfitter-54b95.firebaseapp.com",
-  projectId: "festivaloutfitter-54b95",
-  storageBucket: "festivaloutfitter-54b95.appspot.com",
-  messagingSenderId: "172595882590",
-  appId: "1:172595882590:web:0a5d53fcb47228d67f22cf",
-  measurementId: "G-CCNXGC4XH2"
-};
+    apiKey: "AIzaSyCx901Va2ohHAC71K_SbNqrKxQ3TCpKCDc",
+    authDomain: "coverkraft-f26e1.firebaseapp.com",
+    projectId: "coverkraft-f26e1",
+    storageBucket: "coverkraft-f26e1.appspot.com",
+    messagingSenderId: "317342762",
+    appId: "1:317342762:web:eccecf45cf81536e67ef53",
+    measurementId: "G-V2WBZB474V"
+  };
 
 firebase.initializeApp(firebaseConfig);
 
