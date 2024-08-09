@@ -6,12 +6,12 @@ import step2 from '../../Images/step2.png';
 import step3 from '../../Images/step3.png';
 const About = () => {
     return (
-        <div className='p-5 mt-5 ' style={{ backgroundColor: '#E5F0F4' }}>
-            <h3 className='text-center mb-3' style={{color:'#FF9906'}}>
+        <div className='p-5 mt-5 ' style={{ backgroundColor: '#F7FAFE' }}>
+            <h3 className='text-center mb-3' style={{color:'#FF9906', fontWeight: "184px", height: "23px"}}>
                HOW ITS WORKS
             </h3>
             <h1 className='text-center fs-1 my-1 fw-bold'>How Coverkraft Works?</h1>
-            <Grid className='mt-3' container justifyContent="center"  xs={12} spacing={0}>
+            <Grid className='mt-3' container justifyContent="center"  xs={12} spacing={0} style={{marginTop: "5em"}}>
                 <Grid item xs={4}  style={{ textAlign: 'center' }}>
                     <img  src={step1}/>
                     <h3 className='mt-3 fw-bold fs-2'>Scan your document</h3>
