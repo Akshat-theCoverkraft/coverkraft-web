@@ -24,6 +24,7 @@ import Help from '../profile/Help';
 import About from '../profile/About';
 import { useNavigate } from 'react-router-dom';
 import CityDropdown from './CityDropdown';
+import GlobalDatePicker from './GlobalDatePicker';
 const ProfileDrawer = ({ open, onClose, userName }) => {
     const dispatch = useDispatch();
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -226,7 +227,9 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         setValid(isValid);
     }
     //function to handle phone number input field end
-
+    const handleDobChange = (date) => {
+        setuserDob(date);
+    };
 
 
 
@@ -338,8 +341,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4}>
-                            <Grid item xs={6}>
+                        <div className='col-12' >
+                            
                                 <CustomInput
                                     type="number"
                                     label="Mobile Number"
@@ -353,16 +356,26 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
                                 />
 
-                            </Grid>
-                            <Grid item xs={6}>
+                            </div>
+                            {/* <Grid item xs={6}>
                                 <CustomInput
                                     label="UserDOB"
                                     placeholder="Enter your UserDOB"
                                     value={userDob}
                                     onChange={(e) => setuserDob(e.target.value)}
                                 />
-                            </Grid>
-                        </Grid>
+                            </Grid> */}
+                           <div className='col-12 mb-3'>
+                            <GlobalDatePicker
+                                label="Date"
+                                selectedDate={userDob}
+                                handleDateChange={handleDobChange}
+                                className='custom-picker form-control-lg rounded-5 '
+                                placeholder="select Date"
+
+                            />
+                        </div>
+                        
 
                         <div className="col-12">
                             <CustomInput

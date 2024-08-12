@@ -1,0 +1,23 @@
+/* GlobalDatePicker.css */
+.react-datepicker__input-container {
+    position: relative;
+    display: inline-block;
+    width: 379%;
+}
+
+.custom-datepicker-textfield .MuiInputBase-root {
+    width: 118%; /* or any other desired styles */
+}
+
+.global-date-picker label {
+    /* Custom label styles */
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.custom-datepicker .react-datepicker-popper {
+    /* Custom popper styles */
+}
+.custom-border{
+    border-radius: 25px;
+}

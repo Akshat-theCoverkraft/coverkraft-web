@@ -51,3 +51,8 @@ animate-style{
       max-width: 1861px !important;
   }
 }
+.custom-datepicker {
+ 
+  max-width: 200%; /* Ensure it doesn't exceed the parent's width */
+}
+
