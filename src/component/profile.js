@@ -42,6 +42,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const [state, setstate] = useState('');
     console.log("state", state);
     const [city, setCity] = useState('')
+    console.log('city',city)
     const [userPhone, setuserPhone] = useState();
     const [pinCode, setpinCode] = useState();
     const [gender, setgender] = useState();
