@@ -84,7 +84,7 @@ const Login = () => {
                     size:'invisible'
                 })
                 console.log('verifer',verifier)
-                firebase.auth().signInWithPhoneNumber(phoneNumber,verifier)
+                firebase.auth().signInWithPhoneNumber('+91'+ phoneNumber,verifier)
                 
                 .then(confirmationResult =>{
                     setVerificationId(confirmationResult.verificationId)
