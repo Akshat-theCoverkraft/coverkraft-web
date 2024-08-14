@@ -25,6 +25,7 @@ import About from '../profile/About';
 import { useNavigate } from 'react-router-dom';
 import CityDropdown from './CityDropdown';
 import GlobalDatePicker from './GlobalDatePicker';
+import { toast } from 'react-toastify';
 const ProfileDrawer = ({ open, onClose, userName }) => {
     const dispatch = useDispatch();
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -42,7 +43,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const [state, setstate] = useState('');
     console.log("state", state);
     const [city, setCity] = useState('')
-    console.log('city',city)
+    console.log('city', city)
     const [userPhone, setuserPhone] = useState();
     const [pinCode, setpinCode] = useState();
     const [gender, setgender] = useState();
@@ -57,7 +58,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const [isValidPinCode, setIsValidPinCode] = useState(true);
     const [valid, setValid] = useState(true);
     const [isValidEmail, setIsValidEmail] = useState(true);
-    
+
     const handleCitySelect = (cityId) => {
         setSelectedCityId(cityId);
     };
@@ -104,6 +105,23 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const handleStateSelect = (stateId) => {
         setSelectedStateId(stateId);
     };
+    //function to check user is above 18 or not
+    const isOldEnough = (dob) => {
+        const today = new Date(); // Get today's date
+        const birthDate = new Date(dob); // Convert dob to a Date object
+        let age = today.getFullYear() - birthDate.getFullYear(); // Calculate age
+
+        // Calculate the month difference
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+
+        // If the birth month hasn't occurred yet this year, or it's the birth month but the birth day hasn't occurred yet, subtract one year from age
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        // Return true if age is 18 or older
+        return age >= 18;
+    };
 
     function handleUpateProfile() {
 
@@ -146,7 +164,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 });
                 return;
             }
-            
+
             dispatch(updateUser(API_URL, formData));
             onClose();
         } else {
@@ -231,8 +249,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         setIsValidEmail(isValid);
     };
     //function to handle email input field start
-     //function to handle phone number input field start
-     const handlephonechange = (e) => {
+    //function to handle phone number input field start
+    const handlephonechange = (e) => {
         let number = e.target.value.replace(/\D/g, '');
         number = number.slice(0, 10);
         setuserPhone(number);
@@ -355,22 +373,22 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                             </Grid>
                         </Grid>
                         <div className='col-12' >
-                            
-                                <CustomInput
-                                    type="number"
-                                    label="Mobile Number"
-                                    value={userPhone}
-                                    onChange={handlephonechange}
-                                    placeholder="Enter your mobile number"
-                                    className={!valid ? 'is-invalid' : ''}
-                                    validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
-                                    required
-                                    style={{ width: '88%' }}
 
-                                />
+                            <CustomInput
+                                type="number"
+                                label="Mobile Number"
+                                value={userPhone}
+                                onChange={handlephonechange}
+                                placeholder="Enter your mobile number"
+                                className={!valid ? 'is-invalid' : ''}
+                                validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
+                                required
+                                style={{ width: '88%' }}
 
-                            </div>
-                            {/* <Grid item xs={6}>
+                            />
+
+                        </div>
+                        {/* <Grid item xs={6}>
                                 <CustomInput
                                     label="UserDOB"
                                     placeholder="Enter your UserDOB"
@@ -378,7 +396,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     onChange={(e) => setuserDob(e.target.value)}
                                 />
                             </Grid> */}
-                           <div className='col-12 mb-3'>
+                        <div className='col-12 mb-3'>
                             <GlobalDatePicker
                                 label="Date"
                                 selectedDate={userDob}
@@ -388,7 +406,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
                             />
                         </div>
-                        
+
 
                         <div className="col-12">
                             <CustomInput
@@ -412,12 +430,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
 
-                                <GlobalDropdown onStateSelect={handleStateSelect} initialValue={state}/>
+                                <GlobalDropdown onStateSelect={handleStateSelect} initialValue={state} />
 
                             </Grid>
                             <Grid item xs={12} md={6}>
 
-                                <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} initialValue={city}/>
+                                <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} initialValue={city} />
 
                             </Grid>
                         </Grid>
