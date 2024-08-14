@@ -135,6 +135,18 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             gender ||
             userImgFile
         ) {
+            if (!isOldEnough(userDob)) {
+                toast.error('You must be at least 18 years old to register.', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return;
+            }
+            
             dispatch(updateUser(API_URL, formData));
             onClose();
         } else {
