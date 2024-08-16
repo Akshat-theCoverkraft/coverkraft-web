@@ -8,6 +8,7 @@ import instagram from '../../Images/instagram.png';
 import location from '../../Images/location_on.png';
 import call from '../../Images/call.png';
 import email from '../../Images/email.png';
+import { Link } from 'react-router-dom';
 const Footer = () => {
     return (
         <div>
@@ -36,15 +37,15 @@ const Footer = () => {
                                     Get in Touch
                                 </h6>
                                 <div className='d-flex '>
-                                    <img src={location}  height={30} className='mt-1'/>
+                                    <img src={location}  height={23} className='mt-1'/>
                                     <p  class="text-color fs-5 ml-4 footer-link">8819 Ohio St.South Gate, CA 90280</p>
                                 </div>
                                 <div className='d-flex '>
-                                    <img src={email}  height={25} className='mt-1'/>
+                                    <img src={email}  height={23} className='mt-1'/>
                                     <p  class="text-color fs-5 ml-4 footer-link">Ourstudio@hello.com</p>
                                 </div>
                                 <div className='d-flex '>
-                                    <img src={call}  height={25} className='mt-1'/>
+                                    <img src={call}  height={23} className='mt-1'/>
                                     <p  class="text-color fs-5 ml-4 footer-link">+1 386-688-3295</p>
                                 </div>
                                
@@ -57,16 +58,16 @@ const Footer = () => {
                                     Service
                                 </h6>
                                 <p>
-                                    <p href="#!" class="text-color fs-5 footer-link">Home</p>
+                                    <Link to='/coverkraft' class="text-color fs-5 footer-link">Home</Link>
                                 </p>
                                 <p>
-                                    <p href="#!" class="text-color fs-5 footer-link">About us</p>
+                                    <Link to='/coverkraft/about' class="text-color fs-5 footer-link">About us</Link>
                                 </p>
                                 <p>
-                                    <p href="#!" class="text-color fs-5 footer-link">Vault</p>
+                                    <Link to='/coverkraft/vault' class="text-color fs-5 footer-link">Vault</Link>
                                 </p>
                                 <p>
-                                    <p href="#!" class="text-color fs-5 footer-link">Policy</p>
+                                    <Link to='/coverkraft/vault' class="text-color fs-5 footer-link">Policy</Link>
                                 </p>
                             </div>
 

@@ -464,7 +464,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                         </Grid>
 
                         <div className="spacer-small" />
-                        <Button paddingHorizontal={10} text="Update" onClick={handleUpateProfile} />
+                        <Button size='sm' text="Update" onClick={handleUpateProfile} />
                     </div>
                 )}
             </Box>

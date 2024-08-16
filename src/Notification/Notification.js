@@ -65,9 +65,9 @@ const Notification = () => {
     };
 
     return (
-        <div className='overflow-hidden'>
+        <div className=''>
             <Navbar />
-            <div className='m-5 p-5'>
+            <div className='m-5 p-5' style={{minHeight:'450px'}}>
                 <Typography className='custom-color mb-3' sx={{ p: 2, fontSize: '17px', fontWeight: '500' }}>{sentNotificationsCount} new notification</Typography>
                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
                     {notifications.map((notification, index) => (
