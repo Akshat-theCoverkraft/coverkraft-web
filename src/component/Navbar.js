@@ -117,6 +117,8 @@ function Navbar(props) {
         localStorage.removeItem('verificationId');
         localStorage.removeItem('userId');
         localStorage.removeItem('policyId')
+        localStorage.removeItem('selectedPolicyId');
+        localStorage.removeItem('token')
         navigate('/coverkraft');
     };
 

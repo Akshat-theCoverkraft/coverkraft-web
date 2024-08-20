@@ -7,7 +7,8 @@ import backArrow from '../Images/ic_back_button.png';
 import axios from 'axios';
 import API_URL from '../ServiceModule/Service';
 import Dropdown from '../component/Dropdown';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
     const [familyMember, setFamilyMember] = useState('');
     const [fullName, setFullName] = useState('')
@@ -60,10 +61,15 @@ const handleEmailChange = (e) => {
                 Authorization: `Bearer ${token}`, // Include token in the headers
             }
         });
-        onfamilyAddClose();
+        if(response.status === 200){
+            toast.success('Successfully Created')
+            onfamilyAddClose();
+        }
+       
     }
     return (
         <Drawer anchor="right" open={familyAdd} onClose={onfamilyAddClose}>
+            <ToastContainer/>
             <Box
                 sx={{
                     width: 800, // fixed width

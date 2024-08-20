@@ -101,7 +101,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
         }
     }, [userbyId]);
-
+console.log('userimg kya h',profileImage)
     const handleStateSelect = (stateId) => {
         setSelectedStateId(stateId);
     };
@@ -165,7 +165,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 return;
             }
 
-            dispatch(updateUser(API_URL, formData));
+            dispatch(updateUser(API_URL, formData))
+            .then(()=>{
+                toast.success('Updated successfully')
+            }).catch((error)=>{
+                toast.error('Error in updating')
+            })
             onClose();
         } else {
             console.log("No fields are being updated");

@@ -6,6 +6,8 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@firebase/app": "^0.10.8",
+    "@firebase/auth": "^1.7.6",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
@@ -25,8 +27,6 @@
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
-    "@firebase/app": "^0.10.8",
-    "@firebase/auth": "^1.7.6",
     "firebase": "^10.12.5",
     "i18next": "^23.11.3",
     "moment": "^2.30.1",

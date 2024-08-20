@@ -8,7 +8,7 @@ import Button from '../component/Button';
 import API_URL from '../ServiceModule/Service';
 import { registrationCustomer } from '../store/action/action';
 import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
@@ -139,6 +139,7 @@ const Register = () => {
 
     //function for register and integrate API start
     const handleRegister = () => {
+        console.log('handleregister')
         const roleID = 3;
         if (
             fullName &&
@@ -149,6 +150,7 @@ const Register = () => {
             roleID
         ) {
             if (!isOldEnough(DOB)) {
+                console.log('18 ka hoja')
                 toast.error('You must be at least 18 years old to register.', {
                     position: "top-center",
                     autoClose: 5000,
@@ -159,7 +161,7 @@ const Register = () => {
                 });
                 return;
             }
-
+            console.log('formdata')
             const formData = new FormData();
 
             formData.append('userName', fullName);
@@ -172,10 +174,17 @@ const Register = () => {
             formData.append('state', selectedStateId)
             formData.append('city', selectedCityId)
 
-            dispatch(registrationCustomer(API_URL, formData));
-            toast.success('User registered successfully');
-            navigate('/coverkraft/login')
+            dispatch(registrationCustomer(API_URL, formData))
+            .then(()=>{
+                toast.success('Successfully Registered')
+            }).catch((error)=>{
+                toast.error('Error :',error)
+            })
+            // toast.success('User registered successfully');
+            // console.log('registered')
+            // navigate('/coverkraft/login')
         } else {
+            console.log('pls fill all')
             toast.error("Please fill all required fields", {
                 position: "top-center",
                 autoClose: 5000,
@@ -210,6 +219,7 @@ const Register = () => {
 
     return (
         <div className='overflow-hidden'>
+            <ToastContainer />
             <Navbar />
             <section class=" ">
                 <div class="container-fluid h-custom ">

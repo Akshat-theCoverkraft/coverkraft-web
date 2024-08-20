@@ -10,7 +10,8 @@ import Radio from '@mui/material/Radio';
 import { getBYIDUsers, updateUser } from '../store/action/action';
 import { useDispatch, useSelector } from 'react-redux';
 import API_URL from '../ServiceModule/Service';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const PinkSwitch = styled(Switch)(({ theme }) => ({
   '& .MuiSwitch-switchBase.Mui-checked': {
     color: '#8AC642',
@@ -86,7 +87,12 @@ const Communication = ({ communication, onCommunicationClose }) => {
     formData.append('userFrequent', newValue);
 
     try {
-      dispatch(updateUser(API_URL, formData));
+      dispatch(updateUser(API_URL, formData))
+      .then(()=>{
+        toast.success('Successfully Updated')
+      }).catch((error)=>{
+        toast.error('Error in updating')
+      })
     } catch (error) {
       console.error('Error updating the radio button state', error);
     } finally {
@@ -104,6 +110,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
   return (
     <Drawer anchor="right" open={communication} onClose={onCommunicationClose}>
+      <ToastContainer/>
       <Box sx={{ width: 750, padding: 0, overflowX: 'hidden' }} role="presentation" className='overflow-hidden'>
         <div style={{ backgroundColor: "#FFFEFE" }}>
           <Grid container spacing={2} className='d-flex m-3'>

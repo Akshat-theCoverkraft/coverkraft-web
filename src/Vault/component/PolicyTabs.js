@@ -32,10 +32,10 @@ const useStyles = makeStyles(() => ({
         height: '100vh', // Full viewport height
     },
     loader: {
-        color: '#8AC642', 
+        color: '#8AC642',
     },
 }));
-export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPolicies, handleCheckboxChange, onPolicyListLengthChange,onArchieveListLength }) {
+export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPolicies, handleCheckboxChange, onPolicyListLengthChange, onArchieveListLength }) {
     const [value, setValue] = React.useState(0);
     const [pagePolicy, setPagePolicy] = useState(1);
     const [pageArchive, setPageArchive] = useState(1);
@@ -63,6 +63,54 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
     };
 
     //useEffect
+    // useEffect(() => {
+    //     const fetchPolicyList = async () => {
+    //         setLoading(true);
+    //         try {
+    //             const token = localStorage.getItem('token');
+    //             const userId = localStorage.getItem('userId');
+    //             let status = 'active';
+    //             if (value === 1) {
+    //                 status = 'expired';
+    //             }
+
+    //             const response = await axios.get(`${API_URL}policy/getById`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //                 params: {
+    //                     userId: userId,
+    //                     policyType: status
+    //                 }
+    //             });
+    //             const data = response.data;
+    //             console.log('data response ka', data)
+    //             // Assuming response.data is the whole response object
+    //             if (response.data && response.data.data && Array.isArray(response.data.data)) {
+    //                 console.log('hello')
+    //                 setPolicyList(response.data.data);
+    //                 console.log('know policy', response.data.data)
+    //                 onPolicyListLengthChange(response.data.data.length); // Update parent with policyList length
+    //                 console.log('length btade', response.data.data.length)
+
+    //             } else {
+    //                 console.error('Expected an array but got:', response.data);
+    //                 setPolicyList([]);
+    //                 onPolicyListLengthChange(0);
+    //             }
+
+    //         } catch (error) {
+    //             console.error('Error fetching policy list:', error);
+    //             setPolicyList([]);
+    //             onPolicyListLengthChange(0);
+
+    //         } finally {
+    //             setLoading(false); // Set loading to false after the fetch is complete
+    //         }
+    //     };
+
+    //     fetchPolicyList();
+    // }, [value]);
     useEffect(() => {
         const fetchPolicyList = async () => {
             setLoading(true);
@@ -73,7 +121,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                 if (value === 1) {
                     status = 'expired';
                 }
-
+    
                 const response = await axios.get(`${API_URL}policy/getById`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -83,33 +131,32 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                         policyType: status
                     }
                 });
-
-                // Assuming response.data is the whole response object
-                if (response.data && response.data.data && Array.isArray(response.data.data)) {
-
-                    setPolicyList(response.data.data);
-                    onPolicyListLengthChange(response.data.data.length); // Update parent with policyList length
-                    console.log('length btade', response.data.data.length)
-
+    
+                const data = response.data; // This is already the array you want
+                console.log('data response', data);
+                
+                if (Array.isArray(data)) {
+                    setPolicyList(data);
+                    onPolicyListLengthChange(data.length); // Update parent with policyList length
+                    console.log('Policy list', data);
                 } else {
-                    console.error('Expected an array but got:', response.data);
+                    console.error('Expected an array but got:', data);
                     setPolicyList([]);
                     onPolicyListLengthChange(0);
                 }
-
+    
             } catch (error) {
                 console.error('Error fetching policy list:', error);
                 setPolicyList([]);
                 onPolicyListLengthChange(0);
-
             } finally {
                 setLoading(false); // Set loading to false after the fetch is complete
             }
         };
-
+    
         fetchPolicyList();
     }, [value]);
-
+    
     useEffect(() => {
         const fetchArchieveList = async () => {
             setLoading(true);
@@ -145,7 +192,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                 setArchieveList([]);
                 onArchieveListLength(0)
             }
-            finally{
+            finally {
                 setLoading(false)
             }
         };
@@ -170,17 +217,36 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
 
                     <Grid item xs={12} sm={12} md={12} lg={12}>
                         <Box sx={{ width: '95%' }} className='m-3'>
-
-                            <Box sx={{ maxWidth: { xs: 370, sm: 530 }, width: '75%', bgcolor: '#EAF0FD', margin: 'auto', borderRadius: '35px' }} className='p-2 ' alignItems="center">
-                                <TabList onChange={handleChange} variant="scrollable" scrollButtons={false}
-                                    aria-label="scrollable prevent tabs example" textColor="#42988E" TabIndicatorProps={{ style: { display: 'none' } }}>
-                                    <Tab label="Active" value={0} className='m-2 fw-bolder px-5 rounded-5' sx={{ color: value === 0 ? '#8AC642' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
-                                    <Tab label="Expired" value={1} className='m-2 fw-bolder px-5 rounded-5' sx={{ color: value === 1 ? '#8AC642' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
-                                    <Tab label="Archive" value={2} className='m-2 fw-bolder px-5 rounded-5' sx={{ color: value === 2 ? '#8AC642' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize' }} />
+                            <Box
+                                sx={{
+                                    maxWidth: { xs: 370, sm: 530 },
+                                    width: '75%',
+                                    bgcolor: '#EAF0FD',
+                                    margin: 'auto',
+                                    borderRadius: '35px',
+                                    display: 'flex',         // Add this line
+                                    justifyContent: 'space-around',// Add this line
+                                }}
+                                className='p-2'
+                                alignItems="center"
+                                justifyContent='space-around'
+                            >
+                                <TabList
+                                    onChange={handleChange}
+                                    variant="scrollable"
+                                    scrollButtons={false}
+                                    aria-label="scrollable prevent tabs example"
+                                    textColor="#42988E"
+                                    TabIndicatorProps={{ style: { display: 'none' } }}
+                                >
+                                    <Tab label="Active" value={0} className='m-2 fw-bolder px-5 ' sx={{ color: value === 0 ? '#8AC642' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px' }} />
+                                    <Tab label="Expired" value={1} className='m-2 fw-bolder px-5 ' sx={{ color: value === 1 ? '#8AC642' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px' }} />
+                                    <Tab label="Archive" value={2} className='m-2 fw-bolder px-5' sx={{ color: value === 2 ? '#8AC642' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px' }} />
                                 </TabList>
                             </Box>
                         </Box>
                     </Grid>
+
 
                     {loading ? (
                         <div className={classes.loaderContainer}>

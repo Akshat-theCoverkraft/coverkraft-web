@@ -107,6 +107,16 @@ const LifePolicyForm = () => {
   const handleEndDateChange = (date) => {
     setPolicyEndDate(date);
   };
+  const handleRenewalDate = (date) => {
+    setPolicyRenewalDate(date);
+  };
+  const handleMaturityDate = (date) => {
+    setMaturityDate(date);
+  };
+  const handleDob = (date) => {
+    setDob(date);
+  };
+  
   useEffect(() => {
     // Calculate progress whenever input fields change
     const progress = calculateProgress();
@@ -146,7 +156,7 @@ const LifePolicyForm = () => {
         }
         navigate('/')
       } else {
-        toast.error("error", "Please fill all required fields!");
+        toast.error( "Please fill all required fields!");
       }
     } catch (error) {
       console.error('Failed to save policy:', error);
@@ -247,7 +257,7 @@ const LifePolicyForm = () => {
       <ToastContainer />
       <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: '#F9F9F9' }}>
         <Grid item xs={12} sm={10} md={8}>
-          <Card className='border  my-4' style={{ padding: '40px 90px', boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
+          <Card className='border  my-4' style={{ padding: '40px 70px', boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
             <div className='d-flex justify-content-between'>
               <Typography variant="h4" component="h2" className='fw-bold'>{headingText}</Typography>
               <ProgressBarCircle progress={calculateProgress()} />                        </div>
@@ -261,9 +271,10 @@ const LifePolicyForm = () => {
                     label="Policy Number"
                     // placeholder="policy number"
                     value={policyNumber}
-                    onChange={(e) => {
-                      setPolicyNumber(e.target.value);
-                    }}
+                    // onChange={(e) => {
+                    //   setPolicyNumber(e.target.value);
+                    // }}
+                    disabled={true}
                     required
                   />
 
@@ -295,7 +306,7 @@ const LifePolicyForm = () => {
                       />
                     </Grid>
                   </Grid>
-                  <Grid container spacing={3} className='mt-2'>
+                  <Grid container spacing={1} className='mt-2'>
                     <Grid item xs={12} md={6}>
 
                       <label className="form-label fw-bold" htmlFor="inputField">
@@ -316,6 +327,13 @@ const LifePolicyForm = () => {
                           />
                         </DemoContainer>
                       </LocalizationProvider>
+                        {/* <DateTimePicker
+                        height={50}
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyRenewalDate)}
+                        onChange={handleRenewalDate}
+                      /> */}
                     </Grid>
                     <Grid item xs={12} md={6}>
 
@@ -337,9 +355,16 @@ const LifePolicyForm = () => {
                           />
                         </DemoContainer>
                       </LocalizationProvider>
+                        {/* <DateTimePicker
+                        height={50}
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(maturityDate)}
+                        onChange={handleMaturityDate}
+                      /> */}
                     </Grid>
                   </Grid>
-                  <Grid xs={12} md={6}>
+                  <Grid xs={12} md={6} className='my-3'>
 
                     <label className="form-label fw-bold" htmlFor="inputField">
                       DOB
@@ -359,6 +384,13 @@ const LifePolicyForm = () => {
                         />
                       </DemoContainer>
                     </LocalizationProvider>
+                      {/* <DateTimePicker
+                        height={50}
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(dob)}
+                        onChange={handleDob}
+                      /> */}
                   </Grid>
                   <CustomInput
                     type="text"
@@ -399,16 +431,7 @@ const LifePolicyForm = () => {
                     }}
 
                   />
-                  <CustomInput
-                    type="number"
-                    label="Terminal illness"
-                    value={terminalIllness}
-                    onChange={(e) => {
-                      setTerminalIllness(e.target.value);
 
-                    }}
-
-                  />
 
 
 
@@ -484,7 +507,16 @@ const LifePolicyForm = () => {
                     }}
                     required
                   />
+                  <CustomInput
+                    type="number"
+                    label="Terminal illness"
+                    value={terminalIllness}
+                    onChange={(e) => {
+                      setTerminalIllness(e.target.value);
 
+                    }}
+
+                  />
                 </Grid>
               </Grid>
 

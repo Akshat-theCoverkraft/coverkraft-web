@@ -159,7 +159,7 @@ console.log('policydetails',policyDetails)
                 }
                 navigate('/')
             } else {
-                toast.error("errorii", "Please fill all required fields!");
+                toast.error("Please fill all required fields!");
             }
         } catch (error) {
             console.error('Failed to save policy:', error);
@@ -180,6 +180,7 @@ console.log('policydetails',policyDetails)
             payload.make &&
             payload.model &&
             payload.assetType &&
+            payload.premiumPaid &&
             payload.vehicleEngineNumber &&
             payload.idv
         );
@@ -422,6 +423,7 @@ console.log('policydetails',policyDetails)
                                         onChange={(e) => {
                                             setVehicleEngineNumber(e.target.value);
                                         }}
+                                        required
 
                                     />
                                     <CustomInput

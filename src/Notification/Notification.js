@@ -73,17 +73,17 @@ const Notification = () => {
                     {notifications.map((notification, index) => (
                         <Card key={index} className='rounded mb-5' sx={{ mx: 2, my: 3, p: 1, backgroundColor: '#F8FFFE', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                             <Grid container spacing={3} xs={12}>
-                                <Grid item xs={2}>
+                                <Grid item xs={3}>
                                     <img className='p-3' src={IMAGE_PATH + notification.imagePath} alt='Notification Icon' height={150} width={250} />
                                 </Grid>
-                                <Grid item xs={8}>
+                                <Grid item xs={7}>
                                     <p style={{ fontSize: '17px', fontWeight: '700' }}>{notification.title}</p>
                                     <p style={{ color: '#7C7C7C', fontSize: '16px', fontWeight: '400' }}>
                                         {truncateDescription(notification.description, 20)} <span onClick={() => handleReadMore(notification)}>Read more</span>
                                     </p>
                                 </Grid>
                                 <Grid item xs={2}>
-                                    <p style={{ color: '#A0A0A0', fontSize: '17px' }}>{notification.timeAgo}</p>
+                                    <p style={{ color: '#A0A0A0', fontSize: '17px' }}>{sentNotificationsCount} days ago</p>
                                 </Grid>
                             </Grid>
                         </Card>

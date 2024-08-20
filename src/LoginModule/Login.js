@@ -11,7 +11,7 @@ import Button from '../component/Button';
 import { verifyUser } from '../store/action/action';
 import API_URL from '../ServiceModule/Service';
 import { useDispatch, useSelector } from 'react-redux'
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'
 import Navbar from '../component/Navbar';
@@ -76,7 +76,7 @@ const Login = () => {
                 // Store the user ID in local storage
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('token', token);
-                
+                console.log('token',token)
                 // if(recaptchRef.current){
                 //     recaptchRef.current.innerHTML='<div id="recaptcha-container"></div>'
                 // }
@@ -88,7 +88,7 @@ const Login = () => {
                 
                 // .then(confirmationResult =>{
                 //     setVerificationId(confirmationResult.verificationId)
-                //     alert('Phone verification done')
+                //     toast.success('Phone verification done, OTP sent to your phone number.')
                 //     setLoggedIn(true);
                 // })
                 // .catch(error =>{
@@ -96,8 +96,7 @@ const Login = () => {
                 // })
                setLoggedIn(true)
 
-                // localStorage.setItem('verificationId', confirmationResult.verificationId);
-                // toast.success(' OTP is sent  to your phone number');
+                
             } else {
                 // If status is not 200, display error message
                 toast.error('Phone number verification failed');
@@ -145,6 +144,7 @@ const Login = () => {
 
     return (
         <div className='overflow-hidden'>
+            <ToastContainer/>
             <Navbar />
             <section class=" " style={{ margin: '60px 0px' }}>
                 <div class="container-fluid h-custom">

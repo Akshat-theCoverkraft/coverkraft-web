@@ -52,12 +52,12 @@ function CustomInput({ type, label, value, onChange, isValid, className, placeho
         <input
           type={type}
           id="inputField"
-          className={`form-control form-control-lg rounded-5 ${className} `}
+          className={`form-control form-control-lg ${className} `}
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          style={{ padding: '28px 15px' }}
+          style={{ padding: '22px 15px',borderRadius:'25px' }}
         />
       )}
       {validationMessage && (

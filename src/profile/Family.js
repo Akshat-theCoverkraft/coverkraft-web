@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Drawer, Box } from '@mui/material';
 import { Card, Grid, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import backArrow from '../Images/ic_back_button.png';
 import icDefaultProfile from '../Images/ic_default_profile.png';
 import EmailIcon from '@mui/icons-material/Email';
@@ -10,10 +10,13 @@ import axios from 'axios';
 import API_URL from '../ServiceModule/Service';
 import addMember from '../Images/add-member.png'
 import FamilyAdd from './FamilyAdd';
+import { useDispatch, useSelector } from 'react-redux'
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Family = ({ family, onfamilyclose }) => {
     const [familyData, setFamilyData] = useState([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
-
+    const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
 
     useEffect(() => {
@@ -36,6 +39,7 @@ const Family = ({ family, onfamilyclose }) => {
             } catch (error) {
                 console.error('Error fetching family details:', error);
                 setFamilyData([]);
+            
             }
         };
         fetchFamilyDetails();
@@ -53,7 +57,8 @@ const Family = ({ family, onfamilyclose }) => {
 
     return (
         <Drawer anchor="right" open={family} onClose={onfamilyclose}>
-            <Box sx={{ width: 800, padding: 0 }} role="presentation" style={{overflowX:'hidden'}}>
+            <ToastContainer/>
+            <Box sx={{ width: 800, padding: 0 }} role="presentation" style={{ overflowX: 'hidden' }}>
                 <Grid container spacing={2} className='d-flex m-3'>
                     <Grid item>
                         <img src={backArrow} alt="Back" onClick={onfamilyclose} />

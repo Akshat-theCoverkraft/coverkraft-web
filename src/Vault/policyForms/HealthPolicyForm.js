@@ -139,7 +139,7 @@ const HealthPolicyForm = () => {
         }
         navigate('/')
       } else {
-        toast.error("error", "Please fill all required fields!");
+        toast.error("Please fill all required fields!");
       }
     } catch (error) {
       console.error('Failed to save policy:', error);

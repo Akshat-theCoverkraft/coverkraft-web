@@ -32,6 +32,7 @@ import { useDispatch } from 'react-redux'
 import GradientButton from '../../component/GradientButton';
 
 const PolicyDetail = ({ policyId }) => {
+    console.log('policydetail ma gye', policyId)
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [policyDetails, setPolicyDetails] = useState([]);
@@ -47,17 +48,19 @@ const PolicyDetail = ({ policyId }) => {
                         Authorization: `Bearer ${token}`, // Include token in the headers
                     }
                 });
-                if (response.data && response.data.data && Array.isArray(response.data.data)) {
-                    setPolicyDetails(response.data.data);
-                    console.log('policydetails',policyDetails)
-                    localStorage.setItem('policyId',policyId)
+
+                // Assuming the response.data is already an array of policy details
+                if (Array.isArray(response.data)) {
+                    setPolicyDetails(response.data);
+                    console.log('Policy details:', response.data);
+                    localStorage.setItem('policyId', policyId);
                 } else {
                     console.error('Expected an array but got:', response.data);
                     setPolicyDetails([]);
                 }
 
             } catch (error) {
-                console.error('Error fetching policy list:', error);
+                console.error('Error fetching policy details:', error);
                 setPolicyDetails([]);
             }
         };
@@ -116,7 +119,7 @@ const PolicyDetail = ({ policyId }) => {
         console.log('eheyyyyy', policyDetails[0].policyType)
         const responseData = policyDetails[0];
         const PolicyType = policyDetails[0].policyType;
-        
+
         console.log('polcyytype', responseData)
         if (PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle') {
             navigate('/coverkraft/motor-policy', { state: { policyDetails: responseData, mode: 'edit' } })
@@ -149,7 +152,7 @@ const PolicyDetail = ({ policyId }) => {
     return (
         <>
             {policyDetails.length === 0 ? (
-                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '95vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '98vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                     <img src={emptyImage} alt="No Data" />
                     <p>Add your new policy effortlessly to your account</p>
 
@@ -228,7 +231,7 @@ const PolicyDetail = ({ policyId }) => {
                                         <div style={{ position: 'absolute', top: -33, right: 25, color: '#ffffff', fontSize: '24px', fontWeight: 'bold', zIndex: 1 }}>{status}</div>
                                     </>
                                 )}
-                                <Card className='rounded-4' style={{ marginTop: '130px', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                                <Card className='rounded-4' style={{ marginTop: '48`px', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                                     <div className='d-flex justify-content-end m-4'>
                                         <img src={view} onClick={() => handleViewDocument(documentPath)} className='mr-2 cursor-pointer' />
                                         <img src={download} onClick={() => handleDownloadDocument(documentPath)} className='mr-2 cursor-pointer' />

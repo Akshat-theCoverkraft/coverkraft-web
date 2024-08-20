@@ -88,9 +88,11 @@ const Vault = () => {
 
     //function for checkbox selected for sharing card
     const handleCardClick = (policyId) => {
+        console.log('what is policy id',policyId)
         setSelectedPolicyId(policyId);
         localStorage.setItem('selectedPolicyId', policyId);
     };
+    console.log('selectedpolicyid',selectedPolicyId)
     //function for share dialog
     const toggleShareDialog = () => {
         setShowShareDialog(!showShareDialog);
