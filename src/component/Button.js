@@ -11,7 +11,7 @@ function Button({ onClick, bgcolor, text, color, borderColor, className, size, b
     justifyContent: startIcon ? 'space-between' : 'center',
     padding: '10px 10px',
     borderRadius: '30px',
-    fontSize: '18px', // Increase the text size here
+    fontSize: '14px', // Increase the text size here
   };
 
   return (

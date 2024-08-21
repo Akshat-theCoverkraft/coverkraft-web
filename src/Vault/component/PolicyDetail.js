@@ -48,19 +48,17 @@ const PolicyDetail = ({ policyId }) => {
                         Authorization: `Bearer ${token}`, // Include token in the headers
                     }
                 });
-
-                // Assuming the response.data is already an array of policy details
-                if (Array.isArray(response.data)) {
-                    setPolicyDetails(response.data);
-                    console.log('Policy details:', response.data);
-                    localStorage.setItem('policyId', policyId);
+                if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                    setPolicyDetails(response.data.data);
+                    console.log('policydetails', policyDetails)
+                    localStorage.setItem('policyId', policyId)
                 } else {
                     console.error('Expected an array but got:', response.data);
                     setPolicyDetails([]);
                 }
 
             } catch (error) {
-                console.error('Error fetching policy details:', error);
+                console.error('Error fetching policy list:', error);
                 setPolicyDetails([]);
             }
         };
@@ -69,6 +67,36 @@ const PolicyDetail = ({ policyId }) => {
             fetchPolicyDetails();
         }
     }, [policyId]);
+    // useEffect(() => {
+    //     const fetchPolicyDetails = async () => {
+    //         try {
+    //             const token = localStorage.getItem('token');
+    //             const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`, // Include token in the headers
+    //                 }
+    //             });
+
+    //             // Assuming the response.data is already an array of policy details
+    //             if (Array.isArray(response.data)) {
+    //                 setPolicyDetails(response.data);
+    //                 console.log('Policy details:', response.data);
+    //                 localStorage.setItem('policyId', policyId);
+    //             } else {
+    //                 console.error('Expected an array but got:', response.data);
+    //                 setPolicyDetails([]);
+    //             }
+
+    //         } catch (error) {
+    //             console.error('Error fetching policy details:', error);
+    //             setPolicyDetails([]);
+    //         }
+    //     };
+
+    //     if (policyId) {
+    //         fetchPolicyDetails();
+    //     }
+    // }, [policyId]);
 
 
     //function to view the pdf document
@@ -231,7 +259,7 @@ const PolicyDetail = ({ policyId }) => {
                                         <div style={{ position: 'absolute', top: -33, right: 25, color: '#ffffff', fontSize: '24px', fontWeight: 'bold', zIndex: 1 }}>{status}</div>
                                     </>
                                 )}
-                                <Card className='rounded-4' style={{ marginTop: '48`px', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                                <Card className='rounded-4' style={{ marginTop: '48px', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                                     <div className='d-flex justify-content-end m-4'>
                                         <img src={view} onClick={() => handleViewDocument(documentPath)} className='mr-2 cursor-pointer' />
                                         <img src={download} onClick={() => handleDownloadDocument(documentPath)} className='mr-2 cursor-pointer' />
@@ -293,25 +321,25 @@ const PolicyDetail = ({ policyId }) => {
 
                                 </Card>
                                 {showShareDialog && (
-                                    <div style={{ position: 'absolute', top: '33%', left: '50%', transform: 'translate(5%, -50%)', backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', zIndex: '9999' }}>
+                                    <div style={{ position: 'absolute', top: '30%', left: '52%', transform: 'translate(5%, -50%)', backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)', zIndex: '9999' }}>
                                         <p className='fw-bold '>Share Via</p>
                                         {/* <FacebookShareButton url={shareUrl} quote={policyDetailsMessage}>
                                             <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </FacebookShareButton> */}
                                         <FacebookShareButton url={pdfUrl} >
-                                            <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                            <img src={facebook} alt='facebook' height={30} width={30} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </FacebookShareButton>
                                         <TwitterShareButton url={pdfUrl}>
-                                            <img src={twitter} alt='twitter' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                            <img src={twitter} alt='twitter' height={30} width={30} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </TwitterShareButton>
                                         <WhatsappShareButton url={pdfUrl} >
-                                            <img src={whatsapp} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                            <img src={whatsapp} alt='whatsapp' height={30} width={30} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </WhatsappShareButton>
                                         <EmailShareButton url={pdfUrl} >
-                                            <img src={email} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                            <img src={email} alt='whatsapp' height={30} width={30} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </EmailShareButton>
                                         <RedditShareButton url={pdfUrl} >
-                                            <img src={reddit} alt='whatsapp' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                            <img src={reddit} alt='whatsapp' height={30} width={30} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                         </RedditShareButton>
                                     </div>
                                 )}

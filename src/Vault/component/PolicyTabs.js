@@ -45,6 +45,14 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
     const [archieveList, setArchieveList] = useState([]);
     const [loading, setLoading] = useState(false);
     const classes = useStyles();
+    const [activeCardId, setActiveCardId] = useState(null);
+    const handleCardClickWithState = (id) => {
+        // Set the clicked card as active
+        setActiveCardId(id);
+        // Call the parent handler if needed
+        handleCardClick(id);
+    };
+
     const handlePageChangePolicy = (event, value) => {
         setPagePolicy(value);
     };
@@ -62,7 +70,55 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
         return list.slice(startIndex, endIndex);
     };
 
-    //useEffect
+
+    useEffect(() => {
+        const fetchPolicyList = async () => {
+            setLoading(true);
+            try {
+                const token = localStorage.getItem('token');
+                const userId = localStorage.getItem('userId');
+                let status = 'active';
+                if (value === 1) {
+                    status = 'expired';
+                }
+
+                const response = await axios.get(`${API_URL}policy/getById`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: {
+                        userId: userId,
+                        policyType: status
+                    }
+                });
+                const data = response.data;
+                console.log('data response ka', data)
+                // Assuming response.data is the whole response object
+                if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                    console.log('hello')
+                    setPolicyList(response.data.data);
+                    console.log('know policy', response.data.data)
+                    onPolicyListLengthChange(response.data.data.length); // Update parent with policyList length
+                    console.log('length btade', response.data.data.length)
+
+                } else {
+                    console.error('Expected an array but got:', response.data);
+                    setPolicyList([]);
+                    onPolicyListLengthChange(0);
+                }
+
+            } catch (error) {
+                console.error('Error fetching policy list:', error);
+                setPolicyList([]);
+                onPolicyListLengthChange(0);
+
+            } finally {
+                setLoading(false); // Set loading to false after the fetch is complete
+            }
+        };
+
+        fetchPolicyList();
+    }, [value]);
     // useEffect(() => {
     //     const fetchPolicyList = async () => {
     //         setLoading(true);
@@ -83,18 +139,16 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
     //                     policyType: status
     //                 }
     //             });
-    //             const data = response.data;
-    //             console.log('data response ka', data)
-    //             // Assuming response.data is the whole response object
-    //             if (response.data && response.data.data && Array.isArray(response.data.data)) {
-    //                 console.log('hello')
-    //                 setPolicyList(response.data.data);
-    //                 console.log('know policy', response.data.data)
-    //                 onPolicyListLengthChange(response.data.data.length); // Update parent with policyList length
-    //                 console.log('length btade', response.data.data.length)
 
+    //             const data = response.data; // This is already the array you want
+    //             console.log('data response', data);
+
+    //             if (Array.isArray(data)) {
+    //                 setPolicyList(data);
+    //                 onPolicyListLengthChange(data.length); // Update parent with policyList length
+    //                 console.log('Policy list', data);
     //             } else {
-    //                 console.error('Expected an array but got:', response.data);
+    //                 console.error('Expected an array but got:', data);
     //                 setPolicyList([]);
     //                 onPolicyListLengthChange(0);
     //             }
@@ -103,7 +157,6 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
     //             console.error('Error fetching policy list:', error);
     //             setPolicyList([]);
     //             onPolicyListLengthChange(0);
-
     //         } finally {
     //             setLoading(false); // Set loading to false after the fetch is complete
     //         }
@@ -111,52 +164,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
 
     //     fetchPolicyList();
     // }, [value]);
-    useEffect(() => {
-        const fetchPolicyList = async () => {
-            setLoading(true);
-            try {
-                const token = localStorage.getItem('token');
-                const userId = localStorage.getItem('userId');
-                let status = 'active';
-                if (value === 1) {
-                    status = 'expired';
-                }
-    
-                const response = await axios.get(`${API_URL}policy/getById`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    params: {
-                        userId: userId,
-                        policyType: status
-                    }
-                });
-    
-                const data = response.data; // This is already the array you want
-                console.log('data response', data);
-                
-                if (Array.isArray(data)) {
-                    setPolicyList(data);
-                    onPolicyListLengthChange(data.length); // Update parent with policyList length
-                    console.log('Policy list', data);
-                } else {
-                    console.error('Expected an array but got:', data);
-                    setPolicyList([]);
-                    onPolicyListLengthChange(0);
-                }
-    
-            } catch (error) {
-                console.error('Error fetching policy list:', error);
-                setPolicyList([]);
-                onPolicyListLengthChange(0);
-            } finally {
-                setLoading(false); // Set loading to false after the fetch is complete
-            }
-        };
-    
-        fetchPolicyList();
-    }, [value]);
-    
+
     useEffect(() => {
         const fetchArchieveList = async () => {
             setLoading(true);
@@ -303,8 +311,17 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
 
                                             return (
 
-                                                <Card className='m-5 rounded card-detail policy-card-container' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }} onClick={() => handleCardClick(policy._id)}>
+                                                <Card
+                                                    className='m-5 rounded card-detail policy-card-container'
+                                                    key={index}
+                                                    style={{
+                                                        boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',
+                                                        backgroundColor: policy._id === activeCardId ? '#ededed' : 'white' // Conditional styling
+                                                    }}
+                                                    onClick={() => handleCardClickWithState(policy._id)} // Use the updated click handler
+                                                >
                                                     <CardContent style={{ position: 'relative' }}>
+                                                        {/* Your existing content */}
                                                         {status && (
                                                             <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
                                                         )}
@@ -317,15 +334,19 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                                                 </Grid>
                                                             )}
                                                             <Grid item xs={shareAllPolicy ? 2 : 3}>
-                                                                <img src={policy.policyType === 'car_policy' ? car :
-                                                                    policy.policyType === 'bike_policy' ? scooty :
-                                                                        policy.policyType === 'other_vehicle' ? scooty :
-                                                                            policy.policyType === 'life' ? family :
-                                                                                policy.policyType === 'accident' ? family :
-                                                                                    policy.policyType === 'health' ? HealthInsurance :
-                                                                                        policy.policyType === 'other_health' ? HealthInsurance : ''
-
-                                                                } alt="Policy Image" style={{ width: '75%', maxWidth: '75%' }} className="img-fluid rounded-start" />
+                                                                <img
+                                                                    src={policy.policyType === 'car_policy' ? car :
+                                                                        policy.policyType === 'bike_policy' ? scooty :
+                                                                            policy.policyType === 'other_vehicle' ? scooty :
+                                                                                policy.policyType === 'life' ? family :
+                                                                                    policy.policyType === 'accident' ? family :
+                                                                                        policy.policyType === 'health' ? HealthInsurance :
+                                                                                            policy.policyType === 'other_health' ? HealthInsurance : ''
+                                                                    }
+                                                                    alt="Policy Image"
+                                                                    style={{ width: '75%', maxWidth: '75%' }}
+                                                                    className="img-fluid rounded-start"
+                                                                />
                                                             </Grid>
                                                             <Grid item xs={shareAllPolicy ? 9 : 9} className='d-flex align-items-end justify-content-between'>
                                                                 <div>
@@ -357,6 +378,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                                         )}
                                                     </CardContent>
                                                 </Card>
+
 
 
                                             );

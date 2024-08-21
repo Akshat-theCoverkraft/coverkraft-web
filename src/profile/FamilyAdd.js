@@ -72,8 +72,8 @@ const handleEmailChange = (e) => {
             <ToastContainer/>
             <Box
                 sx={{
-                    width: 800, // fixed width
-                    padding: 4, // padding inside the drawer
+                    width: 800, 
+                    padding: 4, 
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',

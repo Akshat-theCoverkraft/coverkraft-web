@@ -271,9 +271,9 @@ console.log('userimg kya h',profileImage)
 
     return (
         <Drawer anchor="right" open={open} onClose={onClose} className='' >
-            <Box sx={{ width: 750, padding: 0, overflowX: 'hidden' }} role="presentation" className=''>
+            <Box sx={{ width: 550, padding: 0, overflowX: 'hidden' }} role="presentation" className=''>
                 <div className="main-container">
-                    <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "35vh" }}>
+                    <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "39vh" }}>
                         <div className="profile-details">
 
                             <div className="profile-image-container">

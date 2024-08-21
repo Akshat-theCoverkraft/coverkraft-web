@@ -1,4 +1,5 @@
 //action.js
+import { toast } from 'react-toastify'; 
 import axios from "axios";
 
 // Add REGISTER 
@@ -124,30 +125,48 @@ export const extractData = (API_URL, data) => {
             });
     };
 };
-
-
 //Save data 
+// export const saveDocument = (API_URL, data) => {
+//     return (dispatch) => {
+//         dispatch({ type: SAVE_DATA_REQUEST });
+//         const token = localStorage.getItem('token');
+//         return axios
+//             .post(API_URL + `policy/create`,
+//             data,{
+//                 headers: {
+//                     Authorization: `Bearer ${token}`, // Include the token in the headers
+//                 },
+//              })
+//             .then((response) => {
+//                 dispatch({ type: SAVE_DATA_SUCCESS, payload: response.data });
+//                 return response.data;
+//             })
+//             .catch((error) => {
+//                 dispatch({ type: SAVE_DATA_FAILURE, payload: error.message });
+//             });
+//     };
+// }
 export const saveDocument = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: SAVE_DATA_REQUEST });
         const token = localStorage.getItem('token');
         return axios
-            .post(API_URL + `policy/create`,
-            data,{
+            .post(`${API_URL}policy/create`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`, // Include the token in the headers
                 },
-             })
+            })
             .then((response) => {
                 dispatch({ type: SAVE_DATA_SUCCESS, payload: response.data });
-                return response.data;
+                return response; // Return the full response here
             })
             .catch((error) => {
-                dispatch({ type: SAVE_DATA_FAILURE, payload: error.message });
-            });
+                const errorMessage = error.response?.data?.message || "Error in creating policy details";
+                dispatch({ type: SAVE_DATA_FAILURE, payload: errorMessage });
+                return Promise.reject({ status: error.response?.status, message: errorMessage }); 
+                        });
     };
-}
-
+};
 //update data 
 export const updateDocument = (API_URL, data) => {
     return (dispatch) => {

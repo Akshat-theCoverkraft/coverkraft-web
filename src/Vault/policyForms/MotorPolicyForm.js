@@ -68,24 +68,7 @@ console.log('policydetails',policyDetails)
     const token = localStorage.getItem('token')
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    // useEffect(() => {
-    //     if (mode === 'edit' && responseData) {
-    //         setPolicyNumber(responseData.policyNumber || "");
-    //         setPolicyStartDate(responseData.policyStartDate || "");
-    //         setPolicyEndDate(responseData.policyEndDate || "");
-    //         setAssetType(responseData.policyDetails.assetType || "");
-    //         setVehicleEngineNumber(responseData.policyDetails.vehicleEngineNumber || "");
-    //         setSumAssured(responseData.policyDetails.sumAssured || "");
-    //         setNetPremium(responseData.policyDetails.netPremium || "");
-    //         setPremiumPaid(responseData.policyDetails.totalPremium || "");
-    //         setInsuredName(responseData.insuredName || "");
-    //         setInsuredCompany(responseData.policyDetails.insuranceCompany || "");
-    //         setRegistrationNumber(responseData.policyDetails.registrationNumber || "");
-    //         setRegistrationYear(responseData.policyDetails.policyName || "");
-    //         setIdv(responseData.policyDetails.registrationYear || "");
-    //         setMakeModel(responseData.policyDetails.make_Model || "");
-    //     }
-    // }, [mode, responseData]);
+    
     const inputFields = [
         policyNumber,
         policyStartDate,
@@ -186,11 +169,50 @@ console.log('policydetails',policyDetails)
         );
     };
 
+    // const createPolicy = (payload) => {
+    //     console.log('================')
+
+    //     const formData = new FormData();
+
+    //     formData.append('userId', userId);
+    //     formData.append('documentId', documentId);
+    //     formData.append('policyType', responseData?.policyType.toLowerCase());
+    //     formData.append('policyNumber', policyNumber);
+    //     formData.append('policyStartDate', policyStartDate);
+    //     formData.append('policyEndDate', policyEndDate);
+    //     formData.append('premiumPaid', premiumPaid);
+    //     formData.append('netPremium', netPremium);
+    //     formData.append('insuredName', insuredName);
+    //     formData.append('insuranceCompany', insuredCompany);
+    //     formData.append('registrationNumber', registrationNumber);
+    //     formData.append('registrationYear', registrationYear);
+    //     formData.append('assetType', assetType);
+    //     formData.append('vehicleEngineNumber', vehicleEngineNumber);
+    //     formData.append('make', make);
+    //     formData.append('model', model);
+    //     formData.append('ncpPercentage', ncb);
+    //     formData.append('tpPremium', tpPremium);
+    //     formData.append('odPremium', odPremium)
+    //     formData.append('idv', idv);
+    //     dispatch(saveDocument(API_URL, formData))
+    //     .then((response) => {
+    //         if (response && response.status === 200) { // Ensure the response is successful
+    //             toast.success("Successfully Created");
+    //             navigate('/coverkraft/vault');
+    //         } else {
+    //             throw new Error("Failed to create policy");
+    //         }
+    //     })
+    //         .catch((error) => {
+    //             toast.error("Error creating policy");
+    //             console.log("toast", toast.error);
+    //         });
+    // }
     const createPolicy = (payload) => {
         console.log('================')
-
+    
         const formData = new FormData();
-
+    
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', responseData?.policyType.toLowerCase());
@@ -209,18 +231,25 @@ console.log('policydetails',policyDetails)
         formData.append('model', model);
         formData.append('ncpPercentage', ncb);
         formData.append('tpPremium', tpPremium);
-        formData.append('odPremium', odPremium)
+        formData.append('odPremium', odPremium);
         formData.append('idv', idv);
+    
         dispatch(saveDocument(API_URL, formData))
-            .then(() => {
-                toast.success("Successfully Created");
-                navigate('/coverkraft/vault')
+            .then((response) => {
+                if (response && response.status === 200) {
+                    toast.success("Successfully Created");
+                    navigate('/coverkraft/vault');
+                } else {
+                    throw new Error(response?.data?.message || "Failed to create policy");
+                }
             })
             .catch((error) => {
-                toast.error("Error creating policy");
+                const errorMessage = error.response?.data?.message || "Error creating policy";
+                toast.error(`Error: ${errorMessage}`);
+                console.error("Error:", errorMessage);
             });
     }
-
+    
     const updatePolicy = (payload) => {
         console.log('================')
         const formData = new FormData();
