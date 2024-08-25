@@ -164,21 +164,35 @@
   }
   
   .carousel__btn-arrow {
-    border: solid black;
-    border-width: 0 0.4rem 0.4rem 0;
-    height: 6rem;
-    padding: 3px;
     width: 6rem;
-    z-index: 10;
-  }
-  
-  .carousel__btn-arrow--left {
-    transform: rotate(135deg);
-  }
-  
-  .carousel__btn-arrow--right {
-    transform: rotate(-45deg);
-  }
+    height: 6rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-top: 0.5rem;
+    border: none; /* Remove the border so that only the image is visible */
+}
+
+/* Left arrow image */
+.carousel__btn-arrow--left {
+    background-image: url('../../../Images/iconamoon_arrow-right-2.png');
+    transform: rotate(0deg); /* No rotation needed as we're using an image */
+}
+
+/* Right arrow image */
+.carousel__btn-arrow--right {
+    background-image: url('../../../Images/iconamoon_arrow-right-2\ \(1\).png');
+    transform: rotate(0deg); /* No rotation needed as we're using an image */
+}
+
+.carousel__btn--prev {
+    left: -10rem;
+}
+
+.carousel__btn--next {
+    right: -10rem;
+}
+
   
   .carousel__dots {
     display: inline-block;

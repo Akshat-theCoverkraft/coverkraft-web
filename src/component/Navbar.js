@@ -503,7 +503,7 @@ function Navbar(props) {
                     </Card>
                 </div>
             </Popover>
-            <ProfileDrawer open={drawerOpen} onClose={handleDrawerClose} />
+            {/* <ProfileDrawer open={drawerOpen} onClose={handleDrawerClose} /> */}
 
         </>
     )
