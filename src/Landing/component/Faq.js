@@ -27,7 +27,7 @@ export default function Faq() {
 
   return (
     <>
-      <div className="text-center ">
+      <div className="text-center p-3" style={{backgroundColor:'#F7FAFE'}}>
         <h3 className=" fw-bold" style={{ color: "#FF9906" }}>
           FAQ
         </h3>

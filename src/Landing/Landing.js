@@ -13,6 +13,7 @@ import Cards3d from './component/3dCard'
 import Count from './component/Count'
 import Faq from './component/Faq'
 import Testimonials from './component/Testimonials'
+import Service from './component/service'
 const Landing = () => {
   return (
     <div className='overflow-hidden'>
@@ -31,6 +32,9 @@ const Landing = () => {
        
         
         {/* <Carousel/> */}
+        
+      
+        <Service/>
         <Footer/>
         
     </div>

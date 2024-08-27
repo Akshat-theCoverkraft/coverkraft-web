@@ -7,35 +7,43 @@ import mockup from '../../Images/Coverkraft-mockup.png';
 import Grid from '@mui/material/Grid';
 const Coverkraft = () => {
   return (
-    <Grid container spacing={0} justifyContent='center' className='bg-image1 mb-5 p-5'>
-      <Grid item xs={12} md={6} className='ml-2' >
-        <h2 className='my-5' style={{fontSize:'50px'}}>Get our <span className='fw-bold'>Coverkraft</span>  app</h2>
-        <div className=''>
-          <div className='d-flex'>
-            <img src={checkicon} height={30}/>
-            <p className='ml-2 fs-5'>Track your policy status on the go</p>
+    <Grid container xs={12} md={12} spacing={0} justifyContent='center' className='bg-image1 mb-5 p-5'>
+      <Grid item xs={12} md={6} className='d-flex' >
+        <img src={mockup} alt='' width={800} />
+      </Grid>
+      <Grid item xs={12} md={6} className="mt-5 d-flex flex-column justify-content-center " >
+        <div>
+          <h1 className="fw-bold mb-1" style={{ color: "#FF9906", fontSize:'29px' }}>
+            DOWNLOAD APP
+          </h1>
+          <h1 className="mt-3 mb-5 fw-bold" style={{fontSize:'50px'}}>Get the Coverkraft app</h1>
+        </div>
+        <div className='mb-5'>
+          <div className="d-flex mb-2">
+            <img src={checkicon} height={30} alt="check icon" />
+            <p className="ml-2 fs-3">Track your policy status on the go</p>
           </div>
-          <div className='d-flex'>
-            <img src={checkicon} height={30}/>
-            <p className='ml-2 fs-5'>Prioritising securing documents</p>
+          <div className="d-flex mb-2">
+            <img src={checkicon} height={30} alt="check icon" />
+            <p className="ml-2 fs-3">Prioritising securing documents</p>
           </div>
-          <div className='d-flex'>
-            <img src={checkicon} height={30}/>
-            < p className='ml-2 fs-5'>Use the documents anytime from the policy vault</p>
-          </div>  
-          <div className='d-flex'>
-            <img src={checkicon} height={30}/>
-            <p className='ml-2 fs-5'>Convert physical policy documents into the digital document</p>
+          <div className="d-flex mb-2">
+            <img src={checkicon} height={30} alt="check icon" />
+            <p className="ml-2 fs-3">Use the documents anytime from the policy vault</p>
+          </div>
+          <div className="d-flex mb-2">
+            <img src={checkicon} height={30} alt="check icon" />
+            <p className="ml-2 fs-3">Convert physical policy documents into digital documents</p>
           </div>
         </div>
-        <div className='my-5'>
-          <img src={googleicon} className='mr-3'/>
-          <img src={appleicon}/>
+        <div className="my-5">
+          <img src={googleicon} className="mr-3" alt="Google Play Store" />
+          <img src={appleicon} alt="Apple App Store" />
         </div>
       </Grid>
-      <Grid item xs={12} md={5} className='d-flex justify-content-center' >
-        <img src={mockup} alt=''/>
-      </Grid>
+
+
+
     </Grid>
   )
 }
