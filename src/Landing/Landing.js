@@ -9,7 +9,8 @@ import Blog from './component/Blog'
 import Card from './component/Card'
 import About from './component/About'
 import Carousel from './component/Carousel'
-import Cards3d from './component/3dCard'
+import Cards3d from './component/3dCard';
+import Service from './component/service'
 const Landing = () => {
   return (
     <div className='overflow-hidden'>
@@ -18,11 +19,12 @@ const Landing = () => {
         <PolicyType/>
         <Cards3d/>
         <About/>
-        <Card/>
+        {/* <Card/> */}
         <Coverkraft/>
         <Blog/>
         <Afterglow/>
-        {/* <Carousel/> */}
+        <div style={{marginTop: "20em"}}></div>
+        <Service/>
         <Footer/>
         
     </div>
