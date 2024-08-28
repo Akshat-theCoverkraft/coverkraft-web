@@ -27,3 +27,6 @@
     display: 'block';
     object-fit: 'cover';
 }
+.faq-bg{
+    background-image: url('../../../Images/faq-bg.png');
+}

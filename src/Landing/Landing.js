@@ -30,10 +30,8 @@ const Landing = () => {
         <Testimonials/>
         <Faq/>
        
-        
         {/* <Carousel/> */}
         
-      
         <Service/>
         <Footer/>
         

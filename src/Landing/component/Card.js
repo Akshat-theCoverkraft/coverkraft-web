@@ -1,77 +1,129 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
-import group from '../../Images/Clip path group.png';
-import Frame from "../../Images/Frame.png";
-import car from "../../Images/car-1.png";
-import Frame1 from "../../Images/frame1.png";
-import Frame2 from "../../Images/frame-2.png";
-import group4 from "../../Images/luggage.png"
-import group2 from "../../Images/paper.png";
-import group3 from "../../Images/car-2.png";
+import { Card, CardContent, CardMedia, Typography, Button, Grid } from '@mui/material';
+import './CSS/service.css'
 const Job = () => {
-    const cardsData = [
-        { id: 1, imageUrl: group, textColor: "#0F4BA4", company: 'Health Insurance', desgination: 'Get claim guarantee certificate ', imageUrl2: group2, paragraph: 'with your health plans', colorCode: "#CEE4F2" },
-        { id: 2, imageUrl: car, textColor: "#667920", company: 'Car Insurance', desgination: 'Get claim guarantee certificate', imageUrl2: group3, paragraph: ' with your health plans', colorCode: "#F1FEB6" },
-        { id: 3, imageUrl: Frame, textColor: "#3C0BB2", company: 'Term Life Insurance', desgination: 'Get claim guarantee certificate', imageUrl2: Frame2, paragraph: ' with your health plans', colorCode: "#D1C1F6" },
-        { id: 4, imageUrl: Frame1, textColor: "#1E514B", company: 'Travel Insurance', desgination: 'Get claim guarantee certificate', imageUrl2: group4, paragraph: ' with your health plans', colorCode: "#B6FFE4" },
-
+    const dummyData = [
+        {
+            id: 1,
+            icon: 'https://via.placeholder.com/50', // Replace with actual icon URL
+            title: 'Card Title 1',
+            description: 'This is a description for card 1.',
+        },
+        {
+            id: 2,
+            icon: 'https://via.placeholder.com/50',
+            title: 'Card Title 2',
+            description: 'This is a description for card 2.',
+        },
+        {
+            id: 3,
+            icon: 'https://via.placeholder.com/50', // Replace with actual icon URL
+            title: 'Card Title 1',
+            description: 'This is a description for card 1.',
+        },
+        {
+            id: 4,
+            icon: 'https://via.placeholder.com/50',
+            title: 'Card Title 2',
+            description: 'This is a description for card 2.',
+        },
+        
+       
     ];
 
 
 
+
     return (
-        <>
-            <div className="container my-4">
+        <div className="containercards mt-5">
+            <Grid container xs={12} md={12} spacing={4} alignItems="center" justifyContent="center" style={{ backgroundColor: '#F7FAFE' }}>
+                {/* Left Side: Text */}
+                <Grid item xs={12} md={6} display="flex" justifyContent="center" alignItems="center">
+                    <CardContent>
+                        <Typography variant="h3" gutterBottom style={{ color: '#FF9906' }}>
+                            BENEFITS
+                        </Typography>
+                        <Typography variant="h2" className='mb-4 fw-bold'>
+                            Why Prefer Coverkraft
+                        </Typography>
+                        <Typography variant="h5" paragraph className='text-secondary'>
+                            Choose us for personalized insurance <br />solutions, exceptional customer care, and<br /> unwavering commitment to protecting what <br />matters most to you.
+                        </Typography>
+                    </CardContent>
+                </Grid>
 
-
-                {cardsData.map((card, index) => (
-                    index % 4 === 0 && (
-                        <div className="row" key={`row-${index}`}>
-                            {cardsData.slice(index, index + 4).map((card) => (
-                                <div key={card.id} className="col-md-3 p-2">
-                                    <Card className="h-100" style={{ padding: '40px', backgroundColor: card.colorCode, width: '95%' }}>
-                                        <div className='d-flex flex-column grid'>
-                                            <div className=''>
-                                                <div className='mb-1'>
-                                                    <img
-                                                        src={card.imageUrl}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className='p-1'>
-                                                <Typography className='mt-1' gutterBottom variant="body2" style={{ fontSize: '25px', fontWeight: "700", color: card.textColor, }}>
-                                                    {card.company}
-                                                </Typography>
-                                                <Typography gutterBottom variant="body2" style={{ fontSize: '40px', fontWeight: 'bold', color: card.textColor, }}>
-                                                    {card.desgination}
-                                                </Typography>
-                                            </div>
-                                            {/* <div className='d-flex col-md-11'>
-                    <Typography variant="body2"  style={{fontSize: '25px', fontWeight: "700", color: card.textColor, }}>
-                      {card.paragraph}
-                    </Typography>
-                  </div> */}
-                                            <div className='d-flex justify-content-end' style={{ maxHeight: "120px", marginTop: "1em" }}>
-                                                <div>
-                                                    <img
-                                                        style={{ height: "160px" }}
-                                                        src={card.imageUrl2}
-                                                    />
-                                                </div>
-                                            </div>
+                {/* Right Side: Image Grid */}
+                <Grid item xs={12} md={5} className='text-center' display="flex" justifyContent="center" alignItems="center">
+                    <Grid container spacing={4}>
+                        {dummyData.map((card) => (
+                            <Grid item xs={12} md={6} key={card.id}>
+                                <div style={styles.cardWrapper}>
+                                    <div style={styles.cardBackground}></div>
+                                    <div style={styles.cardContainer}>
+                                        <div style={styles.flexItem}>
+                                            <img src={card.icon} alt="Icon" style={styles.cardIcon} />
+                                            <h3 style={styles.cardTitle}>{card.title}</h3>
                                         </div>
-
-
-                                    </Card>
+                                        <p className='text-secondary'>{card.description}</p>
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
-                    )
-                ))}
-
-            </div>
-        </>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Grid>
+            </Grid>
+        </div>
     );
 };
 
 export default Job;
+const styles = {
+    cardWrapper: {
+        position: 'relative',
+        width: '300px',
+        height: '150px',
+        margin: '20px',
+    },
+    cardBackground: {
+        position: 'absolute',
+        top: -20,
+        left: -20,
+        width: '100%',
+        height: '90%',
+        borderRadius: '15px 15px 15px 15px',
+        background: 'linear-gradient(135deg, #42CDC9, #B4E498)',
+        zIndex: 1,
+    },
+    cardContainer: {
+        position: 'absolute',
+        top: '5px',
+        left: '5px',
+        width: 'calc(100% - 10px)',
+        height: 'calc(100% - 10px)',
+        backgroundColor: 'white',
+        borderRadius: '15px 15px 15px 0',
+        zIndex: 2,
+
+        padding: '10px',
+    },
+    flexItem: {
+        display: 'flex',
+        flexDirection: 'row',
+        padding: '10px',
+    },
+    cardIcon: {
+        width: '50px',
+        height: '50px',
+        marginBottom: '10px',
+        marginRight: '10px'
+    },
+    cardTitle: {
+        fontSize: '18px',
+        fontWeight: '700',
+        marginTop: '10px',
+    },
+    cardDescription: {
+        fontSize: '14px',
+        fontColor: 'gray'
+    },
+};
