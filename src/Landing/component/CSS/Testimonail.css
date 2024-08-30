@@ -1,0 +1,134 @@
+
+
+/* body {
+  background-color: gray;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+} */
+
+.container {
+    max-width: 1192px;
+    margin: 0 auto;
+    position: relative;
+}
+
+@mixin breakpoint($width) {
+    @media screen and (max-width: $width) {
+        @content;
+    }
+}
+
+section.testimonials {
+  /* background-color: #f0f1f4; */
+  padding-top: 50px;
+  padding-bottom: 60px;
+
+  .container {
+    .quotes {
+      max-width: 1000px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      .slick-prev:before,
+      .slick-next:before {
+        content: none;
+      }
+      
+      button {
+        height: fit-content;
+        width: 40px;
+        height: 40px;
+        color: transparent;
+        border: none;
+        background-color: transparent;
+            
+        cursor: pointer;
+      }
+      button.slick-next {
+        transform: rotate(180deg);
+      }
+
+      .slick-list {
+
+        .quote-wrapper {
+          margin-left: 25px;
+          margin-right: 25px;
+          background-color: #fff;
+          padding: 30px 50px;
+          border-radius: 13px;
+          position: relative;
+          overflow: hidden;
+
+          &::before {
+            content: "";
+            height: 100%;
+            width: 4px;
+            background-color: '#226089';
+            position: absolute;
+            top: 0;
+            left: 0;
+          }
+
+          .author {
+            margin-top: 0px;
+            font-weight: 600;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            line-height: 1em;
+          }
+        }
+      }
+    }
+  }
+  
+  @include breakpoint(620px) {
+    .container {
+      margin: 0px 0px;
+
+      .quotes {
+        gap: 0px;
+
+        .slick-list {
+          .quote-wrapper {
+            max-height: 270px;
+            min-height: 200px;
+            padding: 20px 30px;
+            margin-left: 10px;
+            margin-right: 10px;
+            border-radius: 8px;
+
+            &::before {
+              content: "";
+              height: 100%;
+              width: 4px;
+              
+              background-position: left center;
+              position: absolute;
+              top: 0;
+              left: 0;
+              border-radius: 20px 0px 0px 20px;
+            }
+
+            .quote {
+              font-size: 16px;
+              line-height: 25px;
+            }
+
+            .author {
+              margin-top: 20px;
+              flex-direction: column;
+              align-items: center;
+              gap: 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

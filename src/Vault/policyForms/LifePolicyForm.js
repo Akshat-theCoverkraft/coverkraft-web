@@ -154,7 +154,7 @@ const LifePolicyForm = () => {
           // Make API call to create a new policy
           await createPolicy(payload);
         }
-        navigate('/')
+       
       } else {
         toast.error( "Please fill all required fields!");
       }

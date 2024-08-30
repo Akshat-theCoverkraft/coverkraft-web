@@ -25,6 +25,7 @@ import dayjs from 'dayjs';
 import ProgressBarCircle from '../../component/ProgressBarCircle';
 import DateTimePicker from '../../component/DateTimePicker';
 import { formatDate } from '../../utils/dateUtils';
+import axios from 'axios';
 const MotorPolicyForm = () => {
     const location = useLocation();
     const responseData = location.state?.responseData;
@@ -140,7 +141,6 @@ console.log('policydetails',policyDetails)
                     // Make API call to create a new policy
                     await createPolicy(payload);
                 }
-                navigate('/')
             } else {
                 toast.error("Please fill all required fields!");
             }
@@ -208,7 +208,56 @@ console.log('policydetails',policyDetails)
     //             console.log("toast", toast.error);
     //         });
     // }
-    const createPolicy = (payload) => {
+    // const createPolicy = (payload) => {
+    //     console.log('================')
+    
+    //     const formData = new FormData();
+    
+    //     formData.append('userId', userId);
+    //     formData.append('documentId', documentId);
+    //     formData.append('policyType', responseData?.policyType.toLowerCase());
+    //     formData.append('policyNumber', policyNumber);
+    //     formData.append('policyStartDate', policyStartDate);
+    //     formData.append('policyEndDate', policyEndDate);
+    //     formData.append('premiumPaid', premiumPaid);
+    //     formData.append('netPremium', netPremium);
+    //     formData.append('insuredName', insuredName);
+    //     formData.append('insuranceCompany', insuredCompany);
+    //     formData.append('registrationNumber', registrationNumber);
+    //     formData.append('registrationYear', registrationYear);
+    //     formData.append('assetType', assetType);
+    //     formData.append('vehicleEngineNumber', vehicleEngineNumber);
+    //     formData.append('make', make);
+    //     formData.append('model', model);
+    //     formData.append('ncpPercentage', ncb);
+    //     formData.append('tpPremium', tpPremium);
+    //     formData.append('odPremium', odPremium);
+    //     formData.append('idv', idv);
+    //     try {
+    //         const response =  axios.post(`${API_URL}policy/create`, formData, {
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`, 
+    //                 'Content-Type': 'multipart/form-data', 
+    //             },
+    //         });
+    //         console.log('respnse bhi btaoo',response)
+            
+    //         if (response && response.status === 200) {
+
+    //             toast.success("Successfully Created");
+    //             navigate('/coverkraft/vault');
+    //         } else {
+    //             console.log('hello error',response.response.status)
+    //             toast.error('Error creating policy')
+    //         }
+    //     } catch (error) {
+    //         const errorMessage = error.response?.data?.message || "Error creating policy";
+    //         toast.error(`Error: ${errorMessage}`);
+    //         console.error("Error:", errorMessage);
+    //     }
+    // }
+
+    const createPolicy = async (payload) => {
         console.log('================')
     
         const formData = new FormData();
@@ -234,21 +283,28 @@ console.log('policydetails',policyDetails)
         formData.append('odPremium', odPremium);
         formData.append('idv', idv);
     
-        dispatch(saveDocument(API_URL, formData))
-            .then((response) => {
-                if (response && response.status === 200) {
-                    toast.success("Successfully Created");
-                    navigate('/coverkraft/vault');
-                } else {
-                    throw new Error(response?.data?.message || "Failed to create policy");
-                }
-            })
-            .catch((error) => {
-                const errorMessage = error.response?.data?.message || "Error creating policy";
-                toast.error(`Error: ${errorMessage}`);
-                console.error("Error:", errorMessage);
+        try {
+            const response = await axios.post(`${API_URL}policy/create`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`, 
+                    'Content-Type': 'multipart/form-data', 
+                },
             });
+    
+            if (response && response.status === 200) {
+                toast.success("Successfully Created");
+                navigate('/coverkraft/vault');
+            } else {
+                console.log('hello error', response.status);
+                toast.error('Error creating policy');
+            }
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Error creating policy";
+            toast.error(`Error: ${errorMessage}`);
+            console.error("Error:", errorMessage);
+        }
     }
+    
     
     const updatePolicy = (payload) => {
         console.log('================')

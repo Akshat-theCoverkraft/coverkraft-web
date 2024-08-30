@@ -316,7 +316,8 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                                     key={index}
                                                     style={{
                                                         boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',
-                                                        backgroundColor: policy._id === activeCardId ? '#ededed' : 'white' // Conditional styling
+                                                        backgroundColor: policy._id === activeCardId ? '#ededed' : 'white', // Conditional styling
+                                                       
                                                     }}
                                                     onClick={() => handleCardClickWithState(policy._id)} // Use the updated click handler
                                                 >

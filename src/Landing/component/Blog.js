@@ -7,16 +7,16 @@ import './CSS/afterglow.css'
 import { Card } from '@mui/material';
 const Blog = () => {
     return (
-        <Grid container justifyContent='center' className='m-5'>
+        <Grid container justifyContent='center' className=' p-5' style={{ backgroundColor: '#F7FAFE' }}>
             {/* <h1 className='text-center m-5' style={{fontSize:'60px'}}> <span className='border-bottom'>Latest</span> from the blog</h1> */}
             <div className="text-center ">
                 <h3 className=" fw-bold" style={{ color: "#FF9906" }}>
                     NEWS & BLOG
                 </h3>
-                <h1 className="mt-3 fw-bold">Latest from the blog</h1>
+                <h1 className="my-3 fw-bold">Latest from the blog</h1>
             </div>
 
-            <Grid container xs={12} md={12} spacing={8} className='blog-bg' >
+            <Grid container xs={12} md={12} spacing={8} className='' >
 
                 <Grid item xs={12} md={6} >
                     <div className='' style={{borderRadius:'25px',  boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px'}}>

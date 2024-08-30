@@ -224,7 +224,7 @@ const PolicyDetail = ({ policyId }) => {
 
                     return (
 
-                        <Card className='p-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                        <Card className='p-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', height: '93vh' }}>
 
                             <div className='d-flex justify-content-between mb-5'>
                                 <Typography variant="h5" component="h2" gutterBottom className='fw-bold pl-4'>Details</Typography>

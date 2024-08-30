@@ -9,7 +9,7 @@ import Carousel1 from '../Carousel1';
 
 const Afterglow = () => {
   return (
-    <div style={{ height: '85vh' }}>
+    <div style={{ height: '69vh' }}>
       <div  className=' bg-image p-5'>
       <div className='text-center text-white mb-5'>
         <h3 className=' fw-bold mt-3'>BENEFITS</h3>
