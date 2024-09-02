@@ -315,7 +315,8 @@ const PolicyDetail = ({ policyId }) => {
                                             }}
                                             onClick={handleArchieve}
                                         >
-                                            Archive
+                                            {/* Archive */}
+                                            {policy.status}
                                         </button>
                                     </Grid>
 

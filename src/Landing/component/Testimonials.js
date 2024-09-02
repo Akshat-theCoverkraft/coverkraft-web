@@ -42,10 +42,10 @@ export default function Testimonials() {
       </div>
       <div style={{ width: "50%", margin: "0 auto", borderRadius: "65px" }}>
       <section className="testimonials">
-      <div className="container">
+      <div className="container ">
         <Slider {...settings} className="quotes">
           {testimonialsData.map((testimonial, index) => (
-            <div key={index} className="quote-wrapper">
+            <div key={index} className="quote-wrapper card">
               <div className="quote">
                 {testimonial.quote}
               </div>

@@ -1,41 +1,33 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Card, CardContent, CardMedia, Typography, Button, Grid } from '@mui/material';
-import './CSS/service.css'
+import React, { useState, useEffect } from 'react';
+import { CardContent, Grid, Typography } from '@mui/material';
+import './CSS/service.css';
+import API_URL from '../../ServiceModule/Service';
+import IMAGE_PATH from '../../ServiceModule/imagePath';
+
 const Job = () => {
-    const dummyData = [
-        {
-            id: 1,
-            icon: 'https://via.placeholder.com/50', // Replace with actual icon URL
-            title: 'Card Title 1',
-            description: 'This is a description for card 1.',
-        },
-        {
-            id: 2,
-            icon: 'https://via.placeholder.com/50',
-            title: 'Card Title 2',
-            description: 'This is a description for card 2.',
-        },
-        {
-            id: 3,
-            icon: 'https://via.placeholder.com/50', // Replace with actual icon URL
-            title: 'Card Title 1',
-            description: 'This is a description for card 1.',
-        },
-        {
-            id: 4,
-            icon: 'https://via.placeholder.com/50',
-            title: 'Card Title 2',
-            description: 'This is a description for card 2.',
-        },
-        
-       
-    ];
+    const [cardData, setCardData] = useState([]);
 
+    useEffect(() => {
+        // Replace with your actual API endpoint
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${API_URL}tips/getAll`);
+                const result = await response.json();
+                if (result.status) {
+                    setCardData(result.data); // Access the data field in the API response
+                } else {
+                    console.error('Error: Data not retrieved');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-
+        fetchData();
+    }, []);
 
     return (
-        <div className=" mt-5">
+        <div className="mt-5">
             <Grid container xs={12} md={12} spacing={4} alignItems="center" justifyContent="center" style={{ backgroundColor: '#F7FAFE' }}>
                 {/* Left Side: Text */}
                 <Grid item xs={12} md={6} display="flex" justifyContent="center" alignItems="center">
@@ -55,14 +47,14 @@ const Job = () => {
                 {/* Right Side: Image Grid */}
                 <Grid item xs={12} md={5} className='text-center' display="flex" justifyContent="center" alignItems="center">
                     <Grid container spacing={4}>
-                        {dummyData.map((card) => (
-                            <Grid item xs={12} md={6} key={card.id}>
+                        {cardData.map((card) => (
+                            <Grid item xs={12} md={6} key={card._id}>
                                 <div style={styles.cardWrapper}>
                                     <div style={styles.cardBackground}></div>
                                     <div style={styles.cardContainer}>
                                         <div style={styles.flexItem}>
-                                            <img src={card.icon} alt="Icon" style={styles.cardIcon} />
-                                            <h3 style={styles.cardTitle}>{card.title}</h3>
+                                            <img src={IMAGE_PATH + card.icon} alt="Icon" style={styles.cardIcon} />
+                                            <h3 style={styles.cardTitle}>{card.subtitle}</h3>
                                         </div>
                                         <p className='text-secondary'>{card.description}</p>
                                     </div>
@@ -77,6 +69,7 @@ const Job = () => {
 };
 
 export default Job;
+
 const styles = {
     cardWrapper: {
         position: 'relative',
