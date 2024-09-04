@@ -1,114 +1,105 @@
-
-
-/* body {
-  background-color: gray;
-  font-family: "Nunito Sans", sans-serif;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 28px;
-} */
-
 .container {
-    max-width: 1192px;
-    margin: 0 auto;
-    position: relative;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
 }
 
 @mixin breakpoint($width) {
-    @media screen and (max-width: $width) {
-        @content;
-    }
+  @media screen and (max-width: $width) {
+    @content;
+  }
 }
 
 section.testimonials {
-  /* background-color: #f0f1f4; */
   padding-top: 50px;
   padding-bottom: 60px;
 
   .container {
     .quotes {
-      max-width: 1000px;
-      margin: auto;
       display: flex;
-      align-items: center;
+      align-items: start;
       gap: 10px;
-      
+
       .slick-prev:before,
       .slick-next:before {
         content: none;
       }
-      
+
       button {
-        height: fit-content;
         width: 40px;
         height: 40px;
         color: transparent;
         border: none;
         background-color: transparent;
-            
         cursor: pointer;
       }
+
       button.slick-next {
         transform: rotate(180deg);
       }
 
       .slick-list {
-
         .quote-wrapper {
-          margin-left: 25px;
-          margin-right: 25px;
+          flex: 1 1 45%; /* Reduces the width of the card to 45% */
+          max-width: 720px; /* Ensures the card doesn't exceed 450px in width */
           background-color: #fff;
-          padding: 50px 50px;
+          padding: 50px;
           border-radius: 20px;
           position: relative;
           overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          margin: 0 15px; /* Adds left and right margin to the testimonial cards */
 
           &::before {
             content: "";
             height: 100%;
             width: 4px;
-            background-color: '#226089';
+            background-color: #226089;
             position: absolute;
             top: 0;
             left: 0;
           }
 
+          .quote {
+            text-align: left;
+            font-size: 16px;
+            line-height: 25px;
+          }
+
           .author {
-            margin-top: 0px;
+            margin-top: 20px;
             font-weight: 600;
             display: flex;
+            justify-content: start;
+            align-items: start;
             flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            line-height: 1em;
+            text-align: left;
           }
         }
       }
     }
   }
-  
+
   @include breakpoint(620px) {
     .container {
-      margin: 0px 0px;
-
       .quotes {
-        gap: 0px;
+        gap: 0;
 
         .slick-list {
           .quote-wrapper {
+            flex: 1 1 95%; /* Reduces the width for smaller screens */
+            max-width: 100%; /* Allows full-width on smaller screens */
             max-height: 270px;
             min-height: 200px;
             padding: 20px 30px;
-            margin-left: 10px;
-            margin-right: 10px;
+            margin: 0 10px; /* Adds left and right margin for smaller screens */
             border-radius: 8px;
 
             &::before {
-              content: "";
               height: 100%;
               width: 4px;
-              
-              background-position: left center;
               position: absolute;
               top: 0;
               left: 0;
@@ -118,13 +109,15 @@ section.testimonials {
             .quote {
               font-size: 16px;
               line-height: 25px;
+              text-align: left;
             }
 
             .author {
               margin-top: 20px;
               flex-direction: column;
-              align-items: center;
+              align-items: left;
               gap: 8px;
+              text-align: left;
             }
           }
         }
