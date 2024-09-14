@@ -40,7 +40,7 @@ const GlobalDropdown = ({ onStateSelect, initialValue }) => {
 
   return (
     <div className="dropdown-container">
-      <label className="dropdown-label" htmlFor="stateDropdown">Select State</label>
+      <label className="dropdown-label" htmlFor="stateDropdown">Select State<span className='text-danger'>*</span></label>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (

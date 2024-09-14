@@ -247,9 +247,9 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                     textColor="#42988E"
                                     TabIndicatorProps={{ style: { display: 'none' } }}
                                 >
-                                    <Tab label="Active" value={0} className='m-2 fw-bolder px-5 ' sx={{ color: value === 0 ? '#8AC642' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px' }} />
-                                    <Tab label="Expired" value={1} className='m-2 fw-bolder px-5 ' sx={{ color: value === 1 ? '#8AC642' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px' }} />
-                                    <Tab label="Archive" value={2} className='m-2 fw-bolder px-5' sx={{ color: value === 2 ? '#8AC642' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px' }} />
+                                    <Tab label="Active" value={0} className='m-2 fw-bolder px-5 ' sx={{ color: value === 0 ? '#8AC642' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px', fontSize: '12px', fontWeight: '700' }} />
+                                    <Tab label="Expired" value={1} className='m-2 fw-bolder px-5 ' sx={{ color: value === 1 ? '#8AC642' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px', fontSize: '12px', fontWeight: '700' }} />
+                                    <Tab label="Archive" value={2} className='m-2 fw-bolder px-5' sx={{ color: value === 2 ? '#8AC642' : '#777777', backgroundColor: value === 2 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px', fontSize: '12px', fontWeight: '700' }} />
                                 </TabList>
                             </Box>
                         </Box>
@@ -263,7 +263,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                     ) : (
                         <div>
                             <TabPanel value={0} className=''>
-                                <div style={{ minHeight: '79vh', maxHeight: '79vh', overflowY: 'auto' }}>
+                                <div style={{ minHeight: '83vh', maxHeight: '83vh', overflowY: 'auto' }}>
                                     {policyList.length === 0 ? (
                                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh' }}>
                                             <img src={emptyImage} alt="No Data" />
@@ -317,7 +317,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                                     style={{
                                                         boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',
                                                         backgroundColor: policy._id === activeCardId ? '#ededed' : 'white', // Conditional styling
-                                                       
+
                                                     }}
                                                     onClick={() => handleCardClickWithState(policy._id)} // Use the updated click handler
                                                 >
@@ -353,7 +353,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                                                 <div>
                                                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                                                         <span className="dot" style={{ backgroundColor: '#8AC642', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px', marginBottom: '14px' }}></span>
-                                                                        <Typography variant="body1" component="p" gutterBottom style={{ color: '#8AC642' }} className='mb-3'>
+                                                                        <p component="p" gutterBottom style={{ color: '#8AC642', fontSize: '11px', fontWeight: '500' }} className='mb-3'>
                                                                             {
                                                                                 policy.policyType === 'car_policy' ? 'Car Insurance' :
                                                                                     policy.policyType === 'bike_policy' ? 'Two Wheeler Insurance' :
@@ -363,11 +363,11 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                                                                                     policy.policyType === 'health' ? 'Health Insurance' :
                                                                                                         policy.policyType === 'other_health' ? 'Other Health Insurance' : ''
                                                                             }
-                                                                        </Typography>
+                                                                        </p>
                                                                     </div>
-                                                                    <h4 variant="h4" component="h2" gutterBottom className='fw-bold'>{policy.insuredName}</h4>
-                                                                    <h6 className='mb-4' style={{ color: '#585858' }}>{policy.policyNumber}</h6>
-                                                                    <h6 variant="h6" component="h2" gutterBottom style={{ color: '#9E9E9E' }}>Expires on {policy.policyEndDate}</h6>
+                                                                    <p style={{ fontSize: '15px', fontWeight: '700' }} className='fw-bold'>{policy.insuredName}</p>
+                                                                    <p style={{ fontSize: '11px', fontWeight: '500', color: '#585858' }} className='mb-4' >{policy.policyNumber}</p>
+                                                                    <p style={{ fontSize: '10px', fontWeight: '500', color: '#9E9E9E' }} gutterBottom >Expires on {policy.policyEndDate}</p>
                                                                 </div>
                                                                 <div style={{ alignItems: 'end' }}>
                                                                     <img src={arrow} className='mr-2' height={40} />
@@ -485,30 +485,33 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                                         </Grid>
                                                     </CardContent>
                                                 </Card>
-                                                <Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
-                                                    <Pagination
-                                                        variant='outlined'
-                                                        size='large'
-                                                        count={Math.ceil(archieveList.length / itemsPerPage)}
-                                                        page={pageArchive}
-                                                        onChange={handlePageChangeArchive}
-                                                    />
-                                                </Box>
+
                                             </div>
                                         ))
+                                       
                                     )}
+                                     < Box sx={{ display: 'flex', justifyContent: 'center', m: 2 }}>
+                                    <Pagination
+                                        variant='outlined'
+                                        size='large'
+                                        count={Math.ceil(archieveList.length / itemsPerPage)}
+                                        page={pageArchive}
+                                        onChange={handlePageChangeArchive}
+                                    />
+                                </Box>
 
-                                </div>
-                            </TabPanel>
                         </div>
-                    )}
-
-                </TabContext>
-
-
-            </Card>
-
+                            </TabPanel>
         </div>
+    )
+}
+
+                </TabContext >
+
+
+            </Card >
+
+        </div >
 
     );
 }

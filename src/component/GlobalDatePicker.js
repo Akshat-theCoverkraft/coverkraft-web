@@ -8,7 +8,7 @@ import './GlobalDatePicker.css'; // Assuming you have this CSS file
 const GlobalDatePicker = ({ selectedDate, handleDateChange, label, className, placeholder }) => {
   return (
     <div className="global-date-picker">
-      <label className='' >{label}</label><br/>
+      <label className='form-label fw-bold' style={{fontSize:'15px'}} >{label}<span className='text-danger'>*</span></label><br/>
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}

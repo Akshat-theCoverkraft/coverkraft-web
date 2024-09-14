@@ -77,6 +77,7 @@ const Login = () => {
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('token', token);
                 console.log('token',token)
+
                 // if(recaptchRef.current){
                 //     recaptchRef.current.innerHTML='<div id="recaptcha-container"></div>'
                 // }
@@ -94,7 +95,8 @@ const Login = () => {
                 // .catch(error =>{
                 //     console.error('Error sending OTP:',error)
                 // })
-               setLoggedIn(true)
+               setLoggedIn(true);
+               toast.success(response.message)
 
                 
             } else {
@@ -103,7 +105,11 @@ const Login = () => {
             }
         } catch (error) {
             console.error('Error:', error);
-            toast.error('An error occurred. Please try again later.');
+            if (error.response) {
+                toast.error(error.response.data.message || 'An unexpected error occurred');
+            } else {
+                toast.error('An unexpected error occurred');
+            }
         }
     }
     //function to handle login and integrate verify number API and recaptcha end

@@ -9,7 +9,7 @@ import API_URL from '../ServiceModule/Service';
 import Dropdown from '../component/Dropdown';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
+const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
     const [familyMember, setFamilyMember] = useState('');
     const [fullName, setFullName] = useState('')
     const [userPhone, setuserPhone] = useState('');
@@ -26,25 +26,25 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose }) => {
         { value: 'Mother', label: 'Mother' },
     ]
 
-   //function to handle phone number input field start
-   const handlephonechange = (e) => {
-    let number = e.target.value.replace(/\D/g, '');
-    number = number.slice(0, 10);
-    setuserPhone(number);
-    const isValid = /^\d{10}$/.test(number.replace('+91', ''));
-    setValid(isValid);
-}
-//function to handle phone number input field end
+    //function to handle phone number input field start
+    const handlephonechange = (e) => {
+        let number = e.target.value.replace(/\D/g, '');
+        number = number.slice(0, 10);
+        setuserPhone(number);
+        const isValid = /^\d{10}$/.test(number.replace('+91', ''));
+        setValid(isValid);
+    }
+    //function to handle phone number input field end
 
-//function to handle email input field start
-const handleEmailChange = (e) => {
-    const emailId = e.target.value;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const isValid = emailRegex.test(useremail);
-    setuserEmail(emailId);
-    setIsValidEmail(isValid);
-};
-//function to handle email input field start
+    //function to handle email input field start
+    const handleEmailChange = (e) => {
+        const emailId = e.target.value;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const isValid = emailRegex.test(useremail);
+        setuserEmail(emailId);
+        setIsValidEmail(isValid);
+    };
+    //function to handle email input field start
 
     async function handleSubmit() {
         const formData = new FormData();
@@ -56,24 +56,38 @@ const handleEmailChange = (e) => {
         formData.append('familyMember', familyMember);
         formData.append('mobile', userPhone);
         formData.append('email', useremail)
-        const response = await axios.post(`${API_URL}family/create`, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`, // Include token in the headers
+        if (userId && fullName && familyMember && userPhone && useremail) {
+            const response = await axios.post(`${API_URL}family/create`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Include token in the headers
+                }
+            });
+            if (response.status === 200) {
+                toast.success('Successfully Created')
+                onSuccess()
+                onfamilyAddClose();
+                setFullName('');
+                setFamilyMember('');
+                setuserPhone('');
+                setuserPhone('');
+                setuserEmail('');
+            }else{
+                toast.error(response.message)
             }
-        });
-        if(response.status === 200){
-            toast.success('Successfully Created')
-            onfamilyAddClose();
         }
-       
+        else {
+            
+            toast.error('Please fill all the required fields!')
+        }
+
     }
     return (
         <Drawer anchor="right" open={familyAdd} onClose={onfamilyAddClose}>
-            <ToastContainer/>
+            <ToastContainer />
             <Box
                 sx={{
-                    width: 800, 
-                    padding: 4, 
+                    width: 800,
+                    padding: 4,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -129,7 +143,7 @@ const handleEmailChange = (e) => {
                         onChange={handleEmailChange}
                         className={!isValidEmail ? 'is-invalid' : ''}
                         validationMessage={!isValidEmail ? 'Please enter a valid email address containing @.' : ''}
-                       required
+                        required
                     />
                 </Box>
                 <Box sx={{ marginTop: 3, width: '100%' }}>

@@ -36,7 +36,7 @@ const Blog = () => {
                 <h3 className="fw-bold" style={{ color: "#FF9906" }}>
                     NEWS & BLOG
                 </h3>
-                <h1 className="my-3 fw-bold">Latest from the blog</h1>
+                <h1 className="my-4 fw-bold">Latest from the blog</h1>
             </div>
 
             <Grid container xs={12} md={12} spacing={8}>
@@ -57,6 +57,12 @@ const Blog = () => {
                     </div>
                 </Grid>
 
+
+
+
+
+
+
                 {/* Smaller Blog Posts on the Right */}
                 <Grid item xs={12} md={6}>
                     {blogPosts.slice(1, 5).map((post, index) => (
@@ -67,7 +73,7 @@ const Blog = () => {
                                         src={IMAGE_PATH + post.newsImg}
                                         alt={post.subtitle}
                                         className="img-fluid rounded-start"
-                                        height={100}
+                                        height={150}
                                         width={100}
                                     />
                                 </Grid>

@@ -47,7 +47,7 @@ const CityDropdown = ({ selectedStateId,onCitySelect,initialValue }) => {
 
   return (
     <div className="dropdown-container">
-      <label className="dropdown-label" htmlFor="cityDropdown">Select City</label>
+      <label className="dropdown-label" htmlFor="cityDropdown">Select City<span className='text-danger'>*</span></label>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (

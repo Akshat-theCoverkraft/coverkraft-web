@@ -30,6 +30,7 @@ import { formatDate } from '../../utils/dateUtils';
 import { updateDocument } from '../../store/action/action';
 import { useDispatch } from 'react-redux'
 import GradientButton from '../../component/GradientButton';
+import { toast } from 'react-toastify';
 
 const PolicyDetail = ({ policyId }) => {
     console.log('policydetail ma gye', policyId)
@@ -170,11 +171,17 @@ const PolicyDetail = ({ policyId }) => {
     };
     const userId = localStorage.getItem('userId')
     const handleArchieve = () => {
+        const archieve='archive'
         const formData = new FormData();
         formData.append('_id', policyId);
         formData.append('userId', userId)
-        formData.append('status', 'archive')
+        formData.append('status',archieve)
         dispatch(updateDocument(API_URL, formData))
+        .then(()=>{
+            toast.success('Policy Updated successfully')
+        }).catch((error)=>{
+            toast.error('Some Error occur')
+        })
     }
 
     return (
@@ -227,7 +234,7 @@ const PolicyDetail = ({ policyId }) => {
                         <Card className='p-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', height: '93vh' }}>
 
                             <div className='d-flex justify-content-between mb-5'>
-                                <Typography variant="h5" component="h2" gutterBottom className='fw-bold pl-4'>Details</Typography>
+                                <p style={{fontSize:'24px',fontWeight:'700'}} className='fw-bold pl-4'>Details</p>
                                 <GradientButton
                                     text='Edit'
                                     size="sm"
@@ -240,11 +247,11 @@ const PolicyDetail = ({ policyId }) => {
 
                             <div className='d-flex justify-content-between'>
                                 <div>
-                                    <Typography variant="h5" component="h2" gutterBottom className='fw-bold pl-4'>
+                                    <p style={{fontSize:'20px',fontWeight:'700'}} gutterBottom className='fw-bold pl-4'>
                                         {policy.policyDetails.make_Model || policy.insuredName}
-                                    </Typography>
-                                    <Typography variant="h6" component="h2" gutterBottom style={{ color: '#585858' }} className='pl-4'>{policy.policyDetails.registrationNumber || policy.policyNumber}</Typography>
-                                    <Typography variant="h6" component="h2" gutterBottom style={{ color: '#9E9E9E' }} className='pl-4'>Expires on  {formatDate(policy.policyEndDate)}</Typography>
+                                    </p>
+                                    <p  style={{ color: '#585858',fontSize:'14px',fontWeight:'500' }} className='pl-4'>{policy.policyDetails.registrationNumber || policy.policyNumber}</p>
+                                    <p style={{ color: '#9E9E9E',fontSize:'14px',fontWeight:'500' }} className='pl-4'>Expires on  {formatDate(policy.policyEndDate)}</p>
                                 </div>
                                 <div>
                                     <img src={policy.policyType === 'car_policy' ? car : detailScooty} alt="Policy Image" width={200} className="img-fluid rounded-start" />
@@ -272,8 +279,8 @@ const PolicyDetail = ({ policyId }) => {
                                                 <img src={premium} height={50} alt='premium' />
                                             </div>
                                             <div>
-                                                <h5 style={{ color: '#585858' }}>Premium Paid</h5>
-                                                <h5 className='fw-bolder'>{policy.premiumPaid}</h5>
+                                                <p style={{ color: '#585858',fontSize:'14px',fontWeight:'500' }}>Premium Paid</p>
+                                                <p style={{fontSize:'16px',fontWeight:'700'}} className='fw-bolder'>{policy.premiumPaid}</p>
                                             </div>
                                         </Grid>
                                         <Grid item xs={6} md={6} className='d-flex' style={{ padding: '30px 40px' }}>
@@ -281,8 +288,8 @@ const PolicyDetail = ({ policyId }) => {
                                                 <img src={value} height={50} alt='value' />
                                             </div>
                                             <div>
-                                                <h5 style={{ color: '#585858' }}>Value(IDV)</h5>
-                                                <h5 className='fw-bolder'>{policy.policyDetails.idv || policy.policyDetails.sumInsured}</h5>
+                                                <p style={{ color: '#585858',fontSize:'14px',fontWeight:'500'  }}>Value(IDV)</p>
+                                                <p className='fw-bolder'>{policy.policyDetails.idv || policy.policyDetails.sumInsured}</p>
                                             </div>
                                         </Grid>
                                         <Grid item xs={6} md={6} className='d-flex' style={{ padding: '30px 40px' }}>
@@ -290,8 +297,8 @@ const PolicyDetail = ({ policyId }) => {
                                                 <img src={startDate} height={50} alt='start date' />
                                             </div>
                                             <div>
-                                                <h5 style={{ color: '#585858' }}>Policy Start Date</h5>
-                                                <h5 className='fw-bolder'>{formatDate(policy.policyStartDate)}</h5>
+                                                <p style={{ color: '#585858',fontSize:'14px',fontWeight:'500'  }}>Policy Start Date</p>
+                                                <p className='fw-bolder'>{formatDate(policy.policyStartDate)}</p>
                                             </div>
                                         </Grid>
                                         <Grid item xs={6} md={6} className='d-flex' style={{ padding: '30px 40px' }}>
@@ -299,11 +306,12 @@ const PolicyDetail = ({ policyId }) => {
                                                 <img src={dateEnd} height={50} alt='end date' />
                                             </div>
                                             <div>
-                                                <h5 style={{ color: '#585858' }}>Policy End Date</h5>
-                                                <h5 className='fw-bolder'>{formatDate(policy.policyEndDate)}</h5>
+                                                <p style={{ color: '#585858',fontSize:'14px',fontWeight:'500'  }}>Policy End Date</p>
+                                                <p className='fw-bolder'>{formatDate(policy.policyEndDate)}</p>
                                             </div>
                                         </Grid>
                                     </Grid>
+                                    {!policy.status ? (
                                     <Grid item className='m-4' xs={12} md={12} style={{ padding: '0 40px' }}>
                                         <button
                                             className='btn btn-lg rounded-5'
@@ -315,10 +323,11 @@ const PolicyDetail = ({ policyId }) => {
                                             }}
                                             onClick={handleArchieve}
                                         >
-                                            {/* Archive */}
-                                            {policy.status}
+                                            Archive
+                                            {/* {policy.status} */}
                                         </button>
                                     </Grid>
+                                    ):(<p></p>)}
 
                                 </Card>
                                 {showShareDialog && (

@@ -27,7 +27,7 @@ const Job = () => {
     }, []);
 
     return (
-        <div className="mt-5">
+        <div className="" style={{marginTop:'100px'}}>
             <Grid container xs={12} md={12} spacing={4} alignItems="center" justifyContent="center" style={{ backgroundColor: '#F7FAFE' }}>
                 {/* Left Side: Text */}
                 <Grid item xs={12} md={6} display="flex" justifyContent="center" alignItems="center">

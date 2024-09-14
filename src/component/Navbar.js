@@ -300,7 +300,7 @@ function Navbar(props) {
                                             </span>
 
                                         </MenuItem>
-                                        <MenuItem onClick={handleClickOpen}>
+                                        {/* <MenuItem onClick={handleClickOpen}>
                                             <TranslateOutlinedIcon />{' '}
                                             <span
                                                 style={{
@@ -312,7 +312,7 @@ function Navbar(props) {
                                                 {' '}
                                                 Language
                                             </span>
-                                        </MenuItem>
+                                        </MenuItem> */}
                                         <MenuItem onClick={handleLogout}>
                                             <LogoutIcon />{' '}
                                             <span
@@ -503,7 +503,7 @@ function Navbar(props) {
                     </Card>
                 </div>
             </Popover>
-            {/* <ProfileDrawer open={drawerOpen} onClose={handleDrawerClose} /> */}
+            <ProfileDrawer open={drawerOpen} onClose={handleDrawerClose} />
 
         </>
     )

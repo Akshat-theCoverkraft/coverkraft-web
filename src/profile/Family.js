@@ -19,45 +19,47 @@ const Family = ({ family, onfamilyclose }) => {
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
 
-    useEffect(() => {
-        const fetchFamilyDetails = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const userId = localStorage.getItem('userId');
-                const response = await axios.get(`${API_URL}family/getById?userId=${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`, // Include token in the headers
-                    }
-                });
-                if (response.data && response.data.data && Array.isArray(response.data.data)) {
-                    setFamilyData(response.data.data);
-                } else {
-                    console.error('Expected an array but got:', response.data);
-                    setFamilyData([]);
+    const fetchFamilyDetails = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${API_URL}family/getById?userId=${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
                 }
-
-            } catch (error) {
-                console.error('Error fetching family details:', error);
+            });
+            if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                setFamilyData(response.data.data);
+            } else {
+                console.error('Expected an array but got:', response.data);
                 setFamilyData([]);
-            
             }
-        };
-        fetchFamilyDetails();
+        } catch (error) {
+            console.error('Error fetching family details:', error);
+            setFamilyData([]);
+        }
+    };
 
+    useEffect(() => {
+        fetchFamilyDetails();
     }, [userId]);
 
     const handleFamilyOpen = () => {
         setDrawerOpen(true);
     };
+
     const handleFamilyClose = () => {
         setDrawerOpen(false);
+    };
 
-    }
-
+    const handleFamilyAddSuccess = () => {
+        // Refresh the family details when a new member is added
+        fetchFamilyDetails();
+        setDrawerOpen(false); // Close the add family drawer
+    };
 
     return (
         <Drawer anchor="right" open={family} onClose={onfamilyclose}>
-            <ToastContainer/>
+            <ToastContainer />
             <Box sx={{ width: 800, padding: 0 }} role="presentation" style={{ overflowX: 'hidden' }}>
                 <Grid container spacing={2} className='d-flex m-3'>
                     <Grid item>
@@ -73,43 +75,42 @@ const Family = ({ family, onfamilyclose }) => {
                             <Card style={styles.card}>
                                 <div className='profile-image-container' style={styles.profileImageContainer}>
                                     <img
-                                        src={!profile.familyImg ? icDefaultProfile : profile.familyImg} // Replace with profile.imageUri or similar from API
+                                        src={!profile.familyImg ? icDefaultProfile : profile.familyImg}
                                         alt="Profile"
                                         className="profile-image"
                                         style={styles.profileImage}
                                     />
                                 </div>
-                                <Typography variant="subtitle1" className={styles.relationship}>
+                                <p style={{fontSize:'16px'}} className={styles.relationship}>
                                     {profile.familyMember}
-                                </Typography>
-                                <Typography variant="h5" className={styles.name}>
+                                </p>
+                                <p style={{fontSize:'20px',fontWeight:'500'}} className={styles.name}>
                                     {profile.fullName}
-                                </Typography>
+                                </p>
                                 <div className='d-flex'>
                                     <EmailIcon />
-                                    <Typography variant="body2" className='ml-2'>
+                                    <p style={{fontSize:'14px'}} className='ml-2'>
                                         {profile.email}
-                                    </Typography>
+                                    </p>
                                 </div>
                                 <div className='d-flex'>
                                     <CallIcon />
-                                    <Typography variant="body2" className='ml-2'>
+                                    <p  style={{fontSize:'14px'}}  className='ml-2'>
                                         {profile.mobile}
-                                    </Typography>
+                                    </p>
                                 </div>
                             </Card>
                         </Grid>
                     ))}
                 </Grid>
                 <Grid container xs={12} justifyContent='center' alignItems='center' className='mt-5' onClick={handleFamilyOpen}>
-
                     <Card style={styles.card}>
                         <img height={70} src={addMember} />
                         <h4 style={{ color: '#0098DB' }}>Add member</h4>
                     </Card>
                 </Grid>
             </Box>
-            <FamilyAdd familyAdd={drawerOpen} onfamilyAddClose={handleFamilyClose} />
+            <FamilyAdd familyAdd={drawerOpen} onfamilyAddClose={handleFamilyClose} onSuccess={handleFamilyAddSuccess} />
         </Drawer>
     );
 };
@@ -135,12 +136,12 @@ const styles = {
     },
     relationship: {
         backgroundColor: '#FACFC6',
-        padding: '5px 10px',
+        padding: '5px 5px',
         borderRadius: '5px',
-        marginBottom: '10px',
+        marginBottom: '0px 0px',
     },
     name: {
-        marginBottom: '5px',
+        marginBottom: '10px',
     },
     infoContainer: {
         display: 'flex',

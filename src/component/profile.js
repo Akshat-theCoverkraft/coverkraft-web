@@ -25,7 +25,7 @@ import About from '../profile/About';
 import { useNavigate } from 'react-router-dom';
 import CityDropdown from './CityDropdown';
 import GlobalDatePicker from './GlobalDatePicker';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 const ProfileDrawer = ({ open, onClose, userName }) => {
     const dispatch = useDispatch();
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -101,7 +101,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
         }
     }, [userbyId]);
-console.log('userimg kya h',profileImage)
+    console.log('userimg kya h', profileImage)
     const handleStateSelect = (stateId) => {
         setSelectedStateId(stateId);
     };
@@ -142,14 +142,14 @@ console.log('userimg kya h',profileImage)
             formData.append("userImg", userImgFile); // Append the file here
         }
         if (
-            username ||
-            useremail ||
-            userPhone ||
-            userDob ||
-            userAddress ||
-            state ||
-            city ||
-            pinCode ||
+            username &&
+            useremail &&
+            userPhone &&
+            userDob &&
+            userAddress &&
+            selectedStateId &&
+            selectedCityId &&
+            pinCode &&
             gender ||
             userImgFile
         ) {
@@ -166,13 +166,18 @@ console.log('userimg kya h',profileImage)
             }
 
             dispatch(updateUser(API_URL, formData))
-            .then(()=>{
-                toast.success('Updated successfully')
-            }).catch((error)=>{
-                toast.error('Error in updating')
-            })
-            onClose();
+                // .then(() => {
+                //     toast.success('Updated successfully')
+                // }).catch((error) => {
+                //     toast.error('Error in updating')
+                // })
+                toast.success('Updated successfully');
+                setTimeout(() => {
+                    onClose();
+                }, 3000);
+            // onClose();
         } else {
+            toast.error('Please fill all required fields!')
             console.log("No fields are being updated");
         }
 
@@ -236,23 +241,28 @@ console.log('userimg kya h',profileImage)
         localStorage.removeItem('policyId')
         navigate('/coverkraft');
     };
+
+
     const handlePinCodeChange = (e) => {
-        const pin = e.target.value;
+        let pin = e.target.value.replace(/\D/g, '');  // Remove all non-digit characters
+        pin = pin.slice(0, 6);  // Limit to 6 digits
         setpinCode(pin);
-        setIsValidPinCode(validatePinCode(pin));
-    };
-    const validatePinCode = (pin) => {
-        // Simple pin code validation (assuming 5 or 6 digit pin codes)
-        return /^\d{5,6}$/.test(pin);
+        const isValidPin = /^\d{5,6}$/.test(pin);  // Check if it's 5 or 6 digits
+        setIsValidPinCode(isValidPin);
     };
     //function to handle email input field start
-    const handleEmailChange = (e) => {
-        const emailId = e.target.value;
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        const isValid = emailRegex.test(useremail);
-        setuserEmail(emailId);
-        setIsValidEmail(isValid);
-    };
+   const handleEmailChange = (e) => {
+    const emailId = e.target.value;
+
+    // Regular expression to validate the email
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // Regex to check for exactly one @ symbol and at least two dots after @
+    const validEmail = emailRegex.test(emailId) &&
+    emailId.split('@').length === 2 && 
+    emailId.split('@')[1].split('.').length <= 3;
+    setuserEmail(emailId);
+    setIsValidEmail(validEmail);
+};
     //function to handle email input field start
     //function to handle phone number input field start
     const handlephonechange = (e) => {
@@ -267,13 +277,22 @@ console.log('userimg kya h',profileImage)
         setuserDob(date);
     };
 
+    const headerStyle = {
+        wordWrap: 'break-word', // Ensures long words break onto the next line
+        overflowWrap: 'break-word', // Alternative property to ensure wrapping
+        maxWidth: '25%', // Ensures the element respects the container's width
+        whiteSpace: 'normal' // Ensures that text can wrap and does not stay in a single line
+      };
+    
+
 
 
     return (
         <Drawer anchor="right" open={open} onClose={onClose} className='' >
-            <Box sx={{ width: 550, padding: 0, overflowX: 'hidden' }} role="presentation" className=''>
+            <ToastContainer />
+            <Box sx={{ width: 850, padding: 0, overflowX: 'hidden' }} role="presentation" className=''>
                 <div className="main-container">
-                    <div className="background-image-container" style={{ backgroundImage: `url(${icProfileBg})`, height: "39vh" }}>
+                    <div className="background-image-container1" style={{ backgroundImage: `url(${icProfileBg})`, height: "39vh", padding:' 20px 200px' }}>
                         <div className="profile-details">
 
                             <div className="profile-image-container">
@@ -306,7 +325,7 @@ console.log('userimg kya h',profileImage)
 
 
                             <div className="spacer" />
-                            <h2 className="text-header">{username}</h2>
+                            <h2 className="text-header" style={{headerStyle}}>{username}</h2>
                             <div className="spacer-small" />
                             <p className="register-text">{useremail}</p>
                             <div class="text-center text-lg-start ">
@@ -325,30 +344,30 @@ console.log('userimg kya h',profileImage)
                 </div>
                 {!update ? (
                     <Card className='main-container m-4 p-4'>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleFamilyOpen}>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleFamilyOpen}>
                             <Grid item xs={1}><img src={family} /></Grid>
-                            <Grid item xs={10}>Family member</Grid>
-                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                            <Grid item xs={9}>Family member</Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleCommunicationOpen}>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleCommunicationOpen}>
                             <Grid item xs={1}><img src={communication} /></Grid>
-                            <Grid item xs={10}>Communication preferances </Grid>
-                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                            <Grid item xs={9}>Communication preferances </Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleHelpOpen}>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleHelpOpen}>
                             <Grid item xs={1}><img src={help} /></Grid>
-                            <Grid item xs={10}>Help</Grid>
-                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                            <Grid item xs={9}>Help</Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleAboutOpen}>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleAboutOpen}>
                             <Grid item xs={1}><img src={about} /></Grid>
-                            <Grid item xs={10}>About</Grid>
-                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                            <Grid item xs={9}>About</Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' onClick={handleLogout}>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleLogout}>
                             <Grid item xs={1}><img src={logout} /></Grid>
-                            <Grid item xs={10}>Logout</Grid>
-                            <Grid item xs={1}><img src={rightArrow} /></Grid>
+                            <Grid item xs={9}>Logout</Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
                     </Card>
                 ) : (
@@ -374,6 +393,7 @@ console.log('userimg kya h',profileImage)
                                     className={!isValidEmail ? 'is-invalid' : ''}
                                     validationMessage={!isValidEmail ? 'Please enter a valid email address containing @.' : ''}
                                     style={{ width: '48%' }}
+                                    required
                                 />
                             </Grid>
                         </Grid>
@@ -403,7 +423,7 @@ console.log('userimg kya h',profileImage)
                             </Grid> */}
                         <div className='col-12 mb-3'>
                             <GlobalDatePicker
-                                label="Date"
+                                label="DOB"
                                 selectedDate={userDob}
                                 handleDateChange={handleDobChange}
                                 className='custom-picker form-control-lg rounded-5 '
@@ -419,6 +439,7 @@ console.log('userimg kya h',profileImage)
                                 placeholder="Enter your UserAddress"
                                 value={userAddress}
                                 onChange={(e) => setuserAddress(e.target.value)}
+                                required
                             />
 
                         </div>
@@ -453,23 +474,43 @@ console.log('userimg kya h',profileImage)
                                     label="PinCode"
                                     placeholder="Enter your PinCode"
                                     value={pinCode}
-                                    onChange={(e) => setpinCode(e.target.value)}
+                                    onChange={handlePinCodeChange}
+                                    className={!isValidPinCode ? 'is-invalid' : ''}
+                                    validationMessage={!isValidPinCode ? 'Please enter a valid pin code (5 or 6 digits).' : ''}
+                                    required
                                 />
 
                             </Grid>
                             <Grid item xs={6}>
-                                <CustomInput
+                                {/* <CustomInput
                                     label="Gender"
                                     placeholder="Enter your gender"
                                     value={gender}
                                     onChange={(e) => setgender(e.target.value)}
+                                    required
 
-                                />
+                                /> */}
+                                <label className="form-label fw-bold" htmlFor="inputField">
+                                    Gender<span className='text-danger'>*</span>
+                                </label>
+                                <select
+                                    id="stateDropdown"
+                                    className="dropdown-select rounded-5 p-3"
+                                    value={gender}
+                                    onChange={(e) => setgender(e.target.value)}
+                                >
+                                    <option disabled  >Select a State</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+
+                                </select>
                             </Grid>
                         </Grid>
 
                         <div className="spacer-small" />
-                        <Button size='sm' text="Update" onClick={handleUpateProfile} />
+                        <Button size='md' text="Update" onClick={handleUpateProfile} disabled={!isValidEmail} // Disable button if email is not valid
+                            bgcolor={!isValidEmail ? '#d3d3d3' : '#8AC642'} />
                     </div>
                 )}
             </Box>

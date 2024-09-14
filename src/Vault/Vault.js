@@ -181,6 +181,7 @@ const Vault = () => {
             } else {
                 toast.error('File is not 200 status due to some issue!');
             }
+            setFiles(null);
         } catch (error) {
             setLoading(false);
             toast.error('File is not extracted due to some issue!');

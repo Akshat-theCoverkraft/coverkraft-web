@@ -14,9 +14,11 @@ import Count from './component/Count'
 import Faq from './component/Faq'
 import Testimonials from './component/Testimonials'
 import Service from './component/service'
+import { ToastContainer } from 'react-toastify'
 const Landing = () => {
   return (
     <div className='overflow-hidden'>
+      <ToastContainer/>
         <Navbar/>
         <HeroSection/>
         <PolicyType/>

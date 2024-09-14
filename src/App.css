@@ -66,6 +66,12 @@
   background-size: cover;
   background-position: center;
 }
+.background-image-container1 {
+  width: 100%;
+  height: 37vh;
+  background-size: cover;
+  background-position: center;
+}
 
 .profile-details {
   text-align: center;
