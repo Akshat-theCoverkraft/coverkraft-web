@@ -43,7 +43,7 @@
     flex: 1;
     justify-content: center;
     position: relative;
-    width: 90%;
+    width: 100%;
     left: 50%;
     transform: translateX(-50%);
   }
@@ -54,7 +54,7 @@
   }
   
   .carousel__inner {
-    height: 33rem;
+    height: 30rem;
     position: relative;
     width: calc(var(--slide-width) * 3);
   }
