@@ -44,7 +44,7 @@ const Blog = () => {
                 <Grid item xs={12} md={6}>
                     <div className='' style={{ borderRadius: '25px', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                         <div className="hover-overlay mb-3">
-                            <img src={IMAGE_PATH + blogPosts[0].newsImg} className="img-fluid" alt={blogPosts[0].title} />
+                            <img src={IMAGE_PATH + blogPosts[0].newsImg} className="" style={{maxWidth:'100%',height:'50%'}} alt={blogPosts[0].title} />
                         </div>
                         <div className="card-body p-4">
                             <p className="card-title fw-bold fs-5 mb-3" style={{ color: '#42988E' }}>{blogPosts[0].date}</p>
@@ -72,9 +72,9 @@ const Blog = () => {
                                     <img
                                         src={IMAGE_PATH + post.newsImg}
                                         alt={post.subtitle}
-                                        className="img-fluid rounded-start"
-                                        height={150}
-                                        width={100}
+                                        className=" rounded-start"
+                                        height={130}
+                                        width={150}
                                     />
                                 </Grid>
                                 <Grid item xs={8} className='p-3'>
