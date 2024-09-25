@@ -138,7 +138,7 @@ const Register = () => {
 
 
     //function for register and integrate API start
-    const handleRegister = () => {
+    const handleRegister = async () => {
         console.log('handleregister')
         const roleID = 3;
         if (
@@ -174,12 +174,19 @@ const Register = () => {
             formData.append('state', selectedStateId)
             formData.append('city', selectedCityId)
 
-            dispatch(registrationCustomer(API_URL, formData))
-            .then(()=>{
+            // dispatch(registrationCustomer(API_URL, formData))
+            // .then(()=>{
+            //     toast.success('Successfully Registered')
+            // }).catch((error)=>{
+            //     toast.error('Error :',error)
+            // })
+            try {
+                await dispatch(registrationCustomer(API_URL, formData))
+                navigate("/coverkraft/login");
                 toast.success('Successfully Registered')
-            }).catch((error)=>{
-                toast.error('Error :',error)
-            })
+            } catch(error) {
+                toast.error('Error')
+            }
             // toast.success('User registered successfully');
             // console.log('registered')
             // navigate('/coverkraft/login')
