@@ -1,0 +1,69 @@
+name: DEV Env 
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          rm -rf node_modules
+          npm cache clean --force
+          npm install --force
+          rm -rf node_modules/.cache
+
+      - name: Build project
+        run: npm run build
+
+      - name: Install SonarScanner
+        uses: SonarSource/sonarqube-scan-action@master
+        with:
+          args: >
+            -Dsonar.projectKey=CoverKraft-frontend-web
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+
+      - name: Configure the AWS CLI
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region us-east-1
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Deploy to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          echo "Starting deployment to EC2..."
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./build/ ubuntu@$EC2_HOST:/var/www/html/coverkraft
+
+          echo "Connecting to EC2 instance..."
+          ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST_DEVELOP << 'EOF'
+            echo "Connected as: $(whoami)"
+            sudo systemctl restart apache2
+            echo "Apache server restarted successfully."
+          EOF
