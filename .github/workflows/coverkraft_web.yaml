@@ -59,7 +59,7 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
           echo "Starting deployment to EC2..."
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./build/ ubuntu@$EC2_HOST:/var/www/html/coverkraft
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./build/ ubuntu@$EC2_HOST:/var/www/html/coverkraft/
 
           echo "Connecting to EC2 instance..."
           ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST_DEVELOP << 'EOF'
