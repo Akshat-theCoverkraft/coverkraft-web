@@ -62,7 +62,7 @@ jobs:
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./build/ ubuntu@$EC2_HOST:/var/www/html/coverkraft/
 
           echo "Connecting to EC2 instance..."
-          ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST_DEVELOP << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST << 'EOF'
             echo "Connected as: $(whoami)"
             sudo systemctl restart apache2
             echo "Apache server restarted successfully."
