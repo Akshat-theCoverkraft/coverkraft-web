@@ -5,6 +5,7 @@ import './CSS/afterglow.css';
 import symbol from '../../Images/Symbol.png';
 import API_URL from '../../ServiceModule/Service';
 import IMAGE_PATH from '../../ServiceModule/imagePath';
+import { THEME_COLOR } from '../../constants';
 
 const Blog = () => {
     const [blogPosts, setBlogPosts] = useState([]);
@@ -31,7 +32,7 @@ const Blog = () => {
     }
 
     return (
-        <Grid container justifyContent='center' className='p-5' style={{ backgroundColor: '#F7FAFE' }}>
+        <Grid container justifyContent='center' className='p-5'>
             <div className="text-center">
                 <h3 className="fw-bold" style={{ color: "#FF9906" }}>
                     NEWS & BLOG
@@ -66,7 +67,7 @@ const Blog = () => {
                 {/* Smaller Blog Posts on the Right */}
                 <Grid item xs={12} md={6}>
                     {blogPosts.slice(1, 5).map((post, index) => (
-                        <Card key={post._id} className="mb-5 rounded-5">
+                        <Card key={post._id} className="mb-5 rounded-5" style={{backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR}}>
                             <Grid container xs={12} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                                 <Grid item xs={3} className='mr-5'>
                                     <img

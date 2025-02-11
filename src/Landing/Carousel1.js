@@ -26,7 +26,7 @@ const createItem = (position, idx, items) => {
         case items.length:
             break;
         default:
-            item.styles = { ...item.styles, opacity: 0 };
+            item.styles = { ...item.styles, opacity: 1 };
             break;
     }
 
@@ -71,7 +71,7 @@ const Carousel1 = () => {
 
     const bigLength = items.length * 2; // Adjust length for the duplicated array
 
-    const prevClick = (jump = 3) => { // Adjusted jump for 3 items at a time
+    const prevClick = (jump = 1) => { // Adjusted jump for 3 items at a time
         if (!isTicking) {
             setIsTicking(true);
             setCarouselItems((prev) => {
@@ -80,7 +80,7 @@ const Carousel1 = () => {
         }
     };
 
-    const nextClick = (jump = 3) => { // Adjusted jump for 3 items at a time
+    const nextClick = (jump = 1) => { // Adjusted jump for 3 items at a time
         if (!isTicking) {
             setIsTicking(true);
             setCarouselItems((prev) => {

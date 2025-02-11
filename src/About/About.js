@@ -5,6 +5,7 @@ import vision from '../Images/ic_vision.png';
 import mission from '../Images/ic_mission.png'
 import { Card, Grid } from '@mui/material';
 import '../profile/about.css'
+import { THEME_COLOR } from '../constants';
 
 const About = () => {
     return (
@@ -22,7 +23,7 @@ const About = () => {
                     {/* <div className="spacer"></div> */}
                     <Grid container spacing={4} xs={12} justifyContent='center' alignItems='center' className=''>
                         <Grid item xs={4}>
-                            <div className='card card-container' style={{backgroundColor:'#F1F1F1',maxHeight:'500px'}}>
+                            <div className='card card-container' style={{backgroundColor:THEME_COLOR.FADE_BACKGROUND, maxHeight:'500px'}}>
                                 <img
                                     src={mission}
                                     alt="Mission"
@@ -37,7 +38,7 @@ const About = () => {
                         </Grid>
                         {/* <div className="spacer"></div> */}
                         <Grid item xs={4}>
-                            <div className='card card-container' style={{backgroundColor:'#F1F1F1',minHeight:'310px'}}>
+                            <div className='card card-container' style={{backgroundColor:THEME_COLOR.FADE_BACKGROUND, minHeight:'310px'}}>
                                 <img
                                     src={vision}
                                     alt="Vision"

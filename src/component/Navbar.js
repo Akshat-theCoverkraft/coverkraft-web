@@ -26,6 +26,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ProfileDrawer from "../component/profile";
 
 import './footer.css';
+import { THEME_COLOR } from '../constants';
 
 
 function Navbar(props) {
@@ -218,7 +219,7 @@ function Navbar(props) {
 
                         <>
                             <IconButton onClick={handleMenuClick}>
-                                {showMenu ? <CloseIcon /> : <MenuIcon />}
+                                {showMenu ? <CloseIcon sx={{ color: THEME_COLOR.COLOR }} /> : <MenuIcon sx={{ color: THEME_COLOR.COLOR }}/>}
                             </IconButton>
                             <Menu
                                 anchorEl={anchorElToggle}
