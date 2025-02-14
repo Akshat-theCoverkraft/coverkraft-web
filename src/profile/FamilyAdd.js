@@ -117,7 +117,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
                 <Box sx={{ marginTop: 2, width: '100%' }}>
                     <CustomInput
                         label="Full Name"
-                        placeholder="Enter your full name"
+                        placeholder="Enter your Full Name"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         required
@@ -125,13 +125,13 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
                 </Box>
                 <Box sx={{ marginTop: 2, width: '100%' }}>
                     <CustomInput
-                        label="UserPhone"
+                        label="Phone Number"
                         type='number'
-                        placeholder="Enter your UserPhone"
+                        placeholder="Enter your Phone Number"
                         value={userPhone}
                         onChange={handlephonechange}
                         className={!valid ? 'is-invalid' : ''}
-                        validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
+                        validationMessage={!valid ? ' Please enter a valid 10-digit phone number.' : ''}
                         required
                     />
                 </Box>
