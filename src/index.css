@@ -56,3 +56,6 @@ animate-style{
   max-width: 200%; /* Ensure it doesn't exceed the parent's width */
 }
 
+.primary-color{
+  color: 'rgb(138, 198, 66)'
+}

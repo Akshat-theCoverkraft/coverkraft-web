@@ -21,6 +21,8 @@ import LifePolicyForm from "./Vault/policyForms/LifePolicyForm";
 import Family from "./profile/Family";
 import About from "./About/About";
 import Notification from "./Notification/Notification";
+import BlogDetails from "./Landing/component/blogs/BlogDetails";
+import Feeds from "./Landing/component/blogs/Feeds";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false)
@@ -103,6 +105,8 @@ useEffect(() => {
        <Route path='/coverkraft/family' element={<Family/>}/>
        <Route path="/coverkraft/about" element={<About/>}/>
        <Route path="/coverkraft/notification" element={<Notification/>}/>
+       <Route path="/coverkraft/feed/:type" element={<Feeds />}/>
+       <Route path="/coverkraft/feed/:type/:id" element={<BlogDetails />}/>
     </Routes>
     </>
   );
