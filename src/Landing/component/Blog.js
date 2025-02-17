@@ -76,7 +76,7 @@ const Blog = () => {
             style={{ maxHeight: "300px", overflow: "hidden",   borderRadius: "25px", }}
           >
             <img
-              src={IMAGE_PATH + post?.newsImg}
+              src={post?.newsImg}
               className=""
               style={{
                 width: "100%",

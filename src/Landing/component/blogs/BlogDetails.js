@@ -63,9 +63,9 @@ console.log(type, id, "<===type")
         </div> */}
         <div className="card mb-4">
           <img
-            src={IMAGE_PATH + blog?.newsImg}
+            src={blog?.newsImg}
             style={{ maxWidth: "80%", margin: "auto" }}
-            alt="A business meeting with a presentation on insurance"
+            alt={blog?.subtitle}
           />
           <div className="card-body">
             <h2 className="text-center">
@@ -95,9 +95,9 @@ console.log(type, id, "<===type")
               <div className="col-md-4 mb-4" key={index}>
                 <div className="card text-left">
                   <img
-                    src={IMAGE_PATH + mBlog?.newsImg}
+                    src={mBlog?.newsImg}
                     className="card-img-top"
-                    alt="People working on laptops in an airplane"
+                    alt={mBlog?.subtitle}
                   />
                   <div className="card-body">
                     <h3 className="card-title h4">
