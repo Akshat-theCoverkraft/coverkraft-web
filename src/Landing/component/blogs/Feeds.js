@@ -113,7 +113,7 @@ function Feeds() {
                     <CardMedia
                       component="img"
                       height="200"
-                      image={IMAGE_PATH + item?.newsImg}
+                      image={item?.newsImg}
                       alt={item?.newsImg}
                       sx={{
                         objectFit: "cover",
