@@ -188,7 +188,7 @@ const PolicyType = () => {
             >
               <div className="item-content mb-3 mt-5">
                 <img
-                  src={IMAGE_PATH + policy.icon}
+                  src={policy.icon}
                   alt={policy.policyType}
                   className="policy-icon"
                   style={{

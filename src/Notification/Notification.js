@@ -74,7 +74,7 @@ const Notification = () => {
                         <Card key={index} className='rounded mb-5' sx={{ mx: 2, my: 3, p: 1, backgroundColor: '#F8FFFE', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                             <Grid container spacing={3} xs={12}>
                                 <Grid item xs={3}>
-                                    <img className='p-3' src={IMAGE_PATH + notification.imagePath} alt='Notification Icon' height={150} width={250} />
+                                    <img className='p-3' src={notification.imagePath} alt='Notification Icon' height={150} width={250} />
                                 </Grid>
                                 <Grid item xs={7}>
                                     <p style={{ fontSize: '17px', fontWeight: '700' }}>{notification.title}</p>

@@ -53,7 +53,7 @@ const Job = () => {
                                     <div style={styles.cardBackground}></div>
                                     <div style={styles.cardContainer}>
                                         <div style={styles.flexItem}>
-                                            <img src={IMAGE_PATH + card.icon} alt="Icon" style={styles.cardIcon} />
+                                            <img src={card.icon} alt="Icon" style={styles.cardIcon} />
                                             <h3 style={styles.cardTitle}>{card.subtitle}</h3>
                                         </div>
                                         <p className='text-secondary'>{card.description}</p>

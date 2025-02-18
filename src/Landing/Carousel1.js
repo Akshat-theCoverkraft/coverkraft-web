@@ -39,7 +39,7 @@ const CarouselSlideItem = ({ pos, idx, activeIdx, items }) => {
     return (
         <li className="carousel__slide-item" style={item.styles}>
             <div className="carousel__slide-item-img-link">
-                <img src={IMAGE_PATH + item.video} alt={item.subtitle} />
+                <img src={item.video} alt={item.subtitle} />
             </div>
         </li>
     );
