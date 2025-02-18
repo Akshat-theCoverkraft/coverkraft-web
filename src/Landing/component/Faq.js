@@ -19,10 +19,10 @@ const StyledAccordionSummary = styled(AccordionSummary)({
 });
 
 export default function Faq() {
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(null);
 
-  const handleChange = (isExpanded) => () => {
-    setExpanded(isExpanded ? "panel1" : false);
+  const handleChange = (panel) => {
+    setExpanded(panel === expanded ? null : panel);
   };
 
   return (
@@ -39,7 +39,7 @@ export default function Faq() {
         <div style={{ width: "70%", margin: "0 auto", padding: '20px' }}>
           <StyledAccordion
             expanded={expanded === "panel1"}
-            onChange={handleChange(expanded !== "panel1")}
+            onClick={() => handleChange("panel1")}
             className='p-3'
             style={{borderTopLeftRadius:'20px',borderTopRightRadius:'20px'}}
           >
@@ -67,7 +67,7 @@ export default function Faq() {
           {/* Repeat for additional Accordions */}
           <StyledAccordion
             expanded={expanded === "panel2"}
-            onChange={handleChange(expanded !== "panel2")}
+            onClick={ () => handleChange("panel2")}
             className="p-3"
           >
             <StyledAccordionSummary
@@ -91,15 +91,15 @@ export default function Faq() {
           </StyledAccordion>
 
           <StyledAccordion
-            expanded={expanded === "panel2"}
-            onChange={handleChange(expanded !== "panel2")}
+            expanded={expanded === "panel3"}
+            onClick={() => handleChange("panel3")}
             className="p-3"
           >
             <StyledAccordionSummary
               expandIcon={
                 <img
-                  src={expanded === "panel2" ? xmark : plus}
-                  alt={expanded === "panel2" ? "collapse" : "expand"}
+                  src={expanded === "panel3" ? xmark : plus}
+                  alt={expanded === "panel3" ? "collapse" : "expand"}
                   style={{ width: "20px", height: "20px" }}
                 />
               }
@@ -116,15 +116,15 @@ export default function Faq() {
           </StyledAccordion>
 
           <StyledAccordion
-            expanded={expanded === "panel2"}
-            onChange={handleChange(expanded !== "panel2")}
+          expanded={expanded === "panel4"}
+          onClick={ () => handleChange("panel4")}
             className="p-3"
           >
             <StyledAccordionSummary
               expandIcon={
                 <img
-                  src={expanded === "panel2" ? xmark : plus}
-                  alt={expanded === "panel2" ? "collapse" : "expand"}
+                  src={expanded === "panel4" ? xmark : plus}
+                  alt={expanded === "panel4" ? "collapse" : "expand"}
                   style={{ width: "20px", height: "20px" }}
                 />
               }
@@ -141,16 +141,16 @@ export default function Faq() {
           </StyledAccordion>
 
           <StyledAccordion
-            expanded={expanded === "panel2"}
-            onChange={handleChange(expanded !== "panel2")}
+             expanded={expanded === "panel5"}
+             onClick={ () => handleChange("panel5")}
             style={{borderBottomLeftRadius:'20px',borderBottomRightRadius:'20px'}}
             className="p-3"
           >
             <StyledAccordionSummary
               expandIcon={
                 <img
-                  src={expanded === "panel2" ? xmark : plus}
-                  alt={expanded === "panel2" ? "collapse" : "expand"}
+                  src={expanded === "panel5" ? xmark : plus}
+                  alt={expanded === "panel5" ? "collapse" : "expand"}
                   style={{ width: "20px", height: "20px", fontWeight: "bolder" }}
                 />
               }
