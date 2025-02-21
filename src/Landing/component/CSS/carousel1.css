@@ -85,7 +85,7 @@
     margin: 0;
     padding: 1rem;
     position: absolute;
-    transition: all 0.3s;
+    transition: all 0.1s ease-in;
     width: var(--slide-width);
   }
   
@@ -100,6 +100,12 @@
   }
   
   .carousel__slide-item-img-link img {
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s ease;
+    width: 100%;
+  }
+  .carousel__slide-item-img-link video {
     height: 100%;
     object-fit: cover;
     transition: all 0.5s ease;

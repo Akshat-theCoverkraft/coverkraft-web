@@ -35,11 +35,22 @@ const createItem = (position, idx, items) => {
 
 const CarouselSlideItem = ({ pos, idx, activeIdx, items }) => {
     const item = createItem(pos, idx, items);
+    const extension = item?.video?.split('.').pop().toLowerCase();
+    const videoExtensions = ['mp4', 'avi', 'mov'];
 
+    if (videoExtensions.includes(extension)) {
+        return (
+            <li className="carousel__slide-item" style={item.styles}>
+                <div className="carousel__slide-item-img-link">
+                <video autoPlay controls src={item?.video} className="card-img-top" />
+                </div>
+            </li>
+        )
+    }
     return (
         <li className="carousel__slide-item" style={item.styles}>
             <div className="carousel__slide-item-img-link">
-                <img src={IMAGE_PATH + item.video} alt={item.subtitle} />
+                <img src={item.video} alt={item.subtitle} />
             </div>
         </li>
     );
