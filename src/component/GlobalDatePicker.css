@@ -2,7 +2,10 @@
 .react-datepicker__input-container {
     position: relative;
     display: inline-block;
-    width: 379%;
+    /* width: 379%; */
+}
+.react-datepicker-wrapper{
+    width: 100%;
 }
 
 .custom-datepicker-textfield .MuiInputBase-root {

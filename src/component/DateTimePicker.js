@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 import { TextField, IconButton, InputAdornment } from '@mui/material';
+import { THEME_COLOR } from '../constants';
 
 const DateTimePicker = (props) => {
     const [selectedDate, setSelectedDate] = useState(
@@ -52,6 +53,8 @@ const DateTimePicker = (props) => {
                 marginTop: '10px',
                 '& .MuiOutlinedInput-root': {
                     borderRadius: '28px',
+                    background: 'rgb(33 37 41)',
+                    color: THEME_COLOR.COLOR
                 },
             }}
         >

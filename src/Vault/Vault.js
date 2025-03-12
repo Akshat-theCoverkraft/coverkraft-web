@@ -40,6 +40,7 @@ import whatsapp from '../Images/wtsp.png';
 import email from '../Images/gmial.png';
 import reddit from '../Images/reddit.png'
 import GradientButton from '../component/GradientButton';
+import { THEME_COLOR } from '../constants';
 //styling for breadcrumbs
 const useStyles = makeStyles((theme) => ({
     separator: {
@@ -293,17 +294,17 @@ const Vault = () => {
             <div className='overflow-hidden'>
                 <Navbar />
 
-                <div className='bg-color'>
+                <div className='bg-color' style={{backgroundColor: THEME_COLOR.BACKGROUND}}>
                     <Stack spacing={2} className='p-5'>
                         <div className={classes.breadcrumbsContainer}>
                             <Breadcrumbs
                                 separator={<span className={classes.separator}>.</span>}
                                 aria-label="breadcrumb"
                             >
-                                <Link key="1" className='text-decoration-none font-size text-secondary' onClick={handleClick} style={{ fontSize: '21px' }}>
+                                <Link key="1" className='text-decoration-none font-size' onClick={handleClick} style={{ fontSize: '21px', color: THEME_COLOR.COLOR }}>
                                     Vault
                                 </Link>
-                                <Typography className='text-dark cursor-pointer font-size' style={{ fontSize: '21px' }}>My Policies</Typography>
+                                <Typography className='cursor-pointer font-size' style={{ fontSize: '21px', color: THEME_COLOR.COLOR }}>My Policies</Typography>
                             </Breadcrumbs>
                             {policyListLength > 0  && (
                                 <img src={share} alt="Share Icon" height={60} className='ml-4' onClick={handleShareIconClick} style={{ cursor: 'pointer' }} />
