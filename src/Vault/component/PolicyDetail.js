@@ -31,6 +31,7 @@ import { updateDocument } from '../../store/action/action';
 import { useDispatch } from 'react-redux'
 import GradientButton from '../../component/GradientButton';
 import { toast } from 'react-toastify';
+import { THEME_COLOR } from '../../constants';
 
 const PolicyDetail = ({ policyId }) => {
     console.log('policydetail ma gye', policyId)
@@ -187,7 +188,7 @@ const PolicyDetail = ({ policyId }) => {
     return (
         <>
             {policyDetails.length === 0 ? (
-                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '98vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                <Card className='rounded-4 border' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '98vh', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', backgroundColor: THEME_COLOR.BACKGROUND, color: THEME_COLOR.COLOR }}>
                     <img src={emptyImage} alt="No Data" />
                     <p>Add your new policy effortlessly to your account</p>
 
@@ -231,7 +232,7 @@ const PolicyDetail = ({ policyId }) => {
 
                     return (
 
-                        <Card className='p-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', height: '93vh' }}>
+                        <Card className='p-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', height: 'auto', minHeight: '93vh', marginBottom: '5px', backgroundColor: THEME_COLOR.BACKGROUND, color: THEME_COLOR.COLOR  }}>
 
                             <div className='d-flex justify-content-between mb-5'>
                                 <p style={{fontSize:'24px',fontWeight:'700'}} className='fw-bold pl-4'>Details</p>
@@ -266,7 +267,7 @@ const PolicyDetail = ({ policyId }) => {
                                         <div style={{ position: 'absolute', top: -33, right: 25, color: '#ffffff', fontSize: '24px', fontWeight: 'bold', zIndex: 1 }}>{status}</div>
                                     </>
                                 )}
-                                <Card className='rounded-4' style={{ marginTop: '48px', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
+                                <Card className='rounded-4' style={{ marginTop: '48px', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR  }}>
                                     <div className='d-flex justify-content-end m-4'>
                                         <img src={view} onClick={() => handleViewDocument(documentPath)} className='mr-2 cursor-pointer' />
                                         <img src={download} onClick={() => handleDownloadDocument(documentPath)} className='mr-2 cursor-pointer' />
