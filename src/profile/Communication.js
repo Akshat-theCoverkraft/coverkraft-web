@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import API_URL from '../ServiceModule/Service';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { THEME_COLOR } from '../constants';
 const PinkSwitch = styled(Switch)(({ theme }) => ({
   '& .MuiSwitch-switchBase.Mui-checked': {
     color: '#8AC642',
@@ -109,10 +110,16 @@ const Communication = ({ communication, onCommunicationClose }) => {
   });
 
   return (
-    <Drawer anchor="right" open={communication} onClose={onCommunicationClose}>
+    <Drawer anchor="right" open={communication} onClose={onCommunicationClose}
+    sx={{
+        "& .MuiPaper-root": {
+            backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+            color: THEME_COLOR.COLOR
+        },
+    }}>
       <ToastContainer/>
       <Box sx={{ width: 750, padding: 0, overflowX: 'hidden' }} role="presentation" className='overflow-hidden'>
-        <div style={{ backgroundColor: "#FFFEFE" }}>
+        <div>
           <Grid container spacing={2} className='d-flex m-3'>
             <Grid item>
               <img src={backArrow} alt="Back" onClick={onCommunicationClose} />

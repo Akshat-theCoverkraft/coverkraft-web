@@ -5,15 +5,15 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { TextField } from '@mui/material';
 import './GlobalDatePicker.css'; // Assuming you have this CSS file
 
-const GlobalDatePicker = ({ selectedDate, handleDateChange, label, className, placeholder }) => {
+const GlobalDatePicker = ({ selectedDate, handleDateChange, label, className, placeholder, width }) => {
   return (
     <div className="global-date-picker">
-      <label className='form-label fw-bold' style={{fontSize:'15px'}} >{label}<span className='text-danger'>*</span></label><br/>
+      <label className='form-label fw-bold text-light' style={{fontSize:'15px'}} >{label}<span className='text-danger'>*</span></label><br/>
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}
         dateFormat="MM/dd/yyyy"
-        className={`form-control py-5 form-control-lg custom-border ${className}`}
+        className={`form-control py-3 form-control-lg custom-border ${className} bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
         placeholder={placeholder}
         popperClassName="custom-datepicker" // Custom class for additional styling
         renderInput={(params) => (

@@ -55,7 +55,7 @@ const CityDropdown = ({ selectedStateId,onCitySelect,initialValue }) => {
       ) : (
         <select
           id="cityDropdown"
-          className="dropdown-select  rounded-5 p-3"
+          className="dropdown-select  rounded-5 bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300"
           value={selectedValue}
           onChange={handleChange}
           disabled={!selectedStateId}
