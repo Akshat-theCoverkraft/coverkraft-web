@@ -9,12 +9,11 @@ import location from '../../Images/location_on.png';
 import call from '../../Images/call.png';
 import email from '../../Images/email.png';
 import { Link } from 'react-router-dom';
-import { THEME_COLOR } from '../../constants';
 const Footer = () => {
     return (
         <div>
 
-            <footer class="text-center text-lg-start " style={{background: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR}}>
+            <footer class="text-center text-lg-start bg-body-tertiary text-muted " style={{background: '#F8F9FA'}}>
 
 
                 <section class="py-5">
@@ -99,7 +98,7 @@ const Footer = () => {
                 </section>
 
 
-                <div className='text-center p-4' style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
+                <div className='text-center p-4' style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
                     <span class="mr-2 " >
                         © Coverkraft 2024
 

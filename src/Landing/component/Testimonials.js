@@ -6,7 +6,6 @@ import './CSS/Testimonail.css';
 import quote from '../../Images/quote-testimonial.png'
 import profilePic from '../../Images/profilePic.png'
 import IMAGE_PATH from "../../ServiceModule/imagePath";
-import { THEME_COLOR } from "../../constants";
 const testimonialsData = [
   {
     quote: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam, adipisci facilis! Consectetur repellendus, nam minima sint voluptas eveniet delectus illum libero odit rerum unde.",
@@ -52,7 +51,7 @@ export default function Testimonials() {
           <div className="container">
             <Slider {...settings} className="quotes">
               {testimonialsData.map((testimonial, index) => (
-                <div key={index} className="quote-wrapper card" style={{backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR}}>
+                <div key={index} className="quote-wrapper card">
                   <img src={quote} className="mb-4"/>
                   <div className="quote" style={{maxHeight:'65px',minHeight:'65px'}}>{testimonial.quote}</div>
                   <div className="author ">

@@ -5,13 +5,10 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import { styled } from "@mui/material/styles";
 import xmark from "../../Images/_xmark.png";
 import plus from "../../Images/plus.png";
-import { THEME_COLOR } from "../../constants";
 
 const StyledAccordion = styled(Accordion)({
   margin: "0px 0",
   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-  backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-  color: THEME_COLOR.COLOR,
 });
 
 const StyledAccordionSummary = styled(AccordionSummary)({
@@ -30,7 +27,7 @@ export default function Faq() {
 
   return (
     <>
-      <div className="text-center p-3">
+      <div className="text-center p-3" style={{ backgroundColor: '#F7FAFE' }}>
         <h3 className="fw-bold" style={{ color: "#FF9906" }}>
           FAQ
         </h3>
@@ -38,7 +35,7 @@ export default function Faq() {
       </div>
       
       {/* Parent div with background color */}
-      <div style={{ padding: '20px 0' }}>
+      <div style={{ backgroundColor: '#F7FAFE', padding: '20px 0' }}>
         <div style={{ width: "70%", margin: "0 auto", padding: '20px' }}>
           <StyledAccordion
             expanded={expanded === "panel1"}
@@ -58,9 +55,9 @@ export default function Faq() {
               id="panel1-header"
               className="fw-bold"
             >
-              <span className="mr-5">01</span>How can I get a quote?
+              <span className="text-secondary  mr-5">01</span>How can I get a quote?
             </StyledAccordionSummary>
-            <AccordionDetails >
+            <AccordionDetails className="text-secondary">
               You can get a quote by visiting our Get a Quote page, calling our
               customer service at 1-800-123-4567, or visiting one of our local
               offices.
@@ -85,7 +82,7 @@ export default function Faq() {
               id="panel2-header"
                className="fw-bold"
             >
-              <span className="mr-5">02</span>What factors affect my insurance premium?
+              <span className="text-secondary mr-5">02</span>What factors affect my insurance premium?
             </StyledAccordionSummary>
             <AccordionDetails>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -110,7 +107,7 @@ export default function Faq() {
               id="panel2-header"
                className="fw-bold"
             >
-              <span className="mr-5">03</span>What is covered under my auto insurance policy?
+              <span className="text-secondary mr-5">03</span>What is covered under my auto insurance policy?
             </StyledAccordionSummary>
             <AccordionDetails>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -135,7 +132,7 @@ export default function Faq() {
               id="panel2-header"
                className="fw-bold"
             >
-              <span className="mr-5">04</span>What is covered under my health insurance plan?
+              <span className="text-secondary mr-5">04</span>What is covered under my health insurance plan?
             </StyledAccordionSummary>
             <AccordionDetails>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -161,7 +158,7 @@ export default function Faq() {
               id="panel2-header"
                className="fw-bold"
             >
-              <span className="mr-5">05</span>What does home insurance cover?
+              <span className="text-secondary mr-5">05</span>What does home insurance cover?
             </StyledAccordionSummary>
             <AccordionDetails>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
