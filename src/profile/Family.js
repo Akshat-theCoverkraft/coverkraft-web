@@ -13,7 +13,6 @@ import FamilyAdd from './FamilyAdd';
 import { useDispatch, useSelector } from 'react-redux'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { THEME_COLOR } from '../constants';
 const Family = ({ family, onfamilyclose }) => {
     const [familyData, setFamilyData] = useState([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -59,12 +58,7 @@ const Family = ({ family, onfamilyclose }) => {
     };
 
     return (
-        <Drawer anchor="right" open={family} onClose={onfamilyclose} sx={{
-                        "& .MuiPaper-root": {
-                            backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-                            color: THEME_COLOR.COLOR
-                        },
-                    }}>
+        <Drawer anchor="right" open={family} onClose={onfamilyclose}>
             <ToastContainer />
             <Box sx={{ width: 800, padding: 0 }} role="presentation" style={{ overflowX: 'hidden' }}>
                 <Grid container spacing={2} className='d-flex m-3'>

@@ -17,7 +17,7 @@ import about from '../Images/ic_about.png'
 import communication from '../Images/ic_communication_pref.png'
 import help from '../Images/ic_help.png'
 import logout from '../Images/ic_logout.png'
-import rightArrow from '../Images/Symbol.png'
+import rightArrow from '../Images/right-arrow.png'
 import Family from '../profile/Family';
 import Communication from '../profile/Communication';
 import Help from '../profile/Help';
@@ -26,8 +26,6 @@ import { useNavigate } from 'react-router-dom';
 import CityDropdown from './CityDropdown';
 import GlobalDatePicker from './GlobalDatePicker';
 import { toast, ToastContainer } from 'react-toastify';
-import {THEME_COLOR} from "../constants"
-
 const ProfileDrawer = ({ open, onClose, userName }) => {
     const dispatch = useDispatch();
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -93,7 +91,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             setuserName(data.userName);
             setuserEmail(data.userEmail);
             setuserPhone(data.userPhone);
-            setuserDob(new Date(data?.userDob?.split('/')?.reverse()?.join('-')));
+            setuserDob(data.userDob);
             setuserAddress(data.userAddress);
             setstate(data.state === null ? null : data.state._id);
             setCity(data.city === null ? null : data.city._id);
@@ -290,20 +288,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
 
     return (
-        <Drawer
-            anchor="right"
-            open={open}
-            onClose={onClose}
-            className=""
-            sx={{
-                "& .MuiPaper-root": {
-                    backgroundColor: THEME_COLOR.FADE_BACKGROUND
-                },
-            }}>
+        <Drawer anchor="right" open={open} onClose={onClose} className='' >
             <ToastContainer />
-            <Box sx={{ width: 850, padding: 0, overflowX: 'hidden', backgroundColor: THEME_COLOR.FADE_BACKGROUND }} role="presentation" className=''>
+            <Box sx={{ width: 850, padding: 0, overflowX: 'hidden' }} role="presentation" className=''>
                 <div className="main-container">
-                    <div className="background-image-container1" style={{ height: "30vh", padding:' 0px 200px' }}>
+                    <div className="background-image-container1" style={{ backgroundImage: `url(${icProfileBg})`, height: "39vh", padding:' 20px 200px' }}>
                         <div className="profile-details">
 
                             <div className="profile-image-container">
@@ -336,7 +325,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
 
                             <div className="spacer" />
-                            <h2 className="text-header text-light" style={{headerStyle}}>{username}</h2>
+                            <h2 className="text-header" style={{headerStyle}}>{username}</h2>
                             <div className="spacer-small" />
                             <p className="register-text">{useremail}</p>
                             <div class="text-center text-lg-start ">
@@ -354,40 +343,40 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
                 </div>
                 {!update ? (
-                    <Card className='main-container m-5 p-4' style={{background: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR}}>
-                        <Grid container xs={12} spacing={4} className='border-bottom mb-5' alignItems='center' onClick={handleFamilyOpen}>
+                    <Card className='main-container m-4 p-4'>
+                        <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleFamilyOpen}>
                             <Grid item xs={1}><img src={family} /></Grid>
                             <Grid item xs={9}>Family member</Grid>
-                            <Grid item xs={2}><img style={{maxHeight: '2.5rem'}} src={rightArrow} /></Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
                         <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleCommunicationOpen}>
                             <Grid item xs={1}><img src={communication} /></Grid>
                             <Grid item xs={9}>Communication preferances </Grid>
-                            <Grid item xs={2}><img style={{maxHeight: '2.5rem'}} src={rightArrow} /></Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
                         <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleHelpOpen}>
                             <Grid item xs={1}><img src={help} /></Grid>
                             <Grid item xs={9}>Help</Grid>
-                            <Grid item xs={2}><img style={{maxHeight: '2.5rem'}} src={rightArrow} /></Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
                         <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleAboutOpen}>
                             <Grid item xs={1}><img src={about} /></Grid>
                             <Grid item xs={9}>About</Grid>
-                            <Grid item xs={2}><img style={{maxHeight: '2.5rem'}} src={rightArrow} /></Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
                         <Grid container xs={12} spacing={4} className='border-bottom mb-4' alignItems='center' onClick={handleLogout}>
                             <Grid item xs={1}><img src={logout} /></Grid>
                             <Grid item xs={9}>Logout</Grid>
-                            <Grid item xs={2}><img style={{maxHeight: '2.5rem'}} src={rightArrow} /></Grid>
+                            <Grid item xs={2}><img src={rightArrow} /></Grid>
                         </Grid>
                     </Card>
                 ) : (
                     <div className="main-container mt-4 p-4">
-                        <Grid container spacing={4} xs={12}  >
+                        <Grid container spacing={4} xs={12} >
                             <Grid item xs={6}>
                                 <CustomInput
-                                    label="Name"
-                                    placeholder="Enter your Name"
+                                    label="UserName"
+                                    placeholder="Enter your UserName"
                                     value={username}
                                     onChange={(e) => setuserName(e.target.value)}
                                     required
@@ -408,7 +397,22 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                 />
                             </Grid>
                         </Grid>
-                        
+                        <div className='col-12' >
+
+                            <CustomInput
+                                type="number"
+                                label="Mobile Number"
+                                value={userPhone}
+                                onChange={handlephonechange}
+                                placeholder="Enter your mobile number"
+                                className={!valid ? 'is-invalid' : ''}
+                                validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
+                                required
+                                style={{ width: '88%' }}
+
+                            />
+
+                        </div>
                         {/* <Grid item xs={6}>
                                 <CustomInput
                                     label="UserDOB"
@@ -417,41 +421,29 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     onChange={(e) => setuserDob(e.target.value)}
                                 />
                             </Grid> */}
-                            <Grid container spacing={4} xs={12}  >
-                                <Grid item xs={6} style={{overflow: 'hidden'}} >
-                                    <CustomInput
-                                        type="number"
-                                        label="Mobile Number"
-                                        value={userPhone}
-                                        onChange={handlephonechange}
-                                        placeholder="Enter your mobile number"
-                                        className={!valid ? 'is-invalid' : ''}
-                                        validationMessage={!valid ? ' Please enter a valid 10-digit mobile number.' : ''}
-                                        required
-                                        style={{ width: '88%' }}
-                                    />
-                                </Grid>
-                                <Grid item xs={6} >
-                                    <GlobalDatePicker
-                                        label="DOB"
-                                        selectedDate={userDob}
-                                        handleDateChange={handleDobChange}
-                                        className='custom-picker form-control rounded-5 '
-                                        placeholder="select Date"
-                                        width="100%"
-                                    />
-                                </Grid>
-                            </Grid>
-                            <div className='col-12' >
-                                <CustomInput
-                                    label="Address"
-                                    placeholder="Enter your Address"
-                                    value={userAddress}
-                                    onChange={(e) => setuserAddress(e.target.value)}
-                                    required
-                                />
-                            </div>
-                     
+                        <div className='col-12 mb-3'>
+                            <GlobalDatePicker
+                                label="DOB"
+                                selectedDate={userDob}
+                                handleDateChange={handleDobChange}
+                                className='custom-picker form-control-lg rounded-5 '
+                                placeholder="select Date"
+
+                            />
+                        </div>
+
+
+                        <div className="col-12">
+                            <CustomInput
+                                label="UserAddress"
+                                placeholder="Enter your UserAddress"
+                                value={userAddress}
+                                onChange={(e) => setuserAddress(e.target.value)}
+                                required
+                            />
+
+                        </div>
+
                         {/* {states.getAllState && states.getAllState.data && (
                                     <GlobalDropdown
                                         label="State"
@@ -461,7 +453,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
                                     />
                                 )} */}
-                        <Grid container spacing={3} className="px-3">
+                        <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
 
                                 <GlobalDropdown onStateSelect={handleStateSelect} initialValue={state} />
@@ -479,7 +471,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                         <Grid container xs={12} spacing={4}>
                             <Grid item xs={6}>
                                 <CustomInput
-                                    label="Pincode"
+                                    label="PinCode"
                                     placeholder="Enter your PinCode"
                                     value={pinCode}
                                     onChange={handlePinCodeChange}
@@ -498,16 +490,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                                     required
 
                                 /> */}
-                                <label className="form-label fw-bold text-light" htmlFor="inputField">
+                                <label className="form-label fw-bold" htmlFor="inputField">
                                     Gender<span className='text-danger'>*</span>
                                 </label>
                                 <select
                                     id="stateDropdown"
-                                    className="dropdown-select rounded-5 bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300"
+                                    className="dropdown-select rounded-5 p-3"
                                     value={gender}
                                     onChange={(e) => setgender(e.target.value)}
                                 >
-                                    <option disabled  >Select Your Gender</option>
+                                    <option disabled  >Select a State</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="other">Other</option>
