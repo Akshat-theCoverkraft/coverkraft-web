@@ -26,17 +26,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ProfileDrawer from "../component/profile";
 
 import './footer.css';
-import { THEME_COLOR } from '../constants';
-import { styled } from '@mui/material';
 
-const DarkMenu = styled(Menu)(({ theme }) => ({
-    '.MuiMenu-paper': {
-        backgroundColor: '#333',  // Dark background color
-        color: 'white',            // Light text color
-        borderRadius: '8px',       // Optional: rounded corners
-        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', // Optional: shadow effect
-    },
-}));
 
 function Navbar(props) {
     const navigate = useNavigate();
@@ -228,9 +218,9 @@ function Navbar(props) {
 
                         <>
                             <IconButton onClick={handleMenuClick}>
-                                {showMenu ? <CloseIcon sx={{ color: THEME_COLOR.COLOR }} /> : <MenuIcon sx={{ color: THEME_COLOR.COLOR }}/>}
+                                {showMenu ? <CloseIcon /> : <MenuIcon />}
                             </IconButton>
-                            <DarkMenu
+                            <Menu
                                 anchorEl={anchorElToggle}
                                 open={Boolean(anchorElToggle)}
                                 onClose={handleCloseToggle}
@@ -248,7 +238,7 @@ function Navbar(props) {
                                 ) : (
                                     <MenuItem onClick={handleLogin}>Login</MenuItem>
                                 )}
-                            </DarkMenu>
+                            </Menu>
                         </>
                     ) : (
 
@@ -285,7 +275,7 @@ function Navbar(props) {
                                     </div>
                                     <img src={notification} alt='' onClick={handleClick} style={{ cursor: 'pointer' }} />
                                     <img src={profile} alt='' onClick={handleOpenMenu} style={{ cursor: 'pointer' }} />
-                                    <DarkMenu
+                                    <Menu
                                         style={{
                                             marginTop: '70px',
                                         }}
@@ -295,7 +285,7 @@ function Navbar(props) {
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                                         transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                                     >
-                                        <MenuItem onClick={handleDrawerOpen} >
+                                        <MenuItem onClick={handleDrawerOpen}>
                                             <AccountCircleOutlinedIcon />{' '}
                                             <span
                                                 style={{
@@ -323,7 +313,7 @@ function Navbar(props) {
                                                 Language
                                             </span>
                                         </MenuItem> */}
-                                        <MenuItem onClick={handleLogout} >
+                                        <MenuItem onClick={handleLogout}>
                                             <LogoutIcon />{' '}
                                             <span
                                                 style={{
@@ -336,7 +326,7 @@ function Navbar(props) {
                                                 Logout
                                             </span>
                                         </MenuItem>
-                                    </DarkMenu>
+                                    </Menu>
                                     <button className='btn btn-lg rounded-5 py-2 px-5' style={{ color: 'white', backgroundColor: '#8AC642' }} onClick={handleVault}>
                                         Vault
                                     </button>

@@ -1,39 +1,30 @@
-/* Dark theme styles */
 .dropdown-container {
-  margin: 1em 0;
-  padding: 0.5em;
-  border-radius: 8px; /* Optional: rounded corners */
-}
-
-.dropdown-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-  color: #fff; /* Light text color for the label */
-}
-
-.dropdown-select {
-  width: 100%;
-  padding: 0.5em;
-  border: 1px solid #444; /* Dark border */
-  border-radius: 4px;
-  font-size: 1em;
-  background-color: #333; /* Dark background for the dropdown */
-  color: #fff; /* Light text color for options */
-  transition: border-color 0.3s;
-}
-
-.dropdown-select:focus {
-  border-color: #007bff; /* Blue border on focus */
-  outline: none;
-}
-
-.dropdown-error {
-  color: #ff4d4d; /* Red error message color */
-  font-size: 0.875em;
-}
-
-/* Optional: Style the loading text */
-.dropdown-container p {
-  color: #fff;
-}
+    margin: 1em 0;
+    padding: 0.5em;
+  }
+  
+  .dropdown-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  
+  .dropdown-select {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+  }
+  
+  .dropdown-select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .dropdown-error {
+    color: red;
+    font-size: 0.875em;
+  }
+  

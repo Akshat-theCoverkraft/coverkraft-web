@@ -28,51 +28,40 @@
 // export default CustomInput;
 
 
-function CustomInput({
-  type,
-  label,
-  value,
-  onChange,
-  isValid,
-  className,
-  placeholder,
-  onKeyDown,
-  validationMessage,
-  required,
-  name,
-  children
-}) {
+import React from 'react';
+
+function CustomInput({ type, label, value, onChange, isValid, className, placeholder, onKeyDown, validationMessage, required, name, children }) {
   const inputId = `inputField-${name}`;
   return (
     <div data-mdb-input-init className="form-outline mb-4">
-      <label className="form-label fw-bold text-light" htmlFor={inputId}>
+      <label className="form-label fw-bold" htmlFor="inputField">
         {label} {required && <span className='text-danger'>*</span>}
       </label>
       {type === 'select' ? (
         <select
           id={inputId}
-          className={`form-control form-control-lg ${className} bg-dark text-light border border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
+          className={`form-control form-control-lg ${className} `}
           value={value}
           onChange={onChange}
           name={name}
-          style={{ padding: '10px 15px', backgroundColor: '#2c2c2c' }}
+          style={{ padding: '0px 0px' }}
         >
           {children}
         </select>
       ) : (
         <input
           type={type}
-          id={inputId}
-          className={`form-control form-control-lg ${className} bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
+          id="inputField"
+          className={`form-control form-control-lg ${className} `}
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          style={{ padding: '12px 15px' }}
+          style={{ padding: '22px 15px',borderRadius:'25px' }}
         />
       )}
       {validationMessage && (
-        <div className="invalid-feedback text-danger">{validationMessage}</div>
+        <div className="invalid-feedback">{validationMessage}</div>
       )}
     </div>
   );
