@@ -3,7 +3,6 @@ import { CardContent, Grid, Typography } from '@mui/material';
 import './CSS/service.css';
 import API_URL from '../../ServiceModule/Service';
 import IMAGE_PATH from '../../ServiceModule/imagePath';
-import { THEME_COLOR } from '../../constants';
 
 const Job = () => {
     const [cardData, setCardData] = useState([]);
@@ -29,7 +28,7 @@ const Job = () => {
 
     return (
         <div className="" style={{marginTop:'100px'}}>
-            <Grid container xs={12} md={12} spacing={4} alignItems="center" justifyContent="center">
+            <Grid container xs={12} md={12} spacing={4} alignItems="center" justifyContent="center" style={{ backgroundColor: '#F7FAFE' }}>
                 {/* Left Side: Text */}
                 <Grid item xs={12} md={6} display="flex" justifyContent="center" alignItems="center">
                     <CardContent>
@@ -77,7 +76,6 @@ const styles = {
         width: '300px',
         height: '150px',
         margin: '20px',
-        marginTop: '4em',
     },
     cardBackground: {
         position: 'absolute',
@@ -95,7 +93,7 @@ const styles = {
         left: '5px',
         width: 'calc(100% - 10px)',
         height: 'calc(100% - 10px)',
-        backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+        backgroundColor: 'white',
         borderRadius: '15px 15px 15px 0',
         zIndex: 2,
 

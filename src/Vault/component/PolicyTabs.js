@@ -24,7 +24,6 @@ import TabPanel from '@mui/lab/TabPanel';
 import axios from 'axios'
 import CircularProgress from '@mui/material/CircularProgress';
 import { makeStyles } from '@mui/styles';
-import { THEME_COLOR } from '../../constants';
 const useStyles = makeStyles(() => ({
     loaderContainer: {
         display: 'flex',
@@ -221,7 +220,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
     return (
         <div>
 
-            <Card className='mx-5 rounded-4' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', backgroundColor: THEME_COLOR.BACKGROUND }}>
+            <Card className='mx-5 rounded-4 border' style={{ justifyContent: 'center', boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }}>
                 <TabContext value={value}>
 
                     <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -239,7 +238,6 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                 className='p-2'
                                 alignItems="center"
                                 justifyContent='space-around'
-                                style={{backgroundColor:THEME_COLOR.FADE_BACKGROUND}}
                             >
                                 <TabList
                                     onChange={handleChange}
@@ -248,7 +246,6 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                     aria-label="scrollable prevent tabs example"
                                     textColor="#42988E"
                                     TabIndicatorProps={{ style: { display: 'none' } }}
-                                    style={{backgroundColor:THEME_COLOR.FADE_BACKGROUND}}
                                 >
                                     <Tab label="Active" value={0} className='m-2 fw-bolder px-5 ' sx={{ color: value === 0 ? '#8AC642' : '#777777', backgroundColor: value === 0 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px', fontSize: '12px', fontWeight: '700' }} />
                                     <Tab label="Expired" value={1} className='m-2 fw-bolder px-5 ' sx={{ color: value === 1 ? '#8AC642' : '#777777', backgroundColor: value === 1 ? 'white' : 'inherit', textTransform: 'capitalize', borderRadius: '25px', fontSize: '12px', fontWeight: '700' }} />
@@ -268,7 +265,7 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                             <TabPanel value={0} className=''>
                                 <div style={{ minHeight: '83vh', maxHeight: '83vh', overflowY: 'auto' }}>
                                     {policyList.length === 0 ? (
-                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh', color: THEME_COLOR.COLOR }}>
+                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh' }}>
                                             <img src={emptyImage} alt="No Data" />
                                             <p>Add your new policy effortlessly to your account</p>
 
@@ -318,9 +315,9 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                                                     className='m-5 rounded card-detail policy-card-container'
                                                     key={index}
                                                     style={{
-                                                        boxShadow: 'rgba(201, 201, 202, 0.95) 0px 0px 5px',
-                                                        backgroundColor: policy._id === activeCardId ? THEME_COLOR.FADE_BACKGROUND : THEME_COLOR.BACKGROUND, // Conditional styling
-                                                        color: THEME_COLOR.COLOR
+                                                        boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',
+                                                        backgroundColor: policy._id === activeCardId ? '#ededed' : 'white', // Conditional styling
+
                                                     }}
                                                     onClick={() => handleCardClickWithState(policy._id)} // Use the updated click handler
                                                 >
@@ -408,14 +405,14 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                             <TabPanel value={1}>
                                 <div style={{ minHeight: '79vh', maxHeight: '79vh', overflowY: 'auto' }}>
                                     {policyList.length === 0 ? (
-                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh', color: THEME_COLOR.COLOR }}>
+                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh' }}>
                                             <img src={emptyImage} alt="No Data" />
                                             <p>Add your new policy effortlessly to your account</p>
                                         </div>
                                     ) : (
                                         getPaginatedData(policyList, pagePolicy).map((policy, index) => (
                                             <div>
-                                                <Card className='m-5 rounded card-detail' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR }} onClick={() => handleCardClick(policy._id)}>
+                                                <Card className='m-5 rounded card-detail' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }} onClick={() => handleCardClick(policy._id)}>
                                                     <CardContent style={{ position: 'relative' }}>
                                                         <div style={{ position: 'absolute', top: 0, right: 0, width: '230px', height: '60px', backgroundImage: `url(${red})`, backgroundSize: 'cover', opacity: 1 }}></div>
                                                         <Grid container spacing={0}>
@@ -458,14 +455,14 @@ export default function PolicyTabs({ handleCardClick, shareAllPolicy, selectedPo
                             <TabPanel value={2}>
                                 <div style={{ minHeight: '79vh', maxHeight: '79vh', overflowY: 'auto' }}>
                                     {archieveList.length === 0 ? (
-                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh', color: THEME_COLOR.COLOR }}>
+                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '70vh' }}>
                                             <img src={emptyImage} alt="No Data" />
                                             <p>Add your new policy effortlessly to your account</p>
                                         </div>
                                     ) : (
                                         getPaginatedData(archieveList, pageArchive).map((policy, index) => (
                                             <div>
-                                                <Card className='m-5 rounded card-detail ' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px', backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR }} onClick={() => handleCardClick(policy._id)}>
+                                                <Card className='m-5 rounded card-detail ' key={index} style={{ boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px' }} onClick={() => handleCardClick(policy._id)}>
                                                     <CardContent style={{ position: 'relative' }}>
                                                         <Grid container spacing={0}>
                                                             <Grid item xs={12} md={3}>
