@@ -26,6 +26,7 @@ import ProgressBarCircle from '../../component/ProgressBarCircle';
 import DateTimePicker from '../../component/DateTimePicker';
 import { formatDate } from '../../utils/dateUtils';
 import axios from 'axios';
+import { THEME_COLOR } from '../../constants';
 const MotorPolicyForm = () => {
     const location = useLocation();
     const responseData = location.state?.responseData;
@@ -344,9 +345,9 @@ console.log('policydetails',policyDetails)
         <div>
             <Navbar />
             <ToastContainer />
-            <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: '#F9F9F9' }}>
+            <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
                 <Grid item xs={12} sm={10} md={8}>
-                    <Card className='border  my-4' style={{ padding: '40px 90px', boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
+                    <Card className='my-4' style={{ padding: '40px 90px', backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR, boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
                         <div className='d-flex justify-content-between'>
                             <Typography variant="h4" component="h2" className='fw-bold'>{headingText}</Typography>
                             <ProgressBarCircle progress={calculateProgress()} />                        </div>
@@ -378,6 +379,7 @@ console.log('policydetails',policyDetails)
                                                 label="DD/MM/YYYY"
                                                 value={formatDate(policyStartDate)}
                                                 onChange={handleStartDateChange}
+                                                className="bg-dark text-light"
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
