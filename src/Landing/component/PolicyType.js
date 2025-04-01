@@ -159,14 +159,14 @@ const PolicyType = () => {
   return (
     <div
       className="p-5 rounded-5 gradient-background"
-      style={{ margin: '0px 5%' }}
+      style={{ margin: '0px 5%', }}
     >
       <h3 className="text-center mb-4 fs-1 fw-bold">
         Reliable <span style={{ color: '#FF9906' }}>Insurance</span> for every need.
       </h3>
       <div style={{ marginTop: '3em' }}>
         
-        <Slider {...settings}>
+        <Slider {...settings} style={{ paddingBottom: '2em'}}>
        
           {policyType.map((policy, index) => (
             <div
@@ -180,7 +180,7 @@ const PolicyType = () => {
                 textAlign: 'center',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-10px) scale(1.25)';
+                e.currentTarget.style.transform = 'translateY(-10px) scale(1.15)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0) scale(1)';

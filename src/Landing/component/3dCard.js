@@ -39,7 +39,7 @@ const Card3d = () => {
 
                     </div>
                     <div className="text-center">
-                        <span className='text-center mb-5' style={{ fontWeight: 500, fontSize: 20 }}>
+                        <span className='text-center text-secondary mb-5' style={{ fontWeight: 500, fontSize: 20 }}>
                             Choose us for personalized insurance solutions, exceptional customer care, and unwavering commitment to protecting what matters most to you.            </span>
 
                     </div>

@@ -204,7 +204,7 @@ const Login = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div>
+                                    <div >
                                         <h1 className='text-center'>6 Digit Verfication</h1>
                                         <h5 className='text-center text-secondary mt-3 mb-5'>Please enter 6 digit OTP to Login OTP sent to XXXXXXX{phoneNumber.slice(-3)}</h5>
 
@@ -219,10 +219,10 @@ const Login = () => {
                                                         display: 'flex',
                                                         textAlign: 'center',
                                                         justifyContent: 'center',
-                                                        width: '100%',
+                                                        width: '70%',
                                                         height: '100%',
-                                                        margin: '17px',
-                                                        padding: '17px'
+                                                        margin: '10px',
+                                                        padding: '10px'
                                                     }}
                                                 />
                                             )}

@@ -42,7 +42,8 @@ section.testimonials {
         .quote-wrapper {
           flex: 1 1 45%; /* Reduces the width of the card to 45% */
           max-width: 720px; /* Ensures the card doesn't exceed 450px in width */
-          background-color: #fff;
+          background-color: #1E1E1E;
+          color: #fff;
           padding: 50px;
           border-radius: 20px;
           position: relative;
