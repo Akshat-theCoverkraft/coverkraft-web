@@ -87,9 +87,9 @@ function Feeds() {
           value="blog"
           sx={{
             fontSize: "14px",
-            color: THEME_COLOR.COLOR, 
+            color: THEME_COLOR.COLOR,
             "&.Mui-selected": {
-              color: THEME_COLOR.GREEN, 
+              color: THEME_COLOR.GREEN,
             },
           }}
         />
@@ -109,7 +109,18 @@ function Feeds() {
           value="short"
           sx={{
             fontSize: "14px",
-            color: THEME_COLOR.COLOR, 
+            color: THEME_COLOR.COLOR,
+            "&.Mui-selected": {
+              color: THEME_COLOR.GREEN,
+            },
+          }}
+        />
+        <Tab
+          label="Videos"
+          value="video"
+          sx={{
+            fontSize: "14px",
+            color: THEME_COLOR.COLOR,
             "&.Mui-selected": {
               color: THEME_COLOR.GREEN,
             },
@@ -122,7 +133,7 @@ function Feeds() {
         {/* Show "No data found" if no contentData */}
         {isLoading ? (
           <Box sx={{ textAlign: "center", mt: 4, minHeight: "40vh" }}>
-            <CircularProgress size={50} sx={{ color: THEME_COLOR.GREEN}} />
+            <CircularProgress size={50} sx={{ color: THEME_COLOR.GREEN }} />
           </Box>
         ) : contentData?.length === 0 ? (
           <Box sx={{ textAlign: "center", mt: 4 }}>
@@ -147,11 +158,11 @@ function Feeds() {
                     backgroundColor: THEME_COLOR.FADE_BACKGROUND,
                   }}
                 >
-                  {item?.contentType === "video" ? (
+                  {item?.type === "short" || item?.type === "video" ? (
                     <CardMedia
                       component="iframe"
-                      src={item?.image}
-                      title={item?.title}
+                      src={item?.newsImg}
+                      title={item?.subtitle}
                       height="200"
                       sx={{
                         objectFit: "cover",
@@ -170,7 +181,7 @@ function Feeds() {
                       }}
                     />
                   )}
-                  <CardContent sx={{ padding: "16px",  }}>
+                  <CardContent sx={{ padding: "16px" }}>
                     <Typography
                       variant="h6"
                       sx={{ fontWeight: "bold", mb: 1, color: THEME_COLOR.SECONDARY_TEXT }}
@@ -178,14 +189,14 @@ function Feeds() {
                       {truncateString(item?.subtitle, 50)}
                     </Typography>
                     <Typography className="mb-3">
-                      <span className="mr-3" style={{color: THEME_COLOR.SECONDARY_TEXT}}>
+                      <span className="mr-3" style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
                         <i
                           className="fas fa-user"
                           style={{ color: "rgb(138, 198, 66)" }}
                         ></i>{" "}
                         {item?.createdBy || "Super Admin"}
                       </span>
-                      <span style={{color: THEME_COLOR.SECONDARY_TEXT}}>
+                      <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
                         <i
                           className="fas fa-calendar-alt"
                           style={{ color: "rgb(138, 198, 66)" }}
@@ -205,10 +216,10 @@ function Feeds() {
                         navigate(`/coverkraft/feed/${selectedTab}/${item?._id}`)
                       }
                       variant="text"
-                      sx={{color: THEME_COLOR.SECONDARY_TEXT}}
+                      sx={{ color: THEME_COLOR.SECONDARY_TEXT }}
                     >
                       Read More{" "}
-                      <img src={arrow} className="ml-2" alt="arrow-right" style={{height: '16px'}} />
+                      <img src={arrow} className="ml-2" alt="arrow-right" style={{ height: '16px' }} />
                     </MuiButton>
                   </CardContent>
                 </Card>
@@ -226,7 +237,7 @@ function Feeds() {
               onChange={handlePageChange}
               variant="outlined"
               shape="rounded"
-              color="secondary" 
+              color="secondary"
             />
           </Box>
         )}
