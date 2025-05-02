@@ -70,6 +70,9 @@ const Footer = () => {
                                 <p>
                                     <Link to='/coverkraft/vault' class="text-color fs-5 footer-link">Policy</Link>
                                 </p>
+                                <p>
+                                    <Link to='/coverkraft/privacypolicy' class="text-color fs-5 footer-link">Privacy Policy</Link>
+                                </p>
                             </div>
 
                             <div class="col-md-1 col-lg-2 col-xl-2 mx-auto mb-md-0 mb-4">

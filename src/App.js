@@ -23,6 +23,7 @@ import About from "./About/About";
 import Notification from "./Notification/Notification";
 import BlogDetails from "./Landing/component/blogs/BlogDetails";
 import Feeds from "./Landing/component/blogs/Feeds";
+import PrivacyPolicy from "./PrivacyPolicy"
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false)
@@ -107,6 +108,7 @@ useEffect(() => {
        <Route path="/coverkraft/notification" element={<Notification/>}/>
        <Route path="/coverkraft/feed/:type" element={<Feeds />}/>
        <Route path="/coverkraft/feed/:type/:id" element={<BlogDetails />}/>
+       <Route path='/coverkraft/privacypolicy' element={<PrivacyPolicy/>}/>
     </Routes>
     </>
   );
