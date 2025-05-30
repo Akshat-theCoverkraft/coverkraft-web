@@ -8,11 +8,12 @@ function GradientButton({ onClick, text, className, size, block, startIcon }) {
     width: block ? "100%" : "",
     display: "flex",
     alignItems: "center",
-    justifyContent: startIcon ? "space-between" : "center",
+    justifyContent: startIcon ? "space-evenly" : "center",
     padding: "15px 10px",
     borderRadius: "30px",
     border: "none", // Ensure border is removed if not needed
-    fontSize: "1.1rem",
+    fontSize: "1.2rem",
+    fontWeight: "bold",
   };
 
   return (
@@ -25,7 +26,7 @@ function GradientButton({ onClick, text, className, size, block, startIcon }) {
       onClick={onClick}
     >
       {startIcon && (
-        <img src={startIcon} height={18} alt="Start Icon" style={{}} />
+        <img src={startIcon} height={16} alt="Start Icon" style={{}} />
       )}
       {text}
     </button>

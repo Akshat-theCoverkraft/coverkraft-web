@@ -342,7 +342,7 @@ const Vault = () => {
               <GradientButton
                 text="Add Policy"
                 size="ml"
-                className="ml-5 "
+                className="ml-5"
                 startIcon={AddIcon}
                 onClick={handleClickOpen}
               />
@@ -382,7 +382,6 @@ const Vault = () => {
         </div>
         <Footer />
 
-        {/* dialog box for add policy start */}
         <BootstrapDialog
           onClose={handleClose}
           aria-labelledby="customized-dialog-title"
