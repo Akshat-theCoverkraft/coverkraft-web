@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Dropdown.css'; // Import the CSS file
-import API_URL from '../ServiceModule/Service';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./Dropdown.css"; // Import the CSS file
+import API_URL from "../ServiceModule/Service";
 
 const GlobalDropdown = ({ onStateSelect, initialValue }) => {
   const [options, setOptions] = useState([]);
@@ -19,8 +19,8 @@ const GlobalDropdown = ({ onStateSelect, initialValue }) => {
         }));
         setOptions(optionsData);
       } catch (error) {
-        console.error('Error fetching options:', error);
-        setError('Failed to load options');
+        console.error("Error fetching options:", error);
+        setError("Failed to load options");
       } finally {
         setLoading(false);
       }
@@ -40,7 +40,9 @@ const GlobalDropdown = ({ onStateSelect, initialValue }) => {
 
   return (
     <div className="dropdown-container">
-      <label className="dropdown-label text-light" htmlFor="stateDropdown">Select State<span className='text-danger'>*</span></label>
+      <label className="dropdown-label text-light" htmlFor="stateDropdown">
+        Select State<span className="text-danger">*</span>
+      </label>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -52,7 +54,9 @@ const GlobalDropdown = ({ onStateSelect, initialValue }) => {
           value={selectedValue}
           onChange={handleChange}
         >
-          <option value="" disabled>Select a state</option>
+          <option value="" disabled>
+            Select a state
+          </option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

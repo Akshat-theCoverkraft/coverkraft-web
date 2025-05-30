@@ -24,9 +24,7 @@
 //   );
 // }
 
-
 // export default CustomInput;
-
 
 function CustomInput({
   type,
@@ -40,22 +38,26 @@ function CustomInput({
   validationMessage,
   required,
   name,
-  children
+  children,
+  backgroundColor,
 }) {
   const inputId = `inputField-${name}`;
   return (
     <div data-mdb-input-init className="form-outline mb-4">
-      <label className="form-label fw-bold text-light" htmlFor={inputId}>
-        {label} {required && <span className='text-danger'>*</span>}
+      <label className="form-label fw-bold text-light mb-3" htmlFor={inputId}>
+        {label} {required && <span className="text-danger">*</span>}
       </label>
-      {type === 'select' ? (
+      {type === "select" ? (
         <select
           id={inputId}
           className={`form-control form-control-lg ${className} bg-dark text-light border border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
           value={value}
           onChange={onChange}
           name={name}
-          style={{ padding: '10px 15px', backgroundColor: '#2c2c2c' }}
+          style={{
+            padding: "10px 15px",
+            backgroundColor: "#2c2c2c",
+          }}
         >
           {children}
         </select>
@@ -68,7 +70,7 @@ function CustomInput({
           onChange={onChange}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          style={{ padding: '12px 15px' }}
+          style={{ padding: "12px 15px", height: "7vh" }}
         />
       )}
       {validationMessage && (
