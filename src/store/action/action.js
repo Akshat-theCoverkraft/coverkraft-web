@@ -77,9 +77,13 @@ export const registrationCustomer = (API_URL, data) => {
           .post(API_URL + "user/createUser", data)
           .then((response) => {
             dispatch({ type: REGISTER_DATA_SUCCESS, payload: response.data });
-            return response.data;
+              return response.data;
+              console.log("Payload:", data);
+
           })
-          .catch((error) => {
+            .catch((error) => {
+                // Check if the error response contains a message
+                console.log("Payload:", data);
             dispatch({ type: REGISTER_DATA_FAILURE, payload: error.message });
           });
       };

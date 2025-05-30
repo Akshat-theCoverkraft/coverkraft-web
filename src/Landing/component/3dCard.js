@@ -19,9 +19,6 @@ const Card3d = () => {
         { id: 4, imageUrl: Frame1, textColor: "#1E514B", company: 'Travel Insurance', desgination: 'Get claim guarantee certificate', imageUrl2: group4, paragraph: ' with your health plans', colorCode: "#B6FFE4" },
 
     ];
-
-
-
     return (
         <>
             <div className="containercard mt-5 my-4">
@@ -69,10 +66,10 @@ const Card3d = () => {
             </div> */}
            
             <div class="image-container flex justify-center items-center my-28">
-  <img src={cardimg} class="hover-image transition duration-500 transform hover:scale-125 bg-indigo-400 hover:bg-indigo-600"/>
-  <img src={cardimg} class="hover-image ml-12"/>
-  <img src={cardimg} class="hover-image ml-12"/>
-  <img src={cardimg} class="hover-image ml-12"/>
+  <img src={cardimg} alt="Insurance benefit card" class="hover-image transition duration-500 transform hover:scale-125 bg-indigo-400 hover:bg-indigo-600"/>
+  <img src={cardimg} alt="Insurance benefit card" class="hover-image ml-12"/>
+  <img src={cardimg} alt="Insurance benefit card" class="hover-image ml-12"/>
+  <img src={cardimg} alt="Insurance benefit card" class="hover-image ml-12"/>
 </div>
 
             </div>
