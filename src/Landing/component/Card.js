@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { CardContent, Grid, Typography } from '@mui/material';
+import { CardContent, Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
 import './CSS/service.css';
 import API_URL from '../../ServiceModule/Service';
-import IMAGE_PATH from '../../ServiceModule/imagePath';
 import { THEME_COLOR } from '../../constants';
 
 const Job = () => {
     const [cardData, setCardData] = useState([]);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
-        // Replace with your actual API endpoint
         const fetchData = async () => {
             try {
                 const response = await fetch(`${API_URL}tips/getAll`);
                 const result = await response.json();
                 if (result.status) {
-                    setCardData(result.data); // Access the data field in the API response
+                    setCardData(result.data);
                 } else {
                     console.error('Error: Data not retrieved');
                 }
@@ -23,33 +23,33 @@ const Job = () => {
                 console.error('Error fetching data:', error);
             }
         };
-
         fetchData();
     }, []);
 
     return (
-        <div className="" style={{marginTop:'100px'}}>
-            <Grid container xs={12} md={12} spacing={4} alignItems="center" justifyContent="center">
+        <div style={{ marginTop: '80px', padding: '20px' }}>
+            <Grid container spacing={4} alignItems="center" justifyContent="center">
                 {/* Left Side: Text */}
-                <Grid item xs={12} md={6} display="flex" justifyContent="center" alignItems="center">
+                <Grid item xs={12} md={6}>
                     <CardContent>
-                        <Typography variant="h3" gutterBottom style={{ color: '#FF9906' }}>
+                        <Typography variant={isMobile ? "h5" : "h3"} gutterBottom style={{ color: '#FF9906' }}>
                             BENEFITS
                         </Typography>
-                        <Typography variant="h2" className='mb-4 fw-bold'>
+                        <Typography variant={isMobile ? "h6" : "h2"} className="mb-4 fw-bold">
                             Why Prefer Coverkraft
                         </Typography>
-                        <Typography variant="h5" paragraph className='text-secondary'>
-                            Choose us for personalized insurance <br />solutions, exceptional customer care, and<br /> unwavering commitment to protecting what <br />matters most to you.
+                        <Typography variant="body1" className="text-secondary" sx={{ fontSize: isMobile ? '1rem' : '1.2rem', lineHeight: 1.7 }}>
+                            Choose us for personalized insurance solutions, exceptional customer care,
+                            and unwavering commitment to protecting what matters most to you.
                         </Typography>
                     </CardContent>
                 </Grid>
 
-                {/* Right Side: Image Grid */}
-                <Grid item xs={12} md={5} className='text-center' display="flex" justifyContent="center" alignItems="center">
-                    <Grid container spacing={4}>
+                {/* Right Side: Cards */}
+                <Grid item xs={12} md={6}>
+                    <Grid container spacing={3} justifyContent="center">
                         {cardData.map((card) => (
-                            <Grid item xs={12} md={6} key={card._id}>
+                            <Grid item xs={12} sm={6} key={card._id}>
                                 <div style={styles.cardWrapper}>
                                     <div style={styles.cardBackground}></div>
                                     <div style={styles.cardContainer}>
@@ -57,7 +57,7 @@ const Job = () => {
                                             <img src={card.icon} alt="Icon" style={styles.cardIcon} />
                                             <h3 style={styles.cardTitle}>{card.subtitle}</h3>
                                         </div>
-                                        <p className='text-secondary'>{card.description}</p>
+                                        <CardDescription text={card.description} />
                                     </div>
                                 </div>
                             </Grid>
@@ -71,54 +71,88 @@ const Job = () => {
 
 export default Job;
 
+// 💡 Read More / Show Less Component
+const MAX_LENGTH = 100;
+
+const CardDescription = ({ text }) => {
+    const [expanded, setExpanded] = useState(false);
+    const isLong = text.length > MAX_LENGTH;
+
+    const handleToggle = () => setExpanded(prev => !prev);
+
+    return (
+        <div>
+            <p style={styles.cardDescription}>
+                {expanded ? text : `${text.slice(0, MAX_LENGTH)}${isLong ? '...' : ''}`}
+            </p>
+            {isLong && (
+                <span
+                    onClick={handleToggle}
+                    style={styles.toggleText}
+                >
+                    {expanded ? 'Show Less' : 'Read More'}
+                </span>
+            )}
+        </div>
+    );
+};
+
+// 💅 Styles
 const styles = {
     cardWrapper: {
         position: 'relative',
-        width: '300px',
-        height: '150px',
-        margin: '20px',
-        marginTop: '4em',
+        width: '100%',
+        height: 'auto',
+        minHeight: '160px',
     },
     cardBackground: {
         position: 'absolute',
-        top: -20,
-        left: -20,
+        top: 0,
+        left: 0,
         width: '100%',
-        height: '90%',
-        borderRadius: '15px 15px 15px 15px',
+        height: '100%',
+        borderRadius: '15px',
         background: 'linear-gradient(135deg, #42CDC9, #B4E498)',
         zIndex: 1,
     },
     cardContainer: {
-        position: 'absolute',
-        top: '5px',
-        left: '5px',
-        width: 'calc(100% - 10px)',
-        height: 'calc(100% - 10px)',
-        backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-        borderRadius: '15px 15px 15px 0',
+        position: 'relative',
         zIndex: 2,
-
-        padding: '10px',
+        backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+        borderRadius: '15px',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
     },
     flexItem: {
         display: 'flex',
-        flexDirection: 'row',
-        padding: '10px',
+        alignItems: 'center',
+        gap: '10px',
     },
     cardIcon: {
-        width: '50px',
-        height: '50px',
-        marginBottom: '10px',
-        marginRight: '10px'
+        width: '40px',
+        height: '40px',
     },
     cardTitle: {
-        fontSize: '18px',
-        fontWeight: '700',
-        marginTop: '10px',
+        fontSize: '1.6rem',
+        fontWeight: 'bold',
+        margin: 0,
     },
     cardDescription: {
-        fontSize: '14px',
-        fontColor: 'gray'
+        fontSize: '1.2rem',
+        color: 'gray',
+        lineHeight: 1.4,
+        margin: 0,
+    },
+    toggleText: {
+        color: '#007BFF',
+        fontSize: '1rem',
+        cursor: 'pointer',
+        marginTop: '5px',
+        display: 'inline-block',
+        transition: 'all 0.3s ease-in-out',
+        textDecoration: 'underline',
+        fontWeight: 500,
     },
 };
