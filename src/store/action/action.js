@@ -78,12 +78,11 @@ export const registrationCustomer = (API_URL, data) => {
           .then((response) => {
             dispatch({ type: REGISTER_DATA_SUCCESS, payload: response.data });
               return response.data;
-              console.log("Payload:", data);
 
           })
             .catch((error) => {
                 // Check if the error response contains a message
-                console.log("Payload:", data);
+
             dispatch({ type: REGISTER_DATA_FAILURE, payload: error.message });
           });
       };
