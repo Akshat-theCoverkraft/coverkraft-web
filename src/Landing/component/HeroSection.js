@@ -42,7 +42,7 @@ const HeroSection = () => {
           <p
             style={{
               color: "#7B7B7B",
-              fontSize: "1.2rem",
+              fontSize: "1.6rem",
               lineHeight: 1.7,
               marginBottom: "2rem",
             }}
