@@ -1,22 +1,32 @@
-.text-color{
-    color: #dddddd;
+.text-color {
+  color: #dddddd;
 }
 /* Style for social media icons */
 .social-icon {
-    transition: opacity 0.3s ease; /* Smooth transition for opacity change */
-  }
-  
-  /* Hover effect: Reduce opacity when hovering over social icons */
-  .social-icon:hover {
-    opacity: 0.7; /* Reduce opacity to 0.7 when hovered */
-  }
-  .footer-link:hover {
-    color: #42988E; /* Green text color on hover */
-    transform: scale(1.05); /* Scale up text size slightly on hover */
-    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for color and scale change */
-    cursor: pointer;
-  }
-  /* CSS for mobile responsiveness */
+  transition: opacity 0.3s ease; /* Smooth transition for opacity change */
+}
+
+.twitter {
+  /* background-color: red; */
+  height: 2vh;
+  cursor: pointer;
+}
+
+.twitter:hover {
+  opacity: 0.7;
+}
+
+/* Hover effect: Reduce opacity when hovering over social icons */
+.social-icon:hover {
+  opacity: 0.7; /* Reduce opacity to 0.7 when hovered */
+}
+.footer-link:hover {
+  color: #42988e; /* Green text color on hover */
+  transform: scale(1.05); /* Scale up text size slightly on hover */
+  transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for color and scale change */
+  cursor: pointer;
+}
+/* CSS for mobile responsiveness */
 @media (max-width: 768px) {
   /* Adjust column width */
   .col-md-2 {

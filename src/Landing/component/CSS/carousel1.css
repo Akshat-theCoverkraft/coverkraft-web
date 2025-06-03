@@ -204,7 +204,7 @@ a {
 .carousel__dots {
   display: inline-block;
   left: 50%;
-  margin-top: 2rem;
+  margin-top: 1rem;
   position: absolute;
   transform: translateX(-50%);
 }

@@ -113,9 +113,7 @@ const Vault = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  //add policy dialog box open and close function end
 
-  //confirm box open and close function start
   const handleConfirmDialogOpen = () => {
     setConfirmDialogOpen(true);
     setOpen(false);
@@ -154,6 +152,8 @@ const Vault = () => {
       }
     }
 
+    console.log(formData);
+
     setLoading(true);
     try {
       const response = await axios.post(
@@ -186,7 +186,6 @@ const Vault = () => {
             state: { responseData: ocrTextObject },
           });
         } else if (PolicyType === "health" || PolicyType === "other_health") {
-          console.log("heyy", ocrTextObject);
           navigate("/coverkraft/health-policy", {
             state: { responseData: ocrTextObject },
           });
