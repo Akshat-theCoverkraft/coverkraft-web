@@ -25,7 +25,7 @@ const Landing = () => {
         <Cards3d/>
         <About/>
         <Afterglow/>   
-        <Card/>
+        {/* <Card/> */}
         <Blog/>
         <Count/>
         <Coverkraft/>

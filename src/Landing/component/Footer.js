@@ -1,117 +1,81 @@
-import React from 'react'
-import logo from '../../Images/coverkraft_logo_1.png'
-import './CSS/footer.css'
-import twitter from '../../Images/twitter.png';
+import logo from '../../Images/coverkraft_logo_1.png';
+import './CSS/footer.css';
+import twitter from '../../Images/X.png';
 import facebook from '../../Images/facebook.png';
-import pinterest from '../../Images/pinterest.png';
 import instagram from '../../Images/instagram.png';
 import location from '../../Images/location_on.png';
 import call from '../../Images/call.png';
 import email from '../../Images/email.png';
 import { Link } from 'react-router-dom';
 import { THEME_COLOR } from '../../constants';
+
 const Footer = () => {
     return (
-        <div>
+        <footer className="text-center text-lg-start" style={{ background: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR }}>
+            <section className="py-5">
+                <div className="container text-center text-md-start">
+                    <div className="row">
 
-            <footer class="text-center text-lg-start " style={{background: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.COLOR}}>
+                        <div className="col-md-3 col-lg-3 col-xl-3 col-sm-12 mb-4">
+                            <h6 className="text-uppercase fw-bold mb-4">
+                                <img src={logo} alt="Coverkraft Logo" height={65} width={214} />
+                            </h6>
+                            <p className="text-color fs-5">
+                                Coverkraft offers powerful tools for filling out forms, scanning documents, and uploading them with ease.
+                            </p>
+                        </div>
 
+                        <div className="col-md-3 col-lg-3 col-xl-3 col-sm-12 mb-4">
+                            <h6 className="text-uppercase fw-bold mb-4 fs-5 custom-color">Get in Touch</h6>
 
-                <section class="py-5">
-                    <div class="col-md-12 mx-5 text-center text-md-start mt-5">
-
-                        <div class="row mt-3">
-
-                            <div class="col-md-2 col-lg-2 col-xl-3 col-sm-12 mx-auto mb-4">
-
-                                <h6 class="text-uppercase fw-bold mb-4">
-                                    <img src={logo} alt=''   height={65} width={214}  />
-                                </h6>
-                                <p className='text-color fs-4 '>
-                                    Coverkraft, we offer<br/> incredible tools for  filling out<br/> forms, scanning documents, <br/>and uploading them.
-                                </p>
+                            <div className="d-flex align-items-start mb-2">
+                                <img src={location} alt="Location Icon" height={23} className="me-2 mt-1" />
+                                <p className="text-color fs-5 footer-link mb-0">8819 Ohio St. South Gate, CA 90280</p>
                             </div>
 
-                            <div class="col-md-2 col-lg-2 col-xl-2  mx-auto mb-4">
-
-                                <h6 class="text-uppercase fw-bold mb-4 fs-5 custom-color"  >
-                                    Get in Touch
-                                </h6>
-                                <div className='d-flex '>
-                                    <img src={location}  height={23} className='mt-1'/>
-                                    <p  class="text-color fs-5 ml-4 footer-link">8819 Ohio St.South Gate, CA 90280</p>
-                                </div>
-                                <div className='d-flex '>
-                                    <img src={email}  height={23} className='mt-1'/>
-                                    <p  class="text-color fs-5 ml-4 footer-link">Ourstudio@hello.com</p>
-                                </div>
-                                <div className='d-flex '>
-                                    <img src={call}  height={23} className='mt-1'/>
-                                    <p  class="text-color fs-5 ml-4 footer-link">+1 386-688-3295</p>
-                                </div>
-                               
-
+                            <div className="d-flex align-items-start mb-2">
+                                <img src={email} alt="Email Icon" height={23} className="me-2 mt-1" />
+                                <p className="text-color fs-5 footer-link mb-0">Ourstudio@hello.com</p>
                             </div>
 
-                            <div class="col-md-1 col-lg-2 col-xl-1  mx-auto mb-4">
-
-                                <h6 class="text-uppercase fw-bold mb-4 fs-5 custom-color" >
-                                    Service
-                                </h6>
-                                <p>
-                                    <Link to='/coverkraft' class="text-color fs-5 footer-link">Home</Link>
-                                </p>
-                                <p>
-                                    <Link to='/coverkraft/about' class="text-color fs-5 footer-link">About us</Link>
-                                </p>
-                                <p>
-                                    <Link to='/coverkraft/vault' class="text-color fs-5 footer-link">Vault</Link>
-                                </p>
-                                <p>
-                                    <Link to='/coverkraft/vault' class="text-color fs-5 footer-link">Policy</Link>
-                                </p>
-                                <p>
-                                    <Link to='/coverkraft/privacypolicy' class="text-color fs-5 footer-link">Privacy Policy</Link>
-                                </p>
+                            <div className="d-flex align-items-start">
+                                <img src={call} alt="Call Icon" height={23} className="me-2 mt-1" />
+                                <p className="text-color fs-5 footer-link mb-0">+1 386-688-3295</p>
                             </div>
+                        </div>
 
-                            <div class="col-md-1 col-lg-2 col-xl-2 mx-auto mb-md-0 mb-4">
+                        <div className="col-md-2 col-lg-2 col-xl-2 col-sm-12 mb-4">
+                            <h6 className="text-uppercase fw-bold mb-4 fs-5 custom-color">Service</h6>
+                            <p><Link to="/coverkraft" className="text-color fs-5 footer-link">Home</Link></p>
+                            <p><Link to="/coverkraft/about" className="text-color fs-5 footer-link">About Us</Link></p>
+                            <p><Link to="/coverkraft/vault" className="text-color fs-5 footer-link">Vault</Link></p>
+                            <p><Link to="/coverkraft/vault" className="text-color fs-5 footer-link">Policy</Link></p>
+                            <p><Link to="/coverkraft/privacypolicy" className="text-color fs-5 footer-link">Privacy Policy</Link></p>
+                        </div>
 
-                                <h6 class="text-uppercase fw-bold mb-4 fs-5 custom-color" >Company</h6>
-                                <p className='text-color fs-5 footer-link'> Blog</p>
-                                <p className='text-color fs-5 footer-link'>
-                                   
-                                    Help
-                                </p>
-                                <p className='text-color fs-5 footer-link'>Terms & Conditions</p>
+                        <div className="col-md-2 col-lg-2 col-xl-2 col-sm-12 mb-4">
+                            <h6 className="text-uppercase fw-bold mb-4 fs-5 custom-color">Company</h6>
+                            <p className="text-color fs-5 footer-link">Blog</p>
+                            <p className="text-color fs-5 footer-link">Help</p>
+                            <p className="text-color fs-5 footer-link">Terms & Conditions</p>
+                        </div>
 
-                            </div>
-
-                            <div className='col-md-2 col-lg-2 col-xl-2 mx-auto'>
-                               
-                                <img src={twitter} className='mr-2 social-icon' height={45} width={45}/>
-                                <img src={facebook} className='mr-2 social-icon'height={45} width={45}/>
-                                <img src={instagram} className='mr-2 social-icon' height={45} width={45}/>
-                                <img src={pinterest} className='mr-2 social-icon' height={45} width={45}/>
-                                
-                            </div>
-
+                        <div className="col-md-2 col-lg-2 col-xl-2 col-sm-12 d-flex justify-content-center align-items-center">
+                            <img src={twitter} alt="Twitter Icon" className="social-icon" />
+                            <img src={facebook} alt="Facebook Icon" className="social-icon" />
+                            <img src={instagram} alt="Instagram Icon" className="social-icon" />
                         </div>
 
                     </div>
-                </section>
-
-
-                <div className='text-center p-4' style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
-                    <span class="mr-2 " >
-                        © Coverkraft 2024
-
-                    </span><span className='border-start border-secondary pl-2'>All Right Reserved</span>
                 </div>
-            </footer>
+            </section>
 
-        </div>
-    )
-}
+            <div className="text-center p-3" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
+                <span className="me-2">© Coverkraft 2024</span>
+                <span className="border-start border-secondary ps-2">All Rights Reserved</span>
+            </div>
+        </footer>
+    );
+};
 
-export default Footer
+export default Footer;

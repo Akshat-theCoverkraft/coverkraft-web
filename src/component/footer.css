@@ -1,26 +1,88 @@
-.nav-item {
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: 600;
-  }
-  
-  /* .nav-item.active {
+.footer-link {
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease-in-out;
+}
+
+.footer-link:hover {
     color: #ffffff;
-    background-color: #007bff; 
-  } */
-  
-  .nav-item:active{
-    color:purple;
-  }
-  .nav-item:visited{
-    color:red;
-  }
-  
-  .show-menu {
-    display: flex;
-  }
-  
-  .hide-menu {
-    display: none;
-  }
-  
+    text-decoration: underline;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    margin: 0 8px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+/* Fix for Twitter icon if it's using a different class or specific targeting */
+.social-icon[src*="twitter"],
+.social-icon[alt*="twitter"],
+.social-icon[alt*="Twitter"],
+.social-icon.twitter {
+    width: 40px;
+    height: 40px;
+    object-fit: cover; /* Use cover instead of contain for better fitting */
+}
+
+.social-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Tablet styles */
+@media screen and (max-width: 768px) {
+    .social-icon {
+        width: 36px;
+        height: 36px;
+        margin: 0 6px;
+    }
+    
+    .social-icon[src*="twitter"],
+    .social-icon[alt*="twitter"],
+    .social-icon[alt*="Twitter"],
+    .social-icon.twitter {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Mobile styles */
+@media screen and (max-width: 480px) {
+    .social-icon {
+        width: 32px;
+        height: 32px;
+        margin: 0 4px;
+    }
+    
+    .social-icon[src*="twitter"],
+    .social-icon[alt*="twitter"],
+    .social-icon[alt*="Twitter"],
+    .social-icon.twitter {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .footer-link {
+        font-size: 14px;
+    }
+}
+
+/* Small mobile styles */
+@media screen and (max-width: 320px) {
+    .social-icon {
+        width: 28px;
+        height: 28px;
+        margin: 0 3px;
+    }
+    
+    .social-icon[src*="twitter"],
+    .social-icon[alt*="twitter"],
+    .social-icon[alt*="Twitter"],
+    .social-icon.twitter {
+        width: 28px;
+        height: 28px;
+    }
+}
