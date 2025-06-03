@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useState, useEffect } from "react";
 import {
   CardContent,
@@ -185,11 +186,139 @@ const Job = () => {
                       />
                     </div>
                   </div>
+=======
+import React, { useState, useEffect } from 'react';
+import { Typography, useMediaQuery, useTheme, IconButton } from '@mui/material';
+import { ChevronLeft, ChevronRight, Close } from '@mui/icons-material';
+import './CSS/service.css';
+import API_URL from '../../ServiceModule/Service';
+
+const Job = () => {
+    const [cardData, setCardData] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [showPopup, setShowPopup] = useState(false);
+    const [popupContent, setPopupContent] = useState({ title: '', description: '' });
+    
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+    const cardsPerView = isMobile ? 1 : isTablet ? 2 : 3;
+    const maxIndex = Math.max(0, cardData.length - cardsPerView);
+
+    useEffect(() => {
+        fetch(`${API_URL}tips/getAll`)
+            .then(res => res.json())
+            .then(result => result.status && setCardData(result.data))
+            .catch(console.error);
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = e => e.key === 'Escape' && setShowPopup(false);
+        showPopup && document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [showPopup]);
+
+    const navigate = direction => setCurrentIndex(prev => 
+        Math.max(0, Math.min(prev + direction, maxIndex))
+    );
+
+    const openPopup = card => {
+        setPopupContent({ title: card.subtitle, description: card.description });
+        setShowPopup(true);
+    };
+
+    const CardDescription = ({ text, onReadMore }) => (
+        <div>
+            <p style={styles.cardDescription}>
+                {text.length > 100 ? `${text.slice(0, 100)}...` : text}
+            </p>
+            {text.length > 100 && (
+                <span onClick={onReadMore} style={styles.toggleText}>Read More</span>
+            )}
+        </div>
+    );
+
+    return (
+        <div id='card' style={styles.container}>
+            {/* Header */}
+            <div style={styles.header}>
+                <Typography variant={isMobile ? "h5" : "h3"} style={styles.headerTitle}>
+                    BENEFITS
+                </Typography>
+                <Typography variant={isMobile ? "h6" : "h2"} style={styles.headerSubtitle}>
+                    Why Prefer Coverkraft
+                </Typography>
+                <Typography variant="body1" style={styles.headerDescription}>
+                    Choose us for personalized insurance solutions, exceptional customer care,
+                    and unwavering commitment to protecting what matters most to you.
+                </Typography>
+            </div>
+
+            {/* Carousel */}
+            <div style={styles.carouselSection}>
+                <div style={styles.carouselContainer}>
+                    {/* Navigation */}
+                    {cardData.length > cardsPerView && (
+                        <>
+                            <IconButton 
+                                onClick={() => navigate(-1)} 
+                                disabled={currentIndex === 0}
+                                style={{...styles.navButton, ...styles.prevButton, opacity: currentIndex === 0 ? 0.3 : 1}}
+                            >
+                                <ChevronLeft fontSize="large" style={{color: '#FF9906'}} />
+                            </IconButton>
+                            <IconButton 
+                                onClick={() => navigate(1)} 
+                                disabled={currentIndex >= maxIndex}
+                                style={{...styles.navButton, ...styles.nextButton, opacity: currentIndex >= maxIndex ? 0.3 : 1}}
+                            >
+                                <ChevronRight fontSize="large" style={{color: '#FF9906'}} />
+                            </IconButton>
+                        </>
+                    )}
+
+                    {/* Cards */}
+                    <div style={styles.cardsWrapper}>
+                        <div style={{
+                            ...styles.cardsContainer,
+                            transform: `translateX(-${currentIndex * (100 / cardsPerView)}%)`
+                        }}>
+                            {cardData.map(card => (
+                                <div key={card._id} style={{...styles.cardSlide, width: `${100 / cardsPerView}%`}}>
+                                    <div style={styles.cardWrapper}>
+                                        <div style={styles.cardBackground}></div>
+                                        <div style={styles.cardContainer}>
+                                            <div style={styles.flexItem}>
+                                                <img src={card.icon} alt="Icon" style={styles.cardIcon} />
+                                                <h3 style={styles.cardTitle}>{card.subtitle}</h3>
+                                            </div>
+                                            <CardDescription text={card.description} onReadMore={() => openPopup(card)} />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Dots */}
+                    {cardData.length > cardsPerView && (
+                        <div style={styles.dotsContainer}>
+                            {Array.from({length: maxIndex + 1}).map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrentIndex(i)}
+                                    style={{...styles.dot, backgroundColor: i === currentIndex ? '#FF9906' : '#666'}}
+                                />
+                            ))}
+                        </div>
+                    )}
+>>>>>>> Stashed changes
                 </div>
               ))}
             </div>
           </div>
 
+<<<<<<< Updated upstream
           {cardData.length > cardsPerView && (
             <div style={styles.dotsContainer}>
               {Array.from({ length: maxIndex + 1 }).map((_, index) => (
@@ -205,6 +334,22 @@ const Job = () => {
               ))}
             </div>
           )}
+=======
+            {/* Popup */}
+            {showPopup && (
+                <div style={styles.popupOverlay} onClick={() => setShowPopup(false)}>
+                    <div style={styles.popupContent} onClick={e => e.stopPropagation()}>
+                        <div style={styles.popupHeader}>
+                            <h3 style={styles.popupTitle}>{popupContent.title}</h3>
+                            <IconButton onClick={() => setShowPopup(false)} style={styles.closeButton}>
+                                <Close style={{color: '#ffffff'}} />
+                            </IconButton>
+                        </div>
+                        <p style={styles.popupDescription}>{popupContent.description}</p>
+                    </div>
+                </div>
+            )}
+>>>>>>> Stashed changes
         </div>
       </div>
 
@@ -233,6 +378,7 @@ const Job = () => {
   );
 };
 
+<<<<<<< Updated upstream
 export default Job;
 
 const MAX_LENGTH = 100;
@@ -461,21 +607,88 @@ const styles = {
     lineHeight: 1.6,
     margin: 0,
   },
+=======
+const styles = {
+    container: { marginTop: '80px', padding: '20px', backgroundColor: '#1a1a1a', minHeight: '100vh' },
+    header: { textAlign: 'center', marginBottom: '40px', padding: '0 20px' },
+    headerTitle: { color: '#FF9906', fontWeight: 'bold' },
+    headerSubtitle: { color: '#ffffff', marginBottom: '16px' },
+    headerDescription: { 
+        fontSize: { xs: '1rem', sm: '1.2rem' }, 
+        lineHeight: 1.7, 
+        maxWidth: '600px', 
+        margin: '0 auto',
+        color: '#b0b0b0'
+    },
+    carouselSection: { width: '100%', maxWidth: '1400px', margin: '0 auto' },
+    carouselContainer: { position: 'relative', width: '100%', padding: '0 60px' },
+    navButton: {
+        position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 10,
+        backgroundColor: '#2d2d2d', border: '2px solid #FF9906', 
+        boxShadow: '0 4px 12px rgba(255,153,6,0.3)', width: '50px', height: '50px',
+        transition: 'all 0.3s ease'
+    },
+    prevButton: { left: '0px' },
+    nextButton: { right: '0px' },
+    cardsWrapper: { overflow: 'hidden', borderRadius: '15px', width: '100%' },
+    cardsContainer: {
+        display: 'flex', transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)', width: '100%'
+    },
+    cardSlide: { padding: '0 12px', boxSizing: 'border-box', flexShrink: 0 },
+    cardWrapper: { position: 'relative', width: '100%', height: '240px', borderRadius: '15px', overflow: 'hidden' },
+    cardBackground: {
+        position: 'absolute', top: '0', left: '0', right: '0', bottom: '0', borderRadius: '15px',
+        background: 'linear-gradient(135deg, #FF9906 0%, #FF6B35 50%, #F7931E 100%)', zIndex: 1
+    },
+    cardContainer: {
+        position: 'relative', zIndex: 2, backgroundColor: '#2d2d2d', borderRadius: '15px',
+        padding: '20px', height: '100%', display: 'flex', flexDirection: 'column',
+        gap: '12px', transition: 'all 0.3s ease', cursor: 'pointer',
+        border: '1px solid #404040', margin: '3px'
+    },
+    flexItem: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' },
+    cardIcon: { width: '45px', height: '45px', objectFit: 'contain', filter: 'brightness(1.2)' },
+    cardTitle: { fontSize: '1.2rem', fontWeight: '600', margin: 0, color: '#ffffff', lineHeight: 1.3 },
+    cardDescription: { fontSize: '0.95rem', color: '#e0e0e0', lineHeight: 1.5, margin: 0, flex: 1 },
+    toggleText: {
+        color: '#FF9906', fontSize: '0.9rem', cursor: 'pointer', marginTop: '8px',
+        display: 'inline-block', transition: 'all 0.3s ease', textDecoration: 'underline', fontWeight: '500'
+    },
+    dotsContainer: { display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '30px' },
+    dot: {
+        width: '12px', height: '12px', borderRadius: '50%', border: 'none',
+        cursor: 'pointer', transition: 'all 0.3s ease'
+    },
+    popupOverlay: {
+        position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)', zIndex: 9999, display: 'flex',
+        alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)',
+        animation: 'fadeIn 0.3s ease-out'
+    },
+    popupContent: {
+        backgroundColor: '#2d2d2d', borderRadius: '16px', padding: '30px',
+        maxWidth: '500px', width: '90%', maxHeight: '80vh', overflow: 'auto',
+        boxShadow: '0 25px 50px rgba(0,0,0,0.5)', border: '1px solid #404040',
+        transform: 'scale(0.9)', animation: 'popupScaleIn 0.3s ease-out forwards'
+    },
+    popupHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', gap: '15px' },
+    popupTitle: { fontSize: '1.6rem', fontWeight: '600', margin: 0, color: '#ffffff', lineHeight: 1.3 },
+    closeButton: { color: '#ffffff', backgroundColor: '#404040', padding: '8px', borderRadius: '50%' },
+    popupDescription: { fontSize: '1.1rem', color: '#e0e0e0', lineHeight: 1.6, margin: 0 }
+>>>>>>> Stashed changes
 };
 
-// Add CSS animations
-const styleSheet = document.createElement("style");
-styleSheet.innerText = `
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    @keyframes popupScaleIn {
-        from { 
-            opacity: 0;
-            transform: scale(0.8) translateY(20px); 
+// Add animations
+if (!document.querySelector('#job-animations')) {
+    const style = document.createElement('style');
+    style.id = 'job-animations';
+    style.textContent = `
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popupScaleIn { 
+            from { opacity: 0; transform: scale(0.8) translateY(20px); } 
+            to { opacity: 1; transform: scale(1) translateY(0); } 
         }
+<<<<<<< Updated upstream
         to { 
             opacity: 1;
             transform: scale(1) translateY(0); 
@@ -502,3 +715,14 @@ styleSheet.innerText = `
     }
 `;
 document.head.appendChild(styleSheet);
+=======
+        .popup-content::-webkit-scrollbar { width: 8px; }
+        .popup-content::-webkit-scrollbar-track { background: #404040; border-radius: 4px; }
+        .popup-content::-webkit-scrollbar-thumb { background: #FF9906; border-radius: 4px; }
+        .popup-content::-webkit-scrollbar-thumb:hover { background: #FFB84D; }
+    `;
+    document.head.appendChild(style);
+}
+
+export default Job;
+>>>>>>> Stashed changes
