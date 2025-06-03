@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './CSS/login.css';
 import LoginImg from '../Images/img_phone_login.png';
 import logo from '../Images/coverkraft_logo.png';
@@ -13,7 +13,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '../component/Navbar';
 import Footer from '../Landing/component/Footer';
 import Grid from '@mui/material/Grid';
-import axios from 'axios';
 import GlobalDropdown from '../component/StateDropdown';
 import CityDropdown from '../component/CityDropdown';
 
@@ -29,27 +28,26 @@ const Register = () => {
     const [valid, setValid] = useState(true);
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [isValidPinCode, setIsValidPinCode] = useState(true);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
     const [fcmToken, setFcmToken] = useState(null);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handlephonechange = (e) => {
-        let number = e.target.value.replace(/\D/g, '').slice(0, 10);
+        const number = e.target.value.replace(/\D/g, '').slice(0, 10);
         setMobileNumber(number);
         setValid(/^\d{10}$/.test(number));
     };
 
     const handleEmailChange = (e) => {
-        const emailId = e.target.value;
+        const emailId = e.target.value.trim();
         const isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailId);
         setEmail(emailId);
         setIsValidEmail(isValid);
     };
 
     const handlePinCodeChange = (e) => {
-        const pin = e.target.value;
+        const pin = e.target.value.replace(/\D/g, '');
         setPincode(pin);
         setIsValidPinCode(/^\d{5,6}$/.test(pin));
     };
@@ -70,32 +68,59 @@ const Register = () => {
 
     const handleRegister = async () => {
         const roleID = 3;
-        if (fullName && DOB && mobileNumber && email && address && roleID) {
-            if (!isOldEnough(DOB)) {
-                toast.error('You must be at least 18 years old to register.');
-                return;
-            }
 
-            const formData = new FormData();
-            formData.append('userName', fullName);
-            formData.append('userDob', DOB);
-            formData.append('userPhone', mobileNumber);
-            formData.append('userEmail', email);
-            formData.append('userAddress', address);
-            formData.append('userFcmId', fcmToken);
-            formData.append('roleId', roleID);
-            if (selectedCityId) formData.append('city', selectedCityId);
-            if (selectedStateId) formData.append('state', selectedStateId);
-
-            try {
-                await dispatch(registrationCustomer(API_URL, formData));
-                toast.success('Successfully Registered');
-                navigate("/coverkraft/login");
-            } catch (error) {
-                toast.error('Registration failed');
-            }
-        } else {
+        if (!fullName || !DOB || !mobileNumber || !email || !address || !roleID) {
             toast.error("Please fill all required fields");
+            return;
+        }
+
+        if (!valid) {
+            toast.error("Please enter a valid 10-digit mobile number");
+            return;
+        }
+
+        if (!isValidEmail) {
+            toast.error("Please enter a valid email address");
+            return;
+        }
+
+        if (!isValidPinCode) {
+            toast.error("Please enter a valid pin code (5 or 6 digits)");
+            return;
+        }
+
+        if (!selectedStateId) {
+            toast.error("Please select a state");
+            return;
+        }
+
+        if (!selectedCityId) {
+            toast.error("Please select a city");
+            return;
+        }
+
+        if (!isOldEnough(DOB)) {
+            toast.error("You must be at least 18 years old to register.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('userName', fullName);
+        formData.append('userDob', DOB);
+        formData.append('userPhone', mobileNumber);
+        formData.append('userEmail', email);
+        formData.append('userAddress', address);
+        formData.append('userFcmId', fcmToken);
+        formData.append('roleId', roleID);
+        formData.append('city', selectedCityId);
+        formData.append('state', selectedStateId);
+
+        try {
+            await dispatch(registrationCustomer(API_URL, formData));
+            toast.success('Successfully Registered');
+            navigate("/coverkraft/login");
+        } catch (error) {
+            toast.error('Registration failed');
         }
     };
 
@@ -117,8 +142,21 @@ const Register = () => {
                                 <h2 className="text-center fw-bold">Register</h2>
                                 <p className="text-center text-muted mb-4">Create your CoverKraft account</p>
 
-                                <CustomInput type="text" label="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-                                <CustomInput type="date" label="Date of Birth" value={DOB} onChange={(e) => setDOB(e.target.value)} required />
+                                <CustomInput
+                                    type="text"
+                                    label="Full Name"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    required
+                                />
+                                <CustomInput
+                                    type="date"
+                                    label="Date of Birth"
+                                    value={DOB}
+                                    onChange={(e) => setDOB(e.target.value)}
+                                    required
+                                />
+
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
                                         <CustomInput
@@ -128,6 +166,7 @@ const Register = () => {
                                             onChange={handlephonechange}
                                             required
                                         />
+                                        {!valid && <small className="text-warning">Enter a valid 10-digit number</small>}
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <CustomInput
@@ -137,8 +176,10 @@ const Register = () => {
                                             onChange={handleEmailChange}
                                             required
                                         />
+                                        {!isValidEmail && <small className="text-warning">Enter a valid email</small>}
                                     </Grid>
                                 </Grid>
+
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
                                         <GlobalDropdown onStateSelect={handleStateSelect} />
@@ -147,6 +188,7 @@ const Register = () => {
                                         <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
                                     </Grid>
                                 </Grid>
+
                                 <CustomInput
                                     label="Pin Code"
                                     placeholder="Enter your Pin Code"
@@ -154,6 +196,8 @@ const Register = () => {
                                     onChange={handlePinCodeChange}
                                     required
                                 />
+                                {!isValidPinCode && <small className="text-warning">Enter a valid pin code (5 or 6 digits)</small>}
+
                                 <div className="mb-3">
                                     <label htmlFor="address" className="form-label fw-bold">Address</label>
                                     <textarea
@@ -166,6 +210,7 @@ const Register = () => {
                                         required
                                     />
                                 </div>
+
                                 <div className="d-grid mt-4">
                                     <Button text="Save" size="lg" block onClick={handleRegister} />
                                 </div>

@@ -29,9 +29,9 @@ import './footer.css';
 import { THEME_COLOR } from '../constants';
 import { styled } from '@mui/material';
 
-const DarkMenu = styled(Menu)(({ theme }) => ({
+const DarkMenu = styled(Menu)(() => ({
     '.MuiMenu-paper': {
-        backgroundColor: '#333',  // Dark background color
+        backgroundColor: '#000',  // Dark background color
         color: 'white',            // Light text color
         borderRadius: '8px',       // Optional: rounded corners
         boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', // Optional: shadow effect
@@ -40,14 +40,12 @@ const DarkMenu = styled(Menu)(({ theme }) => ({
 
 function Navbar(props) {
     const navigate = useNavigate();
-    const scrollToHomeBottom = props.scrollToHomeBottom
-    const scrollToAboutBottom = props.scrollToAboutBottom
-    const scrollToServiceBottom = props.scrollToServiceBottom
     const scrollToContactBottom = props.scrollToContactBottom
     const loggedIn = localStorage.getItem('loggedIn') === 'true';
     const [anchorEl, setAnchorEl] = useState(null);
-    const [isSticky, setIsSticky] = useState(false);
-    const { t, i18n } = useTranslation();
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+    const { i18n } = useTranslation();
     const [englishChecked, setEnglishChecked] = useState(i18n.language === 'en');
     const [hindiChecked, setHindiChecked] = useState(i18n.language === 'hi');
     const [anchorElPop, setAnchorElPop] = React.useState(null);
@@ -55,6 +53,29 @@ function Navbar(props) {
     const [showMenu, setShowMenu] = useState(false);
     const [anchorElToggle, setAnchorElToggle] = useState(null);
     const [activeItem, setActiveItem] = useState('');
+
+    // Scroll behavior for navbar visibility
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY < lastScrollY || currentScrollY < 10) {
+                // Scrolling up or at the top
+                setIsVisible(true);
+            } else {
+                // Scrolling down
+                setIsVisible(false);
+            }
+
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [lastScrollY]);
 
     const handleItemClick = (item) => {
         setActiveItem(item);
@@ -70,7 +91,7 @@ function Navbar(props) {
         }
     };
     // function to open notification popup
-    const handleClick = (event) => {
+    const handleClick = () => {
         navigate('/coverkraft/notification')
         // setAnchorElPop(event.currentTarget);
     };
@@ -89,9 +110,6 @@ function Navbar(props) {
     };
 
     //function to open language pop up
-    const handleClickOpen = () => {
-        setDialogOpen(true);
-    };
 
     //function to close language pop up
     const handleClickClose = () => {
@@ -205,9 +223,18 @@ function Navbar(props) {
                 data-animate-on-scroll
                 className=''
                 style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
                     padding: '10px 70px',
-                    boxShadow:
-                        'rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px ',
+                    backgroundColor: 'black',
+                    boxShadow: isVisible
+                        ? 'rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px'
+                        : 'none',
+                    transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
+                    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+                    zIndex: 1000,
                 }}
             >
                 <div className='sticky nav-style col-md-12 d-flex justify-content-between py-4 '>
@@ -228,7 +255,7 @@ function Navbar(props) {
 
                         <>
                             <IconButton onClick={handleMenuClick}>
-                                {showMenu ? <CloseIcon sx={{ color: THEME_COLOR.COLOR }} /> : <MenuIcon sx={{ color: THEME_COLOR.COLOR }}/>}
+                                {showMenu ? <CloseIcon sx={{ color: THEME_COLOR.COLOR }} /> : <MenuIcon sx={{ color: THEME_COLOR.COLOR }} />}
                             </IconButton>
                             <DarkMenu
                                 anchorEl={anchorElToggle}
@@ -353,6 +380,8 @@ function Navbar(props) {
                 </div>
             </div>
 
+            {/* Spacer div to prevent content from being hidden behind fixed navbar */}
+            <div style={{ height: '95px' }}></div>
 
             {/* dialog box for language change */}
             <Dialog
