@@ -17,7 +17,7 @@ const Service = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <div id='service' className="containercards mt-5">
+    <div className="containercards mt-5">
       <Grid
         container
         spacing={4}
