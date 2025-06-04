@@ -40,7 +40,6 @@ const Blog = () => {
       justifyContent="center"
       className="p-5"
       style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
-      id="blog"
     >
       <div className="text-center">
         <h3 className="fw-bold" style={{ color: "#FF9906" }}>

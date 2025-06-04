@@ -60,7 +60,7 @@ export default function Testimonials() {
 
   return (
     <>
-      <div id="testimonials" className="text-center">
+      <div className="text-center">
         <h3 className="fw-bold" style={{ color: "#FF9906" }}>Testimonials</h3>
         <h1 className="mt-3 fw-bold">Hear From our Clients</h1>
       </div>

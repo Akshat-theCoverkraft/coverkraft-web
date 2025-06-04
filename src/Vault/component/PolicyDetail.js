@@ -179,11 +179,29 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   //function for share policy document
-  const sharePolicyDocument = (documentPath) => {
+  const sharePolicyDocument = async (documentPath) => {
     const url = `${IMAGE_PATH}${documentPath}`;
-    setPdfUrl(url);
-    toggleShareDialog();
+    const filename = documentPath.split("/").pop();
+ 
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const file = new File([blob], filename, { type: "application/pdf" });
+ 
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: "Policy Document",
+          text: "Here is the document you requested.",
+          files: [file],
+        });
+      } else {
+        alert("Your device/browser does not support file sharing.");
+      }
+    } catch (err) {
+      console.error("Error sharing file:", err);
+    }
   };
+  
   const userId = localStorage.getItem("userId");
   const handleArchieve = () => {
     const archieve = "archive";
