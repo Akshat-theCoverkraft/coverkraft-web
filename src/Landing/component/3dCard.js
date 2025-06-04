@@ -82,6 +82,7 @@ const Job = () => {
 
   return (
     <div
+      id="card"
       style={{
         marginTop: "80px",
         padding: "50px",

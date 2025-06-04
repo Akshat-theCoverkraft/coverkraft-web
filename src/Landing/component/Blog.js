@@ -36,6 +36,7 @@ const Blog = () => {
 
   return (
     <Grid
+      id="blog"
       container
       justifyContent="center"
       className="p-5"

@@ -1,38 +1,46 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './CSS/Testimonail.css';
 import quote from '../../Images/quote-testimonial.png';
-import profilePic from '../../Images/profilePic.png';
-import IMAGE_PATH from "../../ServiceModule/imagePath";
 import { THEME_COLOR } from "../../constants";
-
-const testimonialsData = [
-  {
-    quote: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam, adipisci facilis! Consectetur repellendus, nam minima sint voluptas eveniet delectus illum libero odit rerum unde.",
-    author: "Author Name",
-    profile: profilePic,
-  },
-  {
-    quote: "Nam, adipisci facilis! Consectetur repellendus, nam minima sint voluptas eveniet delectus illum libero odit rerum unde, culpa enim architecto dolorem accusamus magni.",
-    author: "Author Name",
-    profile: profilePic,
-  },
-  {
-    quote: "Adipisci facilis! Consectetur repellendus, nam minima sint voluptas eveniet delectus illum libero odit rerum unde, culpa enim architecto dolorem accusamus magni. Eveniet delectus illum libero odit rerum unde.",
-    author: "Author Name",
-    profile: profilePic,
-  },
-  {
-    quote: "Nam, adipisci facilis! Consectetur repellendus, nam minima sint voluptas eveniet delectus illum libero odit rerum unde, culpa enim architecto dolorem accusamus magni.",
-    author: "Author Name",
-    profile: profilePic,
-  }
-];
+import API_URL from "../../ServiceModule/Service"; // Make sure this points to your base API URL
 
 export default function Testimonials() {
+  const [testimonialsData, setTestimonialsData] = useState([]);
   const [slidesToShow, setSlidesToShow] = useState(window.innerWidth <= 620 ? 1 : 2);
+
+  const placeholderTestimonials = [
+    {
+      quote: "This is a fantastic service! Totally changed my life.",
+      author: "Jane Doe",
+      role: "UI/UX Designer",
+      profile: "https://via.placeholder.com/50"
+    },
+    {
+      quote: "Reliable, professional, and fast. Highly recommended!",
+      author: "John Smith",
+      role: "Software Engineer",
+      profile: "https://via.placeholder.com/50"
+    }
+  ];
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch(`${API_URL}testimonials`);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        setTestimonialsData(data.length > 0 ? data : []);
+      } catch (err) {
+        console.error("Failed to fetch testimonials:", err);
+        setTestimonialsData([]); // Fallback to placeholder
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -58,9 +66,11 @@ export default function Testimonials() {
     ]
   };
 
+  const testimonialsToDisplay = testimonialsData.length > 0 ? testimonialsData : placeholderTestimonials;
+
   return (
     <>
-      <div className="text-center">
+      <div id="testimonials" className="text-center">
         <h3 className="fw-bold" style={{ color: "#FF9906" }}>Testimonials</h3>
         <h1 className="mt-3 fw-bold">Hear From our Clients</h1>
       </div>
@@ -69,7 +79,7 @@ export default function Testimonials() {
         <section className="testimonials">
           <div className="container">
             <Slider {...settings} className="quotes">
-              {testimonialsData.map((testimonial, index) => (
+              {testimonialsToDisplay.map((testimonial, index) => (
                 <div
                   key={index}
                   className="quote-wrapper card"
@@ -97,6 +107,9 @@ export default function Testimonials() {
                       className="rounded-circle"
                       alt="author"
                       style={{ flexShrink: 0 }}
+                      onError={(e) => {
+                        e.target.src = "https://via.placeholder.com/50";
+                      }}
                     />
                     <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                       <span
@@ -116,7 +129,7 @@ export default function Testimonials() {
                           color: '#ccc'
                         }}
                       >
-                        Designer
+                        {testimonial.role || "Client"}
                       </span>
                     </div>
                   </div>
