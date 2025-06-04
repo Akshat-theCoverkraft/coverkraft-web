@@ -70,7 +70,7 @@ export default function Faq() {
   };
 
   return (
-    <div style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
+    <div id="faq" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
       <div className="text-center p-3">
         <h3 className="fw-bold" style={{ color: "#FF9906" }}>
           FAQ

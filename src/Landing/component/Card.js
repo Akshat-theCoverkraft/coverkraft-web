@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useState, useEffect } from "react";
 import {
   CardContent,
@@ -236,10 +237,58 @@ const Job = () => {
           </div>
         </div>
       )}
+=======
+import React, { useEffect, useState } from 'react';
+import { Typography, Grid } from '@mui/material';
+import API_URL from '../../ServiceModule/Service';
+import IMAGE_PATH from '../../ServiceModule/imagePath';
+import './CSS/service.css';
+
+const JobCard = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_URL}our_job`)
+      .then((res) => res.json())
+      .then((res) => setData(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  return (
+    <div style={styles.wrapper}>
+      <div style={styles.textSection}>
+        <Typography style={styles.benefitTag}>BENEFITS</Typography>
+        <Typography style={styles.heading}>Why Prefer CoverKraft</Typography>
+        <Typography style={styles.subText}>
+          Choose us for personalized insurance solutions, exceptional customer care,
+          and unwavering commitment to protecting what matters most to you.
+        </Typography>
+      </div>
+
+      <Grid container spacing={3} justifyContent="center">
+        {data.map((item, i) => (
+          <Grid item key={i}>
+            <div style={styles.cardOuter}>
+              <div style={styles.gradientGlow}></div>
+              <div style={styles.card}>
+                <img
+                  src={IMAGE_PATH + item.icon}
+                  alt="card-icon"
+                  style={styles.icon}
+                />
+                <Typography style={styles.title}>{item.title}</Typography>
+                <Typography style={styles.description}>{item.description}</Typography>
+              </div>
+            </div>
+          </Grid>
+        ))}
+      </Grid>
+>>>>>>> Stashed changes
     </div>
   );
 };
 
+<<<<<<< Updated upstream
 export default Job;
 
 // 💡 Read More Component
@@ -511,3 +560,87 @@ styleSheet.innerText = `
     }
 `;
 document.head.appendChild(styleSheet);
+=======
+const styles = {
+  wrapper: {
+    padding: '50px 30px',
+    backgroundColor: '#F8FAFC',
+  },
+  textSection: {
+    maxWidth: 600,
+    margin: '0 auto 50px auto',
+    textAlign: 'center',
+  },
+  benefitTag: {
+    color: '#FF9F0A',
+    fontWeight: 700,
+    fontSize: 16,
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  heading: {
+    fontSize: 32,
+    fontWeight: 700,
+    color: '#111827',
+    marginBottom: 12,
+  },
+  subText: {
+    fontSize: 16,
+    color: '#6B7280',
+    lineHeight: 1.6,
+  },
+  cardOuter: {
+    position: 'relative',
+    width: 280,
+    height: 180,
+    margin: 16,
+  },
+  gradientGlow: {
+    position: 'absolute',
+    top: 0,
+    left: -20,
+    right: -20,
+    bottom: 0,
+    background: 'linear-gradient(135deg, #0fd88f, #42c2e6)',
+    borderRadius: 30,
+    filter: 'blur(50px)',
+    opacity: 0.5,
+    zIndex: 1,
+  },
+  card: {
+    position: 'relative',
+    zIndex: 2,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    height: '100%',
+    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'transform 0.3s ease-in-out',
+  },
+  icon: {
+    width: 48,
+    height: 48,
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 600,
+    color: '#111827',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 14,
+    color: '#4B5563',
+    textAlign: 'center',
+    lineHeight: 1.4,
+  },
+};
+
+export default JobCard;
+>>>>>>> Stashed changes
