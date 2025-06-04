@@ -247,36 +247,63 @@ const Vault = () => {
     }
   };
 
-  const handleSharePdf = async () => {
-    console.log("policyids---------", selectedPolicies);
-    try {
-      const token = localStorage.getItem("token");
-      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
+ const handleSharePdf = async () => {
+  console.log("policyids---------", selectedPolicies);
 
-      const response = await axios.get(
-        `${API_URL}policy/pdfTable?${queryParams}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const filePath = response.data.filePath;
-      console.log("file path:", IMAGE_PATH + filePath);
-      setPdfUrl(IMAGE_PATH + filePath);
-      console.log("pdfurl", pdfUrl);
+  try {
+    const token = localStorage.getItem("token");
+    const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
 
-      // const link = document.createElement('a');
-      // link.href = IMAGE_PATH + filePath;
-      // link.setAttribute('download', 'policies.xlsx');
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-      toggleShareDialog();
-    } catch (error) {
-      console.error("Error fetching policy list:", error);
+    // Step 1: Get the actual PDF file path from backend
+    const response = await axios.get(
+      `${API_URL}policy/pdfTable?${queryParams}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const filePath = response.data.filePath;
+    const url = IMAGE_PATH + filePath;
+    console.log("file path:", url);
+
+    // Step 2: Fetch the file as blob
+    const pdfResponse = await fetch(url);
+    const blob = await pdfResponse.blob();
+
+    // Step 3: Create a File object from blob
+    const filename = filePath.split("/").pop() || "policy.pdf";
+    const file = new File([blob], filename, {
+      type: "application/pdf",
+      lastModified: new Date(),
+    });
+
+    // Step 4: Share using Web Share API with files
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: "Policy Document",
+        text: "Here is your policy document.",
+        files: [file], // THIS is the actual document being shared
+      });
+    } else {
+      alert("Your device/browser does not support direct document sharing.");
+
+      // Optional fallback — auto download
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(file);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
-  };
+
+    toggleShareDialog();
+  } catch (error) {
+    console.error("Error sharing policy document:", error);
+  }
+};
+
 
   const handleCheckboxChange = (policyId) => {
     setSelectedPolicies((prevSelected) =>
