@@ -13,7 +13,7 @@ import { THEME_COLOR } from "../../constants";
 const Footer = () => {
   return (
     <footer
-      className="pt-5 text-lg-start"
+      className="pt-5 text-lg-start px-5"
       style={{
         background: THEME_COLOR.FADE_BACKGROUND,
         color: THEME_COLOR.COLOR,
@@ -64,7 +64,6 @@ const Footer = () => {
             </div>
           </address>
 
-          {/* Service Links */}
           <nav className="col-6 col-md-4 col-lg-2">
             <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
               Service
@@ -84,7 +83,6 @@ const Footer = () => {
             ))}
           </nav>
 
-          {/* Company Links */}
           <div className="col-6 col-md-4 col-lg-2">
             <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
               Company
@@ -96,12 +94,11 @@ const Footer = () => {
             ))}
           </div>
 
-          {/* Social Icons */}
           <div className="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end justify-content-center gap-3">
             <img
               src={twitter}
               alt="Twitter"
-              className="social-icon"
+              className="twitter"
               aria-label="Twitter"
             />
             <img
@@ -120,7 +117,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Copyright */}
       <div
         className="text-center p-3 mt-4"
         style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
