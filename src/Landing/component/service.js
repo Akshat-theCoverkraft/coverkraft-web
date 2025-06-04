@@ -54,7 +54,7 @@ const Service = () => {
               className="text-secondary"
               sx={{
                 lineHeight: 1.7,
-                fontSize: isXs ? "0.95rem" : "1.1rem",
+                fontSize: isXs ? "0.95rem" : "1.4rem",
               }}
             >
               This certificate acknowledges our commitment to providing
