@@ -17,15 +17,14 @@ const Service = () => {
   const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <div id="service" className="containercards mt-5">
+    <div id="service" className="containercards mt-5  p-3">
       <Grid
         container
         spacing={4}
         alignItems="center"
-        justifyContent="center"
+        justifyContent="space-between"
         direction={isSm ? "column-reverse" : "row"}
       >
-        {/* LEFT: Text Content */}
         <Grid item xs={12} md={6}>
           <CardContent
             sx={{
@@ -66,14 +65,15 @@ const Service = () => {
           </CardContent>
         </Grid>
 
-        {/* RIGHT: Image Card */}
-        <Grid item xs={12} md={6} className="text-center">
+        <Grid item xs={12} md={6} className="text-center align-self-end">
           <Card
             sx={{
               boxShadow: 3,
               borderRadius: 4,
               overflow: "hidden",
               mx: isSm ? "auto" : 0,
+              height: "54vh",
+              width: "45vw",
             }}
           >
             <CardMedia
@@ -84,6 +84,7 @@ const Service = () => {
                 width: "100%",
                 height: { xs: 220, sm: 300, md: 400 },
                 objectFit: "contain",
+                alignSelf: "flex-end",
               }}
             />
           </Card>

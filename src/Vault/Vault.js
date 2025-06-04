@@ -57,6 +57,8 @@ const useStyles = makeStyles((theme) => ({
   breadcrumbsContainer: {
     display: "flex",
     alignItems: "center",
+    // backgroundColor: "red",
+    // justifyContent: "center",
   },
 }));
 
@@ -247,63 +249,62 @@ const Vault = () => {
     }
   };
 
- const handleSharePdf = async () => {
-  console.log("policyids---------", selectedPolicies);
+  const handleSharePdf = async () => {
+    console.log("policyids---------", selectedPolicies);
 
-  try {
-    const token = localStorage.getItem("token");
-    const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
+    try {
+      const token = localStorage.getItem("token");
+      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
 
-    // Step 1: Get the actual PDF file path from backend
-    const response = await axios.get(
-      `${API_URL}policy/pdfTable?${queryParams}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      // Step 1: Get the actual PDF file path from backend
+      const response = await axios.get(
+        `${API_URL}policy/pdfTable?${queryParams}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const filePath = response.data.filePath;
-    const url = IMAGE_PATH + filePath;
-    console.log("file path:", url);
+      const filePath = response.data.filePath;
+      const url = IMAGE_PATH + filePath;
+      console.log("file path:", url);
 
-    // Step 2: Fetch the file as blob
-    const pdfResponse = await fetch(url);
-    const blob = await pdfResponse.blob();
+      // Step 2: Fetch the file as blob
+      const pdfResponse = await fetch(url);
+      const blob = await pdfResponse.blob();
 
-    // Step 3: Create a File object from blob
-    const filename = filePath.split("/").pop() || "policy.pdf";
-    const file = new File([blob], filename, {
-      type: "application/pdf",
-      lastModified: new Date(),
-    });
-
-    // Step 4: Share using Web Share API with files
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        title: "Policy Document",
-        text: "Here is your policy document.",
-        files: [file], // THIS is the actual document being shared
+      // Step 3: Create a File object from blob
+      const filename = filePath.split("/").pop() || "policy.pdf";
+      const file = new File([blob], filename, {
+        type: "application/pdf",
+        lastModified: new Date(),
       });
-    } else {
-      alert("Your device/browser does not support direct document sharing.");
 
-      // Optional fallback — auto download
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(file);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Step 4: Share using Web Share API with files
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: "Policy Document",
+          text: "Here is your policy document.",
+          files: [file], // THIS is the actual document being shared
+        });
+      } else {
+        alert("Your device/browser does not support direct document sharing.");
+
+        // Optional fallback — auto download
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(file);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      toggleShareDialog();
+    } catch (error) {
+      console.error("Error sharing policy document:", error);
     }
-
-    toggleShareDialog();
-  } catch (error) {
-    console.error("Error sharing policy document:", error);
-  }
-};
-
+  };
 
   const handleCheckboxChange = (policyId) => {
     setSelectedPolicies((prevSelected) =>
@@ -336,7 +337,7 @@ const Vault = () => {
           <Stack spacing={2} className="p-5">
             <div className={classes.breadcrumbsContainer}>
               <Breadcrumbs
-                separator={<span className={classes.separator}>.</span>}
+                // separator={<span className={classes.separator}>:</span>}
                 aria-label="breadcrumb"
               >
                 <Link
@@ -358,7 +359,7 @@ const Vault = () => {
                 <img
                   src={share}
                   alt="Share Icon"
-                  height={60}
+                  height={40}
                   className="ml-4"
                   onClick={handleShareIconClick}
                   style={{ cursor: "pointer" }}
@@ -368,7 +369,7 @@ const Vault = () => {
               <GradientButton
                 text="Add Policy"
                 size="ml"
-                className="ml-5"
+                className="ml-5 mb-3"
                 startIcon={AddIcon}
                 onClick={handleClickOpen}
               />
