@@ -94,14 +94,12 @@
 
 
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './CSS/policyType.css';
-import Grid from '@mui/material/Grid';
 import Slider from 'react-slick'; // Import the Slider component
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllPolicyType } from '../../store/action/action';
 import API_URL from '../../ServiceModule/Service';
-import IMAGE_PATH from '../../ServiceModule/imagePath';
 
 const PolicyType = () => {
   const [policyType, setPolicyType] = useState([]);

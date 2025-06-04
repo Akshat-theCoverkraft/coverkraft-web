@@ -13,45 +13,49 @@ import "../component/CSS/service.css";
 
 const Service = () => {
   const theme = useTheme();
-  const isSmall = useMediaQuery("(max-width:400px)");
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isXs = useMediaQuery(theme.breakpoints.down("xs"));
+  const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <div className="containercards mt-5">
+    <div id="service" className="containercards mt-5">
       <Grid
         container
         spacing={4}
         alignItems="center"
         justifyContent="center"
-        direction={isMobile ? "column-reverse" : "row"}
+        direction={isSm ? "column-reverse" : "row"}
       >
-        {/* Left Side: Text */}
+        {/* LEFT: Text Content */}
         <Grid item xs={12} md={6}>
           <CardContent
-            style={{
-              textAlign: isMobile ? "center" : "left",
-              padding: isSmall ? "1rem 1rem" : "2rem",
+            sx={{
+              textAlign: isSm ? "center" : "left",
+              px: isSm ? 2 : 4,
+              py: 3,
             }}
           >
             <Typography
-              variant={isSmall ? "h5" : "h4"}
+              variant={isXs ? "h5" : "h4"}
               gutterBottom
-              style={{ color: "#FF9906" }}
+              sx={{ color: "#FF9906" }}
             >
               OUR CERTIFICATIONS
             </Typography>
+
             <Typography
-              variant={isSmall ? "h6" : "h3"}
+              variant={isXs ? "h6" : "h3"}
               className="mb-3 fw-bold"
+              sx={{ fontWeight: 600 }}
             >
               Recognized Excellence
             </Typography>
+
             <Typography
               variant="body1"
               className="text-secondary"
-              style={{
-                lineHeight: "1.7",
-                fontSize: isSmall ? "0.95rem" : "1.1rem",
+              sx={{
+                lineHeight: 1.7,
+                fontSize: isXs ? "0.95rem" : "1.1rem",
               }}
             >
               This certificate acknowledges our commitment to providing
@@ -62,19 +66,24 @@ const Service = () => {
           </CardContent>
         </Grid>
 
-        {/* Right Side: Image */}
+        {/* RIGHT: Image Card */}
         <Grid item xs={12} md={6} className="text-center">
-          <Card sx={{ boxShadow: 3, borderRadius: "16px" }}>
+          <Card
+            sx={{
+              boxShadow: 3,
+              borderRadius: 4,
+              overflow: "hidden",
+              mx: isSm ? "auto" : 0,
+            }}
+          >
             <CardMedia
               component="img"
               src={services}
               alt="Our Services"
               sx={{
                 width: "100%",
-                height: "50vh",
-                maxHeight: isSmall ? 220 : 400,
+                height: { xs: 220, sm: 300, md: 400 },
                 objectFit: "contain",
-                borderRadius: "16px",
               }}
             />
           </Card>
