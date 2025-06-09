@@ -19,9 +19,8 @@ function GradientButton({ onClick, text, className, size, block, startIcon }) {
   return (
     <button
       type="button"
-      className={`btn btn-lg ${size ? `btn-${size}` : ""} ${
-        block ? "w-100" : ""
-      } ${className}`}
+      className={`btn btn-lg ${size ? `btn-${size}` : ""} ${block ? "w-100" : ""
+        } ${className}`}
       style={buttonStyle}
       onClick={onClick}
     >

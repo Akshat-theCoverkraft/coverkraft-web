@@ -8,19 +8,63 @@ background: #eee;
 .h-custom {
 height: calc(100% - 73px);
 }
-@media (max-width: 450px) {
-.h-custom {
-height: 100%;
-}
-}
-@media (max-width: 1197px) {
-    /* Hide the logo image */
-    .container-fluid .row .col-md-8 {
-      display: none;
-    }
+/* login.css */
+
+@media (max-width: 1200px) {
+  .container-fluid.h-custom {
+    padding-left: 20px;
+    padding-right: 20px;
   }
-@media (max-width:987px){
-    .container-fluid .row .col-md-9{
-        display: none;
-    }
 }
+
+@media (max-width: 992px) {
+  .container-fluid.h-custom {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .shadow-md {
+    width: 90vw !important;
+    min-width: 300px;
+    padding: 40px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .shadow-md {
+    width: 100vw !important;
+    min-width: 0;
+    padding: 20px !important;
+  }
+  .order-1 {
+    margin-left: 0 !important;
+  }
+  .login-image-section {
+    display: none; /* Hide side image on mobile */
+  }
+}
+
+@media (max-width: 576px) {
+  .shadow-md {
+    padding: 12px !important;
+    font-size: 14px;
+  }
+  .text-center h1 {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* login.css */
+.slim-input input {
+  font-size: 14px !important;
+  padding: 20px 0px !important;
+  height: 22px !important;
+  border-radius: 6px !important;
+}
+
+.slim-button {
+  font-size: 15px !important;
+  padding: 10px 14px !important;
+  height: 44px !important;
+  border-radius: 15px !important;
+}
+

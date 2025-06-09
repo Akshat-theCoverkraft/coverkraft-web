@@ -27,26 +27,29 @@
 // export default CustomInput;
 
 function CustomInput({
-  type,
+  type = "text",
   label,
   value,
   onChange,
   isValid,
-  className,
+  className = "",
   placeholder,
   onKeyDown,
   validationMessage,
-  required,
-  name,
+  required = false,
+  name = "",
   children,
   backgroundColor,
+  inputStyle = {},
 }) {
   const inputId = `inputField-${name}`;
+
   return (
     <div data-mdb-input-init className="form-outline mb-4">
       <label className="form-label fw-bold text-light mb-3" htmlFor={inputId}>
         {label} {required && <span className="text-danger">*</span>}
       </label>
+
       {type === "select" ? (
         <select
           id={inputId}
@@ -56,7 +59,8 @@ function CustomInput({
           name={name}
           style={{
             padding: "10px 15px",
-            backgroundColor: "#2c2c2c",
+            backgroundColor: backgroundColor || "#2c2c2c",
+            ...inputStyle,
           }}
         >
           {children}
@@ -65,14 +69,21 @@ function CustomInput({
         <input
           type={type}
           id={inputId}
-          className={`form-control form-control-lg ${className} bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
+          className={`form-control form-control-lg ${className} bg-dark text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
-          style={{ padding: "12px 15px", height: "7vh" }}
+          name={name}
+          style={{
+            padding: "18px 15px",
+            backgroundColor: backgroundColor || "#2c2c2c",
+            ...inputStyle,
+            borderRadius: "0.9rem",
+          }}
         />
       )}
+
       {validationMessage && (
         <div className="invalid-feedback text-danger">{validationMessage}</div>
       )}
