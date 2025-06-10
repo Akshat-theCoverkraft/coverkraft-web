@@ -36,21 +36,21 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
   const userEmail = localStorage.getItem("userEmail");
   const [profileImage, setProfileImage] = useState(icDefaultProfile);
-  console.log("profileImage", profileImage);
+  // console.log("profileImage", profileImage);
   const [showImageInput, setShowImageInput] = useState(false);
   const [username, setuserName] = useState();
   const [useremail, setuserEmail] = useState();
   const [userDob, setuserDob] = useState();
   const [userAddress, setuserAddress] = useState();
   const [state, setstate] = useState("");
-  console.log("state", state);
+  // console.log("state", state);
   const [city, setCity] = useState("");
-  console.log("city", city);
+  // console.log("city", city);
   const [userPhone, setuserPhone] = useState();
   const [pinCode, setpinCode] = useState();
   const [gender, setgender] = useState();
   const [userImgFile, setuserImgFile] = useState(null);
-  console.log("userImgFile", userImgFile);
+  // console.log("userImgFile", userImgFile);
   const userbyId = useSelector((state) => state.user);
   const states = useSelector((state) => state.user);
   const [update, setUpdate] = useState(false);
@@ -90,7 +90,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   useEffect(() => {
     if (userbyId.getUserById && userbyId.getUserById.data) {
       const data = userbyId.getUserById.data;
-      console.log("data", data);
+      // console.log("data", data);
       setuserName(data.userName);
       setuserEmail(data.userEmail);
       setuserPhone(data.userPhone);
@@ -105,7 +105,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       );
     }
   }, [userbyId]);
-  console.log("userimg kya h", profileImage);
+  // console.log("userimg kya h", profileImage);
   const handleStateSelect = (stateId) => {
     setSelectedStateId(stateId);
   };
@@ -132,7 +132,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
   function handleUpateProfile() {
     const formData = new FormData();
-    console.log("FormData values before appending:", formData);
+    // console.log("FormData values before appending:", formData);
 
     formData.append("_id", localStorage.getItem("userId"));
     formData.append("userName", username);
@@ -184,7 +184,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       // onClose();
     } else {
       toast.error("Please fill all required fields!");
-      console.log("No fields are being updated");
+      // console.log("No fields are being updated");
     }
   }
 

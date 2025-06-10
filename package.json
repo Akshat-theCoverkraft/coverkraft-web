@@ -2,11 +2,10 @@
   "name": "covercraft",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://thecoverKraft.com/coverkraft/",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@firebase/app": "^0.10.8",
+    "@firebase/app": "^0.13.1",
     "@firebase/auth": "^1.7.6",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -27,7 +26,8 @@
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
-    "firebase": "^10.12.5",
+    "firebase": "^11.9.0",
+    "framer-motion": "^12.16.0",
     "i18next": "^23.11.3",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.47",
@@ -36,13 +36,13 @@
     "react-bootstrap": "^2.10.2",
     "react-datepicker": "^7.3.0",
     "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.5.2",
     "react-i18next": "^14.1.1",
     "react-icons": "^5.2.1",
     "react-multi-carousel": "^2.8.5",
     "react-otp-input": "^3.1.1",
     "react-redux": "^9.1.1",
     "react-router-dom": "^6.23.0",
-    "react-scripts": "5.0.1",
     "react-share": "^5.1.0",
     "react-slick": "^0.30.2",
     "react-spinners": "^0.13.8",
@@ -71,5 +71,20 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.6.0",
+    "babel-loader": "^10.0.0",
+    "html-webpack-plugin": "^5.6.3",
+    "react-refresh": "^0.17.0",
+    "react-scripts": "^5.0.1",
+    "source-map-loader": "^5.0.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   }
 }

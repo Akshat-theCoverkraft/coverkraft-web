@@ -1,42 +1,32 @@
-import React, { useState, useEffect,useRef } from 'react';
-import './CSS/login.css'
+import React, { useState, useEffect, useRef } from 'react';
+import './CSS/login.css';
 import LoginImg from '../Images/img_phone_login.png';
-import logo from '../Images/coverkraft_logo.png';
+import logo from '../Images/coverkraft_logo_1.png';
 import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
-import { Link } from 'react-router-dom';
-import firebase from '../ServiceModule/FirebaseConfig';
+import { Link, useNavigate } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
 import { verifyUser } from '../store/action/action';
 import API_URL from '../ServiceModule/Service';
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios'
-import Navbar from '../component/Navbar';
-import Footer from '../Landing/component/Footer';
-import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import { requestForToken } from '../helper';
-
-
-
+import LOGING from '../Images/LOGING.png';
 const Login = () => {
     const [loggedIn, setLoggedIn] = useState(false);
-    const [otp, setOtp] = React.useState([]);
+    const [otp, setOtp] = useState([]);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid, setValid] = useState(false);
-    const [verificationId,setVerificationId]=useState('')
-    const [verificationCode,setVerificationCode]=useState('')
-   
-  
-    const recaptchRef=useRef(null)
-    
+    const [verificationId, setVerificationId] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const recaptchRef = useRef(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-   
-    const User = useSelector((state) => state.user)
-    //useeffect
+
+    // Syncs `valid` with input validation
     useEffect(() => {
         if (valid) {
             setValid(true);
@@ -45,62 +35,50 @@ const Login = () => {
         }
     }, [!valid]);
 
-   
-
-    //function for handle phone number input field start
+    // Handle phone input (10-digit number)
     const handlephonechange = (e) => {
         let number = e.target.value.replace(/\D/g, '');
         number = number.slice(0, 10);
         setPhoneNumber(number);
         const isValid = /^\d{10}$/.test(number.replace('+91', ''));
         setValid(isValid);
-    }
-    //function for handle phone number input field end
+    };
 
-    //function for handle otp input field start
+    // Handle OTP input
     const handleOtpChange = (newValue) => {
-        setOtp(newValue)
-    }
-    //function for handle otp input field end
+        setOtp(newValue);
+    };
 
-    //function to handle login and integrate verify number API and recaptcha start
+    // Login handler - verifies phone and simulates Firebase OTP send
     const handleLogin = async () => {
         try {
             const userPhone = phoneNumber;
-
             const response = await axios.get(`${API_URL}user/verifyPhone?userPhone=${userPhone}`);
             console.log(response, "response");
+
             if (response.status === 200) {
                 const userId = response.data.user._id;
                 const token = response.data.user.token;
-                // Store the user ID in local storage
+
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('token', token);
-                console.log('token',token)
 
-                // if(recaptchRef.current){
-                //     recaptchRef.current.innerHTML='<div id="recaptcha-container"></div>'
-                // }
-                // const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container',{
-                //     size:'invisible'
-                // })
-                // console.log('verifer',verifier)
+                // Future use: Firebase OTP sending
+                // const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container',{ size:'invisible' })
                 // firebase.auth().signInWithPhoneNumber('+91'+ phoneNumber,verifier)
-                
-                // .then(confirmationResult =>{
-                //     setVerificationId(confirmationResult.verificationId)
-                //     toast.success('Phone verification done, OTP sent to your phone number.')
-                //     setLoggedIn(true);
-                // })
-                // .catch(error =>{
-                //     console.error('Error sending OTP:',error)
-                // })
-               setLoggedIn(true);
-               toast.success(response.message)
+                //     .then(confirmationResult => {
+                //         setVerificationId(confirmationResult.verificationId)
+                //         toast.success('Phone verification done, OTP sent to your phone number.')
+                //         setLoggedIn(true);
+                //     })
+                //     .catch(error => {
+                //         console.error('Error sending OTP:',error)
+                //     })
 
-                
+                setLoggedIn(true);
+                toast.success(response.message);
+
             } else {
-                // If status is not 200, display error message
                 toast.error('Phone number verification failed');
             }
         } catch (error) {
@@ -111,66 +89,159 @@ const Login = () => {
                 toast.error('An unexpected error occurred');
             }
         }
-    }
-    //function to handle login and integrate verify number API and recaptcha end
+    };
 
-
-    //function to verify otp and login start
+    // OTP verification (final login)
     const handleVerify = () => {
-        
-        // const credential =  firebase.auth.PhoneAuthProvider.credential(verificationId,otp);
-        // firebase.auth().signInWithCredential(credential)
-        //     .then(() => {
-                const formData = new FormData();
-                formData.append('userPhone', phoneNumber);
-                // const fcmToken =  requestForToken();
-                const fcmToken=localStorage.getItem('fcmToken')
-                console.log('fcmToken')
-                if (fcmToken) {
-                    formData.append('userFcmId', fcmToken);
-                }
-                dispatch(verifyUser(API_URL, formData))
-                localStorage.setItem('loggedIn', 'true');
-                toast.success('Phone number authentication done');
-                navigate('/coverkraft');
-            // })
-            // .catch((error) => {
-            //     toast.error('Authentication failed');
-            // })
-    }
-    //function to verify otp and login end
+        const formData = new FormData();
+        formData.append('userPhone', phoneNumber);
+        const fcmToken = localStorage.getItem('fcmToken');
 
-    //function for handling event on enter start
+        if (fcmToken) {
+            formData.append('userFcmId', fcmToken);
+        }
+
+        dispatch(verifyUser(API_URL, formData));
+        localStorage.setItem('loggedIn', 'true');
+        toast.success('Phone number authentication done');
+        navigate('/coverkraft');
+    };
+
+    // Trigger login on Enter key
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             handleLogin();
         }
     };
-    //function for handling event on enter end
 
     return (
-        <div className='overflow-hidden'>
-            <ToastContainer/>
-            <Navbar />
-            <section class=" " style={{ margin: '60px 0px' }}>
-                <div class="container-fluid h-custom">
-                    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div
+            className="overflow-hidden"
+            style={{
+                backgroundColor: '#313131',
+                minHeight: '100vh',
+                paddingLeft: '0px',
+                marginLeft: '0px',
+                position: 'relative',
+            }}
+        >
+            <ToastContainer />
+            {/* <Navbar /> */}
 
-                        <div class="col-md-9 col-lg-6 col-xl-5">
-                            <img src={LoginImg}
-                                class="img-fluid" alt="Sample image" height={1000} width={1000}/>
-                        </div>
-                        <div class="col-md-4 col-lg-5 col-xl-4 offset-xl-1">
-                            <form className='shadow shadow-md ' style={{ padding: '70px' }}>
-                                <div class="d-flex flex-row align-items-center justify-content-center mb-5  ">
-                                    <img src={logo} alt='logo' />
+            {/* LOGIN image with centered text */}
+            <div
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    right: 0,
+                    height: '100vh',
+                    width: 'auto',
+                    padding: 0,
+                    margin: 0,
+                    zIndex: 1,
+                    background: 'transparent',
+                    display: 'flex',
+                    alignItems: 'stretch',
+                }}
+            >
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-30%, -50%)',
+                        color: 'white',
+                        textAlign: 'center',
+                        zIndex: 5,
+                        padding: '20px',
+                        maxWidth: '400px',
+                        fontFamily: 'Poppins, sans-serif',
+                    }}
+                >
+                    <h1
+                        style={{
+                            fontSize: '36px',
+                            fontWeight: 'bold',
+                            marginBottom: '10px',
+                            textShadow: '0 0 10px rgba(0,0,0,0.7)',
+                        }}
+                    >
+                        Beema bhi, Bharosa bhi
+                    </h1>
+                    <p
+                        style={{
+                            fontSize: '18px',
+                            opacity: 0.85,
+                            lineHeight: '1.5',
+                            textShadow: '0 0 6px rgba(0,0,0,0.6)',
+                        }}
+                    >
+                        Secure your future. Simplify your policies. Trust the process.
+                    </p>
+                </div>
+
+                <img
+                    src={LOGING}
+                    alt="Sample"
+                    style={{
+                        height: '100vh',
+                        width: 'auto',
+                        margin: 0,
+                        padding: 0,
+                        objectFit: 'cover',
+                    }}
+                />
+            </div>
+
+            {/* Form section */}
+            <section
+                style={{
+                    marginLeft: '150px',
+                    marginRight: '100px',
+                    position: 'relative',
+                    zIndex: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    minHeight: '100vh',
+                }}
+            >
+                <div className="container-fluid h-custom">
+                    <div className="row d-flex justify-content-start align-items-center gx-5">
+                        <div className="col-md-4 col-lg-5 col-xl-4 order-1" style={{ marginLeft: 0 }}>
+                            <form
+                                className="shadow-md text-white"
+                                style={{
+                                    padding: '60px',
+                                    backgroundColor: '#000',
+                                    borderRadius: '12px',
+                                    width: '500px',
+                                    minHeight: '620px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <div className="d-flex flex-row align-items-center justify-content-center mb-5">
+                                    <img
+                                        src={logo}
+                                        alt="logo"
+                                        style={{
+                                            width: '300px',        // Adjust this based on taste (100-150px is clean)
+                                            height: 'auto',
+                                            maxWidth: '100%',
+                                            objectFit: 'contain'
+                                        }}
+                                    />
                                 </div>
 
 
                                 {!loggedIn ? (
-                                    <div >
-                                        <h1 className='text-center'>Login to your Account</h1>
-                                        <h5 className='text-center text-secondary mt-3 mb-5'>Enter your mobile number</h5>
+                                    <div>
+                                        <h1 className="text-center">Login to your Account</h1>
+                                        <h5 className="text-center text-white mt-3 mb-5 font-weight-bold">
+                                            Enter your mobile number
+                                        </h5>
                                         <div>
                                             <CustomInput
                                                 label="Mobile Number"
@@ -178,8 +249,14 @@ const Login = () => {
                                                 onChange={handlephonechange}
                                                 onKeyDown={handleKeyPress}
                                                 placeholder="Enter your number"
-                                                className={!valid && phoneNumber.length > 0 ? 'is-invalid' : ''}
+                                                className={`slim-input ${!valid && phoneNumber.length > 0 ? 'is-invalid' : ''
+                                                    }`}
                                                 required
+                                                style={{
+                                                    fontSize: '14px',
+                                                    padding: '8px 12px',
+                                                    height: '60px',
+                                                }}
                                             />
                                             {!valid && phoneNumber.length > 0 && (
                                                 <div className="invalid-feedback">
@@ -187,8 +264,7 @@ const Login = () => {
                                                 </div>
                                             )}
                                         </div>
-
-                                        <div class="text-center text-lg-start mt-4 pt-2">
+                                        <div className="text-center text-lg-start mt-4 pt-2">
                                             <div id="recaptcha-container"></div>
                                             <div ref={recaptchRef}></div>
                                             <Button
@@ -197,44 +273,48 @@ const Login = () => {
                                                 block={true}
                                                 onClick={handleLogin}
                                                 disabled={!valid || loggedIn}
-                                                className='mt-2'
+                                                className="mt-2 slim-button"
                                             />
-                                            <p class="medium fw-bold mt-2 pt-1 mb-0 text-center">Don't have an account? <Link to='/coverkraft/register'
-                                                class="custom-color" >Register</Link></p>
+                                            <p className="medium fw-bold mt-2 pt-1 mb-0 text-center">
+                                                Don't have an account?{' '}
+                                                <Link to="/coverkraft/register" className="custom-color">
+                                                    Register
+                                                </Link>
+                                            </p>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div >
-                                        <h1 className='text-center'>6 Digit Verfication</h1>
-                                        <h5 className='text-center text-secondary mt-3 mb-5'>Please enter 6 digit OTP to Login OTP sent to XXXXXXX{phoneNumber.slice(-3)}</h5>
-
+                                    <div>
+                                        <h1 className="text-center">6 Digit Verification</h1>
+                                        <h5 className="text-center text-secondary mt-3 mb-5">
+                                            Please enter 6 digit OTP to Login OTP sent to XXXXXXX{phoneNumber.slice(-3)}
+                                        </h5>
                                         <OtpInput
                                             value={otp}
                                             onChange={handleOtpChange}
                                             numInputs={6}
-                                            renderInput={(props, i) => (
+                                            renderInput={(props, _i) => (
                                                 <input
                                                     {...props}
                                                     style={{
-                                                        display: 'flex',
                                                         textAlign: 'center',
-                                                        justifyContent: 'center',
-                                                        width: '70%',
-                                                        height: '100%',
-                                                        margin: '10px',
-                                                        padding: '10px'
+                                                        width: '3.5rem',
+                                                        height: '3.5rem',
+                                                        margin: '0 15px',
+                                                        fontSize: '1.2rem',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid #ccc',
                                                     }}
                                                 />
                                             )}
                                         />
-
-
-                                        <div class="text-center text-lg-start mt-4 pt-2">
+                                        <div className="text-center text-lg-start mt-4 pt-2">
                                             <Button
-                                                text='Verify'
+                                                text="Verify"
                                                 size="lg"
                                                 block={true}
-                                                 onClick={handleVerify}
+                                                onClick={handleVerify}
+                                                className="slim-button"
                                             />
                                         </div>
                                     </div>
@@ -243,12 +323,12 @@ const Login = () => {
                         </div>
                     </div>
                 </div>
-
             </section>
-            <Footer />
 
+            {/* <Footer /> */}
         </div>
-    )
-}
+    );
 
-export default Login
+};
+
+export default Login;

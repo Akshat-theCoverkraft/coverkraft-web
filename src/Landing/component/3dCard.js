@@ -84,11 +84,7 @@ const Job = () => {
     <div
       id="card"
       style={{
-        marginTop: "80px",
-        padding: "50px",
-        backgroundColor: "#1a1a1a",
-        minHeight: "10vh",
-      }}
+        marginTop: "80px",padding: "50px",backgroundColor: "#1a1a1a",minHeight: "10vh",}}
     >
       <div style={styles.headerSection}>
         <Typography

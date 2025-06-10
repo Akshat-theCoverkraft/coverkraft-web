@@ -59,3 +59,12 @@ animate-style{
 .primary-color{
   color: 'rgb(138, 198, 66)'
 }
+
+@media (max-width: 768px) {
+  .force-responsive {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    font-size: 0.875rem;
+  }
+}
