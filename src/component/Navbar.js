@@ -266,27 +266,64 @@ function Navbar({ scrollToContactBottom }) {
             </MenuItem>
           </DarkMenu>
           <button
-            className="btn btn-lg px-4 py-2 mb-3"
             style={{
-              backgroundColor: "#8AC642",
-              color: "white",
-              border: "none",
+              backgroundColor: "transparent",
+              color: "#8AC642",
+              border: "1.5px solid #8AC642",
+              borderRadius: "5px",
+              padding: "2px 8px",
+              fontSize: "1.rem",
+              fontWeight: "600",
+              lineHeight: "2.5",
+              minWidth: "100px",
+              width: "auto",
+              display: "inline-block",
+              cursor: "pointer",
+              userSelect: "none",
+              transition: "all 0.25s ease",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.backgroundColor = "#8AC642";
+              e.currentTarget.style.color = "#000";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = "#8AC642";
             }}
             onClick={handleVault}
           >
             Vault
           </button>
+
         </>
       );
     }
 
     return (
       <button
-        className="btn btn-lg px-4 py-2"
         style={{
+          backgroundColor: "transparent",
           color: "#8AC642",
-          borderColor: "#8AC642",
-          background: "transparent",
+          border: "1.5px solid #8AC642",
+          borderRadius: "5px",
+          padding: "2px 8px",
+          fontSize: "1.rem",
+          fontWeight: "600",
+          lineHeight: "2.5",
+          minWidth: "100px",
+          width: "auto",
+          display: "inline-block",
+          cursor: "pointer",
+          userSelect: "none",
+          transition: "all 0.25s ease",
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.backgroundColor = "#8AC642";
+          e.currentTarget.style.color = "#000";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.backgroundColor = "transparent";
+          e.currentTarget.style.color = "#8AC642";
         }}
         onClick={() => navigate("/coverkraft/login")}
       >

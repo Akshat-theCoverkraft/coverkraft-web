@@ -36,7 +36,7 @@ import IMAGE_PATH from "../ServiceModule/imagePath";
 import GradientButton from "../component/GradientButton";
 import { THEME_COLOR } from "../constants";
 //styling for breadcrumbs
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   separator: {
     color: "#42988E",
     fontSize: "1.6rem",
@@ -70,7 +70,6 @@ const Vault = () => {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const inputRef = useRef();
   const imageRef = useRef();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedPolicyId, setSelectedPolicyId] = React.useState("");
   const [shareAllPolicy, setShareAllPolicy] = useState(false);
@@ -89,11 +88,11 @@ const Vault = () => {
     setSelectedPolicyId(policyId);
     localStorage.setItem("selectedPolicyId", policyId);
   };
-  console.log("selectedpolicyid", selectedPolicyId);
+  // console.log("selectedpolicyid", selectedPolicyId);
   //function for share dialog
   const toggleShareDialog = () => {
     setShowShareDialog(!showShareDialog);
-    console.log("dialog of share", showShareDialog);
+    // console.log("dialog of share", showShareDialog);
   };
 
   //add policy dialog box open and close function start
@@ -104,10 +103,6 @@ const Vault = () => {
     setOpen(false);
   };
 
-  const handleConfirmDialogOpen = () => {
-    setConfirmDialogOpen(true);
-    setOpen(false);
-  };
 
   const handleConfirmDialogClose = () => {
     setConfirmDialogOpen(false);
@@ -239,12 +234,7 @@ const Vault = () => {
 
   const handleSharePdf = async () => {
     console.log("policyids---------", selectedPolicies);
-  const handleSharePdf = async () => {
-    console.log("policyids---------", selectedPolicies);
 
-    try {
-      const token = localStorage.getItem("token");
-      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
     try {
       const token = localStorage.getItem("token");
       const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
@@ -258,19 +248,7 @@ const Vault = () => {
           },
         }
       );
-      // Step 1: Get the actual PDF file path from backend
-      const response = await axios.get(
-        `${API_URL}policy/pdfTable?${queryParams}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
 
-      const filePath = response.data.filePath;
-      const url = IMAGE_PATH + filePath;
-      console.log("file path:", url);
       const filePath = response.data.filePath;
       const url = IMAGE_PATH + filePath;
       console.log("file path:", url);
@@ -278,16 +256,7 @@ const Vault = () => {
       // Step 2: Fetch the file as blob
       const pdfResponse = await fetch(url);
       const blob = await pdfResponse.blob();
-      // Step 2: Fetch the file as blob
-      const pdfResponse = await fetch(url);
-      const blob = await pdfResponse.blob();
 
-      // Step 3: Create a File object from blob
-      const filename = filePath.split("/").pop() || "policy.pdf";
-      const file = new File([blob], filename, {
-        type: "application/pdf",
-        lastModified: new Date(),
-      });
       // Step 3: Create a File object from blob
       const filename = filePath.split("/").pop() || "policy.pdf";
       const file = new File([blob], filename, {
@@ -304,24 +273,7 @@ const Vault = () => {
         });
       } else {
         alert("Your device/browser does not support direct document sharing.");
-      // Step 4: Share using Web Share API with files
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: "Policy Document",
-          text: "Here is your policy document.",
-          files: [file], // THIS is the actual document being shared
-        });
-      } else {
-        alert("Your device/browser does not support direct document sharing.");
 
-        // Optional fallback — auto download
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(file);
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
         // Optional fallback — auto download
         const link = document.createElement("a");
         link.href = URL.createObjectURL(file);
@@ -376,7 +328,7 @@ const Vault = () => {
                   className="text-decoration-none font-size"
                   onClick={handleClick}
                   style={{
-                    paddingTop: '20px',
+                    paddingTop: '10px',
                     fontSize: '21px',
                     color: THEME_COLOR.COLOR,
                     display: 'inline-block'
@@ -387,7 +339,7 @@ const Vault = () => {
 
                 <Typography
                   className="cursor-pointer font-size"
-                  style={{ paddingTop: '20px', fontSize: "21px", color: THEME_COLOR.COLOR }}
+                  style={{ paddingTop: '10px', fontSize: "21px", color: THEME_COLOR.COLOR }}
                 >
                   My Policies
                 </Typography>
@@ -396,17 +348,15 @@ const Vault = () => {
                 <img
                   src={share}
                   alt="Share Icon"
-                  height={40}
                   className="ml-4"
                   onClick={handleShareIconClick}
                   style={{
-                    paddingTop: '18px',
+                    paddingTop: '10px',
                     height: '70px',
                     width: '50px', // maintain aspect ratio if needed
                     cursor: 'pointer',
                     objectFit: 'contain', // ensures it doesn’t stretch weirdly
                   }}
-                  height={40}
                   width={30}
                 />
               )}
@@ -416,6 +366,13 @@ const Vault = () => {
                 className="ml-5 mb-3"
                 startIcon={AddIcon}
                 onClick={handleClickOpen}
+                style={{
+                    paddingTop: '18px',
+                    height: '70px',
+                    width: '50px', // maintain aspect ratio if needed
+                    cursor: 'pointer',
+                    objectFit: 'contain', // ensures it doesn’t stretch weirdly
+                  }}
               />
               {shareAllPolicy && (
                 <>
@@ -683,11 +640,7 @@ const Vault = () => {
       }}
     />
   </DialogActions>
-</BootstrapDialog>
-
-
-        {/* dialog  box for share functionality */}
-        
+</BootstrapDialog>        
       </div>
     </>
   );

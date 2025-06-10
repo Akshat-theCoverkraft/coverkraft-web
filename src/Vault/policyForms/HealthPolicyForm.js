@@ -62,20 +62,6 @@ const HealthPolicyForm = () => {
   const token = localStorage.getItem('token')
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // useEffect(() => {
-  //     if (mode === 'edit' && responseData) {
-  //       setPolicyNumber(responseData.policyNumber || "");
-  //       setPolicyStartDate(responseData.policyStartDate || "");
-  //       setPolicyEndDate(responseData.policyEndDate || "");
-  //       setSumAssured(responseData.policyDetails.sumAssured || "");
-  //       setPremiumPaid(responseData.policyDetails.premiumPaid || "");
-  //       setInsuredName(responseData.insuredName || "");
-  //       setInsuredCompany(responseData.policyDetails.insuranceCompany || "");
-  //       setDob(responseData.policyDetails.dob || "");
-  //       setPolicyName(responseData.policyDetails.policyName || "");
-  //       setIdv(responseData.policyDetails.idv || "");
-  //     }
-  //   }, [mode, responseData]);
   const inputFields = [
     policyNumber,
     policyStartDate,
@@ -118,7 +104,6 @@ const HealthPolicyForm = () => {
   const handleSubmit = async () => {
     try {
       setLoading(true); // Set loading state to true to disable the button
-
       const payload = {
         policyNumber,
         policyStartDate,
@@ -129,7 +114,6 @@ const HealthPolicyForm = () => {
         insuredCompany,
         policyName,
       };
-
       if (validateFields(payload)) {
         if (mode === 'edit') {
           // Make API call to update the existing policy
@@ -147,7 +131,6 @@ const HealthPolicyForm = () => {
       setLoading(false); // Reset loading state to false after API call completes
     }
   };
-
   const validateFields = (payload) => {
     // Implement your validation logic here
     return (
@@ -164,10 +147,8 @@ const HealthPolicyForm = () => {
   };
 
   const createPolicy = (payload) => {
-    console.log('================')
 
     const formData = new FormData();
-
     formData.append('userId', userId);
     formData.append('documentId', documentId);
     formData.append('policyType', responseData?.policyType.toLowerCase());
@@ -182,7 +163,6 @@ const HealthPolicyForm = () => {
     formData.append('insuranceCompany', insuredCompany);
     formData.append('dob', dob);
     formData.append('policyName', policyName)
-
     dispatch(saveDocument(API_URL, formData))
       .then(() => {
         toast.success("Successfully Created");
@@ -192,7 +172,6 @@ const HealthPolicyForm = () => {
         toast.error("Error creating policy");
       });
   }
-
   const updatePolicy = (payload) => {
     console.log('================')
     const formData = new FormData();
@@ -219,10 +198,8 @@ const HealthPolicyForm = () => {
       })
       .catch((error) => {
         toast.error("Error updating policy");
-      });
-
+     });
   }
-
   return (
     <div>
       <Navbar />
@@ -235,7 +212,6 @@ const HealthPolicyForm = () => {
               <ProgressBarCircle progress={calculateProgress()} />                        </div>
             <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}> Details</p>
             <div>
-
               <Grid container spacing={6}>
                 <Grid item xs={12} md={6}>
                   <CustomInput
@@ -260,7 +236,6 @@ const HealthPolicyForm = () => {
                   />
                   <Grid container spacing={3} className='mt-2 mb-2'>
                     <Grid item xs={12} md={6}>
-
                       <label className="form-label fw-bold" htmlFor="inputField">
                         Start date <span className='text-danger'>*</span>
                       </label>
@@ -273,11 +248,9 @@ const HealthPolicyForm = () => {
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
-
                       <label className="form-label fw-bold" htmlFor="inputField">
                         End date <span className='text-danger'>*</span>
                       </label>
-
                       <DateTimePicker
                         height={50}
                         isIcon={false}
@@ -293,7 +266,6 @@ const HealthPolicyForm = () => {
                     value={insuredName}
                     onChange={(e) => {
                       setInsuredName(e.target.value);
-
                     }}
                     required
                   />
@@ -303,14 +275,9 @@ const HealthPolicyForm = () => {
                     value={insuredCompany}
                     onChange={(e) => {
                       setInsuredCompany(e.target.value);
-
                     }}
                     required
                   />
-
-
-
-
                   <Button
                     text={mode === 'edit' ? 'Update' : 'Save'}
                     size="lg"
@@ -318,15 +285,9 @@ const HealthPolicyForm = () => {
                     onClick={handleSubmit}
 
                   />
-
                 </Grid>
                 <Grid item xs={12} md={6}>
                   {/* <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}>Vehicle Details</p> */}
-
-
-
-
-
                   <CustomInput
                     type="text"
                     label="Net Premium"
@@ -335,7 +296,6 @@ const HealthPolicyForm = () => {
                       setNetPremium(e.target.value);
 
                     }}
-
                   />
                   <CustomInput
                     type="text"
@@ -371,15 +331,10 @@ const HealthPolicyForm = () => {
                     value={totalSumAssured}
                     onChange={(e) => {
                       setTotalSumAssured(e.target.value);
-
                     }}
-
                   />
-
                 </Grid>
               </Grid>
-
-
             </div>
           </Card>
         </Grid>
