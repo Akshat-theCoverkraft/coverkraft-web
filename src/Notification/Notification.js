@@ -10,12 +10,10 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
-import ck from "../Images/ck.png";
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
-import IMAGE_PATH from "../ServiceModule/imagePath";
 import { THEME_COLOR } from "../constants";
 
 const Notification = () => {
@@ -30,19 +28,25 @@ const Notification = () => {
       setLoading(true);
       try {
         const response = await axios.get(`${API_URL}notification/getAll`, {
-          params: {
-            status: "active",
-          },
+          params: { status: "active" },
         });
-        setLoading(false);
-        setNotifications(response?.data?.data);
-        const sentCount = response?.data?.data.filter(
-          (notification) => notification.notificationStatus === "sent"
+
+        const allNotifications = response?.data?.data || [];
+        const deletedIds =
+          JSON.parse(localStorage.getItem("deletedNotifications")) || [];
+
+        const filteredNotifications = allNotifications.filter(
+          (notification) => !deletedIds.includes(notification._id)
+        );
+
+        setNotifications(filteredNotifications);
+
+        const sentCount = filteredNotifications.filter(
+          (n) => n.notificationStatus === "sent"
         ).length;
         setSentNotificationsCount(sentCount);
       } catch (error) {
         console.error("Error fetching notifications:", error);
-        setLoading(false);
       } finally {
         setLoading(false);
       }
@@ -52,7 +56,6 @@ const Notification = () => {
   }, []);
 
   const markAsSeen = async (id) => {
-    console.log("idseen", id);
     try {
       await axios.post(`${API_URL}notification/update`, {
         _id: id,
@@ -65,9 +68,7 @@ const Notification = () => {
 
   const truncateDescription = (description, wordLimit) => {
     const words = description.split(" ");
-    if (words.length <= wordLimit) {
-      return description;
-    }
+    if (words.length <= wordLimit) return description;
     return words.slice(0, wordLimit).join(" ") + "...";
   };
 
@@ -80,6 +81,26 @@ const Notification = () => {
   const handleClose = () => {
     setOpen(false);
     setSelectedNotification(null);
+  };
+
+  const deleteNotification = (id) => {
+    const updatedList = notifications.filter((n) => n._id !== id);
+    setNotifications(updatedList);
+    setSentNotificationsCount(updatedList.length);
+
+    const deletedIds =
+      JSON.parse(localStorage.getItem("deletedNotifications")) || [];
+    localStorage.setItem(
+      "deletedNotifications",
+      JSON.stringify([...deletedIds, id])
+    );
+  };
+
+  const deleteAllNotifications = () => {
+    const allIds = notifications.map((n) => n._id);
+    localStorage.setItem("deletedNotifications", JSON.stringify(allIds));
+    setNotifications([]);
+    setSentNotificationsCount(0);
   };
 
   if (loading) {
@@ -122,6 +143,9 @@ const Notification = () => {
             style={{
               width: "100%",
               paddingLeft: "1rem",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Typography
@@ -129,9 +153,23 @@ const Notification = () => {
               sx={{ fontSize: "17px", fontWeight: "500", color: "#E0E0E0" }}
             >
               {sentNotificationsCount} new notification
-              {sentNotificationsCount > 1 ? "s" : ""}
+              {sentNotificationsCount !== 1 ? "s" : ""}
             </Typography>
+            <Button
+              onClick={deleteAllNotifications}
+              style={{
+                backgroundColor: "#D32F2F",
+                color: "white",
+                padding: "3px 12px",
+                fontSize: "14px",
+                borderRadius: "4px",
+                marginBottom: "1rem",
+              }}
+            >
+              Delete All
+            </Button>
           </div>
+
           {notifications?.map((notification, index) => {
             return (
               <Card
@@ -150,19 +188,6 @@ const Notification = () => {
                   style={{ backgroundColor: "#1C1C1C", minWidth: "80vw" }}
                   className="px-5 py-3"
                 >
-                  {/* <Grid item xs={3}>
-                    <img
-                      className="p-3"
-                      src={notification.imagePath}
-                      alt="Notification Icon"
-                      style={{
-                        height: "200px",
-                        width: "200px",
-                        objectFit: "contain",
-                        borderRadius: "8px",
-                      }}
-                    />
-                  </Grid> */}
                   <Grid item xs={10} className="pt-5">
                     <p
                       style={{
@@ -181,7 +206,7 @@ const Notification = () => {
                       }}
                     >
                       {truncateDescription(notification.description, 20)}{" "}
-                      {notification?.description?.length > 20 && (
+                      {notification?.description?.split(" ").length > 20 && (
                         <span
                           onClick={() => handleReadMore(notification)}
                           style={{
@@ -194,21 +219,39 @@ const Notification = () => {
                       )}
                     </p>
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid
+                    item
+                    xs={2}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-end",
+                      justifyContent: "space-between",
+                      paddingTop: "1.5rem",
+                    }}
+                  >
                     <p
                       style={{
                         color: "white",
-                        fontSize: "1.5rem",
-                        textAlign: "right",
-                        height: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
+                        fontSize: "1.1rem",
+                        marginBottom: "0.5rem",
                       }}
                     >
                       {sentNotificationsCount} day
                       {sentNotificationsCount > 1 ? "s" : ""} ago
                     </p>
+                    <Button
+                      onClick={() => deleteNotification(notification._id)}
+                      style={{
+                        color: "#FF5252",
+                        fontWeight: "bold",
+                        fontSize: "13px",
+                        marginLeft: "90px",
+                        paddingLeft: "900px",
+                      }}
+                    >
+                      Delete
+                    </Button>
                   </Grid>
                 </Grid>
               </Card>

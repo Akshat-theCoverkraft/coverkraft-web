@@ -1,145 +1,124 @@
+import React from "react";
+import { Link } from "react-router-dom";
 import logo from "../../Images/coverkraft_logo_1.png";
-import "./CSS/footer.css";
 import twitter from "../../Images/X.png";
 import facebook from "../../Images/facebook.png";
 import instagram from "../../Images/instagram.png";
 import location from "../../Images/location_on.png";
 import call from "../../Images/call.png";
 import email from "../../Images/email.png";
-import { Link } from "react-router-dom";
+import "./CSS/footer.css";
 import { THEME_COLOR } from "../../constants";
 
 const Footer = () => {
   return (
     <footer
-      className="text-center text-lg-start"
+      className="pt-5 text-lg-start px-5"
       style={{
         background: THEME_COLOR.FADE_BACKGROUND,
         color: THEME_COLOR.COLOR,
       }}
     >
-      <section className="py-5">
-        <div className="container text-center text-md-start">
-          <div className="row">
-            <div className="col-md-3 col-lg-3 col-xl-3 col-sm-12 mb-4">
-              <h6 className="text-uppercase fw-bold mb-4">
-                <img src={logo} alt="Coverkraft Logo" height={65} width={214} />
-              </h6>
-              <p className="text-color fs-5">
-                Coverkraft offers powerful tools for filling out forms, scanning
-                documents, and uploading them with ease.
-              </p>
+      <div className="container text-center text-md-start">
+        <div className="row g-4">
+          {/* Logo and Description */}
+          <div className="col-12 col-md-6 col-lg-3">
+            <img
+              src={logo}
+              alt="Coverkraft Logo"
+              height={65}
+              width={214}
+              className="mb-3"
+            />
+            <p className="fs-5 text-color">
+              Coverkraft offers powerful tools for filling out forms, scanning
+              documents, and uploading them with ease.
+            </p>
+          </div>
+
+          {/* Get in Touch */}
+          <address className="col-12 col-md-6 col-lg-3">
+            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
+              Get in Touch
+            </h6>
+
+            <div className="d-flex align-items-start mb-2">
+              <img src={location} alt="" height={23} className="me-2 mt-1" />
+              <span className="fs-5 footer-link">
+                8819 Ohio St. South Gate, CA 90280
+              </span>
             </div>
 
-            <div className="col-md-3 col-lg-3 col-xl-3 col-sm-12 mb-4">
-              <h6 className="text-uppercase fw-bold mb-4 fs-5 custom-color">
-                Get in Touch
-              </h6>
-
-              <div className="d-flex align-items-start mb-2">
-                <img
-                  src={location}
-                  alt="Location Icon"
-                  height={23}
-                  className="me-2 mt-1"
-                />
-                <p className="text-color fs-5 footer-link mb-0">
-                  8819 Ohio St. South Gate, CA 90280
-                </p>
-              </div>
-
-              <div className="d-flex align-items-start mb-2">
-                <img
-                  src={email}
-                  alt="Email Icon"
-                  height={23}
-                  className="me-2 mt-1"
-                />
-                <p className="text-color fs-5 footer-link mb-0">
-                  Ourstudio@hello.com
-                </p>
-              </div>
-
-              <div className="d-flex align-items-start">
-                <img
-                  src={call}
-                  alt="Call Icon"
-                  height={23}
-                  className="me-2 mt-1"
-                />
-                <p className="text-color fs-5 footer-link mb-0">
-                  +1 386-688-3295
-                </p>
-              </div>
+            <div className="d-flex align-items-start mb-2">
+              <img src={email} alt="" height={23} className="me-2 mt-1" />
+              <a href="mailto:Ourstudio@hello.com" className="fs-5 footer-link">
+                Ourstudio@hello.com
+              </a>
             </div>
 
-            <div className="col-md-2 col-lg-2 col-xl-2 col-sm-12 mb-4">
-              <h6 className="text-uppercase fw-bold mb-4 fs-5 custom-color">
-                Service
-              </h6>
-              <p>
-                <Link to="/coverkraft" className="text-color fs-5 footer-link">
-                  Home
-                </Link>
-              </p>
-              <p>
-                <Link
-                  to="/coverkraft/about"
-                  className="text-color fs-5 footer-link"
-                >
-                  About Us
-                </Link>
-              </p>
-              <p>
-                <Link
-                  to="/coverkraft/vault"
-                  className="text-color fs-5 footer-link"
-                >
-                  Vault
-                </Link>
-              </p>
-              <p>
-                <Link
-                  to="/coverkraft/vault"
-                  className="text-color fs-5 footer-link"
-                >
-                  Policy
-                </Link>
-              </p>
-              <p>
-                <Link
-                  to="/coverkraft/privacypolicy"
-                  className="text-color fs-5 footer-link"
-                >
-                  Privacy Policy
-                </Link>
-              </p>
+            <div className="d-flex align-items-start">
+              <img src={call} alt="" height={23} className="me-2 mt-1" />
+              <a href="tel:+13866883295" className="fs-5 footer-link">
+                +1 386-688-3295
+              </a>
             </div>
+          </address>
 
-            <div className="col-md-2 col-lg-2 col-xl-2 col-sm-12 mb-4">
-              <h6 className="text-uppercase fw-bold mb-4 fs-5 custom-color">
-                Company
-              </h6>
-              <p className="text-color fs-5 footer-link">Blog</p>
-              <p className="text-color fs-5 footer-link">Help</p>
-              <p className="text-color fs-5 footer-link">Terms & Conditions</p>
-            </div>
+          <nav className="col-6 col-md-4 col-lg-2">
+            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
+              Service
+            </h6>
+            {[
+              { to: "/coverkraft", label: "Home" },
+              { to: "/coverkraft/about", label: "About Us" },
+              { to: "/coverkraft/vault", label: "Vault" },
+              { to: "/coverkraft/vault", label: "Policy" },
+              { to: "/coverkraft/privacypolicy", label: "Privacy Policy" },
+            ].map(({ to, label }) => (
+              <p key={label}>
+                <Link to={to} className="fs-5 footer-link text-color">
+                  {label}
+                </Link>
+              </p>
+            ))}
+          </nav>
 
-            <div className="col-md-2 col-lg-2 col-xl-2 col-sm-12 d-flex justify-content-center align-items-center">
-              <img src={twitter} alt="Twitter Icon" className="twitter" />
-              <img src={facebook} alt="Facebook Icon" className="social-icon" />
-              <img
-                src={instagram}
-                alt="Instagram Icon"
-                className="social-icon"
-              />
-            </div>
+          <div className="col-6 col-md-4 col-lg-2">
+            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
+              Company
+            </h6>
+            {["Blog", "Help", "Terms & Conditions"].map((item) => (
+              <p className="fs-5 footer-link text-color" key={item}>
+                {item}
+              </p>
+            ))}
+          </div>
+
+          <div className="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end justify-content-center gap-3">
+            <img
+              src={twitter}
+              alt="Twitter"
+              className="twitter"
+              aria-label="Twitter"
+            />
+            <img
+              src={facebook}
+              alt="Facebook"
+              className="social-icon"
+              aria-label="Facebook"
+            />
+            <img
+              src={instagram}
+              alt="Instagram"
+              className="social-icon"
+              aria-label="Instagram"
+            />
           </div>
         </div>
-      </section>
+      </div>
 
       <div
-        className="text-center p-3"
+        className="text-center p-3 mt-4"
         style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
       >
         <span className="me-2">© Coverkraft 2024</span>

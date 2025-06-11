@@ -6,6 +6,7 @@ import {
   Typography,
   Grid,
   useMediaQuery,
+  Box,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import services from "../../Images/image 13.png";
@@ -13,11 +14,10 @@ import "../component/CSS/service.css";
 
 const Service = () => {
   const theme = useTheme();
-  const isSmall = useMediaQuery("(max-width:400px)");
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <div className="containercards mt-5">
+    <Box id="service" className="containercards mt-5 p-3">
       <Grid
         container
         spacing={4}
@@ -25,62 +25,70 @@ const Service = () => {
         justifyContent="center"
         direction={isMobile ? "column-reverse" : "row"}
       >
-        {/* Left Side: Text */}
+        {/* Text Block */}
         <Grid item xs={12} md={6}>
           <CardContent
-            style={{
+            sx={{
               textAlign: isMobile ? "center" : "left",
-              padding: isSmall ? "1rem 1rem" : "2rem",
+              px: { xs: 2, sm: 3, md: 4 },
+              py: { xs: 2, sm: 3 },
             }}
           >
             <Typography
-              variant={isSmall ? "h5" : "h4"}
+              variant={isMobile ? "h5" : "h4"}
               gutterBottom
-              style={{ color: "#FF9906" }}
+              sx={{ color: "#FF9906" }}
             >
               OUR CERTIFICATIONS
             </Typography>
+
             <Typography
-              variant={isSmall ? "h6" : "h3"}
-              className="mb-3 fw-bold"
+              variant={isMobile ? "h6" : "h3"}
+              sx={{ fontWeight: 700, mb: 2 }}
             >
               Recognized Excellence
             </Typography>
+
             <Typography
               variant="body1"
-              className="text-secondary"
-              style={{
-                lineHeight: "1.7",
-                fontSize: isSmall ? "0.95rem" : "1.1rem",
+              sx={{
+                lineHeight: 1.7,
+                fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.3rem" },
+                color: "#fff",
               }}
             >
-              This certificate acknowledges our commitment to providing
-              exceptional insurance services. Your trust in us is our greatest
-              asset. We pledge to continue delivering reliable and comprehensive
-              coverage to protect your future.
+              This certificate acknowledges our commitment to providing exceptional insurance services. Your trust in us is our greatest asset. We pledge to continue delivering reliable and comprehensive coverage to protect your future.
             </Typography>
           </CardContent>
         </Grid>
 
-        {/* Right Side: Image */}
-        <Grid item xs={12} md={6} className="text-center">
-          <Card sx={{ boxShadow: 3, borderRadius: "16px" }}>
+        {/* Image Block */}
+        <Grid item xs={12} md={6} sx={{ textAlign: "center" }}>
+          <Card
+            sx={{
+              boxShadow: 3,
+              borderRadius: 4,
+              overflow: "hidden",
+              mx: "auto",
+              maxWidth: { xs: "100%", sm: "80%", md: "90%" },
+              height: "auto",
+            }}
+          >
             <CardMedia
               component="img"
               src={services}
               alt="Our Services"
               sx={{
                 width: "100%",
-                height: "50vh",
-                maxHeight: isSmall ? 220 : 400,
+                height: "auto",
+                maxHeight: { xs: 220, sm: 320, md: 400 },
                 objectFit: "contain",
-                borderRadius: "16px",
               }}
             />
           </Card>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 

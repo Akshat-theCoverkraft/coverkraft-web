@@ -33,22 +33,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
 import IMAGE_PATH from "../ServiceModule/imagePath";
-import {
-  FacebookShareButton,
-  TwitterShareButton,
-  WhatsappShareButton,
-  EmailShareButton,
-  RedditShareButton,
-} from "react-share";
-import twitter from "../Images/twiter.png";
-import facebook from "../Images/fb.png";
-import whatsapp from "../Images/wtsp.png";
-import email from "../Images/gmial.png";
-import reddit from "../Images/reddit.png";
 import GradientButton from "../component/GradientButton";
 import { THEME_COLOR } from "../constants";
 //styling for breadcrumbs
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   separator: {
     color: "#42988E",
     fontSize: "1.6rem",
@@ -57,6 +45,8 @@ const useStyles = makeStyles((theme) => ({
   breadcrumbsContainer: {
     display: "flex",
     alignItems: "center",
+    // backgroundColor: "red",
+    // justifyContent: "center",
   },
 }));
 
@@ -80,7 +70,6 @@ const Vault = () => {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const inputRef = useRef();
   const imageRef = useRef();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedPolicyId, setSelectedPolicyId] = React.useState("");
   const [shareAllPolicy, setShareAllPolicy] = useState(false);
@@ -99,11 +88,11 @@ const Vault = () => {
     setSelectedPolicyId(policyId);
     localStorage.setItem("selectedPolicyId", policyId);
   };
-  console.log("selectedpolicyid", selectedPolicyId);
+  // console.log("selectedpolicyid", selectedPolicyId);
   //function for share dialog
   const toggleShareDialog = () => {
     setShowShareDialog(!showShareDialog);
-    console.log("dialog of share", showShareDialog);
+    // console.log("dialog of share", showShareDialog);
   };
 
   //add policy dialog box open and close function start
@@ -114,10 +103,6 @@ const Vault = () => {
     setOpen(false);
   };
 
-  const handleConfirmDialogOpen = () => {
-    setConfirmDialogOpen(true);
-    setOpen(false);
-  };
 
   const handleConfirmDialogClose = () => {
     setConfirmDialogOpen(false);
@@ -249,10 +234,12 @@ const Vault = () => {
 
   const handleSharePdf = async () => {
     console.log("policyids---------", selectedPolicies);
+
     try {
       const token = localStorage.getItem("token");
       const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
 
+      // Step 1: Get the actual PDF file path from backend
       const response = await axios.get(
         `${API_URL}policy/pdfTable?${queryParams}`,
         {
@@ -261,20 +248,44 @@ const Vault = () => {
           },
         }
       );
-      const filePath = response.data.filePath;
-      console.log("file path:", IMAGE_PATH + filePath);
-      setPdfUrl(IMAGE_PATH + filePath);
-      console.log("pdfurl", pdfUrl);
 
-      // const link = document.createElement('a');
-      // link.href = IMAGE_PATH + filePath;
-      // link.setAttribute('download', 'policies.xlsx');
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
+      const filePath = response.data.filePath;
+      const url = IMAGE_PATH + filePath;
+      console.log("file path:", url);
+
+      // Step 2: Fetch the file as blob
+      const pdfResponse = await fetch(url);
+      const blob = await pdfResponse.blob();
+
+      // Step 3: Create a File object from blob
+      const filename = filePath.split("/").pop() || "policy.pdf";
+      const file = new File([blob], filename, {
+        type: "application/pdf",
+        lastModified: new Date(),
+      });
+
+      // Step 4: Share using Web Share API with files
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: "Policy Document",
+          text: "Here is your policy document.",
+          files: [file], // THIS is the actual document being shared
+        });
+      } else {
+        alert("Your device/browser does not support direct document sharing.");
+
+        // Optional fallback — auto download
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(file);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
       toggleShareDialog();
     } catch (error) {
-      console.error("Error fetching policy list:", error);
+      console.error("Error sharing policy document:", error);
     }
   };
 
@@ -309,20 +320,26 @@ const Vault = () => {
           <Stack spacing={2} className="p-5">
             <div className={classes.breadcrumbsContainer}>
               <Breadcrumbs
-                separator={<span className={classes.separator}>.</span>}
+                // separator={<span className={classes.separator}>:</span>}
                 aria-label="breadcrumb"
               >
                 <Link
                   key="1"
                   className="text-decoration-none font-size"
                   onClick={handleClick}
-                  style={{ fontSize: "21px", color: THEME_COLOR.COLOR }}
+                  style={{
+                    paddingTop: '10px',
+                    fontSize: '21px',
+                    color: THEME_COLOR.COLOR,
+                    display: 'inline-block'
+                  }}
                 >
-                  Vault
+                  My Link
                 </Link>
+
                 <Typography
                   className="cursor-pointer font-size"
-                  style={{ fontSize: "21px", color: THEME_COLOR.COLOR }}
+                  style={{ paddingTop: '10px', fontSize: "21px", color: THEME_COLOR.COLOR }}
                 >
                   My Policies
                 </Typography>
@@ -331,19 +348,31 @@ const Vault = () => {
                 <img
                   src={share}
                   alt="Share Icon"
-                  height={60}
                   className="ml-4"
                   onClick={handleShareIconClick}
-                  style={{ cursor: "pointer" }}
+                  style={{
+                    paddingTop: '10px',
+                    height: '70px',
+                    width: '50px', // maintain aspect ratio if needed
+                    cursor: 'pointer',
+                    objectFit: 'contain', // ensures it doesn’t stretch weirdly
+                  }}
+                  width={30}
                 />
               )}
-
               <GradientButton
                 text="Add Policy"
                 size="ml"
-                className="ml-5"
+                className="ml-5 mb-3"
                 startIcon={AddIcon}
                 onClick={handleClickOpen}
+                style={{
+                    paddingTop: '18px',
+                    height: '70px',
+                    width: '50px', // maintain aspect ratio if needed
+                    cursor: 'pointer',
+                    objectFit: 'contain', // ensures it doesn’t stretch weirdly
+                  }}
               />
               {shareAllPolicy && (
                 <>
@@ -433,11 +462,11 @@ const Vault = () => {
                     style={{
                       backgroundColor: "white",
                       color: "black",
-                      fontSize: "22px",
+                      fontSize: "18px",
                       boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                     }}
                   >
-                    <img src={uploadPdf} alt="" height={35} className="mr-3" />
+                    <img src={uploadPdf} alt="" height={28} className="mr-3" />
                     <p>Upload Document</p>
                   </Card>
                 </React.Fragment>
@@ -448,7 +477,7 @@ const Vault = () => {
                     style={{
                       backgroundColor: "white",
                       color: "black",
-                      fontSize: "22px",
+                      fontSize: "18px",
                     }}
                     key={indx}
                   >
@@ -481,11 +510,11 @@ const Vault = () => {
                     className="d-flex justify-content-center card-detail p-3  cursor-pointer"
                     onClick={() => imageRef.current.click()}
                     style={{
-                      fontSize: "22px",
+                      fontSize: "18px",
                       boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                     }}
                   >
-                    <img src={uploadImg} alt="" height={40} className="mr-3" />
+                    <img src={uploadImg} alt="" height={32} className="mr-3" />
                     <p>Upload Image</p>
                   </Card>
                 </React.Fragment>
@@ -496,7 +525,7 @@ const Vault = () => {
                     style={{
                       backgroundColor: "white",
                       color: "black",
-                      fontSize: "22px",
+                      fontSize: "18px",
                     }}
                     key={indx}
                   >
@@ -515,120 +544,103 @@ const Vault = () => {
         </BootstrapDialog>
 
         {/* Dialog box of confirm box start */}
-        <BootstrapDialog
-          onClose={handleConfirmDialogClose}
-          aria-labelledby="confirmation-dialog-title"
-          open={confirmDialogOpen}
-          className=""
-          fullWidth
-          maxWidth="sm"
+       <BootstrapDialog
+  onClose={handleConfirmDialogClose}
+  aria-labelledby="confirmation-dialog-title"
+  open={confirmDialogOpen}
+  fullWidth
+  maxWidth="sm"
+  PaperProps={{
+    style: {
+      borderRadius: '16px',
+      padding: '24px',
+      backgroundColor: '#ffffff',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+    },
+  }}
+>
+  <DialogContent style={{ position: 'relative' }}>
+    {loading && (
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          height: '100%',
+          width: '100%',
+          backgroundColor: 'rgba(255,255,255,0.7)',
+          zIndex: 10,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: '16px',
+        }}
+      >
+        <Spinner
+          style={{ width: '3rem', height: '3rem', color: '#8AC642' }}
+          animation="border"
+          role="status"
         >
-          <DialogContent className="">
-            {loading && (
-              <div className="overlay-container">
-                <div className="fade-screen"></div>
-                <div className="loader-overlay d-flex justify-content-center">
-                  <Spinner
-                    className=" text-center"
-                    style={{ width: "3rem", height: "3rem", color: "#8AC642" }}
-                    animation="border"
-                    role="status"
-                  >
-                    <span className="sr-only">Loading...</span>
-                  </Spinner>
-                </div>
-              </div>
-            )}
-            <Typography
-              className="fw-bold text-center fs-4"
-              variant="body1"
-              gutterBottom
-            >
-              Are you sure you want to proceed?
-            </Typography>
-          </DialogContent>
-          <DialogActions className="mx-5 my-3">
-            <Button
-              text="Cancel"
-              size="md"
-              block={true}
-              onClick={handleConfirmDialogClose}
-            />
-            <Button
-              text="Confirm"
-              size="lg"
-              block={true}
-              onClick={handleConfirm}
-            />
-          </DialogActions>
-        </BootstrapDialog>
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      </div>
+    )}
 
-        {/* dialog  box for share functionality */}
-        {showShareDialog && (
-          <div
-            style={{
-              position: "absolute",
-              top: "32%",
-              left: "30%",
-              transform: "translate(-20%, -50%)",
-              backgroundColor: "white",
-              padding: "20px",
-              borderRadius: "10px",
-              boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
-              zIndex: "9999",
-            }}
-          >
-            <p className="fw-bold ">Share Via</p>
-            {/* <FacebookShareButton url={shareUrl} quote={policyDetailsMessage}>
-                                            <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
-                                        </FacebookShareButton> */}
-            <FacebookShareButton url={pdfUrl}>
-              <img
-                src={facebook}
-                alt="facebook"
-                height={50}
-                width={50}
-                style={{ cursor: "pointer", marginRight: "10px" }}
-              />
-            </FacebookShareButton>
-            <TwitterShareButton url={pdfUrl}>
-              <img
-                src={twitter}
-                alt="twitter"
-                height={50}
-                width={50}
-                style={{ cursor: "pointer", marginRight: "10px" }}
-              />
-            </TwitterShareButton>
-            <WhatsappShareButton url={pdfUrl}>
-              <img
-                src={whatsapp}
-                alt="whatsapp"
-                height={50}
-                width={50}
-                style={{ cursor: "pointer", marginRight: "10px" }}
-              />
-            </WhatsappShareButton>
-            <EmailShareButton url={pdfUrl}>
-              <img
-                src={email}
-                alt="whatsapp"
-                height={50}
-                width={50}
-                style={{ cursor: "pointer", marginRight: "10px" }}
-              />
-            </EmailShareButton>
-            <RedditShareButton url={pdfUrl}>
-              <img
-                src={reddit}
-                alt="whatsapp"
-                height={50}
-                width={50}
-                style={{ cursor: "pointer", marginRight: "10px" }}
-              />
-            </RedditShareButton>
-          </div>
-        )}
+    <Typography
+      variant="h6"
+      align="center"
+      gutterBottom
+      style={{
+        fontWeight: 600,
+        fontSize: '20px',
+        color: '#333',
+        zIndex: 1,
+        position: 'relative',
+        paddingTop: loading ? '20px' : '0',
+      }}
+    >
+      Are you sure you want to proceed?
+    </Typography>
+  </DialogContent>
+
+  <DialogActions
+    style={{
+      justifyContent: 'center',
+      padding: '16px 32px',
+      gap: '16px',
+    }}
+  >
+    <Button
+      text="Cancel"
+      size="md"
+      block={false}
+      onClick={handleConfirmDialogClose}
+      style={{
+        border: '2px solid #8AC642',
+        color: '#8AC642',
+        backgroundColor: 'transparent',
+        borderRadius: '8px',
+        fontWeight: 600,
+        padding: '8px 24px',
+      }}
+    />
+
+    <Button
+      text="Confirm"
+      size="md"
+      block={false}
+      onClick={handleConfirm}
+      style={{
+        backgroundColor: '#8AC642',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        fontWeight: 600,
+        padding: '8px 24px',
+      }}
+    />
+  </DialogActions>
+</BootstrapDialog>        
       </div>
     </>
   );
