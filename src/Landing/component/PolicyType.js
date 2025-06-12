@@ -159,9 +159,9 @@ const PolicyType = () => {
       className="p-5 rounded-5 gradient-background"
       style={{ margin: '0px 5%', }}
     >
-      <h3 className="text-center mb-4 fs-1 fw-bold">
+      {/* <h3 className="text-center mb-4 fs-1 fw-bold">
         Reliable <span style={{ color: '#FF9906' }}>Insurance</span> for every need.
-      </h3>
+      </h3> */}
       <div style={{ marginTop: '3em' }}>
         
         <Slider {...settings} style={{ paddingBottom: '2em'}}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import Logo from "../Images/coverkraft_logo_1.png";
+import Logo from "../Images/CoverKraft-beta.png";
 import profile from "../Images/ic-profile.png";
 import notification from "../Images/ic-notification.png";
 import { useTranslation } from "react-i18next";
@@ -28,22 +28,22 @@ const DarkMenu = styled(Menu)(() => ({
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/coverkraft", auth: false },
   { key: "about", label: "About Us", path: "/coverkraft/about", auth: true },
-  {
-    key: "help",
-    label: "Help",
-    path: "/",
-    auth: true,
-    isHelp: true,
-  },
+  // {
+  //   key: "help",
+  //   label: "Help",
+  //   path: "/",
+  //   auth: true,
+  //   isHelp: true,
+  // },
 ];
 
 const MORE_MENU_ITEMS = [
-  { key: "Card", label: "Why prefer CoverKraft", id: "card" },
-  { key: "about", label: "About Us", id: "about" },
-  { key: "blog", label: "Blog", id: "blog" },
-  { key: "testimonials", label: "Testimonials", id: "testimonials" },
-  { key: "faq", label: "FAQ", id: "faq" },
-  { key: "service", label: "Service", id: "service" },
+  { key: "Card", label: "Why prefer CoverKraft", id: "card", path: "/coverkraft" },
+  // { key: "about", label: "About Us", path: "/coverkraft/about", auth: true },
+  { key: "blog", label: "Blog", id: "blog", path: "/coverkraft/feed/blog" },
+  { key: "testimonials", label: "Testimonials", id: "testimonials", path: "/coverkraft/testimonials" },
+  { key: "faq", label: "FAQ", id: "faq", path: "/coverkraft/faq" },
+  // { key: "service", label: "Service", id: "service", path: "/coverkraft/service" },
 ];
 
 const LOCAL_STORAGE_KEYS = [
@@ -292,7 +292,7 @@ function Navbar({ scrollToContactBottom }) {
             }}
             onClick={handleVault}
           >
-            Vault
+            Policy Vault
           </button>
 
         </>

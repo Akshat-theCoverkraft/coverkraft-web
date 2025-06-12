@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './CSS/login.css';
-import LoginImg from '../Images/img_phone_login.png';
-import logo from '../Images/coverkraft_logo.png';
+import logo from '../Images/CoverKraft-beta.png';
 import { Link, useNavigate } from 'react-router-dom';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';
@@ -10,33 +9,25 @@ import { registrationCustomer } from '../store/action/action';
 import { useDispatch } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from '../component/Navbar';
-import Footer from '../Landing/component/Footer';
-import Grid from '@mui/material/Grid';
-import GlobalDropdown from '../component/StateDropdown';
-import CityDropdown from '../component/CityDropdown';
+import LOGING from '../Images/LOGING.png';
 
 const Register = () => {
     const [fullName, setFullName] = useState('');
-    const [DOB, setDOB] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
     const [email, setEmail] = useState('');
-    const [address, setAddress] = useState('');
-    const [pincode, setPincode] = useState('');
-    const [selectedStateId, setSelectedStateId] = useState('');
-    const [selectedCityId, setSelectedCityId] = useState('');
     const [valid, setValid] = useState(true);
     const [isValidEmail, setIsValidEmail] = useState(true);
-    const [isValidPinCode, setIsValidPinCode] = useState(true);
-    const [fcmToken, setFcmToken] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handlephonechange = (e) => {
-        const number = e.target.value.replace(/\D/g, '').slice(0, 10);
+        let number = e.target.value.replace(/\D/g, '');
+        number = number.slice(0, 10);
         setMobileNumber(number);
-        setValid(/^\d{10}$/.test(number));
+        const isValid = /^\d{10}$/.test(number.replace('+91', ''));
+        setValid(isValid);
     };
 
     const handleEmailChange = (e) => {
@@ -46,30 +37,10 @@ const Register = () => {
         setIsValidEmail(isValid);
     };
 
-    const handlePinCodeChange = (e) => {
-        const pin = e.target.value.replace(/\D/g, '');
-        setPincode(pin);
-        setIsValidPinCode(/^\d{5,6}$/.test(pin));
-    };
-
-    const handleStateSelect = (stateId) => setSelectedStateId(stateId);
-    const handleCitySelect = (cityId) => setSelectedCityId(cityId);
-
-    const isOldEnough = (dob) => {
-        const today = new Date();
-        const birthDate = new Date(dob);
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age >= 18;
-    };
-
     const handleRegister = async () => {
         const roleID = 3;
 
-        if (!fullName || !DOB || !mobileNumber || !email || !address || !roleID) {
+        if (!fullName || !mobileNumber || !email) {
             toast.error("Please fill all required fields");
             return;
         }
@@ -84,36 +55,13 @@ const Register = () => {
             return;
         }
 
-        if (!isValidPinCode) {
-            toast.error("Please enter a valid pin code (5 or 6 digits)");
-            return;
-        }
-
-        if (!selectedStateId) {
-            toast.error("Please select a state");
-            return;
-        }
-
-        if (!selectedCityId) {
-            toast.error("Please select a city");
-            return;
-        }
-
-        if (!isOldEnough(DOB)) {
-            toast.error("You must be at least 18 years old to register.");
-            return;
-        }
+        setIsSubmitting(true);
 
         const formData = new FormData();
         formData.append('userName', fullName);
-        formData.append('userDob', DOB);
         formData.append('userPhone', mobileNumber);
         formData.append('userEmail', email);
-        formData.append('userAddress', address);
-        formData.append('userFcmId', fcmToken);
         formData.append('roleId', roleID);
-        formData.append('city', selectedCityId);
-        formData.append('state', selectedStateId);
 
         try {
             await dispatch(registrationCustomer(API_URL, formData));
@@ -121,109 +69,247 @@ const Register = () => {
             navigate("/coverkraft/login");
         } catch (error) {
             toast.error('Registration failed');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleCancel = () => {
+        navigate("/coverkraft"); // Navigate to home page
+    };
+
+    // Trigger register on Enter key
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleRegister();
         }
     };
 
     return (
-        <div className="bg-dark text-light min-vh-100 overflow-hidden">
+        <div
+            className="overflow-hidden"
+            style={{
+                backgroundColor: '#313131',
+                minHeight: '100vh',
+                paddingLeft: '0px',
+                marginLeft: '0px',
+                position: 'relative',
+            }}
+        >
             <ToastContainer />
-            <Navbar />
-            <section className="py-5">
+
+            {/* Background image with centered text */}
+            <div
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    right: 0,
+                    height: '100vh',
+                    width: 'auto',
+                    padding: 0,
+                    margin: 0,
+                    zIndex: 1,
+                    background: 'transparent',
+                    display: 'flex',
+                    alignItems: 'stretch',
+                }}
+            >
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-30%, -50%)',
+                        color: 'white',
+                        textAlign: 'center',
+                        zIndex: 5,
+                        padding: '20px',
+                        maxWidth: '400px',
+                        fontFamily: 'Poppins, sans-serif',
+                    }}
+                >
+                    <h1
+                        style={{
+                            fontSize: '36px',
+                            fontWeight: 'bold',
+                            marginBottom: '10px',
+                            textShadow: '0 0 10px rgba(0,0,0,0.7)',
+                        }}
+                    >
+                        Beema bhi, Bharosa bhi
+                    </h1>
+                    <p
+                        style={{
+                            fontSize: '18px',
+                            opacity: 0.85,
+                            lineHeight: '1.5',
+                            textShadow: '0 0 6px rgba(0,0,0,0.6)',
+                        }}
+                    >
+                        Secure your future. Simplify your policies. Trust the process.
+                    </p>
+                </div>
+                <img
+                    src={LOGING}
+                    alt="Sample"
+                    style={{
+                        height: '100vh',
+                        width: 'auto',
+                        margin: 0,
+                        padding: 0,
+                        objectFit: 'cover',
+                    }}
+                />
+            </div>
+
+            {/* Form section */}
+            <section
+                style={{
+                    marginLeft: '150px',
+                    marginRight: '100px',
+                    position: 'relative',
+                    zIndex: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    minHeight: '100vh',
+                }}
+            >
                 <div className="container-fluid h-custom">
-                    <div className="row justify-content-center align-items-center g-4">
-                        <div className="col-md-6 d-none d-md-block text-center">
-                            <img src={LoginImg} alt="Phone Login" className="img-fluid" />
-                        </div>
-                        <div className="col-md-6 col-lg-5">
-                            <form className="shadow-lg p-4 rounded-4 bg-secondary text-light">
-                                <div className="text-center mb-3">
-                                    <img src={logo} alt="Logo" height={60} />
-                                </div>
-                                <h2 className="text-center fw-bold">Register</h2>
-                                <p className="text-center text-muted mb-4">Create your CoverKraft account</p>
-
-                                <CustomInput
-                                    type="text"
-                                    label="Full Name"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
-                                    required
-                                />
-                                <CustomInput
-                                    type="date"
-                                    label="Date of Birth"
-                                    value={DOB}
-                                    onChange={(e) => setDOB(e.target.value)}
-                                    required
-                                />
-
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={6}>
-                                        <CustomInput
-                                            type="number"
-                                            label="Mobile Number"
-                                            value={mobileNumber}
-                                            onChange={handlephonechange}
-                                            required
-                                        />
-                                        {!valid && <small className="text-warning">Enter a valid 10-digit number</small>}
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <CustomInput
-                                            type="email"
-                                            label="Email"
-                                            value={email}
-                                            onChange={handleEmailChange}
-                                            required
-                                        />
-                                        {!isValidEmail && <small className="text-warning">Enter a valid email</small>}
-                                    </Grid>
-                                </Grid>
-
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={6}>
-                                        <GlobalDropdown onStateSelect={handleStateSelect} />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <CityDropdown selectedStateId={selectedStateId} onCitySelect={handleCitySelect} />
-                                    </Grid>
-                                </Grid>
-
-                                <CustomInput
-                                    label="Pin Code"
-                                    placeholder="Enter your Pin Code"
-                                    value={pincode}
-                                    onChange={handlePinCodeChange}
-                                    required
-                                />
-                                {!isValidPinCode && <small className="text-warning">Enter a valid pin code (5 or 6 digits)</small>}
-
-                                <div className="mb-3">
-                                    <label htmlFor="address" className="form-label fw-bold">Address</label>
-                                    <textarea
-                                        id="address"
-                                        className="form-control rounded-3 bg-dark text-light border-light"
-                                        rows={3}
-                                        value={address}
-                                        onChange={(e) => setAddress(e.target.value)}
-                                        placeholder="Enter your address"
-                                        required
+                    <div className="row d-flex justify-content-start align-items-center gx-5">
+                        <div className="col-md-4 col-lg-5 col-xl-4 order-1" style={{ marginLeft: 0 }}>
+                            <form
+                                className="shadow-md text-white"
+                                style={{
+                                    padding: '60px',
+                                    backgroundColor: '#000',
+                                    borderRadius: '12px',
+                                    width: '500px',
+                                    minHeight: '620px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <div className="d-flex flex-row align-items-center justify-content-center mb-5">
+                                    <img
+                                        src={logo}
+                                        alt="logo"
+                                        style={{
+                                            width: '300px',
+                                            height: 'auto',
+                                            maxWidth: '100%',
+                                            objectFit: 'contain'
+                                        }}
                                     />
                                 </div>
 
-                                <div className="d-grid mt-4">
-                                    <Button text="Save" size="lg" block onClick={handleRegister} />
+                                <div>
+                                    <h1 className="text-center">Create your Account</h1>
+                                    <h5 className="text-center text-white mt-3 mb-5 font-weight-bold">
+                                        Enter your details to register
+                                    </h5>
+
+                                    <div className="mb-3">
+                                        <CustomInput
+                                            label="Full Name"
+                                            value={fullName}
+                                            onChange={(e) => setFullName(e.target.value)}
+                                            onKeyDown={handleKeyPress}
+                                            placeholder="Enter your full name"
+                                            className="slim-input"
+                                            required
+                                            style={{
+                                                fontSize: '14px',
+                                                padding: '8px 12px',
+                                                height: '60px',
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <CustomInput
+                                            label="Email"
+                                            value={email}
+                                            onChange={handleEmailChange}
+                                            onKeyDown={handleKeyPress}
+                                            placeholder="Enter your email"
+                                            className={`slim-input ${!isValidEmail && email.length > 0 ? 'is-invalid' : ''}`}
+                                            required
+                                            style={{
+                                                fontSize: '14px',
+                                                padding: '8px 12px',
+                                                height: '60px',
+                                            }}
+                                        />
+                                        {!isValidEmail && email.length > 0 && (
+                                            <div className="invalid-feedback">
+                                                Please enter a valid email address.
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <CustomInput
+                                            label="Mobile Number"
+                                            value={mobileNumber}
+                                            onChange={handlephonechange}
+                                            onKeyDown={handleKeyPress}
+                                            placeholder="Enter your number"
+                                            className={`slim-input ${!valid && mobileNumber.length > 0 ? 'is-invalid' : ''}`}
+                                            required
+                                            style={{
+                                                fontSize: '14px',
+                                                padding: '8px 12px',
+                                                height: '60px',
+                                            }}
+                                        />
+                                        {!valid && mobileNumber.length > 0 && (
+                                            <div className="invalid-feedback">
+                                                Please enter a valid 10-digit mobile number.
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="text-center text-lg-start mt-4 pt-2">
+                                        <div className="d-flex gap-3">
+                                            <Button
+                                                text="Cancel"
+                                                size="lg"
+                                                onClick={handleCancel}
+                                                className="mt-2 slim-button flex-fill"
+                                                style={{
+                                                    color: "#fff",
+                                                    backgroundColor: "#5A9E1E",
+                                                    borderRadius: "0px",
+                                                    padding: "14px 32px",
+                                                    fontSize: "1rem",
+                                                    fontWeight: 700,
+                                                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                                                    textTransform: "uppercase",
+                                                    letterSpacing: "1px",
+                                                }}
+                                            />
+                                            <Button
+                                                text={isSubmitting ? 'Registering...' : 'Register'}
+                                                size="lg"
+                                                onClick={handleRegister}
+                                                disabled={!valid || !isValidEmail || !fullName || !email || !mobileNumber || isSubmitting}
+                                                className="mt-2 slim-button flex-fill"
+                                            />
+                                        </div>
+                                        <p className="medium fw-bold mt-2 pt-1 mb-0 text-center">
+                                            Already have an account?{' '}
+                                            <Link to="/coverkraft/login" className="custom-color">
+                                                Login
+                                            </Link>
+                                        </p>
+                                    </div>
                                 </div>
-                                <p className="text-center mt-3">
-                                    Already have an account?{' '}
-                                    <Link to="/coverkraft/login" className="text-info fw-bold">Login</Link>
-                                </p>
                             </form>
                         </div>
                     </div>
                 </div>
             </section>
-            <Footer />
         </div>
     );
 };

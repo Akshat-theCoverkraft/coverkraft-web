@@ -33,7 +33,7 @@ const createItem = (position, idx, items) => {
   return item;
 };
 
-const CarouselSlideItem = ({ pos, idx, activeIdx, items }) => {
+const CarouselSlideItem = ({ pos, idx, items }) => {
   const item = createItem(pos, idx, items);
   const extension = item?.video?.split(".").pop().toLowerCase();
   const videoExtensions = ["mp4", "avi", "mov"];
@@ -118,7 +118,7 @@ const Carousel1 = () => {
   }, [carouselItems]);
 
   return (
-    <div className="carousel__wrap">
+    <div className="carousel__wrap" style={{  }}>
       <div className="carousel__inner">
         <button
           className="carousel__btn carousel__btn--prev"

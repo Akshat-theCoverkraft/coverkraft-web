@@ -39,7 +39,7 @@ const HeroSection = () => {
             }}
             dangerouslySetInnerHTML={{ __html: t("secureFuture") }}
           />
-          <p
+          {/* <p
             style={{
               color: "#7B7B7B",
               fontSize: "1.8rem",
@@ -50,7 +50,7 @@ const HeroSection = () => {
             Choose us for tailored insurance coverage, exceptional customer
             service, and peace of mind with reliable, comprehensive protection
             for all your needs.
-          </p>
+          </p> */}
           <Button
             onClick={handleVault}
             style={{
@@ -58,7 +58,7 @@ const HeroSection = () => {
               backgroundColor: "#5A9E1E",
               borderRadius: "30px",
               padding: "14px 32px",
-              fontSize: "1rem",
+              fontSize: "1.4rem",
               fontWeight: 700,
               boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
               textTransform: "uppercase",
@@ -82,7 +82,7 @@ const HeroSection = () => {
         >
           <img
             src={family}
-            alt="Family Home Insurance"
+            alt="Family Home "
             style={{
               width: "100%",
               height: "auto",

@@ -107,7 +107,7 @@ const Job = () => {
         >
           Why Prefer Coverkraft
         </Typography>
-        <Typography
+        {/* <Typography
           variant="body1"
           sx={{
             fontSize: isMobile ? "1rem" : "1.2rem",
@@ -120,7 +120,7 @@ const Job = () => {
           Choose us for personalized insurance solutions, exceptional customer
           care, and unwavering commitment to protecting what matters most to
           you.
-        </Typography>
+        </Typography> */}
       </div>
 
       {/* Carousel Section */}

@@ -4,7 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import checkicon from "../../Images/Check-icon.png";
 import googleicon from "../../Images/Google-icon.png";
 import appleicon from "../../Images/Apple-icon.png";
-import mockup from "../../Images/Coverkraft-mockup.png";
+import mockup from "../../Images/Group 1000001136.png";
 import "./CSS/afterglow.css";
 
 const features = [
@@ -44,7 +44,7 @@ const Coverkraft = () => {
             gutterBottom
             sx={{ fontSize: { xs: "22px", sm: "26px", md: "29px" } }}
           >
-            DOWNLOAD APP
+            DOWNLOAD APP <span style={{ color: "#8BC642", fontWeight:"6rem", fontSize: "50px" }}>Coming Soon...</span>
           </Typography>
           <Typography
             variant="h3"

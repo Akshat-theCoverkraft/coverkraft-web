@@ -1,49 +1,60 @@
+/* === TEXT STYLES === */
 .text-color {
   color: #dddddd;
 }
-/* Style for social media icons */
-.social-icon {
-  transition: opacity 0.3s ease; /* Smooth transition for opacity change */
-}
 
-.twitter {
-  /* background-color: red; */
-  height: 2vh;
+.footer-link {
+  color: #e0e0e0;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
   cursor: pointer;
+  display: inline-block;
 }
 
-.twitter:hover {
-  opacity: 0.7;
-}
-
-/* Hover effect: Reduce opacity when hovering over social icons */
-.social-icon:hover {
-  opacity: 0.7; /* Reduce opacity to 0.7 when hovered */
-}
 .footer-link:hover {
-  color: #42988e; /* Green text color on hover */
-  transform: scale(1.05); /* Scale up text size slightly on hover */
-  transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for color and scale change */
+  color: #ffffff;
+  text-decoration: underline;
+  transform: scale(1.05); /* Zoom on hover */
+}
+
+/* === SOCIAL ICON STYLES === */
+.social-icon,
+.twitter {
+  width: 30px;
+  height: 60px;
+  transition: transform 0.3s ease, filter 0.3s ease;
   cursor: pointer;
 }
-/* CSS for mobile responsiveness */
+
+.social-icon:hover,
+.twitter:hover {
+  transform: scale(1.15); /* Consistent zoom */
+  filter: brightness(0.9) invert(0.9); /* Slight hover effect */
+}
+
+/* === UTILITY CLASSES === */
+.clickable {
+  cursor: pointer;
+}
+
+/* === RESPONSIVENESS === */
 @media (max-width: 768px) {
-  /* Adjust column width */
-  .col-md-2 {
-    flex: 0 0 100%;
-    max-width: 100%;
+  footer .row > div {
+    text-align: center;
   }
 
-  /* Adjust social icons size */
-  .social-icon {
-    height: 30px;
-    width: 30px;
+  .footer-link {
+    margin: 6px 0;
+  }
+
+  .social-icon,
+  .twitter {
+    width: 24px;
+    height: 24px;
   }
 }
 
-/* CSS for tablet responsiveness */
 @media (max-width: 992px) {
-  /* Adjust column width */
   .col-md-2 {
     flex: 0 0 50%;
     max-width: 50%;

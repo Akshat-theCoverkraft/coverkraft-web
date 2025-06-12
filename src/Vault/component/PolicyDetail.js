@@ -3,7 +3,11 @@ import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Button from "../../component/Button";
 import EditIcon from "../../Images/edit.png";
-import detailScooty from "../../Images/detail-scooty.png";
+import scooty from "../../Images/detail-scooty.png";
+import HealthInsurance from "../../Images/FamilyHealthInsurance.png";
+import car from "../../Images/Car.png";
+import Health from "../../Images/ic_health.png"
+import Life from "../../Images/ic_life.png"
 import Grid from "@mui/material/Grid";
 import premium from "../../Images/premium.png";
 import value from "../../Images/value.png";
@@ -13,23 +17,10 @@ import redBg from "../../Images/red-img.png";
 import share from "../../Images/share.png";
 import download from "../../Images/ic-download1.png";
 import view from "../../Images/ic-view.png";
-import {
-  FacebookShareButton,
-  TwitterShareButton,
-  WhatsappShareButton,
-  EmailShareButton,
-  RedditShareButton,
-} from "react-share";
-import twitter from "../../Images/twiter.png";
-import facebook from "../../Images/fb.png";
-import whatsapp from "../../Images/wtsp.png";
-import email from "../../Images/gmial.png";
-import reddit from "../../Images/reddit.png";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../ServiceModule/Service";
 import axios from "axios";
 import emptyImage from "../../Images/ic-empty.png";
-import car from "../../Images/Car.png";
 import IMAGE_PATH from "../../ServiceModule/imagePath";
 import moment from "moment";
 import { formatDate } from "../../utils/dateUtils";
@@ -81,36 +72,6 @@ const PolicyDetail = ({ policyId }) => {
       fetchPolicyDetails();
     }
   }, [policyId]);
-  // useEffect(() => {
-  //     const fetchPolicyDetails = async () => {
-  //         try {
-  //             const token = localStorage.getItem('token');
-  //             const response = await axios.get(`${API_URL}policy/fetchFullData?_id=${policyId}`, {
-  //                 headers: {
-  //                     Authorization: `Bearer ${token}`, // Include token in the headers
-  //                 }
-  //             });
-
-  //             // Assuming the response.data is already an array of policy details
-  //             if (Array.isArray(response.data)) {
-  //                 setPolicyDetails(response.data);
-  //                 console.log('Policy details:', response.data);
-  //                 localStorage.setItem('policyId', policyId);
-  //             } else {
-  //                 console.error('Expected an array but got:', response.data);
-  //                 setPolicyDetails([]);
-  //             }
-
-  //         } catch (error) {
-  //             console.error('Error fetching policy details:', error);
-  //             setPolicyDetails([]);
-  //         }
-  //     };
-
-  //     if (policyId) {
-  //         fetchPolicyDetails();
-  //     }
-  // }, [policyId]);
 
   //function to view the pdf document
   const handleViewDocument = (documentPath) => {
@@ -182,12 +143,12 @@ const PolicyDetail = ({ policyId }) => {
   const sharePolicyDocument = async (documentPath) => {
     const url = `${IMAGE_PATH}${documentPath}`;
     const filename = documentPath.split("/").pop();
- 
+
     try {
       const response = await fetch(url);
       const blob = await response.blob();
       const file = new File([blob], filename, { type: "application/pdf" });
- 
+
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           title: "Policy Document",
@@ -201,7 +162,7 @@ const PolicyDetail = ({ policyId }) => {
       console.error("Error sharing file:", err);
     }
   };
-  
+
   const userId = localStorage.getItem("userId");
   const handleArchieve = () => {
     const archieve = "archive";
@@ -346,10 +307,24 @@ const PolicyDetail = ({ policyId }) => {
                 <div>
                   <img
                     src={
-                      policy.policyType === "car_policy" ? car : detailScooty
+                      policy.policyType === "car_policy"
+                        ? car
+                        : policy.policyType === "bike_policy"
+                          ? scooty
+                          : policy.policyType === "other_vehicle"
+                            ? scooty
+                            : policy.policyType === "life"
+                              ? family
+                              : policy.policyType === "accident"
+                                ? family
+                                : policy.policyType === "health"
+                                  ? Health
+                                  : policy.policyType === "other_health"
+                                    ? HealthInsurance
+                                    : ""
                     }
                     alt="Policy Image"
-                    width={200}
+                    style={{ width: "75%", maxWidth: "75%" }}
                     className="img-fluid rounded-start"
                   />
                 </div>
@@ -549,71 +524,7 @@ const PolicyDetail = ({ policyId }) => {
                     <p></p>
                   )}
                 </Card>
-                {showShareDialog && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "30%",
-                      left: "52%",
-                      transform: "translate(5%, -50%)",
-                      backgroundColor: "white",
-                      padding: "20px",
-                      borderRadius: "10px",
-                      boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
-                      zIndex: "9999",
-                    }}
-                  >
-                    <p className="fw-bold ">Share Via</p>
-                    {/* <FacebookShareButton url={shareUrl} quote={policyDetailsMessage}>
-                                            <img src={facebook} alt='facebook' height={50} width={50} style={{ cursor: 'pointer', marginRight: '10px' }} />
-                                        </FacebookShareButton> */}
-                    <FacebookShareButton url={pdfUrl}>
-                      <img
-                        src={facebook}
-                        alt="facebook"
-                        height={30}
-                        width={30}
-                        style={{ cursor: "pointer", marginRight: "10px" }}
-                      />
-                    </FacebookShareButton>
-                    <TwitterShareButton url={pdfUrl}>
-                      <img
-                        src={twitter}
-                        alt="twitter"
-                        height={30}
-                        width={30}
-                        style={{ cursor: "pointer", marginRight: "10px" }}
-                      />
-                    </TwitterShareButton>
-                    <WhatsappShareButton url={pdfUrl}>
-                      <img
-                        src={whatsapp}
-                        alt="whatsapp"
-                        height={30}
-                        width={30}
-                        style={{ cursor: "pointer", marginRight: "10px" }}
-                      />
-                    </WhatsappShareButton>
-                    <EmailShareButton url={pdfUrl}>
-                      <img
-                        src={email}
-                        alt="whatsapp"
-                        height={30}
-                        width={30}
-                        style={{ cursor: "pointer", marginRight: "10px" }}
-                      />
-                    </EmailShareButton>
-                    <RedditShareButton url={pdfUrl}>
-                      <img
-                        src={reddit}
-                        alt="whatsapp"
-                        height={30}
-                        width={30}
-                        style={{ cursor: "pointer", marginRight: "10px" }}
-                      />
-                    </RedditShareButton>
-                  </div>
-                )}
+                {/*  */}
               </div>
             </Card>
           );

@@ -1,161 +1,285 @@
 import React, { useState, useEffect } from "react";
-import Grid from "@mui/material/Grid";
-import { Button as MuiButton, Chip, Typography } from "@mui/material";
-import "./CSS/afterglow.css";
+import {
+  Grid,
+  Chip,
+  Typography,
+  Button as MuiButton,
+  CircularProgress,
+} from "@mui/material";
+import { styled } from "@mui/system";
 import symbol from "../../Images/Symbol.png";
+import Eye from "../../Images/ic-view.png";
 import API_URL from "../../ServiceModule/Service";
-import IMAGE_PATH from "../../ServiceModule/imagePath";
 import { Link, useNavigate } from "react-router-dom";
 import { capitalizeFirstLetter, truncateString } from "../../utils/helpers";
 import { THEME_COLOR } from "../../constants";
 
+// 🔹 Styled Components
+const ScrollContainer = styled("div")({
+  display: "flex",
+  // overflowX: "hidden", // Hide scrollbar
+  gap: "20px",
+  width: "100%",
+  position: "relative",
+  "&:hover .scrolling-content": {
+    animationPlayState: "paused", // Pause on hover
+  },
+});
+
+const ScrollingContent = styled("div")({
+  display: "flex",
+  gap: "20px",
+  animation: "infiniteScroll 60s linear infinite", // Infinite scroll animation
+  "&:hover": {
+    animationPlayState: "paused",
+  },
+  "@keyframes infiniteScroll": {
+    "0%": {
+      transform: "translateX(0)",
+    },
+    "100%": {
+      transform: "translateX(-50%)", 
+    },
+  },
+});
+
+const Card = styled("div")({
+  flex: "0 0 auto",
+  width: 300,
+  borderRadius: 10,
+  backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+  padding: 10,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  transition: "transform 0.3s ease",
+  "&:hover": {
+    transform: "translateY(-5px)",
+  },
+});
+
+const MediaContainer = styled("div")({
+  height: 170,
+  borderRadius: 6,
+  overflow: "hidden",
+  backgroundColor: "#000",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+const CenteredContainer = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  width: "100%",
+  maxWidth: "1200px", 
+  margin: "0 auto",
+});
+
+// 🔹 Main Blog Component
 const Blog = () => {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  useEffect(() => {
-    // Fetch the blog data from the API
-    const fetchData = async () => {
-      try {
-        // const response = await fetch(`${API_URL}news/getAll`);
-        const response = await fetch(`${API_URL}news/get-single-feed-type`);
-        const result = await response.json();
-        if (result?.success) {
-          setPosts(result.data);
-        }
-      } catch (error) {
-        console.error("Error fetching blog data:", error);
-      }
-    };
 
-    fetchData();
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch(`${API_URL}news/getAll`);
+        const result = await response.json();
+        console.log("📦 Blog API Result:", result);
+
+        if (result?.status && Array.isArray(result.data)) {
+          setPosts(result.data);
+        } else {
+          console.warn("⚠️ Unexpected blog structure:", result);
+        }
+      } catch (err) {
+        console.error("🔥 Blog Fetch Failed:", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  // if (posts.length === 0) {
-  //     return
-  // }
+  const firstPostType = posts?.[0]?.type || "news";
+
+  // Duplicate posts for infinite scroll effect
+  const duplicatedPosts = [...posts, ...posts];
+
+  if (loading) {
+    return (
+      <Grid container justifyContent="center" style={{ padding: "60px" }}>
+        <CircularProgress />
+      </Grid>
+    );
+  }
+
+  const renderCard = (post, index) => (
+    <Card
+      key={`${post?._id}-${index}`}
+      onClick={() => navigate(`/coverkraft/feed/${post?.type}`)}
+    >
+<MediaContainer>
+  {post?.newsVideo ? (
+    <>
+      <video
+        key={post._id || index}
+        controls
+        playsInline
+        muted
+        preload="metadata"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          display: "block",
+        }}
+        onError={(e) => {
+          console.warn("📛 Video failed:", e);
+          const fallback = document.getElementById(`fallback-img-${index}`);
+          if (fallback) fallback.style.display = "block";
+          e.target.style.display = "none";
+        }}
+      >
+        <source src={post.newsVideo} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <img
+        id={`fallback-img-${index}`}
+        src={post?.newsImg || Eye}
+        alt={post?.title}
+        style={{
+          display: "none",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+        onError={(e) => {
+          e.target.src = Eye;
+        }}
+      />
+    </>
+  ) : (
+    <img
+      src={post?.newsImg || Eye}
+      alt={post?.title}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+      }}
+      onError={(e) => {
+        e.target.src = Eye;
+      }}
+    />
+  )}
+</MediaContainer>
+
+
+
+      <div style={{ paddingTop: "10px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "8px",
+          }}
+        >
+          <Typography variant="body2" fontWeight="bold" fontSize="1.2rem" color={THEME_COLOR.GREEN}>
+            {post?.date}
+          </Typography>
+          <Chip
+            label={capitalizeFirstLetter(post?.type)}
+            variant="outlined"
+            size="small"
+            sx={{
+              fontSize: "12px",
+              borderColor: THEME_COLOR.GREEN,
+              color: THEME_COLOR.GREEN,
+              fontWeight: "bold",
+            }}
+          />
+        </div>
+
+        <Typography variant="h6" style={{ marginBottom: "8px", fontSize: "1.6rem", fontWeight: "bold" }}>
+          {truncateString(post?.subtitle, 50)}
+        </Typography>
+
+        <Typography variant="body2 " style={{ marginBottom: "8px", fontSize: "1.3rem", }}>
+          {truncateString(post?.description, 80)}
+        </Typography>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginTop: "10px",
+            cursor: "pointer",
+          }}
+        >
+          <Link
+            to={`/coverkraft/feed/${post?.type}`}
+            style={{
+              textDecoration: "none",
+              fontWeight: "bold",
+              color: THEME_COLOR.PRIMARY_TEXT || "#fff",
+              marginRight: "8px",
+              fontSize: "14px",
+            }}
+          >
+            See More 
+          </Link>
+          <img src={symbol} height={15} alt="symbol" />
+        </div>
+      </div>
+    </Card>
+  );
 
   return (
     <Grid
       id="blog"
       container
       justifyContent="center"
-      className="p-5"
-      style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
+      style={{ backgroundColor: THEME_COLOR.BACKGROUND, padding: "0px 20px" }}
     >
-      <div className="text-center">
-        <h3 className="fw-bold" style={{ color: "#FF9906" }}>
-          NEWS & BLOG
-        </h3>
-        <h1 className="my-4 fw-bold">Latest from the blog</h1>
-      </div>
+      <CenteredContainer>
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <h3 style={{ color: "#FF9906", fontWeight: "bold" }}>NEWS & BLOG</h3>
+          <h1 style={{ fontWeight: "bold", margin: "20px 0" }}>Latest from the blog</h1>
+        </div>
 
-      <Grid container xs={12} md={12} spacing={8} justifyContent="center">
-        {/* Main Blog Post on the Left */}
-        {[...posts?.slice(0, 2)]?.map((post, index) => {
-          const isOdd = posts?.slice(0, 2)?.length % 2 !== 0;
-          const isLastItem = index === posts?.slice(0, 2)?.length - 1;
+        {/* Infinite Horizontal Carousel */}
+        <Grid item xs={12} style={{ width: "100%" }}>
+          <ScrollContainer>
+            <ScrollingContent className="scrolling-content">
+              {duplicatedPosts.map((post, index) => renderCard(post, index))}
+            </ScrollingContent>
+          </ScrollContainer>
+        </Grid>
 
-          return (
-            <Grid
-              item
-              xs={12}
-              md={6}
-              key={post?._id}
-              style={{
-                ...(isOdd && isLastItem ? { justifyContent: "center" } : {}),
-              }}
-            >
-              <div
-                className=""
-                style={{
-                  borderRadius: "25px",
-                  boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                  backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-                }}
-                onClick={() => navigate(`/coverkraft/feed/${post?.type}`)}
-              >
-                <div
-                  className="hover-overlay mb-3"
-                  style={{
-                    maxHeight: "300px",
-                    overflow: "hidden",
-                    borderRadius: "25px",
-                  }}
-                >
-                  <img
-                    src={post?.newsImg}
-                    className=""
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                    alt={post?.title}
-                  />
-                </div>
-
-                <div className="card-body p-4">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <p
-                      className="card-title fw-bold fs-5"
-                      style={{ color: THEME_COLOR.GREEN }}
-                    >
-                      {post?.date}
-                    </p>
-                    <Chip
-                      label={capitalizeFirstLetter(post?.type)}
-                      className="fw-bold"
-                      color="primary"
-                      variant="outlined"
-                      style={{
-                        fontSize: "12px",
-                        borderColor: THEME_COLOR.GREEN,
-                        color: THEME_COLOR.GREEN,
-                      }}
-                    />
-                  </div>
-                  <h2 className="card-text mb-3">
-                    {truncateString(post?.subtitle, 50)}
-                  </h2>
-                  <Typography variant="p" sx={{ mb: 2 }}>
-                    {truncateString(post?.description, 80)}
-                  </Typography>
-                  <div className="d-flex cursor-pointer mt-3">
-                    <Link
-                      to={`/coverkraft/feed/${post?.type}`}
-                      className="fw-bold mr-2"
-                    >
-                      See More {capitalizeFirstLetter(post?.type)}'s
-                    </Link>
-                    <img
-                      src={symbol}
-                      height={15}
-                      className="mt-2  cursor-pointer"
-                      alt="symbol"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Grid>
-          );
-        })}
-        {
-          <Grid item xs={12} md={12} style={{ textAlign: "center" }}>
-            <MuiButton
-              variant="contained"
-              color="primary"
-              onClick={() => navigate(`/coverkraft/feed/${posts?.[0]?.type}`)}
-              style={{
-                borderRadius: "25px",
-                padding: "10px 20px",
-                backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-              }}
-            >
-              View All
-            </MuiButton>
-          </Grid>
-        }
-      </Grid>
+        {/* View All Button */}
+        <Grid item xs={12} style={{ textAlign: "center", marginTop: "40px", marginBottom: "20px",  }}>
+          <MuiButton
+            variant="contained"
+            onClick={() => navigate(`/coverkraft/feed/${firstPostType}`)}
+            style={{
+              borderRadius: "25px",
+              padding: "10px 20px",
+              backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+              color: THEME_COLOR.PRIMARY_TEXT || "#fff",
+              boxShadow: "none",
+              width: "150px",
+              fontWeight: "bold",
+              height: "40px",
+              fontSize: "13px",
+            }}
+          >
+            View All
+          </MuiButton>
+        </Grid>
+      </CenteredContainer>
     </Grid>
   );
 };

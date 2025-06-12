@@ -9,7 +9,9 @@ import { THEME_COLOR } from "../constants";
 
 const About = () => {
   return (
-    <div className="overflow-hidden">
+    <div
+      id="about"
+      className="overflow-hidden">
       <Navbar />
       <div className="content">
         <div className="padding-container">
@@ -29,9 +31,9 @@ const About = () => {
                 alignSelf: "center",
               }}
             >
-              CoverKraft Insurance Broking Pvt Ltd is on a mission to
-              revolutionize the insurance industry. <br />
-              Led by a team of insurance experts and tech enthusiasts, we have
+              CoverKraft  Pvt Ltd is on a mission to
+              revolutionize the industry. <br />
+              Led by a team of experts and tech enthusiasts, we have
               developed a user-friendly tech platform to make insurance easily
               understandable and accessible for all.
             </p>
@@ -61,7 +63,7 @@ const About = () => {
                   className="text px-5"
                   style={{ color: THEME_COLOR.SECONDARY_TEXT }}
                 >
-                  To educate customers about various risks and insurance
+                  To educate customers about various risks of fake
                   products, equip them with tools for accessing and sharing
                   their policies, and empower them with technology to purchase
                   the most suitable products.
