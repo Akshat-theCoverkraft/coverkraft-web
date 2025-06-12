@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CSS/login.css';
 import LoginImg from '../Images/img_phone_login.png';
 import logo from '../Images/CoverKraft-beta.png';
-import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
+// import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { requestForToken } from '../helper';
+// import { requestForToken } from '../helper';
 import LOGING from '../Images/LOGING.png';
 const Login = () => {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -92,20 +92,20 @@ const Login = () => {
     };
 
     // OTP verification (final login)
-    const handleVerify = () => {
-        const formData = new FormData();
-        formData.append('userPhone', phoneNumber);
-        const fcmToken = localStorage.getItem('fcmToken');
+    // const handleVerify = () => {
+    //     const formData = new FormData();
+    //     formData.append('userPhone', phoneNumber);
+    //     const fcmToken = localStorage.getItem('fcmToken');
 
-        if (fcmToken) {
-            formData.append('userFcmId', fcmToken);
-        }
+    //     if (fcmToken) {
+    //         formData.append('userFcmId', fcmToken);
+    //     }
 
-        dispatch(verifyUser(API_URL, formData));
-        localStorage.setItem('loggedIn', 'true');
-        toast.success('Phone number authentication done');
-        navigate('/coverkraft');
-    };
+    //     dispatch(verifyUser(API_URL, formData));
+    //     localStorage.setItem('loggedIn', 'true');
+    //     toast.success('Phone number authentication done');
+    //     navigate('/coverkraft');
+    // };
     // Trigger login on Enter key
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
