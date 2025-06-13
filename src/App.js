@@ -29,6 +29,8 @@ import PrivacyPolicy from "./PrivacyPolicy";
 import BackToTop from "./component/BackToTop";
 import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx"; // adjust path
 import ContactUs from "./pages/ContactUs.jsx";
+import PolicyType from './Landing/component/PolicyType';
+import PolicyDetails from './pages/PolicyDetails';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
@@ -121,6 +123,8 @@ function App() {
         <Route path='/coverkraft/privacypolicy' element={<PrivacyPolicy />} />
         <Route path="/coverkraft/legal" element={<LegalPoliciesPage />} />
         <Route path="/coverkraft/contactus" element={<ContactUs />} />
+        <Route path="/coverkraft/policy-type" element={<PolicyType />} />
+        <Route path="/policy-details/:id" element={<PolicyDetails />} />
         {/* Add more routes as needed */}
       </Routes>
     </>

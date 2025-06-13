@@ -45,7 +45,7 @@ const ScrollingContent = styled("div")({
 
 const Card = styled("div")({
   flex: "0 0 auto",
-  width: 300,
+  width: 400,
   borderRadius: 10,
   backgroundColor: THEME_COLOR.FADE_BACKGROUND,
   padding: 10,

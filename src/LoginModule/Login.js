@@ -142,6 +142,7 @@ const Login = () => {
                     alignItems: 'stretch',
                 }}
             >
+
                 <div
                     style={{
                         position: 'absolute',
@@ -156,6 +157,7 @@ const Login = () => {
                         fontFamily: 'Poppins, sans-serif',
                     }}
                 >
+
                     <h1
                         style={{
                             fontSize: '36px',
@@ -177,6 +179,7 @@ const Login = () => {
                         Secure your future. Simplify your policies. Trust the process.
                     </p>
                 </div>
+
                 <img
                     src={LOGING}
                     alt="Sample"
@@ -202,9 +205,13 @@ const Login = () => {
                     minHeight: '100vh',
                 }}
             >
+
                 <div className="container-fluid h-custom">
+
                     <div className="row d-flex justify-content-start align-items-center gx-5">
+
                         <div className="col-md-4 col-lg-5 col-xl-4 order-1" style={{ marginLeft: 0 }}>
+
                             <form
                                 className="shadow-md text-white"
                                 style={{
@@ -218,6 +225,16 @@ const Login = () => {
                                     justifyContent: 'center',
                                 }}
                             >
+                                <Link to="/coverkraft" style={{
+                                    display: 'inline-block',
+                                    marginBottom: '20px',
+                                    color: '#5A9E1E',
+                                    fontWeight: 600,
+                                    textDecoration: 'none',
+                                    fontSize: '1.1rem',
+                                }}>
+                                    &larr; Back to Home
+                                </Link>
                                 <div className="d-flex flex-row align-items-center justify-content-center mb-5">
                                     <img
                                         src={logo}
@@ -263,7 +280,7 @@ const Login = () => {
                                             <div id="recaptcha-container"></div>
                                             <div ref={recaptchRef}></div>
                                             <Button
-                                                  borderRadius="30px"
+                                                borderRadius="30px"
                                                 text={loggedIn ? 'Logging in...' : 'Login'}
                                                 size="lg"
                                                 block={true}

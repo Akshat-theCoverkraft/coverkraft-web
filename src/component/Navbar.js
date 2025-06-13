@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Logo from "../Images/CoverKraft-beta.png";
 import profile from "../Images/ic-profile.png";
 import notification from "../Images/ic-notification.png";
@@ -23,206 +23,214 @@ const DarkMenu = styled(Menu)(() => ({
     borderRadius: "8px",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
   },
+  ".MuiMenu-list": {
+    minWidth: "150px",
+  },
+}));
+
+const MobileMenu = styled(Menu)(({ theme }) => ({
+  ".MuiMenu-paper": {
+    backgroundColor: "#333",
+    color: "white",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    right: "0 !important",
+    left: "auto !important",
+    transformOrigin: "right top !important",
+  },
+}));
+
+const StyledButton = styled("button")(() => ({
+  backgroundColor: "transparent",
+  color: "#8AC642",
+  border: "1.5px solid #8AC642",
+  borderRadius: "5px",
+  padding: "8px 16px",
+  fontSize: "1rem",
+  fontWeight: "600",
+  minWidth: "100px",
+  cursor: "pointer",
+  userSelect: "none",
+  transition: "all 0.25s ease",
+  "&:hover": {
+    backgroundColor: "#8AC642",
+    color: "#000",
+  },
 }));
 
 const NAV_ITEMS = [
-  { key: "home", label: "Home", path: "/coverkraft", auth: false },
+  { key: "home", label: "Home", path: "/coverkraft" },
   { key: "about", label: "About Us", path: "/coverkraft/about", auth: true },
   { key: "contact", label: "Contact Us", path: "/coverkraft/contactus", auth: true },
-  // {
-  //   key: "help",
-  //   label: "Help",
-  //   path: "/",
-  //   auth: true,
-  //   isHelp: true,
-  // },
 ];
 
 const MORE_MENU_ITEMS = [
-  { key: "Card", label: "Why prefer CoverKraft", id: "card", path: "/coverkraft" },
-  // { key: "about", label: "About Us", path: "/coverkraft/about", auth: true },
-  { key: "blog", label: "Blog", id: "blog", path: "/coverkraft/feed/blog" },
-  { key: "testimonials", label: "Testimonials", id: "testimonials", path: "/coverkraft/testimonials" },
-  { key: "faq", label: "FAQ", id: "faq", path: "/coverkraft/faq" },
-  // { key: "service", label: "Service", id: "service", path: "/coverkraft/service" },
+  { key: "Card", label: "Why prefer CoverKraft", id: "card" },
+  { key: "blog", label: "Blog", id: "blog" },
+  { key: "testimonials", label: "Testimonials", id: "testimonials" },
+  { key: "faq", label: "FAQ", id: "faq" },
 ];
 
-const LOCAL_STORAGE_KEYS = [
-  "loggedIn",
-  "verificationId",
-  "userId",
-  "policyId",
-  "selectedPolicyId",
-  "token",
-];
+const LOCAL_STORAGE_KEYS = ["loggedIn", "verificationId", "userId", "policyId", "selectedPolicyId", "token"];
 
 function Navbar({ scrollToContactBottom }) {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
-
-  // State management
+  const location = useLocation();
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [mobileAnchor, setMobileAnchor] = useState(null);
   const [moreAnchor, setMoreAnchor] = useState(null);
-  const [isVisible, setIsVisible] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // Memoized values
-  const loggedIn = useMemo(
-    () => localStorage.getItem("loggedIn") === "true",
-    []
-  );
+  const loggedIn = useMemo(() => localStorage.getItem("loggedIn") === "true", []);
   const isMobile = useMemo(() => windowWidth < 1260, [windowWidth]);
-  const visibleNavItems = useMemo(
-    () => NAV_ITEMS.filter((item) => !item.auth || loggedIn),
-    [loggedIn]
-  );
+  const isHomePage = useMemo(() => location.pathname === "/coverkraft", [location.pathname]);
+  const visibleNavItems = useMemo(() => NAV_ITEMS.filter(item => !item.auth || loggedIn), [loggedIn]);
 
-  // Scroll visibility effect
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
+  // Get active item based on current path
+  const activeItem = useMemo(() => {
+    const currentItem = NAV_ITEMS.find(item => item.path === location.pathname);
+    return currentItem?.key || "";
+  }, [location.pathname]);
 
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setIsVisible(currentScrollY < 10 || currentScrollY < lastScrollY);
-      lastScrollY = currentScrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Window resize effect
+  // Window resize handler
   useEffect(() => {
     const handleResize = () => {
       const newWidth = window.innerWidth;
       setWindowWidth(newWidth);
-      if (newWidth >= 1260) {
-        setMobileAnchor(null);
-      }
+      if (newWidth >= 1260) setMobileAnchor(null);
     };
 
     window.addEventListener("resize", handleResize, { passive: true });
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Event handlers
-  const secure = useCallback(
-    (callback) => () => {
-      if (loggedIn) {
-        callback();
-      } else {
-        navigate("/coverkraft/login");
-      }
-    },
-    [loggedIn, navigate]
-  );
+  // Navigation handler
+  const handleNavigation = useCallback((item) => {
+    if (item.isHelp && typeof scrollToContactBottom === "function") {
+      return loggedIn ? scrollToContactBottom() : navigate("/coverkraft/login");
+    }
+    if (item.auth && !loggedIn) return navigate("/coverkraft/login");
+    navigate(item.path);
+  }, [loggedIn, navigate, scrollToContactBottom]);
 
-  const handleNavigation = useCallback(
-    (item) => {
-      if (item.isHelp) {
-        return typeof scrollToContactBottom === "function"
-          ? secure(scrollToContactBottom)()
-          : console.warn("scrollToContactBottom is not a function");
-      }
-      if (item.auth) {
-        return secure(() => navigate(item.path))();
-      }
-      navigate(item.path);
-    },
-    [secure, scrollToContactBottom, navigate]
-  );
-
+  // Logout handler with page refresh
   const handleLogout = useCallback(() => {
-    LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
-    navigate("/coverkraft");
+    LOCAL_STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
     setProfileAnchor(null);
+    navigate("/coverkraft");
+    // Force page refresh after logout
+    setTimeout(() => window.location.reload(), 100);
   }, [navigate]);
 
   const handleVault = useCallback(() => {
-    const isLoggedIn = !!localStorage.getItem("token");
-    navigate(isLoggedIn ? "/coverkraft/vault" : "/coverkraft/login");
+    navigate(localStorage.getItem("token") ? "/coverkraft/vault" : "/coverkraft/login");
   }, [navigate]);
 
   const handleMoreItemClick = useCallback((id) => {
     setMoreAnchor(null);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  // Menu close handlers
+  const closeMenus = {
+    profile: () => setProfileAnchor(null),
+    mobile: () => setMobileAnchor(null),
+    more: () => setMoreAnchor(null),
+  };
+
+  const toggleMobileMenu = useCallback((e) => {
+    setMobileAnchor(prev => prev ? null : e.currentTarget);
+  }, []);
+
+  // Render user actions
+  const UserActions = () => {
+    if (!loggedIn) {
+      return <StyledButton onClick={() => navigate("/coverkraft/login")}>Login</StyledButton>;
     }
-  }, []);
 
-  // Menu handlers
-  const handleProfileMenuClose = useCallback(() => setProfileAnchor(null), []);
-  const handleMobileMenuClose = useCallback(() => setMobileAnchor(null), []);
-  const handleMoreMenuClose = useCallback(() => setMoreAnchor(null), []);
-
-  const handleMobileMenuToggle = useCallback(() => {
-    setMobileAnchor((prev) => (prev ? null : true));
-  }, []);
-
-  const handleDrawerClose = useCallback(() => setDrawerOpen(false), []);
-
-  // Render mobile menu items
-  const renderMobileMenuItems = () => (
-    <>
-      {visibleNavItems.map((item) => (
-        <MenuItem
-          key={item.key}
-          onClick={() => {
-            handleNavigation(item);
-            handleMobileMenuClose();
+    return (
+      <>
+        <img
+          src={notification}
+          alt="notification"
+          onClick={() => navigate("/coverkraft/notification")}
+          style={{ height: 24, width: 24, cursor: "pointer" }}
+        />
+        <img
+          src={profile}
+          alt="profile"
+          onClick={(e) => setProfileAnchor(e.currentTarget)}
+          style={{ height: 24, width: 24, cursor: "pointer" }}
+        />
+        <DarkMenu 
+          anchorEl={profileAnchor} 
+          open={Boolean(profileAnchor)} 
+          onClose={closeMenus.profile}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          sx={{
+            "& .MuiMenu-paper": {
+              right: "70px !important",
+              left: "auto !important",
+            }
           }}
         >
+          <MenuItem onClick={() => { setDrawerOpen(true); closeMenus.profile(); }}>
+            <AccountCircleOutlinedIcon style={{ marginRight: "10px" }} />
+            My Profile
+          </MenuItem>
+          <MenuItem onClick={handleLogout}>
+            <LogoutIcon style={{ marginRight: "10px" }} />
+            Logout
+          </MenuItem>
+        </DarkMenu>
+        <StyledButton onClick={handleVault}>Policy Vault</StyledButton>
+      </>
+    );
+  };
+
+  // Mobile menu items
+  const MobileMenuItems = () => (
+    <>
+      {visibleNavItems.map(item => (
+        <MenuItem key={item.key} onClick={() => { handleNavigation(item); closeMenus.mobile(); }}>
           {item.label}
         </MenuItem>
       ))}
       {loggedIn ? (
         <>
-          <MenuItem
-            onClick={() => {
-              navigate("/coverkraft/notification");
-              handleMobileMenuClose();
-            }}
-          >
+          <MenuItem onClick={() => { navigate("/coverkraft/notification"); closeMenus.mobile(); }}>
             Notification
           </MenuItem>
-          <MenuItem
-            onClick={() => {
-              handleLogout();
-              handleMobileMenuClose();
-            }}
-          >
+          <MenuItem onClick={() => { handleLogout(); closeMenus.mobile(); }}>
             Logout
           </MenuItem>
         </>
       ) : (
-        <MenuItem
-          onClick={() => {
-            navigate("/coverkraft/login");
-            handleMobileMenuClose();
-          }}
-        >
+        <MenuItem onClick={() => { navigate("/coverkraft/login"); closeMenus.mobile(); }}>
           Login
         </MenuItem>
       )}
     </>
   );
 
-  // Render desktop navigation items
-  const renderDesktopNavItems = () => (
+  // Desktop navigation items
+  const DesktopNavItems = () => (
     <>
-      {visibleNavItems.map((item) => (
+      {visibleNavItems.map(item => (
         <div
           key={item.key}
-          className={`nav-item ${activeItem === item.key ? "active" : ""}`}
-          onClick={() => {
-            handleNavigation(item);
-            setActiveItem(item.key);
+          className="nav-item"
+          onClick={() => handleNavigation(item)}
+          style={{
+            cursor: "pointer",
+            color: activeItem === item.key ? "#8AC642" : "white",
+            fontWeight: activeItem === item.key ? "600" : "400",
+            padding: "8px 16px",
+            borderRadius: "4px",
+            transition: "all 0.3s ease",
           }}
-          style={{ cursor: "pointer" }}
         >
           {item.label}
         </div>
@@ -230,134 +238,35 @@ function Navbar({ scrollToContactBottom }) {
     </>
   );
 
-  // Render user actions (login/profile/vault)
-  const renderUserActions = () => {
-    if (loggedIn) {
-      return (
-        <>
-          <img
-            src={notification}
-            alt="notification"
-            onClick={() => navigate("/coverkraft/notification")}
-            style={{ height: 24, width: 24, cursor: "pointer" }}
-          />
-          <img
-            src={profile}
-            alt="profile"
-            onClick={(e) => setProfileAnchor(e.currentTarget)}
-            style={{ height: 32, width: 32, cursor: "pointer" }}
-          />
-          <DarkMenu
-            anchorEl={profileAnchor}
-            open={Boolean(profileAnchor)}
-            onClose={handleProfileMenuClose}
-          >
-            <MenuItem
-              onClick={() => {
-                setDrawerOpen(true);
-                handleProfileMenuClose();
-              }}
-            >
-              <AccountCircleOutlinedIcon style={{ marginRight: "10px" }} />
-              My Profile
-            </MenuItem>
-            <MenuItem onClick={handleLogout}>
-              <LogoutIcon style={{ marginRight: "10px" }} />
-              Logout
-            </MenuItem>
-          </DarkMenu>
-          <button
-            style={{
-              backgroundColor: "transparent",
-              color: "#8AC642",
-              border: "1.5px solid #8AC642",
-              borderRadius: "5px",
-              padding: "2px 8px",
-              fontSize: "1.rem",
-              fontWeight: "600",
-              lineHeight: "2.5",
-              minWidth: "100px",
-              width: "auto",
-              display: "inline-block",
-              cursor: "pointer",
-              userSelect: "none",
-              transition: "all 0.25s ease",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = "#8AC642";
-              e.currentTarget.style.color = "#000";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.color = "#8AC642";
-            }}
-            onClick={handleVault}
-          >
-            Policy Vault
-          </button>
-
-        </>
-      );
-    }
-
+  // More menu (only on home page)
+  const MoreMenu = () => {
+    if (!isHomePage) return null;
+    
     return (
-      <button
-        style={{
-          backgroundColor: "transparent",
-          color: "#8AC642",
-          border: "1.5px solid #8AC642",
-          borderRadius: "5px",
-          padding: "2px 8px",
-          fontSize: "1.rem",
-          fontWeight: "600",
-          lineHeight: "2.5",
-          minWidth: "100px",
-          width: "auto",
-          display: "inline-block",
-          cursor: "pointer",
-          userSelect: "none",
-          transition: "all 0.25s ease",
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.backgroundColor = "#8AC642";
-          e.currentTarget.style.color = "#000";
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.backgroundColor = "transparent";
-          e.currentTarget.style.color = "#8AC642";
-        }}
-        onClick={() => navigate("/coverkraft/login")}
-      >
-        Login
-      </button>
+      <>
+        <IconButton onClick={(e) => setMoreAnchor(e.currentTarget)} sx={{ color: THEME_COLOR.COLOR }}>
+          <MoreVertIcon />
+        </IconButton>
+        <DarkMenu 
+          anchorEl={moreAnchor} 
+          open={Boolean(moreAnchor)} 
+          onClose={closeMenus.more}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          {MORE_MENU_ITEMS.map(item => (
+            <MenuItem key={item.key} onClick={() => handleMoreItemClick(item.id)}>
+              {item.label}
+            </MenuItem>
+          ))}
+        </DarkMenu>
+      </>
     );
   };
 
-  // Render more menu
-  const renderMoreMenu = () => (
-    <>
-      <IconButton
-        onClick={(e) => setMoreAnchor(e.currentTarget)}
-        sx={{ color: THEME_COLOR.COLOR }}
-      >
-        <MoreVertIcon />
-      </IconButton>
-      <DarkMenu
-        anchorEl={moreAnchor}
-        open={Boolean(moreAnchor)}
-        onClose={handleMoreMenuClose}
-      >
-        {MORE_MENU_ITEMS.map((item) => (
-          <MenuItem key={item.key} onClick={() => handleMoreItemClick(item.id)}>
-            {item.label}
-          </MenuItem>
-        ))}
-      </DarkMenu>
-    </>
-  );
-
   return (
     <>
+      {/* Sticky Navbar */}
       <div
         style={{
           position: "fixed",
@@ -368,8 +277,6 @@ function Navbar({ scrollToContactBottom }) {
           padding: "10px 70px",
           backgroundColor: "black",
           boxShadow: "0px 4px 6px rgba(0,0,0,0.3)",
-          transform: isVisible ? "translateY(0)" : "translateY(-100%)",
-          transition: "transform 0.3s ease-in-out",
         }}
       >
         <div className="nav-style d-flex justify-content-between align-items-center">
@@ -379,30 +286,32 @@ function Navbar({ scrollToContactBottom }) {
             height={65}
             width={214}
             style={{ cursor: "pointer" }}
-            onClick={() => handleNavigation(NAV_ITEMS[0])}
+            onClick={() => navigate("/coverkraft")}
           />
 
           {isMobile ? (
             <>
-              <IconButton onClick={handleMobileMenuToggle}>
-                {mobileAnchor ? (
-                  <CloseIcon sx={{ color: THEME_COLOR.COLOR }} />
-                ) : (
+              <IconButton onClick={toggleMobileMenu}>
+                {mobileAnchor ? 
+                  <CloseIcon sx={{ color: THEME_COLOR.COLOR }} /> : 
                   <MenuIcon sx={{ color: THEME_COLOR.COLOR }} />
-                )}
+                }
               </IconButton>
-              <DarkMenu
+              <MobileMenu
+                anchorEl={mobileAnchor}
                 open={Boolean(mobileAnchor)}
-                onClose={handleMobileMenuClose}
+                onClose={closeMenus.mobile}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
               >
-                {renderMobileMenuItems()}
-              </DarkMenu>
+                <MobileMenuItems />
+              </MobileMenu>
             </>
           ) : (
-            <div className="d-flex align-items-center gap-4">
-              {renderDesktopNavItems()}
-              {renderUserActions()}
-              {renderMoreMenu()}
+            <div className="d-flex align-items-center" style={{ gap: "24px" }}>
+              <DesktopNavItems />
+              <UserActions />
+              <MoreMenu />
             </div>
           )}
         </div>
@@ -412,7 +321,7 @@ function Navbar({ scrollToContactBottom }) {
       <div style={{ height: "95px" }} />
 
       {/* Profile Drawer */}
-      <ProfileDrawer open={drawerOpen} onClose={handleDrawerClose} />
+      <ProfileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </>
   );
 }
