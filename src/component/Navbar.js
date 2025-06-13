@@ -28,6 +28,7 @@ const DarkMenu = styled(Menu)(() => ({
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/coverkraft", auth: false },
   { key: "about", label: "About Us", path: "/coverkraft/about", auth: true },
+  { key: "contact", label: "Contact Us", path: "/coverkraft/contactus", auth: true },
   // {
   //   key: "help",
   //   label: "Help",

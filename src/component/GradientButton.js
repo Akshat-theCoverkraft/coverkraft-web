@@ -14,6 +14,7 @@ function GradientButton({ onClick, text, className, size, block, startIcon }) {
     border: "none", // Ensure border is removed if not needed
     fontSize: "1.2rem",
     fontWeight: "bold",
+    
   };
 
   return (

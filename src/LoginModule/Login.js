@@ -92,20 +92,20 @@ const Login = () => {
     };
 
     // OTP verification (final login)
-    // const handleVerify = () => {
-    //     const formData = new FormData();
-    //     formData.append('userPhone', phoneNumber);
-    //     const fcmToken = localStorage.getItem('fcmToken');
+    const handleVerify = () => {
+        const formData = new FormData();
+        formData.append('userPhone', phoneNumber);
+        const fcmToken = localStorage.getItem('fcmToken');
 
-    //     if (fcmToken) {
-    //         formData.append('userFcmId', fcmToken);
-    //     }
+        if (fcmToken) {
+            formData.append('userFcmId', fcmToken);
+        }
 
-    //     dispatch(verifyUser(API_URL, formData));
-    //     localStorage.setItem('loggedIn', 'true');
-    //     toast.success('Phone number authentication done');
-    //     navigate('/coverkraft');
-    // };
+        dispatch(verifyUser(API_URL, formData));
+        localStorage.setItem('loggedIn', 'true');
+        toast.success('Phone number authentication done');
+        navigate('/coverkraft');
+    };
     // Trigger login on Enter key
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
