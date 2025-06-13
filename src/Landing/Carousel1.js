@@ -3,7 +3,7 @@ import "./component/CSS/carousel1.css";
 import API_URL from "../ServiceModule/Service";
 import IMAGE_PATH from "../ServiceModule/imagePath";
 
-const slideWidth = 30; // Width of each slide
+const slideWidth = 10; // Width of each slide
 
 const sleep = (ms = 0) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -118,8 +118,16 @@ const Carousel1 = () => {
   }, [carouselItems]);
 
   return (
-    <div className="carousel__wrap" style={{  }}>
-      <div className="carousel__inner">
+    <div
+      className="carousel__wrap"
+      style={{
+        // backgroundColor: "#0e0e0e",
+        padding: "0 4rem",
+        color: "#fff",
+        marginTop: "1rem",
+        marginBottom: "3rem",
+      }}
+    >      <div className="carousel__inner">
         <button
           className="carousel__btn carousel__btn--prev"
           onClick={() => prevClick()}

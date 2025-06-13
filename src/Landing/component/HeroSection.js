@@ -20,7 +20,7 @@ const HeroSection = () => {
   };
 
   return (
-    <div style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
+    <div style={{ paddingTop: "3rem", paddingBottom: "0.2rem" }}>
       <Grid
         container
         spacing={4}

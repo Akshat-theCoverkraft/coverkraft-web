@@ -27,51 +27,65 @@ const steps = [
 
 const About = () => {
   return (
-      <Box
-      px={{ xs: 2, sm: 4, md: 6 }}
-      py={{ xs: 6, sm: 8 }}
-      mt={5}
-      sx={{ backgroundColor: THEME_COLOR.FADE_BACKGROUND }}
+    <Box
+      px={{ xs: 1, sm: 2, md: 3 }}
+      py={{ xs: 3, sm: 4 }}
+      mt={2}
+      width="100%"
+      mx="auto"
+      sx={{ backgroundColor: THEME_COLOR.FADE_BACKGROUND, borderRadius: 3 }}
     >
       <Typography
         variant="h6"
         align="center"
-        sx={{ color: '#FF9906', fontWeight: 600, mb: 1 }}
-      >
-        HOW IT WORKS
-      </Typography>
-
-      <Typography
-        variant="h3"
-        align="center"
         sx={{
-          fontWeight: 'bold',
-          fontSize: { xs: '30px', sm: '36px', md: '42px' },
-          my: 2,
+          color: '#FF9906', fontWeight: 600, mb: 1,
+          fontSize: { xs: '22px', sm: '26px', md: '30px' },
         }}
       >
-        How Coverkraft Works?
+        HOW IT WORKS ?
       </Typography>
 
-      <Grid  container spacing={5} justifyContent="center" mt={5}>
+      <Grid container spacing={3} justifyContent="center" mt={2}>
         {steps.map((step, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index} textAlign="center">
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            key={index}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center', // Center align all content
+              textAlign: 'center',  // Center text
+            }}
+          >
             <Box
               component="img"
               src={step.img}
               alt={step.title}
-              sx={{ width: '100%', maxWidth: '280px', height: 'auto', mx: 'auto' }}
+              sx={{
+                width: '120px',
+                height: '120px',
+                objectFit: 'cover',
+                mb: 2,
+                filter: 'contrast(1.3) brightness(1.08) saturate(1.15) drop-shadow(0 0 3px #000)',
+                borderRadius: 2,
+                display: 'block',
+                alignSelf: 'center',
+              }}
             />
             <Typography
               variant="h5"
-              sx={{ mt: 3, fontWeight: 'bold', fontSize: '1.8rem' }}
+              sx={{ fontWeight: 'bold', fontSize: '1.2rem', mb: 1 }}
             >
               {step.title}
             </Typography>
             <Typography
               variant="body1"
               color="white"
-              sx={{ mt: 1, fontSize: '1.7rem', px: { xs: 1, sm: 2 } }}
+              sx={{ fontSize: '1rem', px: { xs: 1, sm: 2 } }}
             >
               {step.desc}
             </Typography>

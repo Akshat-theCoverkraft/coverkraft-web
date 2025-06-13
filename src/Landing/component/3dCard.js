@@ -84,7 +84,8 @@ const Job = () => {
     <div
       id="card"
       style={{
-        marginTop: "80px",padding: "50px",backgroundColor: "#1a1a1a",minHeight: "10vh",}}
+        marginTop: "80px", padding: "50px", backgroundColor: "#1a1a1a", minHeight: "10vh",
+      }}
     >
       <div style={styles.headerSection}>
         <Typography
@@ -92,14 +93,13 @@ const Job = () => {
           gutterBottom
           style={{ color: "#FF9906", fontWeight: "bold" }}
         >
-          BENEFITS
+          Tips And Tricks
         </Typography>
         <Typography
           variant={isMobile ? "h6" : "h2"}
           className="mb-4 fw-bold"
           style={{ color: "#ffffff" }}
         >
-          Why Prefer Coverkraft
         </Typography>
         {/* <Typography
           variant="body1"
@@ -152,9 +152,8 @@ const Job = () => {
             <div
               style={{
                 ...styles.cardsContainer,
-                transform: `translateX(-${
-                  currentIndex * (100 / cardsPerView)
-                }%)`,
+                transform: `translateX(-${currentIndex * (100 / cardsPerView)
+                  }%)`,
               }}
             >
               {cardData.map((card) => (
