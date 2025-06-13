@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../Images/CoverKraft-beta.png";
 import twitter from "../../Images/twitter.png";
 import facebook from "../../Images/facebook.png";
@@ -10,13 +10,30 @@ import email from "../../Images/email.png";
 import "./CSS/footer.css";
 import { THEME_COLOR } from "../../constants";
 import moment from "moment";
-import { useNavigate } from 'react-router-dom'; // Don't forget to import useNavigate
 
 const Footer = () => {
   const navigate = useNavigate();
-  const handleNavigation = () => {
-    navigate('/coverkraft/feed/blog');
+
+  const handleStaticNav = (route) => () => {
+    navigate(route);
   };
+
+  const servicesLinks = [
+    { to: "/coverkraft", label: "Home" },
+    { to: "/coverkraft/about", label: "About Us" },
+    { to: "/coverkraft/vault", label: "Policy Vault" },
+  ];
+
+  const companyLinks = [
+    { label: "Privacy Policy", to: "/coverkraft/privacypolicy" },
+    { label: "Grievance Redress Policy", to: "/coverkraft/privacypolicy" },
+    { label: "License", to: "/coverkraft/privacypolicy" },
+    { label: "Terms of Use", to: "/coverkraft/privacypolicy" },
+    { label: "Refund & Cancellation Policy", to: "/coverkraft/privacypolicy" },
+    { label: "ISNP", to: "/coverkraft/privacypolicy" },
+    { label: "legal", to: "/coverkraft/legal" },
+  ];
+
   return (
     <footer
       className="pt-5 text-lg-start px-5"
@@ -29,77 +46,66 @@ const Footer = () => {
         <div className="row g-4">
           {/* Logo and Description */}
           <div className="col-12 col-md-6 col-lg-3">
-            <img
-              src={logo}
-              alt="Coverkraft Logo"
-              height={65}
-              width={214}
-              className="mb-3"
-            />
+            <img src={logo} alt="Coverkraft Logo" height={65} width={214} className="mb-3" />
             <p className="fs-5 text-color">
-              Coverkraft offers powerful tools for filling out forms, scanning
-              documents, and uploading them with ease.
+              Coverkraft offers powerful tools for filling out forms, scanning documents, and uploading them with ease.
             </p>
           </div>
 
-          {/* Get in Touch */}
+          {/* Contact Info */}
           <address className="col-12 col-md-6 col-lg-3">
-            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
-              Get in Touch
-            </h6>
+            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">Get in Touch</h6>
 
             <div className="d-flex align-items-start mb-2">
-              <img src={location} alt="" height={23} className="me-2 mt-1" />
-              <span className="fs-5 footer-link">
-                8819 Ohio St. South Gate, CA 90280
-              </span>
+              <img src={location} alt="Location" height={23} className="me-2 mt-1" />
+              <span className="fs-5 footer-link">16 D-1, Danish Nagar, Hoshangabad Road, Bhopal, MP, 462026</span>
             </div>
 
             <div className="d-flex align-items-start mb-2">
-              <img src={email} alt="" height={23} className="me-2 mt-1" />
-              <a href="mailto:Ourstudio@hello.com" className="fs-5 footer-link">
-                Ourstudio@hello.com
+              <img src={email} alt="Email" height={23} className="me-2 mt-1" />
+              <a href="mailto:contact@thecoverkraft.com" className="fs-5 footer-link">
+                contact@thecoverkraft.com
               </a>
             </div>
 
             <div className="d-flex align-items-start">
-              <img src={call} alt="" height={23} className="me-2 mt-1" />
+              <img src={call} alt="Call" height={23} className="me-2 mt-1" />
               <a href="tel:+13866883295" className="fs-5 footer-link">
                 +1 386-688-3295
               </a>
             </div>
           </address>
 
-          <nav className="col-6 col-md-4 col-lg-2" >
-            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color clickable">
-              Service
-            </h6>
-            {[
-              { to: "/coverkraft", label: "Home" },
-              { to: "/coverkraft/about", label: "About Us" },
-              { to: "/coverkraft/vault", label: "Policy Vault" },
-              // { to: "/coverkraft/vault", label: "Policy" },
-              { to: "/coverkraft/privacypolicy", label: "Privacy Policy" },
-            ].map(({ to, label }) => (
+          {/* Services Navigation */}
+          <nav className="col-6 col-md-4 col-lg-2">
+            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">Services</h6>
+            {servicesLinks.map(({ to, label }) => (
               <p key={label}>
                 <Link to={to} className="fs-5 footer-link text-color" aria-label={label}>
                   {label}
                 </Link>
-
               </p>
             ))}
           </nav>
 
+          {/* Company Navigation */}
           <div className="col-6 col-md-4 col-lg-2">
-            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
-              Company
-            </h6>
-            <p className="fs-5 footer-link text-color clickable" onClick={handleNavigation}>
-              Blog
-            </p>
-
+            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">Company</h6>
+            {companyLinks.map(({ label, to }) => (
+              <p key={label}>
+                <span
+                  className="fs-5 footer-link text-color clickable"
+                  onClick={handleStaticNav(to)}
+                  role="button"
+                  aria-label={label}
+                >
+                  {label}
+                </span>
+              </p>
+            ))}
           </div>
 
+          {/* Social Icons */}
           <div className="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end justify-content-center gap-3">
             {[twitter, facebook, instagram].map((icon, i) => (
               <img
@@ -107,21 +113,18 @@ const Footer = () => {
                 src={icon}
                 alt={`Social Icon ${i}`}
                 className="social-icon"
-                aria-label={`Social ${i}`}
+                height={24}
+                width={24}
               />
             ))}
           </div>
         </div>
       </div>
 
-      <div
-        className="text-center p-3 mt-4"
-        style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
-      >
-        <span className="me-2">© Coverkraft {moment().format('YYYY')}</span>
-        <span className="text-color">
-          All rights reserved
-        </span>
+      {/* Footer Bottom Bar */}
+      <div className="text-center p-3 mt-4" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
+        <span className="me-2">© Coverkraft {moment().format("YYYY")}</span>
+        <span className="text-color">All rights reserved</span>
       </div>
     </footer>
   );

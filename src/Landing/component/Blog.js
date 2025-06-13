@@ -29,7 +29,7 @@ const ScrollContainer = styled("div")({
 const ScrollingContent = styled("div")({
   display: "flex",
   gap: "20px",
-  animation: "infiniteScroll 60s linear infinite", // Infinite scroll animation
+  animation: "infiniteScroll 120s linear infinite", // Infinite scroll animation
   "&:hover": {
     animationPlayState: "paused",
   },
@@ -241,7 +241,7 @@ const Blog = () => {
       id="blog"
       container
       justifyContent="center"
-      style={{ backgroundColor: THEME_COLOR.BACKGROUND, padding: "0px 20px" }}
+      style={{ backgroundColor: THEME_COLOR.BACKGROUND, padding: "35px 20px" }}
     >
       <CenteredContainer>
         {/* Header */}

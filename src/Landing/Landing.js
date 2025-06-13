@@ -10,7 +10,7 @@ import Card from "./component/Card";
 import About from "./component/About";
 import Carousel from "./component/Carousel";
 import Cards3d from "./component/3dCard";
-import Count from "./component/Count";
+// import Count from "./component/Count";
 import Faq from "./component/Faq";
 import Testimonials from "./component/Testimonials";
 import Service from "./component/service";
@@ -21,13 +21,14 @@ const Landing = () => {
       <ToastContainer />
       <Navbar />
       <HeroSection />
+      <Afterglow />
       <PolicyType />
       <Cards3d />
       <About />
-      <Afterglow />
+      
       {/* <Card/> */}
       <Blog />
-      <Count />
+      {/* <Count /> */}
       <Coverkraft />
       <Testimonials />
       <Faq />

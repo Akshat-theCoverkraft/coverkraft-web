@@ -363,17 +363,24 @@ const Vault = () => {
               <GradientButton
                 text="Add Policy"
                 size="ml"
-                className="ml-5 mb-3"
+                className="ml-5 mb-3 responsive-gradient-btn"
                 startIcon={AddIcon}
                 onClick={handleClickOpen}
                 style={{
-                    paddingTop: '18px',
-                    height: '70px',
-                    width: '50px', // maintain aspect ratio if needed
-                    cursor: 'pointer',
-                    objectFit: 'contain', // ensures it doesn’t stretch weirdly
-                  }}
+                  padding: '1rem 1.5rem', // vertical & horizontal padding
+                  height: 'auto',
+                  minHeight: '48px',
+                  width: 'auto',
+                  maxWidth: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1rem',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                }}
               />
+
               {shareAllPolicy && (
                 <>
                   <Button
@@ -544,103 +551,103 @@ const Vault = () => {
         </BootstrapDialog>
 
         {/* Dialog box of confirm box start */}
-       <BootstrapDialog
-  onClose={handleConfirmDialogClose}
-  aria-labelledby="confirmation-dialog-title"
-  open={confirmDialogOpen}
-  fullWidth
-  maxWidth="sm"
-  PaperProps={{
-    style: {
-      borderRadius: '16px',
-      padding: '24px',
-      backgroundColor: '#ffffff',
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-    },
-  }}
->
-  <DialogContent style={{ position: 'relative' }}>
-    {loading && (
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          height: '100%',
-          width: '100%',
-          backgroundColor: 'rgba(255,255,255,0.7)',
-          zIndex: 10,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: '16px',
-        }}
-      >
-        <Spinner
-          style={{ width: '3rem', height: '3rem', color: '#8AC642' }}
-          animation="border"
-          role="status"
+        <BootstrapDialog
+          onClose={handleConfirmDialogClose}
+          aria-labelledby="confirmation-dialog-title"
+          open={confirmDialogOpen}
+          fullWidth
+          maxWidth="sm"
+          PaperProps={{
+            style: {
+              borderRadius: '16px',
+              padding: '24px',
+              backgroundColor: '#ffffff',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            },
+          }}
         >
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>
-    )}
+          <DialogContent style={{ position: 'relative' }}>
+            {loading && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  height: '100%',
+                  width: '100%',
+                  backgroundColor: 'rgba(255,255,255,0.7)',
+                  zIndex: 10,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: '16px',
+                }}
+              >
+                <Spinner
+                  style={{ width: '3rem', height: '3rem', color: '#8AC642' }}
+                  animation="border"
+                  role="status"
+                >
+                  <span className="sr-only">Loading...</span>
+                </Spinner>
+              </div>
+            )}
 
-    <Typography
-      variant="h6"
-      align="center"
-      gutterBottom
-      style={{
-        fontWeight: 600,
-        fontSize: '20px',
-        color: '#333',
-        zIndex: 1,
-        position: 'relative',
-        paddingTop: loading ? '20px' : '0',
-      }}
-    >
-      Are you sure you want to proceed?
-    </Typography>
-  </DialogContent>
+            <Typography
+              variant="h6"
+              align="center"
+              gutterBottom
+              style={{
+                fontWeight: 600,
+                fontSize: '20px',
+                color: '#333',
+                zIndex: 1,
+                position: 'relative',
+                paddingTop: loading ? '20px' : '0',
+              }}
+            >
+              Are you sure you want to proceed?
+            </Typography>
+          </DialogContent>
 
-  <DialogActions
-    style={{
-      justifyContent: 'center',
-      padding: '16px 32px',
-      gap: '16px',
-    }}
-  >
-    <Button
-      text="Cancel"
-      size="md"
-      block={false}
-      onClick={handleConfirmDialogClose}
-      style={{
-        border: '2px solid #8AC642',
-        color: '#8AC642',
-        backgroundColor: 'transparent',
-        borderRadius: '8px',
-        fontWeight: 600,
-        padding: '8px 24px',
-      }}
-    />
+          <DialogActions
+            style={{
+              justifyContent: 'center',
+              padding: '16px 32px',
+              gap: '16px',
+            }}
+          >
+            <Button
+              text="Cancel"
+              size="md"
+              block={false}
+              onClick={handleConfirmDialogClose}
+              style={{
+                border: '2px solid #8AC642',
+                color: '#8AC642',
+                backgroundColor: 'transparent',
+                borderRadius: '8px',
+                fontWeight: 600,
+                padding: '8px 24px',
+              }}
+            />
 
-    <Button
-      text="Confirm"
-      size="md"
-      block={false}
-      onClick={handleConfirm}
-      style={{
-        backgroundColor: '#8AC642',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '8px',
-        fontWeight: 600,
-        padding: '8px 24px',
-      }}
-    />
-  </DialogActions>
-</BootstrapDialog>        
+            <Button
+              text="Confirm"
+              size="md"
+              block={false}
+              onClick={handleConfirm}
+              style={{
+                backgroundColor: '#8AC642',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 600,
+                padding: '8px 24px',
+              }}
+            />
+          </DialogActions>
+        </BootstrapDialog>
       </div>
     </>
   );
