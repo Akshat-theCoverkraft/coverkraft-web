@@ -28,7 +28,6 @@ const steps = [
 const About = () => {
   return (
       <Box
-          id="about"
       px={{ xs: 2, sm: 4, md: 6 }}
       py={{ xs: 6, sm: 8 }}
       mt={5}

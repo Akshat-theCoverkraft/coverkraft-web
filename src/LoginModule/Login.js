@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CSS/login.css';
 import LoginImg from '../Images/img_phone_login.png';
-import logo from '../Images/coverkraft_logo_1.png';
-import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
+import logo from '../Images/CoverKraft-beta.png';
+// import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { requestForToken } from '../helper';
+// import { requestForToken } from '../helper';
 import LOGING from '../Images/LOGING.png';
 const Login = () => {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -92,28 +92,26 @@ const Login = () => {
     };
 
     // OTP verification (final login)
-    const handleVerify = () => {
-        const formData = new FormData();
-        formData.append('userPhone', phoneNumber);
-        const fcmToken = localStorage.getItem('fcmToken');
+    // const handleVerify = () => {
+    //     const formData = new FormData();
+    //     formData.append('userPhone', phoneNumber);
+    //     const fcmToken = localStorage.getItem('fcmToken');
 
-        if (fcmToken) {
-            formData.append('userFcmId', fcmToken);
-        }
+    //     if (fcmToken) {
+    //         formData.append('userFcmId', fcmToken);
+    //     }
 
-        dispatch(verifyUser(API_URL, formData));
-        localStorage.setItem('loggedIn', 'true');
-        toast.success('Phone number authentication done');
-        navigate('/coverkraft');
-    };
-
+    //     dispatch(verifyUser(API_URL, formData));
+    //     localStorage.setItem('loggedIn', 'true');
+    //     toast.success('Phone number authentication done');
+    //     navigate('/coverkraft');
+    // };
     // Trigger login on Enter key
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             handleLogin();
         }
     };
-
     return (
         <div
             className="overflow-hidden"
@@ -179,7 +177,6 @@ const Login = () => {
                         Secure your future. Simplify your policies. Trust the process.
                     </p>
                 </div>
-
                 <img
                     src={LOGING}
                     alt="Sample"
@@ -192,7 +189,6 @@ const Login = () => {
                     }}
                 />
             </div>
-
             {/* Form section */}
             <section
                 style={{
@@ -234,8 +230,6 @@ const Login = () => {
                                         }}
                                     />
                                 </div>
-
-
                                 {!loggedIn ? (
                                     <div>
                                         <h1 className="text-center">Login to your Account</h1>
@@ -256,6 +250,7 @@ const Login = () => {
                                                     fontSize: '14px',
                                                     padding: '8px 12px',
                                                     height: '60px',
+                                                    borderRadius: '40px',
                                                 }}
                                             />
                                             {!valid && phoneNumber.length > 0 && (
@@ -268,12 +263,24 @@ const Login = () => {
                                             <div id="recaptcha-container"></div>
                                             <div ref={recaptchRef}></div>
                                             <Button
+                                                  borderRadius="30px"
                                                 text={loggedIn ? 'Logging in...' : 'Login'}
                                                 size="lg"
                                                 block={true}
                                                 onClick={handleLogin}
                                                 disabled={!valid || loggedIn}
                                                 className="mt-2 slim-button"
+                                                customStyle={{
+                                                    color: "#fff",
+                                                    backgroundColor: "#5A9E1E",
+                                                    // borderRadius: "40px",
+                                                    padding: "14px 32px",
+                                                    fontSize: "1.4rem",
+                                                    fontWeight: 700,
+                                                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                                                    textTransform: "uppercase",
+                                                    letterSpacing: "1px",
+                                                }}
                                             />
                                             <p className="medium fw-bold mt-2 pt-1 mb-0 text-center">
                                                 Don't have an account?{' '}
@@ -324,7 +331,6 @@ const Login = () => {
                     </div>
                 </div>
             </section>
-
             {/* <Footer /> */}
         </div>
     );

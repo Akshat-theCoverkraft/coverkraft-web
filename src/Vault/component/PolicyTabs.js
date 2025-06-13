@@ -146,7 +146,6 @@ export default function PolicyTabs({
             status: "archive",
           },
         });
-
         // Assuming response.data is the whole response object
         if (
           response.data &&

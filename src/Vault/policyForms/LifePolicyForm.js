@@ -30,7 +30,6 @@ const LifePolicyForm = () => {
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
   const policyDetails = location.state?.policyDetails;
-
   // Now you can use the responseData and mode in your component
   let headingText;
   if (mode === 'edit') {
@@ -215,11 +214,9 @@ const LifePolicyForm = () => {
         toast.error("Error creating policy");
       });
   }
-
   const updatePolicy = (payload) => {
     console.log('================')
     const formData = new FormData();
-
     formData.append('userId', userId);
     formData.append('documentId', documentId);
     formData.append('_id', policyId)
@@ -250,12 +247,11 @@ const LifePolicyForm = () => {
         toast.error("Error updating policy");
       });
   }
-
   return (
     <div>
       <Navbar />
       <ToastContainer />
-      <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: '#F9F9F9' }}>
+      <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: '#000' }}>
         <Grid item xs={12} sm={10} md={8}>
           <Card className='border  my-4' style={{ padding: '40px 70px', boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
             <div className='d-flex justify-content-between'>
@@ -355,17 +351,9 @@ const LifePolicyForm = () => {
                           />
                         </DemoContainer>
                       </LocalizationProvider>
-                        {/* <DateTimePicker
-                        height={50}
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(maturityDate)}
-                        onChange={handleMaturityDate}
-                      /> */}
                     </Grid>
                   </Grid>
                   <Grid xs={12} md={6} className='my-3'>
-
                     <label className="form-label fw-bold" htmlFor="inputField">
                       DOB
                     </label>
@@ -384,13 +372,6 @@ const LifePolicyForm = () => {
                         />
                       </DemoContainer>
                     </LocalizationProvider>
-                      {/* <DateTimePicker
-                        height={50}
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(dob)}
-                        onChange={handleDob}
-                      /> */}
                   </Grid>
                   <CustomInput
                     type="text"
@@ -429,37 +410,22 @@ const LifePolicyForm = () => {
                       setAccidentalDisability(e.target.value);
 
                     }}
-
                   />
-
-
-
-
                   <Button
                     text={mode === 'edit' ? 'Update' : 'Save'}
                     size="lg"
                     block={true}
                     onClick={handleSubmit}
-
                   />
-
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  {/* <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}>Vehicle Details</p> */}
-
-
-
-
-
                   <CustomInput
                     type="number"
                     label="Net Premium"
                     value={netPremium}
                     onChange={(e) => {
                       setNetPremium(e.target.value);
-
                     }}
-
                   />
                   <CustomInput
                     type="number"
@@ -476,7 +442,6 @@ const LifePolicyForm = () => {
                     value={sumAssured}
                     onChange={(e) => {
                       setSumAssured(e.target.value);
-
                     }}
                     required
                   />
@@ -487,7 +452,6 @@ const LifePolicyForm = () => {
                     onChange={(e) => {
                       setPa(e.target.value);
                     }}
-
                   />
                   <CustomInput
                     type="text"
@@ -496,7 +460,6 @@ const LifePolicyForm = () => {
                     onChange={(e) => {
                       setOthers(e.target.value);
                     }}
-
                   />
                   <CustomInput
                     type="text"
@@ -513,21 +476,14 @@ const LifePolicyForm = () => {
                     value={terminalIllness}
                     onChange={(e) => {
                       setTerminalIllness(e.target.value);
-
                     }}
-
                   />
                 </Grid>
               </Grid>
-
-
             </div>
           </Card>
         </Grid>
       </Grid>
       <Footer />
-    </div>
-  )
-}
-
+    </div>)}
 export default LifePolicyForm

@@ -36,27 +36,27 @@ const faqList = [
   },
   {
     id: "panel2",
-    question: "What factors affect my insurance premium?",
+    question: "What factors affect my premium?",
     answer:
-      "Your insurance premium depends on various factors such as age, location, type of coverage, past claims, and more.",
+      "Your premium depends on various factors such as age, location, type of coverage, past claims, and more.",
   },
   {
     id: "panel3",
-    question: "What is covered under my auto insurance policy?",
+    question: "What is covered under my auto policy?",
     answer:
       "Typically, it includes liability coverage, collision, comprehensive, medical payments, and uninsured motorist coverage.",
   },
   {
     id: "panel4",
-    question: "What is covered under my health insurance plan?",
+    question: "What is covered under my health plan?",
     answer:
-      "Health insurance generally covers doctor visits, hospitalization, prescription drugs, preventive care, and more.",
+      "A health plan generally covers doctor visits, hospitalization, prescription drugs, preventive care, and more.",
   },
   {
     id: "panel5",
-    question: "What does home insurance cover?",
+    question: "What does home protection cover?",
     answer:
-      "Home insurance usually covers damage to your home, personal belongings, liability, and temporary living expenses.",
+      "Home protection usually covers damage to your home, personal belongings, liability, and temporary living expenses.",
   },
 ];
 
@@ -72,10 +72,10 @@ export default function Faq() {
   return (
     <div id="faq" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
       <div className="text-center p-3">
-        <h3 className="fw-bold" style={{ color: "#FF9906" }}>
+        <h3 className="mt-3 fw-bold" style={{ color: "#FF9906", fontSize: "2.5rem" }}>
           FAQ
         </h3>
-        <h1 className="mt-3 fw-bold">Frequently Asked Questions</h1>
+        <h1 className="mt-3 fw-bold" style={{ fontSize: "2.5rem" }}>Frequently Asked Questions</h1>
       </div>
 
       <div style={{ padding: "20px 0" }}>
@@ -112,11 +112,12 @@ export default function Faq() {
                 aria-controls={`${item.id}-content`}
                 id={`${item.id}-header`}
                 className="fw-bold"
+                style={{ fontSize: "1.25rem" }}
               >
-                <span className="mr-3">{`0${index + 1}`}</span>
+                <span className="mr-3" style={{ fontSize: "1.1rem" }}>{`0${index + 1}`}</span>
                 {item.question}
               </StyledAccordionSummary>
-              <AccordionDetails>{item.answer}</AccordionDetails>
+              <AccordionDetails style={{ fontSize: "1.1rem" }}>{item.answer}</AccordionDetails>
             </StyledAccordion>
           ))}
         </div>

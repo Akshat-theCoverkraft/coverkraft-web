@@ -1,5 +1,5 @@
-import React from 'react';
-import frame from '../../Images/Frame 8.png';
+
+import frame from '../../Images/family-blur-img.png';
 
 const Count = () => {
     const imgStyle = {

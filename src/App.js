@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import './App.css';
+// import { requestFCMPermission, setupOnMessageListener } from "./fcm"; // 💡 New clean file
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom"
 import "./App.css";
 // import { requestFCMPermission, setupOnMessageListener } from "./fcm"; // 💡 New clean file
 import {
@@ -10,6 +13,7 @@ import {
 import Login from "./LoginModule/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Register from "./LoginModule/Register";
+// import { registerFirebaseSW } from './fcm'; // Import your FCM functions
 import { registerFirebaseSW } from "./fcm"; // Import your FCM functions
 // or './fcm' depending on where you put them
 import { Toaster } from "react-hot-toast";
@@ -36,9 +40,6 @@ function App() {
   const navigate = useNavigate();
   // Removed top-level await; handled in useEffect below
 
-  // useEffect(() => {
-  //   setupOnMessageListener();
-  // }, []);
 
   // useEffect(() => {
   //   const setupFCM = async () => {

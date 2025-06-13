@@ -1,16 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../../Images/coverkraft_logo_1.png";
-import twitter from "../../Images/X.png";
+import logo from "../../Images/CoverKraft-beta.png";
+import twitter from "../../Images/twitter.png";
 import facebook from "../../Images/facebook.png";
-import instagram from "../../Images/instagram.png";
+import instagram from "../../Images/social.png";
 import location from "../../Images/location_on.png";
 import call from "../../Images/call.png";
 import email from "../../Images/email.png";
 import "./CSS/footer.css";
 import { THEME_COLOR } from "../../constants";
+import moment from "moment";
+import { useNavigate } from 'react-router-dom'; // Don't forget to import useNavigate
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const handleNavigation = () => {
+    navigate('/coverkraft/feed/blog');
+  };
   return (
     <footer
       className="pt-5 text-lg-start px-5"
@@ -64,21 +70,22 @@ const Footer = () => {
             </div>
           </address>
 
-          <nav className="col-6 col-md-4 col-lg-2">
-            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
+          <nav className="col-6 col-md-4 col-lg-2" >
+            <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color clickable">
               Service
             </h6>
             {[
               { to: "/coverkraft", label: "Home" },
               { to: "/coverkraft/about", label: "About Us" },
-              { to: "/coverkraft/vault", label: "Vault" },
-              { to: "/coverkraft/vault", label: "Policy" },
+              { to: "/coverkraft/vault", label: "Policy Vault" },
+              // { to: "/coverkraft/vault", label: "Policy" },
               { to: "/coverkraft/privacypolicy", label: "Privacy Policy" },
             ].map(({ to, label }) => (
               <p key={label}>
-                <Link to={to} className="fs-5 footer-link text-color">
+                <Link to={to} className="fs-5 footer-link text-color" aria-label={label}>
                   {label}
                 </Link>
+
               </p>
             ))}
           </nav>
@@ -87,32 +94,22 @@ const Footer = () => {
             <h6 className="text-uppercase fw-bold mb-3 fs-5 custom-color">
               Company
             </h6>
-            {["Blog", "Help", "Terms & Conditions"].map((item) => (
-              <p className="fs-5 footer-link text-color" key={item}>
-                {item}
-              </p>
-            ))}
+            <p className="fs-5 footer-link text-color clickable" onClick={handleNavigation}>
+              Blog
+            </p>
+
           </div>
 
           <div className="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end justify-content-center gap-3">
-            <img
-              src={twitter}
-              alt="Twitter"
-              className="twitter"
-              aria-label="Twitter"
-            />
-            <img
-              src={facebook}
-              alt="Facebook"
-              className="social-icon"
-              aria-label="Facebook"
-            />
-            <img
-              src={instagram}
-              alt="Instagram"
-              className="social-icon"
-              aria-label="Instagram"
-            />
+            {[twitter, facebook, instagram].map((icon, i) => (
+              <img
+                key={i}
+                src={icon}
+                alt={`Social Icon ${i}`}
+                className="social-icon"
+                aria-label={`Social ${i}`}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -121,9 +118,9 @@ const Footer = () => {
         className="text-center p-3 mt-4"
         style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
       >
-        <span className="me-2">© Coverkraft 2024</span>
-        <span className="border-start border-secondary ps-2">
-          All Rights Reserved
+        <span className="me-2">© Coverkraft {moment().format('YYYY')}</span>
+        <span className="text-color">
+          All rights reserved
         </span>
       </div>
     </footer>
