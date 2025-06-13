@@ -4,12 +4,12 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom"
 import "./App.css";
 // import { requestFCMPermission, setupOnMessageListener } from "./fcm"; // 💡 New clean file
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+// import {
+//   BrowserRouter as Router,
+//   Routes,
+//   Route,
+//   useNavigate,
+// } from "react-router-dom";
 import Login from "./LoginModule/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Register from "./LoginModule/Register";
