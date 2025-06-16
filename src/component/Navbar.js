@@ -1,62 +1,16 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Logo from "../Images/CoverKraft-beta.png";
-import profile from "../Images/ic-profile.png";
-import notification from "../Images/ic-notification.png";
-import { useTranslation } from "react-i18next";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { IconButton, styled } from "@mui/material";
+import { IconButton, Menu, MenuItem, styled } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Logo from "../Images/CoverKraft-beta.png";
+import profileIcon from "../Images/ic-profile.png";
+import notificationIcon from "../Images/ic-notification.png";
 import ProfileDrawer from "../component/profile";
-import "./footer.css";
 import { THEME_COLOR } from "../constants";
-
-const DarkMenu = styled(Menu)(() => ({
-  ".MuiMenu-paper": {
-    backgroundColor: "#333",
-    color: "white",
-    borderRadius: "8px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-  },
-  ".MuiMenu-list": {
-    minWidth: "150px",
-  },
-}));
-
-const MobileMenu = styled(Menu)(({ theme }) => ({
-  ".MuiMenu-paper": {
-    backgroundColor: "#333",
-    color: "white",
-    borderRadius: "8px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-    right: "0 !important",
-    left: "auto !important",
-    transformOrigin: "right top !important",
-  },
-}));
-
-const StyledButton = styled("button")(() => ({
-  backgroundColor: "transparent",
-  color: "#8AC642",
-  border: "1.5px solid #8AC642",
-  borderRadius: "5px",
-  padding: "8px 16px",
-  fontSize: "1rem",
-  fontWeight: "600",
-  minWidth: "100px",
-  cursor: "pointer",
-  userSelect: "none",
-  transition: "all 0.25s ease",
-  "&:hover": {
-    backgroundColor: "#8AC642",
-    color: "#000",
-  },
-}));
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/coverkraft" },
@@ -73,6 +27,34 @@ const MORE_MENU_ITEMS = [
 
 const LOCAL_STORAGE_KEYS = ["loggedIn", "verificationId", "userId", "policyId", "selectedPolicyId", "token"];
 
+const StyledButton = styled("button")(() => ({
+  backgroundColor: "transparent",
+  color: "#8AC642",
+  border: "1.5px solid #8AC642",
+  borderRadius: "5px",
+  padding: "8px 16px",
+  fontSize: "1rem",
+  fontWeight: "600",
+  minWidth: "100px",
+  cursor: "pointer",
+  userSelect: "none",
+  transition: "all 0.25s ease",
+  '&:hover': {
+    backgroundColor: "#8AC642",
+    color: "#000",
+  },
+}));
+
+const DarkMenu = styled(Menu)(({ theme }) => ({
+  '& .MuiMenu-paper': {
+    backgroundColor: "#333",
+    color: "white",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    minWidth: 160,
+  },
+}));
+
 function Navbar({ scrollToContactBottom }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -80,193 +62,42 @@ function Navbar({ scrollToContactBottom }) {
   const [mobileAnchor, setMobileAnchor] = useState(null);
   const [moreAnchor, setMoreAnchor] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const loggedIn = useMemo(() => localStorage.getItem("loggedIn") === "true", []);
-  const isMobile = useMemo(() => windowWidth < 1260, [windowWidth]);
+  const isMobile = useMemo(() => window.innerWidth < 1260, []);
   const isHomePage = useMemo(() => location.pathname === "/coverkraft", [location.pathname]);
-  const visibleNavItems = useMemo(() => NAV_ITEMS.filter(item => !item.auth || loggedIn), [loggedIn]);
 
-  // Get active item based on current path
-  const activeItem = useMemo(() => {
-    const currentItem = NAV_ITEMS.find(item => item.path === location.pathname);
-    return currentItem?.key || "";
-  }, [location.pathname]);
+  const visibleNavItems = useMemo(() => {
+    return NAV_ITEMS.filter(item => {
+      if (isHomePage && item.key === "home") return false;
+      return !item.auth || loggedIn;
+    });
+  }, [loggedIn, isHomePage]);
 
-  // Window resize handler
-  useEffect(() => {
-    const handleResize = () => {
-      const newWidth = window.innerWidth;
-      setWindowWidth(newWidth);
-      if (newWidth >= 1260) setMobileAnchor(null);
-    };
-
-    window.addEventListener("resize", handleResize, { passive: true });
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Navigation handler
   const handleNavigation = useCallback((item) => {
-    if (item.isHelp && typeof scrollToContactBottom === "function") {
-      return loggedIn ? scrollToContactBottom() : navigate("/coverkraft/login");
-    }
     if (item.auth && !loggedIn) return navigate("/coverkraft/login");
     navigate(item.path);
-  }, [loggedIn, navigate, scrollToContactBottom]);
+  }, [loggedIn, navigate]);
 
-  // Logout handler with page refresh
-  const handleLogout = useCallback(() => {
+  const handleMoreItemClick = (id) => {
+    setMoreAnchor(null);
+    const element = document.getElementById(id);
+    if (element) element.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleLogout = () => {
     LOCAL_STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
     setProfileAnchor(null);
     navigate("/coverkraft");
-    // Force page refresh after logout
     setTimeout(() => window.location.reload(), 100);
-  }, [navigate]);
+  };
 
-  const handleVault = useCallback(() => {
+  const handleVault = () => {
     navigate(localStorage.getItem("token") ? "/coverkraft/vault" : "/coverkraft/login");
-  }, [navigate]);
-
-  const handleMoreItemClick = useCallback((id) => {
-    setMoreAnchor(null);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
-  // Menu close handlers
-  const closeMenus = {
-    profile: () => setProfileAnchor(null),
-    mobile: () => setMobileAnchor(null),
-    more: () => setMoreAnchor(null),
-  };
-
-  const toggleMobileMenu = useCallback((e) => {
-    setMobileAnchor(prev => prev ? null : e.currentTarget);
-  }, []);
-
-  // Render user actions
-  const UserActions = () => {
-    if (!loggedIn) {
-      return <StyledButton onClick={() => navigate("/coverkraft/login")}>Login</StyledButton>;
-    }
-
-    return (
-      <>
-        <img
-          src={notification}
-          alt="notification"
-          onClick={() => navigate("/coverkraft/notification")}
-          style={{ height: 24, width: 24, cursor: "pointer" }}
-        />
-        <img
-          src={profile}
-          alt="profile"
-          onClick={(e) => setProfileAnchor(e.currentTarget)}
-          style={{ height: 24, width: 24, cursor: "pointer" }}
-        />
-        <DarkMenu 
-          anchorEl={profileAnchor} 
-          open={Boolean(profileAnchor)} 
-          onClose={closeMenus.profile}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-          sx={{
-            "& .MuiMenu-paper": {
-              right: "70px !important",
-              left: "auto !important",
-            }
-          }}
-        >
-          <MenuItem onClick={() => { setDrawerOpen(true); closeMenus.profile(); }}>
-            <AccountCircleOutlinedIcon style={{ marginRight: "10px" }} />
-            My Profile
-          </MenuItem>
-          <MenuItem onClick={handleLogout}>
-            <LogoutIcon style={{ marginRight: "10px" }} />
-            Logout
-          </MenuItem>
-        </DarkMenu>
-        <StyledButton onClick={handleVault}>Policy Vault</StyledButton>
-      </>
-    );
-  };
-
-  // Mobile menu items
-  const MobileMenuItems = () => (
-    <>
-      {visibleNavItems.map(item => (
-        <MenuItem key={item.key} onClick={() => { handleNavigation(item); closeMenus.mobile(); }}>
-          {item.label}
-        </MenuItem>
-      ))}
-      {loggedIn ? (
-        <>
-          <MenuItem onClick={() => { navigate("/coverkraft/notification"); closeMenus.mobile(); }}>
-            Notification
-          </MenuItem>
-          <MenuItem onClick={() => { handleLogout(); closeMenus.mobile(); }}>
-            Logout
-          </MenuItem>
-        </>
-      ) : (
-        <MenuItem onClick={() => { navigate("/coverkraft/login"); closeMenus.mobile(); }}>
-          Login
-        </MenuItem>
-      )}
-    </>
-  );
-
-  // Desktop navigation items
-  const DesktopNavItems = () => (
-    <>
-      {visibleNavItems.map(item => (
-        <div
-          key={item.key}
-          className="nav-item"
-          onClick={() => handleNavigation(item)}
-          style={{
-            cursor: "pointer",
-            color: activeItem === item.key ? "#8AC642" : "white",
-            fontWeight: activeItem === item.key ? "600" : "400",
-            padding: "8px 16px",
-            borderRadius: "4px",
-            transition: "all 0.3s ease",
-          }}
-        >
-          {item.label}
-        </div>
-      ))}
-    </>
-  );
-
-  // More menu (only on home page)
-  const MoreMenu = () => {
-    if (!isHomePage) return null;
-    
-    return (
-      <>
-        <IconButton onClick={(e) => setMoreAnchor(e.currentTarget)} sx={{ color: THEME_COLOR.COLOR }}>
-          <MoreVertIcon />
-        </IconButton>
-        <DarkMenu 
-          anchorEl={moreAnchor} 
-          open={Boolean(moreAnchor)} 
-          onClose={closeMenus.more}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          {MORE_MENU_ITEMS.map(item => (
-            <MenuItem key={item.key} onClick={() => handleMoreItemClick(item.id)}>
-              {item.label}
-            </MenuItem>
-          ))}
-        </DarkMenu>
-      </>
-    );
   };
 
   return (
     <>
-      {/* Sticky Navbar */}
       <div
         style={{
           position: "fixed",
@@ -279,7 +110,7 @@ function Navbar({ scrollToContactBottom }) {
           boxShadow: "0px 4px 6px rgba(0,0,0,0.3)",
         }}
       >
-        <div className="nav-style d-flex justify-content-between align-items-center">
+        <div className="d-flex justify-content-between align-items-center">
           <img
             src={Logo}
             alt="Logo"
@@ -291,36 +122,93 @@ function Navbar({ scrollToContactBottom }) {
 
           {isMobile ? (
             <>
-              <IconButton onClick={toggleMobileMenu}>
-                {mobileAnchor ? 
-                  <CloseIcon sx={{ color: THEME_COLOR.COLOR }} /> : 
-                  <MenuIcon sx={{ color: THEME_COLOR.COLOR }} />
-                }
+              <IconButton onClick={(e) => setMobileAnchor(e.currentTarget)}>
+                {mobileAnchor ? <CloseIcon sx={{ color: THEME_COLOR.COLOR }} /> : <MenuIcon sx={{ color: THEME_COLOR.COLOR }} />}
               </IconButton>
-              <MobileMenu
+              <DarkMenu
                 anchorEl={mobileAnchor}
                 open={Boolean(mobileAnchor)}
-                onClose={closeMenus.mobile}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                onClose={() => setMobileAnchor(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
               >
-                <MobileMenuItems />
-              </MobileMenu>
+                {visibleNavItems.map(item => (
+                  <MenuItem key={item.key} onClick={() => { handleNavigation(item); setMobileAnchor(null); }}>{item.label}</MenuItem>
+                ))}
+                {loggedIn ? (
+                  [
+                    <MenuItem key="notify" onClick={() => { navigate("/coverkraft/notification"); setMobileAnchor(null); }}>Notification</MenuItem>,
+                    <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+                  ]
+                ) : (
+                  <MenuItem onClick={() => { navigate("/coverkraft/login"); setMobileAnchor(null); }}>Login</MenuItem>
+                )}
+              </DarkMenu>
             </>
           ) : (
-            <div className="d-flex align-items-center" style={{ gap: "24px" }}>
-              <DesktopNavItems />
-              <UserActions />
-              <MoreMenu />
+            <div className="d-flex align-items-center" style={{ gap: 24 }}>
+              {visibleNavItems.map(item => (
+                <div
+                  key={item.key}
+                  style={{
+                    cursor: "pointer",
+                    color: location.pathname === item.path ? "#8AC642" : "white",
+                    fontWeight: location.pathname === item.path ? "600" : "400",
+                  }}
+                  onClick={() => handleNavigation(item)}
+                >
+                  {item.label}
+                </div>
+              ))}
+              <img
+                src={notificationIcon}
+                alt="notification"
+                style={{ height: 24, width: 24, cursor: "pointer" }}
+                onClick={() => navigate("/coverkraft/notification")}
+              />
+              <img
+                src={profileIcon}
+                alt="profile"
+                style={{ height: 24, width: 24, cursor: "pointer" }}
+                onClick={(e) => setProfileAnchor(e.currentTarget)}
+              />
+              <DarkMenu
+                anchorEl={profileAnchor}
+                open={Boolean(profileAnchor)}
+                onClose={() => setProfileAnchor(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              >
+                <MenuItem onClick={() => { setDrawerOpen(true); setProfileAnchor(null); }}>
+                  <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <LogoutIcon sx={{ mr: 1 }} /> Logout
+                </MenuItem>
+              </DarkMenu>
+              <StyledButton onClick={handleVault}>Policy Vault</StyledButton>
+              {isHomePage && (
+                <IconButton onClick={(e) => setMoreAnchor(e.currentTarget)} sx={{ color: THEME_COLOR.COLOR }}>
+                  <MoreVertIcon />
+                </IconButton>
+              )}
+              <DarkMenu
+                anchorEl={moreAnchor}
+                open={Boolean(moreAnchor)}
+                onClose={() => setMoreAnchor(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              >
+                {MORE_MENU_ITEMS.map(item => (
+                  <MenuItem key={item.key} onClick={() => handleMoreItemClick(item.id)}>{item.label}</MenuItem>
+                ))}
+              </DarkMenu>
             </div>
           )}
         </div>
       </div>
 
-      {/* Spacer div */}
       <div style={{ height: "95px" }} />
-
-      {/* Profile Drawer */}
       <ProfileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </>
   );
