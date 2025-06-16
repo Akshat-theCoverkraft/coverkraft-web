@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../../Images/coverkraft_logo_1.png";
-import twitter from "../../Images/X.png";
 import facebook from "../../Images/facebook.png";
 import instagram from "../../Images/instagram.png";
 import location from "../../Images/location_on.png";
@@ -9,6 +8,7 @@ import call from "../../Images/call.png";
 import email from "../../Images/email.png";
 import "./CSS/footer.css";
 import { THEME_COLOR } from "../../constants";
+import moment from "moment";
 
 const Footer = () => {
   return (
@@ -96,7 +96,7 @@ const Footer = () => {
 
           <div className="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end justify-content-center gap-3">
             <img
-              src={twitter}
+              src={require("../../Images/ic_twitter.png")}
               alt="Twitter"
               className="twitter"
               aria-label="Twitter"
@@ -121,7 +121,7 @@ const Footer = () => {
         className="text-center p-3 mt-4"
         style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
       >
-        <span className="me-2">© Coverkraft 2024</span>
+<span className="me-2">© Coverkraft {moment().format('YYYY')}</span>
         <span className="border-start border-secondary ps-2">
           All Rights Reserved
         </span>

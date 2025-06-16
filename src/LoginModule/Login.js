@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CSS/login.css';
-import LoginImg from '../Images/img_phone_login.png';
 import logo from '../Images/coverkraft_logo_1.png';
-import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
+// import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import CustomInput from '../component/CustomInput';
@@ -13,15 +12,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { requestForToken } from '../helper';
-import LOGING from '../Images/LOGING.png';
+
 const Login = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [otp, setOtp] = useState([]);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [valid, setValid] = useState(false);
-    const [verificationId, setVerificationId] = useState('');
-    const [verificationCode, setVerificationCode] = useState('');
     const recaptchRef = useRef(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -181,7 +177,7 @@ const Login = () => {
                 </div>
 
                 <img
-                    src={LOGING}
+                    src={require('../Images/bg_login.png')}
                     alt="Sample"
                     style={{
                         height: '100vh',
