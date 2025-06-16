@@ -110,8 +110,8 @@ const Footer = () => {
                 height={23}
                 className="me-2 mt-1"
               />
-              <a href="tel:+13866883295" className="fs-5 footer-link">
-                +1 386-688-3295
+              <a href="tel:+91XXXXXXXXXX" className="fs-5 footer-link">
+                +91 XXXX-XXXXX
               </a>
             </div>
           </address>

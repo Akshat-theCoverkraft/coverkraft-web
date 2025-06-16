@@ -31,6 +31,7 @@ import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx"; // adjust pa
 import ContactUs from "./pages/ContactUs.jsx";
 import PolicyType from './Landing/component/PolicyType';
 import PolicyDetails from './pages/PolicyDetails';
+import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
@@ -99,6 +100,7 @@ function App() {
       <Toaster position="top-right" reverseOrder={false} />
       {/* This stuff can go wherever appropriate in layout */}
       <BackToTop />
+      <UniversalHomeButton />
 
       <Routes>
         <Route path="/coverkraft" element={<Landing />} />
