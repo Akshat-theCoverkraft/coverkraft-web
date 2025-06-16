@@ -35,14 +35,19 @@ const Footer = () => {
 
   const companyLinks = [
     { label: "Privacy Policy", to: "/coverkraft/legal#PrivacyPolicy" },
-    { label: "Grievance Redress Policy", to: "/coverkraft/legal#GrievanceRedressPolicy" },
+    {
+      label: "Grievance Redress Policy",
+      to: "/coverkraft/legal#GrievanceRedressPolicy",
+    },
     { label: "License", to: "/coverkraft/legal#License" },
     { label: "Terms of Use", to: "/coverkraft/legal#TermsOfUse" },
-    { label: "Refund & Cancellation Policy", to: "/coverkraft/legal#RefundCancellationPolicy" },
+    {
+      label: "Refund & Cancellation Policy",
+      to: "/coverkraft/legal#RefundCancellationPolicy",
+    },
     { label: "ISNP", to: "/coverkraft/legal#ISNP" },
     { label: "legal", to: "/coverkraft/legal" },
-        { to: "/coverkraft/about", label: "About Us" },
-
+    { to: "/coverkraft/about", label: "About Us" },
   ];
 
   return (
@@ -65,8 +70,8 @@ const Footer = () => {
               className="mb-3"
             />
             <p className="fs-5 text-color">
-              Coverkraft offers powerful tools for filling out forms,
-              scanning documents, and uploading them with ease.
+              Coverkraft offers powerful tools for filling out forms, scanning
+              documents, and uploading them with ease.
             </p>
           </div>
 
@@ -89,12 +94,7 @@ const Footer = () => {
             </div>
 
             <div className="d-flex align-items-start mb-2">
-              <img
-                src={email}
-                alt="Email"
-                height={23}
-                className="me-2 mt-1"
-              />
+              <img src={email} alt="Email" height={23} className="me-2 mt-1" />
               <a
                 href="mailto:contact@thecoverkraft.com"
                 className="fs-5 footer-link"
@@ -104,12 +104,7 @@ const Footer = () => {
             </div>
 
             <div className="d-flex align-items-start">
-              <img
-                src={call}
-                alt="Call"
-                height={23}
-                className="me-2 mt-1"
-              />
+              <img src={call} alt="Call" height={23} className="me-2 mt-1" />
               <a href="tel:+91XXXXXXXXXX" className="fs-5 footer-link">
                 +91 XXXX-XXXXX
               </a>
@@ -155,7 +150,7 @@ const Footer = () => {
           </div>
 
           {/* Social Icons */}
-          <div className="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end justify-content-center gap-3">
+          <div className="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end justify-content-center gap-3 p-3">
             {[twitter, facebook, instagram].map((icon, i) => (
               <img
                 key={i}

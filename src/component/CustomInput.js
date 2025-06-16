@@ -45,7 +45,7 @@ function CustomInput({
   const inputId = `inputField-${name}`;
 
   return (
-    <div data-mdb-input-init className="form-outline mb-4">
+    <div data-mdb-input-init className="form-outline mb-2">
       <label className="form-label fw-bold text-light mb-3" htmlFor={inputId}>
         {label} {required && <span className="text-danger">*</span>}
       </label>
