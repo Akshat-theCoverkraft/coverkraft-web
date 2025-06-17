@@ -3,10 +3,10 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  width: 100%;
+  width: calc(100% - 40px); /* 20px space on each side */
   height: 40vh;
-  border-bottom-left-radius: 3%;
-  border-bottom-right-radius: 3%;
+  margin: 0 20px;
+  border-radius: 10%;
 }
 .bg-image1 {
   /* background-image: url("../../../Images/cover-bg.png"); */

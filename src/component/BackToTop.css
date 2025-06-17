@@ -1,12 +1,14 @@
 .back-to-top-btn {
   position: fixed;
-  bottom: 40px;
+  bottom: 20px; /* Lower on the screen */
   right: 40px;
-  padding: 14px;
+  width: 56px;   /* Equal width and height for circle */
+  height: 56px;
+  padding: 0;
   font-size: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #19f02f, #035907);
-  color: white;
+  background: linear-gradient(135deg, #1E1E1E);
+  color: #8BC642;
   border: none;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);

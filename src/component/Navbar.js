@@ -88,7 +88,7 @@ function Navbar({ scrollToContactBottom }) {
   const handleLogout = () => {
     LOCAL_STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
     setProfileAnchor(null);
-    navigate("/coverkraft");
+    navigate("/coverkraft/login");
     setTimeout(() => window.location.reload(), 100);
   };
 
@@ -136,12 +136,18 @@ function Navbar({ scrollToContactBottom }) {
                   <MenuItem key={item.key} onClick={() => { handleNavigation(item); setMobileAnchor(null); }}>{item.label}</MenuItem>
                 ))}
                 {loggedIn ? (
-                  [
-                    <MenuItem key="notify" onClick={() => { navigate("/coverkraft/notification"); setMobileAnchor(null); }}>Notification</MenuItem>,
-                    <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
-                  ]
+                  <>
+                    <MenuItem key="notify" onClick={() => { navigate("/coverkraft/notification"); setMobileAnchor(null); }}>
+                      Notification
+                    </MenuItem>
+                    <MenuItem key="logout" onClick={handleLogout}>
+                      Logout
+                    </MenuItem>
+                  </>
                 ) : (
-                  <MenuItem onClick={() => { navigate("/coverkraft/login"); setMobileAnchor(null); }}>Login</MenuItem>
+                  <MenuItem onClick={() => { navigate("/coverkraft/login"); setMobileAnchor(null); }}>
+                    Login
+                  </MenuItem>
                 )}
               </DarkMenu>
             </>
@@ -160,32 +166,38 @@ function Navbar({ scrollToContactBottom }) {
                   {item.label}
                 </div>
               ))}
-              <img
-                src={notificationIcon}
-                alt="notification"
-                style={{ height: 24, width: 24, cursor: "pointer" }}
-                onClick={() => navigate("/coverkraft/notification")}
-              />
-              <img
-                src={profileIcon}
-                alt="profile"
-                style={{ height: 24, width: 24, cursor: "pointer" }}
-                onClick={(e) => setProfileAnchor(e.currentTarget)}
-              />
-              <DarkMenu
-                anchorEl={profileAnchor}
-                open={Boolean(profileAnchor)}
-                onClose={() => setProfileAnchor(null)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              >
-                <MenuItem onClick={() => { setDrawerOpen(true); setProfileAnchor(null); }}>
-                  <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  <LogoutIcon sx={{ mr: 1 }} /> Logout
-                </MenuItem>
-              </DarkMenu>
+              {loggedIn ? (
+                <>
+                  <img
+                    src={notificationIcon}
+                    alt="notification"
+                    style={{ height: 24, width: 24, cursor: "pointer" }}
+                    onClick={() => navigate("/coverkraft/notification")}
+                  />
+                  <img
+                    src={profileIcon}
+                    alt="profile"
+                    style={{ height: 24, width: 24, cursor: "pointer" }}
+                    onClick={(e) => setProfileAnchor(e.currentTarget)}
+                  />
+                  <DarkMenu
+                    anchorEl={profileAnchor}
+                    open={Boolean(profileAnchor)}
+                    onClose={() => setProfileAnchor(null)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  >
+                    <MenuItem onClick={() => { setDrawerOpen(true); setProfileAnchor(null); }}>
+                      <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
+                    </MenuItem>
+                    <MenuItem onClick={handleLogout}>
+                      <LogoutIcon sx={{ mr: 1 }} /> Logout
+                    </MenuItem>
+                  </DarkMenu>
+                </>
+              ) : (
+                <StyledButton onClick={() => navigate("/coverkraft/login")}>Login</StyledButton>
+              )}
               <StyledButton onClick={handleVault}>Policy Vault</StyledButton>
               {isHomePage && (
                 <IconButton onClick={(e) => setMoreAnchor(e.currentTarget)} sx={{ color: THEME_COLOR.COLOR }}>

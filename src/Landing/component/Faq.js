@@ -72,10 +72,9 @@ export default function Faq() {
   return (
     <div id="faq" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
       <div className="text-center p-3">
-        <h3 className="mt-3 fw-bold" style={{ color: "#FF9906", fontSize: "2.5rem" }}>
-          FAQ
-        </h3>
-        <h1 className="mt-3 fw-bold" style={{ fontSize: "2.5rem" }}>Frequently Asked Questions</h1>
+        <h1 className="mt-3 fw-bold" style={{ color: "#FF9906", fontSize: "2.6rem" }}>
+          FAQs
+        </h1>
       </div>
 
       <div style={{ padding: "20px 0" }}>
