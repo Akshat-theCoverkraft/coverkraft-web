@@ -109,7 +109,7 @@ function Navbar({ scrollToContactBottom }) {
   const handleLogout = () => {
     LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
     setProfileAnchor(null);
-    navigate("/coverkraft/login");
+    navigate("/");
     setTimeout(() => window.location.reload(), 100);
   };
 
