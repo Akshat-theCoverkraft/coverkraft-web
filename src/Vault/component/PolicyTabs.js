@@ -171,7 +171,6 @@ export default function PolicyTabs({
     fetchArchieveList();
   }, [value]);
 
-  //function for set the value
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -192,14 +191,14 @@ export default function PolicyTabs({
               <Box
                 sx={{
                   maxWidth: { xs: 370, sm: 530 },
-                  width: "75%",
+                  width: "50%",
                   bgcolor: "#EAF0FD",
                   margin: "auto",
                   borderRadius: "35px",
-                  display: "flex", // Add this line
-                  justifyContent: "space-around", // Add this line
+                  display: "flex",
+                  justifyContent: "space-around",
                 }}
-                className="p-2"
+                className=""
                 alignItems="center"
                 justifyContent="space-around"
                 style={{
@@ -305,23 +304,17 @@ export default function PolicyTabs({
                     getPaginatedData(policyList, pageActive).map(
                       (policy, index) => {
                         let endDate, diffInDays, status;
-
-                        console.log("policy", policy);
-
                         try {
                           if (policy.policyEndDate) {
-                            // Try to parse the date part of the policy end date
                             const datePart = policy.policyEndDate.split(" ")[0];
                             const [day, month, year] = datePart.split("/");
 
-                            // Create a new Date object with the date components
                             endDate = new Date(year, month - 1, day);
 
                             if (isNaN(endDate)) throw new Error("Invalid date");
 
                             const now = new Date();
 
-                            // Remove the time component from the dates
                             const endDateWithoutTime = new Date(
                               endDate.getFullYear(),
                               endDate.getMonth(),
@@ -333,7 +326,6 @@ export default function PolicyTabs({
                               now.getDate()
                             );
 
-                            // Calculate the difference in milliseconds between the dates
                             const diffInMs =
                               endDateWithoutTime.getTime() -
                               nowWithoutTime.getTime();
@@ -356,18 +348,14 @@ export default function PolicyTabs({
 
                         return (
                           <Card
-                            className="m-5 rounded card-detail policy-card-container"
+                            className="mb-5 rounded card-detail "
                             key={index}
                             style={{
-                              boxShadow:
-                                "rgba(201, 201, 202, 0.95) 0px 0px 5px",
-                              backgroundColor:
-                                policy._id === activeCardId
-                                  ? THEME_COLOR.FADE_BACKGROUND
-                                  : THEME_COLOR.BACKGROUND, // Conditional styling
+                              boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+                              backgroundColor: THEME_COLOR.FADE_BACKGROUND,
                               color: THEME_COLOR.COLOR,
                             }}
-                            onClick={() => handleCardClickWithState(policy._id)} // Use the updated click handler
+                            onClick={() => handleCardClickWithState(policy._id)}
                           >
                             <CardContent style={{ position: "relative" }}>
                               {status && (
@@ -538,6 +526,19 @@ export default function PolicyTabs({
                       count={Math.ceil(policyList.length / itemsPerPage)}
                       page={pageActive}
                       onChange={handlePageActive}
+                      sx={{
+                        "& .MuiPaginationItem-root": {
+                          color: "#fff", // text color
+                          borderColor: "#fff", // border color for outlined variant
+                        },
+                        "& .MuiPaginationItem-root.Mui-selected": {
+                          backgroundColor: "#fff",
+                          color: "#000", // text color when selected
+                        },
+                        "& .MuiPaginationItem-ellipsis": {
+                          color: "#fff",
+                        },
+                      }}
                     />
                   </Box>
                 </div>
@@ -566,18 +567,18 @@ export default function PolicyTabs({
                       <p>Add your new policy effortlessly to your account</p>
                     </div>
                   ) : (
-                    getPaginatedData(policyList, pagePolicy).map(
-                      (policy, index) => (
-                        <div>
+                    <>
+                      {getPaginatedData(policyList, pagePolicy).map(
+                        (policy, index) => (
                           <Card
-                            className="m-5 rounded card-detail"
+                            className="rounded card-detail mb-5"
                             key={index}
                             style={{
                               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                               backgroundColor: THEME_COLOR.FADE_BACKGROUND,
                               color: THEME_COLOR.COLOR,
                             }}
-                            onClick={() => handleCardClick(policy._id)}
+                            onClick={() => handleCardClick(policy?._id)}
                           >
                             <CardContent style={{ position: "relative" }}>
                               <div
@@ -585,13 +586,14 @@ export default function PolicyTabs({
                                   position: "absolute",
                                   top: 0,
                                   right: 0,
-                                  width: "230px",
+                                  width: "150px",
                                   height: "60px",
                                   backgroundImage: `url(${red})`,
                                   backgroundSize: "cover",
                                   opacity: 1,
                                 }}
                               ></div>
+
                               <Grid container spacing={0}>
                                 <Grid
                                   item
@@ -606,10 +608,10 @@ export default function PolicyTabs({
                                         : policy.policyType === "bike_policy"
                                         ? scooty
                                         : policy.policyType === "health"
-                                        ? Health // Use the specific health icon
+                                        ? Health
                                         : policy.policyType === "life"
-                                        ? Life // Use the specific life icon
-                                        : scooty // Fallback: You might want a generic 'default' icon here
+                                        ? Life
+                                        : scooty
                                     }
                                     alt="Policy Image"
                                     style={{ width: "75%", maxWidth: "75%" }}
@@ -657,15 +659,10 @@ export default function PolicyTabs({
                                           ? "Life Insurance"
                                           : policy.policyType === "accident"
                                           ? "Accident Insurance"
-                                          : "Other Insurance"}{" "}
+                                          : "Other Insurance"}
                                       </Typography>
                                     </div>
-                                    <h4
-                                      variant="h4"
-                                      component="h2"
-                                      gutterBottom
-                                      className="fw-bold"
-                                    >
+                                    <h4 className="fw-bold">
                                       {policy.insuredName}
                                     </h4>
                                     <h6
@@ -674,24 +671,22 @@ export default function PolicyTabs({
                                     >
                                       {policy.policyNumber}
                                     </h6>
-                                    <h6
-                                      variant="h6"
-                                      component="h2"
-                                      gutterBottom
-                                      style={{ color: "#9E9E9E" }}
-                                    >
+                                    <h6 style={{ color: "#9E9E9E" }}>
                                       Expires on {policy.policyEndDate}
                                     </h6>
                                   </div>
+
                                   <div style={{ alignItems: "end" }}>
                                     <img
                                       src={arrow}
                                       className="mr-2"
                                       height={40}
+                                      alt="arrow"
                                     />
                                   </div>
                                 </Grid>
                               </Grid>
+
                               <div
                                 style={{
                                   position: "absolute",
@@ -706,26 +701,38 @@ export default function PolicyTabs({
                               </div>
                             </CardContent>
                           </Card>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              m: 2,
-                            }}
-                          >
-                            <Pagination
-                              variant="outlined"
-                              size="large"
-                              count={Math.ceil(
-                                policyList.length / itemsPerPage
-                              )}
-                              page={pagePolicy}
-                              onChange={handlePageChangePolicy}
-                            />
-                          </Box>
-                        </div>
-                      )
-                    )
+                        )
+                      )}
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          m: 2,
+                        }}
+                      >
+                        <Pagination
+                          variant="outlined"
+                          size="large"
+                          count={Math.ceil(policyList.length / itemsPerPage)}
+                          page={pagePolicy}
+                          onChange={handlePageChangePolicy}
+                          sx={{
+                            "& .MuiPaginationItem-root": {
+                              color: "#fff", // text color
+                              borderColor: "#fff", // border color for outlined variant
+                            },
+                            "& .MuiPaginationItem-root.Mui-selected": {
+                              backgroundColor: "#fff",
+                              color: "#000", // text color when selected
+                            },
+                            "& .MuiPaginationItem-ellipsis": {
+                              color: "#fff",
+                            },
+                          }}
+                        />
+                      </Box>
+                    </>
                   )}
                 </div>
               </TabPanel>
@@ -756,7 +763,7 @@ export default function PolicyTabs({
                       (policy, index) => (
                         <div>
                           <Card
-                            className="m-5 rounded card-detail "
+                            className="mb-5 rounded card-detail "
                             key={index}
                             style={{
                               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
@@ -880,6 +887,19 @@ export default function PolicyTabs({
                       count={Math.ceil(archieveList.length / itemsPerPage)}
                       page={pageArchive}
                       onChange={handlePageChangeArchive}
+                      sx={{
+                        "& .MuiPaginationItem-root": {
+                          color: "#fff", // text color
+                          borderColor: "#fff", // border color for outlined variant
+                        },
+                        "& .MuiPaginationItem-root.Mui-selected": {
+                          backgroundColor: "#fff",
+                          color: "#000", // text color when selected
+                        },
+                        "& .MuiPaginationItem-ellipsis": {
+                          color: "#fff",
+                        },
+                      }}
                     />
                   </Box>
                 </div>

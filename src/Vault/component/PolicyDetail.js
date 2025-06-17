@@ -5,9 +5,10 @@ import Button from "../../component/Button";
 import EditIcon from "../../Images/edit.png";
 import scooty from "../../Images/detail-scooty.png";
 import HealthInsurance from "../../Images/FamilyHealthInsurance.png";
+import family from "../../Images/Family.png";
 import car from "../../Images/Car.png";
-import Health from "../../Images/ic_health.png"
-import Life from "../../Images/ic_life.png"
+import Health from "../../Images/ic_health.png";
+import Life from "../../Images/ic_life.png";
 import Grid from "@mui/material/Grid";
 import premium from "../../Images/premium.png";
 import value from "../../Images/value.png";
@@ -203,10 +204,10 @@ const PolicyDetail = ({ policyId }) => {
           let endDate, diffInDays, status;
 
           try {
-            if (policy.policyEndDate) {
+            if (policy?.policyEndDate) {
               // Try to parse the date part of the policy end date
-              const datePart = policy.policyEndDate.split(" ")[0];
-              const [day, month, year] = datePart.split("/");
+              const datePart = policy?.policyEndDate?.split(" ")[0];
+              const [day, month, year] = datePart?.split("/");
 
               // Create a new Date object with the date components
               endDate = new Date(year, month - 1, day);
@@ -215,7 +216,6 @@ const PolicyDetail = ({ policyId }) => {
 
               const now = new Date();
 
-              // Remove the time component from the dates
               const endDateWithoutTime = new Date(
                 endDate.getFullYear(),
                 endDate.getMonth(),
@@ -227,7 +227,6 @@ const PolicyDetail = ({ policyId }) => {
                 now.getDate()
               );
 
-              // Calculate the difference in milliseconds between the dates
               const diffInMs =
                 endDateWithoutTime.getTime() - nowWithoutTime.getTime();
               diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
@@ -242,7 +241,7 @@ const PolicyDetail = ({ policyId }) => {
             console.error("Error parsing policy end date:", error);
           }
 
-          const documentPath = policy.documentDetails.documentPath;
+          const documentPath = policy?.documentDetails?.documentPath;
 
           return (
             <Card
@@ -280,7 +279,7 @@ const PolicyDetail = ({ policyId }) => {
                     gutterBottom
                     className="fw-bold pl-4"
                   >
-                    {policy.policyDetails.make_Model || policy.insuredName}
+                    {policy?.policyDetails?.make_Model || policy?.insuredName}
                   </p>
                   <p
                     style={{
@@ -290,8 +289,8 @@ const PolicyDetail = ({ policyId }) => {
                     }}
                     className="pl-4"
                   >
-                    {policy.policyDetails.registrationNumber ||
-                      policy.policyNumber}
+                    {policy?.policyDetails?.registrationNumber ||
+                      policy?.policyNumber}
                   </p>
                   <p
                     style={{
@@ -301,31 +300,28 @@ const PolicyDetail = ({ policyId }) => {
                     }}
                     className="pl-4"
                   >
-                    Expires on {formatDate(policy.policyEndDate)}
+                    Expires on {formatDate(policy?.policyEndDate)}
                   </p>
                 </div>
                 <div>
                   <img
                     src={
-                      policy.policyType === "car_policy"
+                      policy?.policyType === "car_policy"
                         ? car
-                        : policy.policyType === "bike_policy"
-                          ? scooty
-                          : policy.policyType === "other_vehicle"
-                            ? scooty
-                            : policy.policyType === "life"
-                              ? family
-                              : policy.policyType === "accident"
-                                ? family
-                                : policy.policyType === "health"
-                                  ? Health
-                                  : policy.policyType === "other_health"
-                                    ? HealthInsurance
-                                    : ""
+                        : policy?.policyType === "bike_policy"
+                        ? scooty
+                        : policy?.policyType === "other_vehicle"
+                        ? scooty
+                        : policy?.policyType === "life"
+                        ? family
+                        : policy?.policyType === "accident"
+                        ? family
+                        : policy?.policyType === "health"
+                        ? Health
+                        : policy?.policyType === "other_health"
+                        ? HealthInsurance
+                        : emptyImage
                     }
-                    alt="Policy Image"
-                    style={{ width: "75%", maxWidth: "75%" }}
-                    className="img-fluid rounded-start"
                   />
                 </div>
               </div>
@@ -417,7 +413,7 @@ const PolicyDetail = ({ policyId }) => {
                           style={{ fontSize: "16px", fontWeight: "700" }}
                           className="fw-bolder"
                         >
-                          {policy.premiumPaid}
+                          {policy?.premiumPaid}
                         </p>
                       </div>
                     </Grid>
@@ -442,8 +438,8 @@ const PolicyDetail = ({ policyId }) => {
                           Value(IDV)
                         </p>
                         <p className="fw-bolder">
-                          {policy.policyDetails.idv ||
-                            policy.policyDetails.sumInsured}
+                          {policy?.policyDetails.idv ||
+                            policy?.policyDetails?.sumInsured}
                         </p>
                       </div>
                     </Grid>
@@ -468,7 +464,7 @@ const PolicyDetail = ({ policyId }) => {
                           Policy Start Date
                         </p>
                         <p className="fw-bolder">
-                          {formatDate(policy.policyStartDate)}
+                          {formatDate(policy?.policyStartDate)}
                         </p>
                       </div>
                     </Grid>
@@ -493,12 +489,12 @@ const PolicyDetail = ({ policyId }) => {
                           Policy End Date
                         </p>
                         <p className="fw-bolder">
-                          {formatDate(policy.policyEndDate)}
+                          {formatDate(policy?.policyEndDate)}
                         </p>
                       </div>
                     </Grid>
                   </Grid>
-                  {!policy.status ? (
+                  {!policy?.status ? (
                     <Grid
                       item
                       className="m-4"
@@ -517,7 +513,6 @@ const PolicyDetail = ({ policyId }) => {
                         onClick={handleArchieve}
                       >
                         Archive
-                        {/* {policy.status} */}
                       </button>
                     </Grid>
                   ) : (
