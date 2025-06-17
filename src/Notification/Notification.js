@@ -36,8 +36,6 @@ const Notification = () => {
         params: { status: "active" },
       });
 
-      console.log("Fetched notifications:", response?.data);
-
       const allNotifications = response?.data?.data || [];
       const deletedIds =
         JSON.parse(localStorage.getItem("deletedNotifications")) || [];
@@ -87,19 +85,6 @@ const Notification = () => {
     setSelectedNotification(null);
   };
 
-  const deleteNotification = (id) => {
-    const updatedList = notifications.filter((n) => n._id !== id);
-    setNotifications(updatedList);
-    setSentNotificationsCount(updatedList.length);
-
-    const deletedIds =
-      JSON.parse(localStorage.getItem("deletedNotifications")) || [];
-    localStorage.setItem(
-      "deletedNotifications",
-      JSON.stringify([...deletedIds, id])
-    );
-  };
-
   const handleDeleteNotificastion = async (id) => {
     const res = await axios.post(`${API_URL}notification/delete`, { _id: id });
 
@@ -132,6 +117,37 @@ const Notification = () => {
     );
   }
 
+  if (notifications?.length === 0) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          backgroundColor: "#121212",
+          color: "#E0E0E0",
+        }}
+      >
+        <Navbar />
+        <div
+          style={{
+            minHeight: "80vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h5">
+            You have no notifications at the moment.
+          </Typography>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -141,7 +157,7 @@ const Notification = () => {
       }}
     >
       <Navbar />
-      <div className="m-5 p-5">
+      <div className="m-5 p-5" style={{ minHeight: "60vh" }}>
         <div
           style={{
             overflowY: "auto",

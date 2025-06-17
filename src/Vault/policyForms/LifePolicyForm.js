@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from '../../component/Navbar';
-import { ToastContainer, toast } from 'react-toastify';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField'
-import Box from '@mui/material/Box';
-import CustomInput from '../../component/CustomInput';
-import Button from '../../component/Button';
-import { useLocation } from 'react-router-dom';
-import Vault from '../Vault';
-import { useDispatch } from 'react-redux'
-import 'react-toastify/dist/ReactToastify.css';
-import API_URL from '../../ServiceModule/Service';
-import { saveDocument, updateDocument } from '../../store/action/action';
-import { useNavigate } from 'react-router-dom'
-import moment from 'moment';
-import Footer from '../../Landing/component/Footer';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
-import ProgressBarCircle from '../../component/ProgressBarCircle';
-import DateTimePicker from '../../component/DateTimePicker';
-import { formatDate } from '../../utils/dateUtils';
+import React, { useEffect, useState } from "react";
+import Navbar from "../../component/Navbar";
+import { ToastContainer, toast } from "react-toastify";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import CustomInput from "../../component/CustomInput";
+import Button from "../../component/Button";
+import { useLocation } from "react-router-dom";
+import Vault from "../Vault";
+import { useDispatch } from "react-redux";
+import "react-toastify/dist/ReactToastify.css";
+import API_URL from "../../ServiceModule/Service";
+import { saveDocument, updateDocument } from "../../store/action/action";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import Footer from "../../Landing/component/Footer";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import ProgressBarCircle from "../../component/ProgressBarCircle";
+import DateTimePicker from "../../component/DateTimePicker";
+import { formatDate } from "../../utils/dateUtils";
 const LifePolicyForm = () => {
   const location = useLocation();
   const responseData = location.state?.responseData;
@@ -32,57 +32,75 @@ const LifePolicyForm = () => {
   const policyDetails = location.state?.policyDetails;
   // Now you can use the responseData and mode in your component
   let headingText;
-  if (mode === 'edit') {
-    headingText = 'Edit Policy';
+  if (mode === "edit") {
+    headingText = "Edit Policy";
   } else {
-    headingText = 'Add Policy';
+    headingText = "Add Policy";
   }
   //   const PolicyType = responseData.policyType.toLowerCase();
   // console.log('pollcitype',PolicyType)
-  const [policyNumber, setPolicyNumber] = useState(responseData?.policyNumber || policyDetails?.policyNumber || "");
-  const [policyStartDate, setPolicyStartDate] = useState(responseData?.policyStartDate || policyDetails?.policyStartDate || "");
-  const [policyEndDate, setPolicyEndDate] = useState(responseData?.policyEndDate || policyDetails?.policyEndDate || "");
-  const [sumAssured, setSumAssured] = useState(responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || "");
-  const [premiumPaid, setPremiumPaid] = useState(responseData?.totalPremium || policyDetails?.premiumPaid || "");
-  const [insuredName, setInsuredName] = useState(responseData?.insuredName || policyDetails?.insuredName || "");
-  const [insuredCompany, setInsuredCompany] = useState(responseData?.insuranceCompany || policyDetails?.insuredCompany || "");
-  const [netPremium, setNetPremium] = useState(responseData?.netPremium || policyDetails?.policyDetails?.netPremium || "");
-  const [criticalIllness, setCriticalIllness] = useState(responseData?.criticalIllness || policyDetails?.policyDetails?.criticalIllness || "");
-  const [accidentalDisability, setAccidentalDisability] = useState(responseData?.accidentalDisability || policyDetails?.policyDetails?.accidentalDisability || "")
-  const [terminalIllness, setTerminalIllness] = useState(responseData?.terminalIllness || policyDetails?.policyDetails?.terminalIllness || '')
+  const [policyNumber, setPolicyNumber] = useState(
+    responseData?.policyNumber || policyDetails?.policyNumber || ""
+  );
+  const [policyStartDate, setPolicyStartDate] = useState(
+    responseData?.policyStartDate || policyDetails?.policyStartDate || ""
+  );
+  const [policyEndDate, setPolicyEndDate] = useState(
+    responseData?.policyEndDate || policyDetails?.policyEndDate || ""
+  );
+  const [sumAssured, setSumAssured] = useState(
+    responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || ""
+  );
+  const [premiumPaid, setPremiumPaid] = useState(
+    responseData?.totalPremium || policyDetails?.premiumPaid || ""
+  );
+  const [insuredName, setInsuredName] = useState(
+    responseData?.insuredName || policyDetails?.insuredName || ""
+  );
+  const [insuredCompany, setInsuredCompany] = useState(
+    responseData?.insuranceCompany || policyDetails?.insuredCompany || ""
+  );
+  const [netPremium, setNetPremium] = useState(
+    responseData?.netPremium || policyDetails?.policyDetails?.netPremium || ""
+  );
+  const [criticalIllness, setCriticalIllness] = useState(
+    responseData?.criticalIllness ||
+      policyDetails?.policyDetails?.criticalIllness ||
+      ""
+  );
+  const [accidentalDisability, setAccidentalDisability] = useState(
+    responseData?.accidentalDisability ||
+      policyDetails?.policyDetails?.accidentalDisability ||
+      ""
+  );
+  const [terminalIllness, setTerminalIllness] = useState(
+    responseData?.terminalIllness ||
+      policyDetails?.policyDetails?.terminalIllness ||
+      ""
+  );
   const [pa, setPa] = useState(responseData?.pa || "");
-  const [policyRenewalDate, setPolicyRenewalDate] = useState(responseData?.policyRenewalDate || "");
-  const [maturityDate, setMaturityDate] = useState(responseData?.maturityDate || "")
-  const [others, setOthers] = useState(responseData?.others || policyDetails?.others || "");
+  const [policyRenewalDate, setPolicyRenewalDate] = useState(
+    responseData?.policyRenewalDate || ""
+  );
+  const [maturityDate, setMaturityDate] = useState(
+    responseData?.maturityDate || ""
+  );
+  const [others, setOthers] = useState(
+    responseData?.others || policyDetails?.others || ""
+  );
   const [dob, setDob] = useState(responseData?.dob || "");
-  const [policyName, setPolicyName] = useState(responseData?.policyName || policyDetails?.policyDetails?.policyName || "");
+  const [policyName, setPolicyName] = useState(
+    responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
+  );
 
   const [loading, setLoading] = useState(false);
-  const userId = localStorage.getItem('userId');
-  const documentId = localStorage.getItem('documentId');
-  const policyId = localStorage.getItem('policyId')
+  const userId = localStorage.getItem("userId");
+  const documentId = localStorage.getItem("documentId");
+  const policyId = localStorage.getItem("policyId");
 
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (mode === 'edit' && responseData) {
-  //     setPolicyNumber(responseData.policyNumber || "");
-  //     setPolicyStartDate(responseData.policyStartDate || "");
-  //     setPolicyEndDate(responseData.policyEndDate || "");
-  //     setSumAssured(responseData.policyDetails.sumAssured || "");
-  //     setPremiumPaid(responseData.policyDetails.totalPremium || "");
-  //     setInsuredName(responseData.insuredName || "");
-  //     setInsuredCompany(responseData.policyDetails.insuranceCompany || "");
-  //     setNetPremium(responseData.netPremium || "");
-  //     setCriticalIllness(responseData.criticalIllness || "")
-  //     setAccidentalDisability(responseData.accidentalDisability || '');
-  //     setPolicyRenewalDate(responseData.policyRenewalDate || '');
-  //     setMaturityDate(responseData.maturityDate || '');
-  //     setOthers(responseData.others || '');
-  //     setIdv(responseData.policyDetails.idv || "");
-  //   }
-  // }, [mode, responseData]);
 
   const inputFields = [
     policyNumber,
@@ -92,7 +110,6 @@ const LifePolicyForm = () => {
     insuredName,
     insuredCompany,
     policyName,
-
   ];
   const calculateProgress = () => {
     const filledFields = inputFields.filter((field) => field !== "").length;
@@ -115,11 +132,9 @@ const LifePolicyForm = () => {
   const handleDob = (date) => {
     setDob(date);
   };
-  
+
   useEffect(() => {
-    // Calculate progress whenever input fields change
     const progress = calculateProgress();
-    // Handle progress value, you can store it in state or use directly
   }, [
     policyNumber,
     policyStartDate,
@@ -132,7 +147,7 @@ const LifePolicyForm = () => {
   ]);
   const handleSubmit = async () => {
     try {
-      setLoading(true); // Set loading state to true to disable the button
+      setLoading(true);
 
       const payload = {
         policyNumber,
@@ -146,26 +161,22 @@ const LifePolicyForm = () => {
       };
 
       if (validateFields(payload)) {
-        if (mode === 'edit') {
-          // Make API call to update the existing policy
+        if (mode === "edit") {
           await updatePolicy(payload);
         } else {
-          // Make API call to create a new policy
           await createPolicy(payload);
         }
-       
       } else {
-        toast.error( "Please fill all required fields!");
+        toast.error("Please fill all required fields!");
       }
     } catch (error) {
-      console.error('Failed to save policy:', error);
+      console.error("Failed to save policy:", error);
     } finally {
-      setLoading(false); // Reset loading state to false after API call completes
+      setLoading(false);
     }
   };
 
   const validateFields = (payload) => {
-    // Implement your validation logic here
     return (
       payload.policyNumber &&
       payload.policyStartDate &&
@@ -175,91 +186,112 @@ const LifePolicyForm = () => {
       payload.insuredCompany &&
       payload.sumAssured &&
       payload.policyName
-
     );
   };
 
   const createPolicy = (payload) => {
-    console.log('================')
-
     const formData = new FormData();
 
-    formData.append('userId', userId);
-    formData.append('documentId', documentId);
-    formData.append('policyType', responseData?.policyType.toLowerCase());
-    formData.append('policyNumber', policyNumber);
-    formData.append('policyStartDate', policyStartDate);
-    formData.append('policyEndDate', policyEndDate);
-    formData.append('sumInsured', sumAssured);
-    formData.append('premiumPaid', premiumPaid);
-    formData.append('netPremium', netPremium);
-    formData.append('insuredName', insuredName);
-    formData.append('insuranceCompany', insuredCompany);
-    formData.append('criticalIllness', criticalIllness);
-    formData.append('accidentalDisability', accidentalDisability);
-    formData.append('terminalIllness', terminalIllness)
-    formData.append('pa', pa);
-    formData.append('policyRenewalDate', policyRenewalDate);
-    formData.append('maturityDate', maturityDate);
-    formData.append('others', others);
-    formData.append('dob', dob);
-    formData.append('policyName', policyName)
+    formData.append("userId", userId);
+    formData.append("documentId", documentId);
+    formData.append("policyType", responseData?.policyType.toLowerCase());
+    formData.append("policyNumber", policyNumber);
+    formData.append("policyStartDate", policyStartDate);
+    formData.append("policyEndDate", policyEndDate);
+    formData.append("sumInsured", sumAssured);
+    formData.append("premiumPaid", premiumPaid);
+    formData.append("netPremium", netPremium);
+    formData.append("insuredName", insuredName);
+    formData.append("insuranceCompany", insuredCompany);
+    formData.append("criticalIllness", criticalIllness);
+    formData.append("accidentalDisability", accidentalDisability);
+    formData.append("terminalIllness", terminalIllness);
+    formData.append("pa", pa);
+    formData.append("policyRenewalDate", policyRenewalDate);
+    formData.append("maturityDate", maturityDate);
+    formData.append("others", others);
+    formData.append("dob", dob);
+    formData.append("policyName", policyName);
     dispatch(saveDocument(API_URL, formData))
-
       .then(() => {
         toast.success("Successfully Created");
-        navigate('/coverkraft/vault')
+        navigate("/coverkraft/vault");
       })
       .catch((error) => {
         toast.error("Error creating policy");
       });
-  }
+  };
   const updatePolicy = (payload) => {
-    console.log('================')
     const formData = new FormData();
-    formData.append('userId', userId);
-    formData.append('documentId', documentId);
-    formData.append('_id', policyId)
-    formData.append('policyType', policyDetails?.policyType.toLowerCase());
-    formData.append('policyNumber', policyNumber);
-    formData.append('policyStartDate', policyStartDate);
-    formData.append('policyEndDate', policyEndDate);
-    formData.append('sumInsured', sumAssured);
-    formData.append('premiumPaid', premiumPaid);
-    formData.append('netPremium', netPremium);
-    formData.append('insuredName', insuredName);
-    formData.append('insuranceCompany', insuredCompany);
-    formData.append('criticalIllness', criticalIllness);
-    formData.append('accidentalDisability', accidentalDisability);
-    formData.append('terminalIllness', terminalIllness)
-    formData.append('pa', pa);
-    formData.append('policyRenewalDate', policyRenewalDate);
-    formData.append('maturityDate', maturityDate);
-    formData.append('others', others);
-    formData.append('dob', dob);
-    formData.append('policyName', policyName)
+    formData.append("userId", userId);
+    formData.append("documentId", documentId);
+    formData.append("_id", policyId);
+    formData.append("policyType", policyDetails?.policyType.toLowerCase());
+    formData.append("policyNumber", policyNumber);
+    formData.append("policyStartDate", policyStartDate);
+    formData.append("policyEndDate", policyEndDate);
+    formData.append("sumInsured", sumAssured);
+    formData.append("premiumPaid", premiumPaid);
+    formData.append("netPremium", netPremium);
+    formData.append("insuredName", insuredName);
+    formData.append("insuranceCompany", insuredCompany);
+    formData.append("criticalIllness", criticalIllness);
+    formData.append("accidentalDisability", accidentalDisability);
+    formData.append("terminalIllness", terminalIllness);
+    formData.append("pa", pa);
+    formData.append("policyRenewalDate", policyRenewalDate);
+    formData.append("maturityDate", maturityDate);
+    formData.append("others", others);
+    formData.append("dob", dob);
+    formData.append("policyName", policyName);
     dispatch(updateDocument(API_URL, formData))
       .then(() => {
         toast.success("Successfully Updated");
-        navigate('/coverkraft/vault')
+        navigate("/coverkraft/vault");
       })
       .catch((error) => {
         toast.error("Error updating policy");
       });
-  }
+  };
   return (
     <div>
       <Navbar />
       <ToastContainer />
-      <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: '#000' }}>
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        sx={{ backgroundColor: "#000" }}
+      >
         <Grid item xs={12} sm={10} md={8}>
-          <Card className='border  my-4' style={{ padding: '40px 70px', boxShadow: ' rgba(17, 17, 26, 0.1) 0px 0px 16px', borderRadius: '20px' }}>
-            <div className='d-flex justify-content-between'>
-              <Typography variant="h4" component="h2" className='fw-bold'>{headingText}</Typography>
-              <ProgressBarCircle progress={calculateProgress()} />                        </div>
-            <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}> Details</p>
+          <Card
+            className="my-4"
+            style={{
+              padding: "40px 70px",
+              boxShadow: " rgba(17, 17, 26, 0.1) 0px 0px 16px",
+              borderRadius: "20px",
+              backgroundColor: "#3E3E3E",
+            }}
+          >
+            <div className="d-flex justify-content-between">
+              <Typography
+                variant="h4"
+                component="h2"
+                className="fw-bold"
+                style={{ color: "#fff" }}
+              >
+                {headingText}
+              </Typography>
+              <ProgressBarCircle progress={calculateProgress()} />{" "}
+            </div>
+            <p
+              className="custom-color my-4"
+              style={{ fontSize: "18px", fontWeight: "700" }}
+            >
+              {" "}
+              Details
+            </p>
             <div>
-
               <Grid container spacing={6}>
                 <Grid item xs={12} md={6}>
                   <CustomInput
@@ -274,11 +306,13 @@ const LifePolicyForm = () => {
                     required
                   />
 
-                  <Grid container spacing={3} className='mt-2'>
+                  <Grid container spacing={3} className="mt-2">
                     <Grid item xs={12} md={6}>
-
-                      <label className="form-label fw-bold" htmlFor="inputField">
-                        Start date <span className='text-danger'>*</span>
+                      <label
+                        className="form-label fw-bold"
+                        htmlFor="inputField"
+                      >
+                        Start date <span className="text-danger">*</span>
                       </label>
                       <DateTimePicker
                         height={50}
@@ -289,9 +323,11 @@ const LifePolicyForm = () => {
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
-
-                      <label className="form-label fw-bold" htmlFor="inputField">
-                        End date <span className='text-danger'>*</span>
+                      <label
+                        className="form-label fw-bold"
+                        htmlFor="inputField"
+                      >
+                        End date <span className="text-danger">*</span>
                       </label>
                       <DateTimePicker
                         height={50}
@@ -302,14 +338,16 @@ const LifePolicyForm = () => {
                       />
                     </Grid>
                   </Grid>
-                  <Grid container spacing={1} className='mt-2'>
+                  <Grid container spacing={1} className="mt-2">
                     <Grid item xs={12} md={6}>
-
-                      <label className="form-label fw-bold" htmlFor="inputField">
+                      <label
+                        className="form-label fw-bold"
+                        htmlFor="inputField"
+                      >
                         Policy Renewal date
                       </label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
+                        <DemoContainer components={["DatePicker"]}>
                           <DatePicker
                             defaultValue={dayjs(policyRenewalDate)}
                             selected={policyRenewalDate}
@@ -319,11 +357,11 @@ const LifePolicyForm = () => {
                             selectsStart
                             startDate={policyRenewalDate}
                             placeholderText="MM/DD/YYYY"
-                            style={{ width: '100%' }}
+                            style={{ width: "100%" }}
                           />
                         </DemoContainer>
                       </LocalizationProvider>
-                        {/* <DateTimePicker
+                      {/* <DateTimePicker
                         height={50}
                         isIcon={false}
                         label="DD/MM/YYYY"
@@ -332,12 +370,14 @@ const LifePolicyForm = () => {
                       /> */}
                     </Grid>
                     <Grid item xs={12} md={6}>
-
-                      <label className="form-label fw-bold" htmlFor="inputField">
+                      <label
+                        className="form-label fw-bold"
+                        htmlFor="inputField"
+                      >
                         Maturity date
                       </label>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
+                        <DemoContainer components={["DatePicker"]}>
                           <DatePicker
                             defaultValue={dayjs(maturityDate)}
                             selected={maturityDate}
@@ -347,18 +387,18 @@ const LifePolicyForm = () => {
                             selectsStart
                             startDate={maturityDate}
                             placeholderText="MM/DD/YYYY"
-                            style={{ width: '100%' }}
+                            style={{ width: "100%" }}
                           />
                         </DemoContainer>
                       </LocalizationProvider>
                     </Grid>
                   </Grid>
-                  <Grid xs={12} md={6} className='my-3'>
+                  <Grid xs={12} md={6} className="my-3">
                     <label className="form-label fw-bold" htmlFor="inputField">
                       DOB
                     </label>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DemoContainer components={['DatePicker']}>
+                      <DemoContainer components={["DatePicker"]}>
                         <DatePicker
                           defaultValue={dayjs(dob)}
                           selected={dob}
@@ -368,7 +408,7 @@ const LifePolicyForm = () => {
                           selectsStart
                           startDate={dob}
                           placeholderText="MM/DD/YYYY"
-                          style={{ width: '100%' }}
+                          style={{ width: "100%" }}
                         />
                       </DemoContainer>
                     </LocalizationProvider>
@@ -379,7 +419,6 @@ const LifePolicyForm = () => {
                     value={insuredName}
                     onChange={(e) => {
                       setInsuredName(e.target.value);
-
                     }}
                     required
                   />
@@ -389,7 +428,6 @@ const LifePolicyForm = () => {
                     value={insuredCompany}
                     onChange={(e) => {
                       setInsuredCompany(e.target.value);
-
                     }}
                     required
                   />
@@ -399,7 +437,6 @@ const LifePolicyForm = () => {
                     value={criticalIllness}
                     onChange={(e) => {
                       setCriticalIllness(e.target.value);
-
                     }}
                   />
                   <CustomInput
@@ -408,11 +445,10 @@ const LifePolicyForm = () => {
                     value={accidentalDisability}
                     onChange={(e) => {
                       setAccidentalDisability(e.target.value);
-
                     }}
                   />
                   <Button
-                    text={mode === 'edit' ? 'Update' : 'Save'}
+                    text={mode === "edit" ? "Update" : "Save"}
                     size="lg"
                     block={true}
                     onClick={handleSubmit}
@@ -485,5 +521,7 @@ const LifePolicyForm = () => {
         </Grid>
       </Grid>
       <Footer />
-    </div>)}
-export default LifePolicyForm
+    </div>
+  );
+};
+export default LifePolicyForm;

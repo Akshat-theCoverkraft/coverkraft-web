@@ -10,8 +10,8 @@ import Typography from "@mui/material/Typography";
 import scooty from "../../Images/Scooty.png";
 import HealthInsurance from "../../Images/FamilyHealthInsurance.png";
 import car from "../../Images/Car.png";
-import Health from "../../Images/ic_health.png"
-import Life from "../../Images/ic_life.png"
+import Health from "../../Images/ic_health.png";
+import Life from "../../Images/ic_life.png";
 import arrow from "../../Images/right-arrow.png";
 import red from "../../Images/red-bg.png";
 import family from "../../Images/Family.png";
@@ -306,6 +306,8 @@ export default function PolicyTabs({
                       (policy, index) => {
                         let endDate, diffInDays, status;
 
+                        console.log("policy", policy);
+
                         try {
                           if (policy.policyEndDate) {
                             // Try to parse the date part of the policy end date
@@ -368,7 +370,6 @@ export default function PolicyTabs({
                             onClick={() => handleCardClickWithState(policy._id)} // Use the updated click handler
                           >
                             <CardContent style={{ position: "relative" }}>
-                              {/* Your existing content */}
                               {status && (
                                 <div
                                   style={{
@@ -402,18 +403,18 @@ export default function PolicyTabs({
                                       policy.policyType === "car_policy"
                                         ? car
                                         : policy.policyType === "bike_policy"
-                                          ? scooty
-                                          : policy.policyType === "other_vehicle"
-                                            ? scooty
-                                            : policy.policyType === "life"
-                                              ? family
-                                              : policy.policyType === "accident"
-                                                ? family
-                                                : policy.policyType === "health"
-                                                  ? HealthInsurance
-                                                  : policy.policyType === "other_health"
-                                                    ? HealthInsurance
-                                                    : ""
+                                        ? scooty
+                                        : policy.policyType === "other_vehicle"
+                                        ? scooty
+                                        : policy.policyType === "life"
+                                        ? family
+                                        : policy.policyType === "accident"
+                                        ? family
+                                        : policy.policyType === "health"
+                                        ? HealthInsurance
+                                        : policy.policyType === "other_health"
+                                        ? HealthInsurance
+                                        : ""
                                     }
                                     alt="Policy Image"
                                     style={{ width: "75%", maxWidth: "75%" }}
@@ -456,19 +457,19 @@ export default function PolicyTabs({
                                         {policy.policyType === "car_policy"
                                           ? "Car Insurance"
                                           : policy.policyType === "bike_policy"
-                                            ? "Two Wheeler Insurance"
-                                            : policy.policyType ===
-                                              "other_vehicle"
-                                              ? "Other Vehicle Insurance"
-                                              : policy.policyType === "life"
-                                                ? "Life Insurance"
-                                                : policy.policyType === "accident"
-                                                  ? "Accident Insurance"
-                                                  : policy.policyType === "health"
-                                                    ? "Health Insurance"
-                                                    : policy.policyType === "other_health"
-                                                      ? "Other Health Insurance"
-                                                      : ""}
+                                          ? "Two Wheeler Insurance"
+                                          : policy.policyType ===
+                                            "other_vehicle"
+                                          ? "Other Vehicle Insurance"
+                                          : policy.policyType === "life"
+                                          ? "Life Insurance"
+                                          : policy.policyType === "accident"
+                                          ? "Accident Insurance"
+                                          : policy.policyType === "health"
+                                          ? "Health Insurance"
+                                          : policy.policyType === "other_health"
+                                          ? "Other Health Insurance"
+                                          : ""}
                                       </p>
                                     </div>
                                     <p
@@ -592,18 +593,23 @@ export default function PolicyTabs({
                                 }}
                               ></div>
                               <Grid container spacing={0}>
-                                <Grid item xs={12} md={3} sx={{ overflow: "hidden" }}>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  md={3}
+                                  sx={{ overflow: "hidden" }}
+                                >
                                   <img
                                     src={
                                       policy.policyType === "car_policy"
                                         ? car
                                         : policy.policyType === "bike_policy"
-                                          ? scooty
-                                          : policy.policyType === "health"
-                                            ? Health // Use the specific health icon
-                                            : policy.policyType === "life"
-                                              ? Life   // Use the specific life icon
-                                              : scooty // Fallback: You might want a generic 'default' icon here
+                                        ? scooty
+                                        : policy.policyType === "health"
+                                        ? Health // Use the specific health icon
+                                        : policy.policyType === "life"
+                                        ? Life // Use the specific life icon
+                                        : scooty // Fallback: You might want a generic 'default' icon here
                                     }
                                     alt="Policy Image"
                                     style={{ width: "75%", maxWidth: "75%" }}
@@ -644,14 +650,14 @@ export default function PolicyTabs({
                                         {policy.policyType === "car_policy"
                                           ? "Car Insurance"
                                           : policy.policyType === "bike_policy"
-                                            ? "Two Wheeler Insurance"
-                                            : policy.policyType === "health"
-                                              ? "Health Insurance"
-                                              : policy.policyType === "life"
-                                                ? "Life Insurance"
-                                                : policy.policyType === "accident"
-                                                  ? "Accident Insurance"
-                                                  : "Other Insurance"} {/* Add a default for unknown types */}
+                                          ? "Two Wheeler Insurance"
+                                          : policy.policyType === "health"
+                                          ? "Health Insurance"
+                                          : policy.policyType === "life"
+                                          ? "Life Insurance"
+                                          : policy.policyType === "accident"
+                                          ? "Accident Insurance"
+                                          : "Other Insurance"}{" "}
                                       </Typography>
                                     </div>
                                     <h4
@@ -761,18 +767,23 @@ export default function PolicyTabs({
                           >
                             <CardContent style={{ position: "relative" }}>
                               <Grid container spacing={0}>
-                                <Grid item xs={12} md={3} sx={{ overflow: "hidden" }}>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  md={3}
+                                  sx={{ overflow: "hidden" }}
+                                >
                                   <img
                                     src={
                                       policy.policyType === "car_policy"
                                         ? car
                                         : policy.policyType === "bike_policy"
-                                          ? scooty
-                                          : policy.policyType === "health"
-                                            ? Health // Use the specific health icon
-                                            : policy.policyType === "life"
-                                              ? Life   // Use the specific life icon
-                                              : scooty // Fallback: You might want a generic 'default' icon here
+                                        ? scooty
+                                        : policy.policyType === "health"
+                                        ? Health // Use the specific health icon
+                                        : policy.policyType === "life"
+                                        ? Life // Use the specific life icon
+                                        : scooty // Fallback: You might want a generic 'default' icon here
                                     }
                                     alt="Policy Image"
                                     style={{ width: "75%", maxWidth: "75%" }}
@@ -813,14 +824,15 @@ export default function PolicyTabs({
                                         {policy.policyType === "car_policy"
                                           ? "Car Insurance"
                                           : policy.policyType === "bike_policy"
-                                            ? "Two Wheeler Insurance"
-                                            : policy.policyType === "health"
-                                              ? "Health Insurance"
-                                              : policy.policyType === "life"
-                                                ? "Life Insurance"
-                                                : policy.policyType === "accident"
-                                                  ? "Accident Insurance"
-                                                  : "Other Insurance"} {/* Add a default for unknown types */}
+                                          ? "Two Wheeler Insurance"
+                                          : policy.policyType === "health"
+                                          ? "Health Insurance"
+                                          : policy.policyType === "life"
+                                          ? "Life Insurance"
+                                          : policy.policyType === "accident"
+                                          ? "Accident Insurance"
+                                          : "Other Insurance"}{" "}
+                                        {/* Add a default for unknown types */}
                                       </Typography>
                                     </div>
                                     <h4
