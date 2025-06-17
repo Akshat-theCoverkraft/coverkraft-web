@@ -68,6 +68,15 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     dispatch(getAllState(API_URL));
   }, [dispatch]);
 
+  const LOCAL_STORAGE_KEYS = [
+    "loggedIn",
+    "verificationId",
+    "userId",
+    "policyId",
+    "selectedPolicyId",
+    "token",
+  ];
+
   useEffect(() => {
     if (states !== null && states !== undefined) {
       if (states.getAllState !== null && states.getAllState !== undefined) {
@@ -277,11 +286,9 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     navigate("/coverkraft/contactus");
   };
   const handleLogout = () => {
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("verificationId");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("policyId");
-    navigate("/coverkraft");
+    LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+    navigate("/");
+    setTimeout(() => window.location.reload(), 100);
   };
 
   const handlePinCodeChange = (e) => {
