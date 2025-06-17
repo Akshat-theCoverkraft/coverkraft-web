@@ -41,3 +41,7 @@
   font-size: 0.9rem;
   color: #aaa;
 }
+.slick-dots li.slick-active div {
+  background-color: #FF9906 !important;
+  transform: scale(1.2);
+}

@@ -330,16 +330,18 @@ const Vault = () => {
                   style={{
                     paddingTop: '10px',
                     fontSize: '21px',
-                    color: THEME_COLOR.COLOR,
-                    display: 'inline-block'
+                    fontWeight: 'bold',
+                    color: "#A5A5A5",
+                    display: 'inline-block',
+                    marginLeft:55,
                   }}
                 >
-                  My Link
+  Vault
                 </Link>
 
                 <Typography
                   className="cursor-pointer font-size"
-                  style={{ paddingTop: '10px', fontSize: "21px", color: THEME_COLOR.COLOR }}
+                  style={{ paddingTop: '10px', fontSize: "21px", fontWeight: "bolder", color: THEME_COLOR.COLOR }}
                 >
                   My Policies
                 </Typography>
