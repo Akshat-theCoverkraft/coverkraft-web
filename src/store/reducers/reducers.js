@@ -1,4 +1,4 @@
-import { getAllState, updateDocument } from "../action/action";
+import { deleteAllNotificationsByUser, deleteNotification, getAllState, updateDocument } from "../action/action";
 
 const initialState = {
   getAllNotification: [],
@@ -7,18 +7,21 @@ const initialState = {
   getPolicyType: [],
   getAllState: [],
   getUserById: [],
+  getAllTestimonials: [],
   updateUser: null,
   ocrData: null,
   saveData: null,
   updateDocument: null,
   loading: false,
   error: null,
+  deleteNotification: null,
+  deleteAllNotificationsByUser: null,
 };
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
-     //GETALLPOLICYTYPE 
-     case "GETALLNOTIFICATION_DATA_REQUEST":
+    //GETALLPOLICYTYPE 
+    case "GETALLNOTIFICATION_DATA_REQUEST":
       return {
         ...state,
         loading: true,
@@ -37,6 +40,32 @@ const userReducer = (state = initialState, action) => {
         loading: false,
         error: action.payload,
       };
+    // Handle the request for deleting a specific notification or all notifications
+    case "DELETE_NOTIFICATION_REQUEST":
+    case "DELETE_ALL_NOTIFICATIONS_REQUEST":
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    // Handle the success case for deleting a notification or all notifications
+    case "DELETE_NOTIFICATION_SUCCESS":
+    case "DELETE_ALL_NOTIFICATIONS_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        // Optionally refetch or filter getAllNotification here if needed
+      };
+    // Handle the specific notification deletion
+    case "DELETE_NOTIFICATION_FAILURE":
+    case "DELETE_ALL_NOTIFICATIONS_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    //delete notification
     //customer registion start
     case "REGISTER_DATA_REQUEST":
       return {
@@ -103,6 +132,26 @@ const userReducer = (state = initialState, action) => {
         error: action.payload,
       };
     //ocr extract data end
+    // GET ALL TESTIMONIALS
+    case "GETALLTESTIMONIALS_DATA_REQUEST":
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case "GETALLTESTIMONIALS_DATA_SUCCESS":
+      return {
+        ...state,
+        getAllTestimonials: action.payload,
+        loading: false,
+        error: null,
+      };
+    case "GETALLTESTIMONIALS_DATA_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
 
     //SAVE DOCUMENT
     case "SAVE_DATA_REQUEST":

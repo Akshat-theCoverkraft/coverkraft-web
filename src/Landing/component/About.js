@@ -2,51 +2,57 @@ import './CSS/afterglow.css';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import step1 from '../../Images/step1.png';
-import step2 from '../../Images/step2.png';
-import step3 from '../../Images/step3.png';
+import Scan from '../../Images/Scan.png';
+import Search from '../../Images/Serach.png';
+import Download from '../../Images/DownloadSection.png';
 import { THEME_COLOR } from '../../constants';
 
 const steps = [
   {
-    img: step1,
+    img: Scan,
     title: 'Scan your document',
-    desc: 'Scan the policy document and access a physical policy document in a digital version.',
+    desc: 'Turn your paper policy into a digital file\nwith just a quick scan.',
   },
   {
-    img: step2,
-    title: 'Extract your document',
-    desc: 'Extract key information from the scanned document automatically and securely.',
+    img: Search,
+    title: 'Extract key info',
+    desc: 'We’ll automatically pull out what matters most\nfrom your scanned policy.',
   },
   {
-    img: step3,
-    title: 'Save your document',
-    desc: 'Store and access your document anytime from your secure digital policy vault.',
+    img: Download,
+    title: 'Save to your vault',
+    desc: 'Securely store and access your document anytime\n— anywhere.',
   },
 ];
 
 const About = () => {
   return (
     <Box
-      px={{ xs: 1, sm: 2, md: 3 }}
-      py={{ xs: 3, sm: 4 }}
-      mt={2}
+      px={{ xs: 2, sm: 4, md: 6 }}
+      py={{ xs: 4, sm: 6 }}
+      mt={4}
       width="100%"
       mx="auto"
-      sx={{ backgroundColor: THEME_COLOR.FADE_BACKGROUND, borderRadius: 3 }}
+      sx={{
+        backgroundColor: "#222222",
+        borderRadius: 4,
+        textAlign: 'center',
+      }}
     >
       <Typography
-        variant="h6"
-        align="center"
+        variant="h4"
         sx={{
-          color: '#FF9906', fontWeight: 600, mb: 1,
-          fontSize: { xs: '22px', sm: '26px', md: '30px' },
+          color: '#FF9906',
+          fontWeight: 700,
+          mb: 4,
+          fontSize: { xs: '26px', sm: '30px', md: '32px' },
+          letterSpacing: '0.5px',
         }}
       >
-        HOW IT WORKS ?
+        How It Works
       </Typography>
 
-      <Grid container spacing={3} justifyContent="center" mt={2}>
+      <Grid container spacing={{ xs: 4, sm: 5, md: 6 }} justifyContent="center">
         {steps.map((step, index) => (
           <Grid
             item
@@ -57,8 +63,9 @@ const About = () => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center', // Center align all content
-              textAlign: 'center',  // Center text
+              alignItems: 'center',
+              textAlign: 'center',
+              padding: 4,
             }}
           >
             <Box
@@ -66,26 +73,32 @@ const About = () => {
               src={step.img}
               alt={step.title}
               sx={{
-                width: '120px',
-                height: '120px',
-                objectFit: 'cover',
-                mb: 2,
-                filter: 'contrast(1.3) brightness(1.08) saturate(1.15) drop-shadow(0 0 3px #000)',
-                borderRadius: 2,
-                display: 'block',
-                alignSelf: 'center',
+                width: '160px',
+                height: '130px',
+                mb: 3,
+                
               }}
             />
             <Typography
-              variant="h5"
-              sx={{ fontWeight: 'bold', fontSize: '1.2rem', mb: 1 }}
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                fontSize: '1.7rem',
+                color: 'white',
+                mb: 1.5,
+              }}
             >
               {step.title}
             </Typography>
             <Typography
               variant="body1"
-              color="white"
-              sx={{ fontSize: '1rem', px: { xs: 1, sm: 2 } }}
+              sx={{
+                fontSize: '1.5rem',
+                color: '#e0e0e0',
+                px: { xs: 2, sm: 3 },
+                lineHeight: 1.6,
+                whiteSpace: 'pre-line',
+              }}
             >
               {step.desc}
             </Typography>
