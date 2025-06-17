@@ -93,8 +93,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
       <ToastContainer />
       <Box
         sx={{
-          width: 800,
-          padding: 4,
+          width: "40vw",
+          padding: "50px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -122,16 +122,17 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             required
           />
         </Box>
-        <Box sx={{ marginTop: 2, width: "100%" }}>
+        <Box sx={{ marginTop: "1.5rem", width: "100%" }}>
           <CustomInput
             label="Full Name"
             placeholder="Enter your Full Name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
+            padding={"2rem"}
           />
         </Box>
-        <Box sx={{ marginTop: 2, width: "100%" }}>
+        <Box sx={{ marginTop: "1.5rem", width: "100%" }}>
           <CustomInput
             label="Phone Number"
             type="number"
@@ -143,9 +144,10 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
               !valid ? " Please enter a valid 10-digit phone number." : ""
             }
             required
+            padding={"2rem"}
           />
         </Box>
-        <Box sx={{ marginTop: 2, width: "100%" }}>
+        <Box sx={{ marginTop: "1.5rem", width: "100%" }}>
           <CustomInput
             label="UserEmail"
             placeholder="Enter your UserEmail"
@@ -158,9 +160,10 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
                 : ""
             }
             required
+            padding={"2rem"}
           />
         </Box>
-        <Box sx={{ marginTop: 3, width: "100%" }}>
+        <Box sx={{ marginTop: "1.5rem", width: "100%" }}>
           <Button
             text="Continue"
             size="sm"

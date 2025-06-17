@@ -41,6 +41,8 @@ function CustomInput({
   children,
   backgroundColor,
   inputStyle = {},
+  padding = "0.9rem",
+  height = "1vh",
 }) {
   const inputId = `inputField-${name}`;
 
@@ -69,7 +71,7 @@ function CustomInput({
         <input
           type={type}
           id={inputId}
-          className={`form-control form-control-lg ${className} bg-dark text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
+          className={`form-control form-control-lg ${className} bg-dark text-light border-2 border-dark rounded-xxl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
@@ -79,7 +81,7 @@ function CustomInput({
             padding: "18px 15px",
             backgroundColor: backgroundColor || "#2c2c2c",
             ...inputStyle,
-            borderRadius: "0.9rem",
+            borderRadius: padding,
           }}
         />
       )}

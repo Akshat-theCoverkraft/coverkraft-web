@@ -21,6 +21,7 @@ import API_URL from "../ServiceModule/Service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { THEME_COLOR } from "../constants";
+import { WhatsApp } from "@mui/icons-material";
 const PinkSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#8AC642",
@@ -137,6 +138,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
           overflowY: "auto",
           overflowX: "hidden",
           paddingBottom: 3,
+          width: "40vw",
         }}
         role="presentation"
       >
@@ -151,27 +153,97 @@ const Communication = ({ communication, onCommunicationClose }) => {
           </Grid>
           <Card className="m-5 p-4 rounded-4 shadow">
             <h3>Policy Updates</h3>
-            <p className="mb-3" style={{ color: "#7A7878" }}>
+            <p className="mb-4" style={{ color: "#7A7878" }}>
               Policy Updates: Important updates for your purchased policies
               payment, issuance renewal, and reminders.
             </p>
-            <Grid container xs={12} spacing={3} className="mb-3 mt-2">
-              <Grid item xs={1}>
-                <img src={sms} height={40} />
-              </Grid>
-              <Grid item xs={10} className="mt-1" style={{ fontWeight: "500" }}>
-                SMS
-              </Grid>
-              <Grid item xs={1}>
+            <Grid
+              container
+              spacing={3}
+              sx={{
+                my: 5,
+                padding: "0 2vw",
+                gap: "10px",
+                marginLeft: "20px",
+              }}
+              alignItems="center"
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flex: 1,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  margin: "10px 0",
+                }}
+              >
+                <div>
+                  <img
+                    src={sms}
+                    height={30}
+                    alt="sms icon"
+                    style={{ marginRight: "16px", gap: "10px" }}
+                  />
+                  <span>SMS</span>
+                </div>
                 <PinkSwitch
                   {...label}
                   checked={switchStates.userSms}
                   onChange={handleSwitchUpdate("userSms")}
                 />
+              </div>
+              {/* <Grid item xs={1} sx={{ pr: 2 }}>
+                <img
+                  src={sms}
+                  height={40}
+                  alt="sms icon"
+                  style={{ marginRight: "16px", gap: "10px" }}
+                />
               </Grid>
+
+              <Grid
+                item
+                xs={10}
+                sx={{ fontWeight: 500, marginLeft: "20px", gap: "10px" }}
+              >
+                SMS
+              </Grid> */}
+
+              {/* <Grid item xs={1}>
+               
+              </Grid> */}
             </Grid>
-            <Grid container xs={12} spacing={3} className="mb-3">
-              <Grid item xs={1}>
+            <Grid
+              container
+              spacing={3}
+              sx={{ my: 5, padding: "0 2vw" }}
+              alignItems="center"
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flex: 1,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  margin: "10px 0",
+                }}
+              >
+                <div>
+                  <img
+                    src={call}
+                    height={30}
+                    alt="sms icon"
+                    style={{ marginRight: "16px", gap: "10px" }}
+                  />
+                  <span>Call</span>
+                </div>
+                <PinkSwitch
+                  {...label}
+                  checked={switchStates.userCall}
+                  onChange={handleSwitchUpdate("userCall")}
+                />
+              </div>
+              {/* <Grid item xs={1}>
                 <img src={call} height={40} />
               </Grid>
               <Grid item xs={10} className="mt-1" style={{ fontWeight: "500" }}>
@@ -183,10 +255,39 @@ const Communication = ({ communication, onCommunicationClose }) => {
                   checked={switchStates.userCall}
                   onChange={handleSwitchUpdate("userCall")}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
-            <Grid container xs={12} spacing={3} className="mb-3">
-              <Grid item xs={1}>
+            <Grid
+              container
+              spacing={3}
+              sx={{ my: 5, padding: "0 2vw" }}
+              alignItems="center"
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flex: 1,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  margin: "10px 0",
+                }}
+              >
+                <div>
+                  <img
+                    src={wtsp}
+                    height={30}
+                    alt="sms icon"
+                    style={{ marginRight: "16px", gap: "10px" }}
+                  />
+                  <span>Whatsapp</span>
+                </div>
+                <PinkSwitch
+                  {...label}
+                  checked={switchStates.userWhatsapp}
+                  onChange={handleSwitchUpdate("userWhatsapp")}
+                />
+              </div>
+              {/* <Grid item xs={1}>
                 <img src={wtsp} height={40} />
               </Grid>
               <Grid item xs={10} className="mt-1" style={{ fontWeight: "500" }}>
@@ -198,7 +299,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
                   checked={switchStates.userWhatsapp}
                   onChange={handleSwitchUpdate("userWhatsapp")}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Card>
           <Card className="m-5 p-4 rounded-4 shadow">
