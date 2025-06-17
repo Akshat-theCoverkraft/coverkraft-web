@@ -20,7 +20,7 @@ const HeroSection = () => {
   };
 
   return (
-    <div style={{ paddingTop: "3rem", paddingBottom: "0.2rem" }}>
+    <div style={{ paddingTop: "3rem", paddingBottom: "0rem" }}>
       <Grid
         container
         spacing={4}
@@ -39,7 +39,7 @@ const HeroSection = () => {
             }}
             dangerouslySetInnerHTML={{ __html: t("secureFuture") }}
           />
-          {/* <p
+          <p
             style={{
               color: "#7B7B7B",
               fontSize: "1.8rem",
@@ -47,10 +47,10 @@ const HeroSection = () => {
               marginBottom: "2rem",
             }}
           >
-            Choose us for tailored insurance coverage, exceptional customer
+            Choose us for tailored  coverage, exceptional customer
             service, and peace of mind with reliable, comprehensive protection
             for all your needs.
-          </p> */}
+          </p>
           <Button
             onClick={handleVault}
             style={{

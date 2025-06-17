@@ -38,10 +38,10 @@ const Service = () => {
   };
 
   return (
-    <Box id="service" className="containercards mt-5 p-3">
+    <Box id="service" className="containercards mt-6 p-3">
       <Grid
         container
-        spacing={4}
+        spacing={{ xs: 2, sm: 4 }}
         alignItems="stretch"
         justifyContent="center"
         direction={isMobile ? "column-reverse" : "row"}
@@ -53,17 +53,19 @@ const Service = () => {
               background: "#232323",
               borderRadius: 4,
               boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-              p: { xs: 3, sm: 4, md: 5 },
+              p: { xs: 2, sm: 3, md: 5 },
               height: "100%",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               border: "1px solid #333",
+              minHeight: "100vh", // Optional: makes it vertically centered as well
+              minHeight: { xs: 180, sm: 220, md: 260 },
             }}
           >
             <CardContent
               sx={{
-                textAlign: isMobile ? "center" : "left",
+                textAlign: { xs: "center", md: "left" },
                 px: 0,
                 py: 0,
               }}
@@ -77,11 +79,10 @@ const Service = () => {
               </Typography>
               <Typography
                 variant={isMobile ? "h6" : "h3"}
-                sx={{ fontWeight: 500, mb: 2 }}
+                sx={{ fontWeight: 300, mb: 2 }}
               >
                 Recognized Excellence
               </Typography>
-              {/* <Typography ...> ... </Typography> */}
             </CardContent>
           </Box>
         </Grid>
@@ -93,33 +94,35 @@ const Service = () => {
               background: "#181818",
               borderRadius: 4,
               boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-              p: { xs: 3, sm: 4, md: 5 },
+              p: { xs: 2, sm: 3, md: 5 },
               height: "100%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               border: "1px solid #333",
+              minHeight: { xs: 180, sm: 220, md: 260 },
             }}
           >
             <Card
               ref={cardRef}
-              onMouseMove={handleMouseMove}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              onMouseMove={isMobile ? undefined : handleMouseMove}
+              onMouseEnter={isMobile ? undefined : handleMouseEnter}
+              onMouseLeave={isMobile ? undefined : handleMouseLeave}
               sx={{
                 borderRadius: 4,
                 overflow: "hidden",
                 mx: "auto",
-                maxWidth: "100%",
-                height: "auto",
+                width: { xs: "100%", sm: "80%", md: "70%" },
                 background: isHovered ? "#3E3E3E" : "transparent",
                 boxShadow: "none",
-                transform: `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) translateZ(${isHovered ? '30px' : '0px'})`,
+                transform: isMobile
+                  ? "none"
+                  : `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg) translateZ(${isHovered ? '30px' : '0px'})`,
                 transition: isHovered
                   ? "background-color 0.3s ease, box-shadow 0.3s ease"
                   : "all 0.3s ease-out",
                 transformStyle: "preserve-3d",
-                cursor: "pointer",
+                cursor: isMobile ? "default" : "pointer",
                 boxShadow: isHovered
                   ? `0 ${Math.abs(mousePosition.y) + 20}px ${Math.abs(mousePosition.x) + 40}px rgba(0, 0, 0, 0.2)`
                   : "none",
@@ -131,7 +134,7 @@ const Service = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                minHeight: 220,
+                minHeight: { xs: 120, sm: 180, md: 220 },
               }}
               elevation={0}
             >
@@ -140,13 +143,13 @@ const Service = () => {
                 src={services}
                 alt="Our Services"
                 sx={{
-                  width: "60%",
+                  width: { xs: "80%", sm: "70%", md: "60%" },
                   height: "auto",
-                  maxHeight: { xs: 220, sm: 320, md: 400 },
+                  maxHeight: { xs: 120, sm: 220, md: 320 },
                   objectFit: "contain",
                   backgroundColor: "transparent",
-                  transition: "transform 0.3s ease-in-out",
-                  padding: isHovered ? "20px" : "0px",
+                  transition: "transform 0.3s ease-in-out, padding 0.3s",
+                  padding: isHovered && !isMobile ? "20px" : "0px",
                   boxSizing: "border-box",
                   margin: "0 auto",
                   display: "block",
