@@ -46,7 +46,7 @@ const Footer = () => {
       to: "/coverkraft/legal#RefundCancellationPolicy",
     },
     { label: "ISNP", to: "/coverkraft/legal#ISNP" },
-    { label: "legal", to: "/coverkraft/legal" },
+    { label: "Legal", to: "/coverkraft/legal" },
     { to: "/coverkraft/about", label: "About Us" },
   ];
 
