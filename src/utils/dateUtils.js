@@ -1,4 +1,4 @@
-import { parse, format } from "date-fns";
+import { parse, format, isValid } from "date-fns";
 import moment from "moment";
 
 export const formatDate = (dateString) => {
@@ -20,7 +20,6 @@ export const formatDate = (dateString) => {
 };
 
 export function dateformat(inputDate) {
-  console.log("@------", inputDate);
   const desiredFormat = "DD/MM/YYYY";
 
   // Check if the inputDate contains time and date, and remove the time part if it does

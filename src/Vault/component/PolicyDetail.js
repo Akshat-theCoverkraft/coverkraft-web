@@ -245,15 +245,16 @@ const PolicyDetail = ({ policyId }) => {
 
           return (
             <Card
-              className="p-5 rounded-4 border"
+              className="p-5 rounded-4"
               style={{
                 justifyContent: "center",
                 boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                height: "auto",
-                minHeight: "93vh",
-                marginBottom: "5px",
+                height: "100vh",
+                minHeight: "90vh",
+                marginBottom: "5vh",
                 backgroundColor: THEME_COLOR.BACKGROUND,
                 color: THEME_COLOR.COLOR,
+                border: "0.5px solid grey",
               }}
             >
               <div className="d-flex justify-content-between mb-5">
@@ -402,9 +403,9 @@ const PolicyDetail = ({ policyId }) => {
                       <div>
                         <p
                           style={{
-                            color: "#585858",
-                            fontSize: "14px",
-                            fontWeight: "500",
+                            color: "#fff",
+                            fontSize: "1.2rem",
+                            fontWeight: "600",
                           }}
                         >
                           Premium Paid
@@ -430,12 +431,12 @@ const PolicyDetail = ({ policyId }) => {
                       <div>
                         <p
                           style={{
-                            color: "#585858",
-                            fontSize: "14px",
-                            fontWeight: "500",
+                            color: "#fff",
+                            fontSize: "1.2rem",
+                            fontWeight: "600",
                           }}
                         >
-                          Value(IDV)
+                          Value (IDV)
                         </p>
                         <p className="fw-bolder">
                           {policy?.policyDetails.idv ||
@@ -456,16 +457,14 @@ const PolicyDetail = ({ policyId }) => {
                       <div>
                         <p
                           style={{
-                            color: "#585858",
-                            fontSize: "14px",
-                            fontWeight: "500",
+                            color: "#fff",
+                            fontSize: "1.2rem",
+                            fontWeight: "600",
                           }}
                         >
                           Policy Start Date
                         </p>
-                        <p className="fw-bolder">
-                          {formatDate(policy?.policyStartDate)}
-                        </p>
+                        <p className="fw-bolder">{policy?.policyStartDate}</p>
                       </div>
                     </Grid>
                     <Grid
@@ -481,16 +480,14 @@ const PolicyDetail = ({ policyId }) => {
                       <div>
                         <p
                           style={{
-                            color: "#585858",
-                            fontSize: "14px",
-                            fontWeight: "500",
+                            color: "#fff",
+                            fontSize: "1.2rem",
+                            fontWeight: "600",
                           }}
                         >
                           Policy End Date
                         </p>
-                        <p className="fw-bolder">
-                          {formatDate(policy?.policyEndDate)}
-                        </p>
+                        <p className="fw-bolder">{policy?.policyEndDate}</p>
                       </div>
                     </Grid>
                   </Grid>

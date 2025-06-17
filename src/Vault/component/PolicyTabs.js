@@ -80,55 +80,57 @@ export default function PolicyTabs({
     return list.slice(startIndex, endIndex);
   };
 
+  console.log("-----+++++++++++++++++", pageActive);
+
   useEffect(() => {
-    const fetchPolicyList = async () => {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("userId");
-        let status = "active";
-        if (value === 1) {
-          status = "expired";
-        }
-
-        const response = await axios.get(`${API_URL}policy/getById`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            userId: userId,
-            policyType: status,
-          },
-        });
-        const data = response.data;
-        console.log("data response ka", data);
-        // Assuming response.data is the whole response object
-        if (
-          response.data &&
-          response.data.data &&
-          Array.isArray(response.data.data)
-        ) {
-          console.log("hello");
-          setPolicyList(response.data.data);
-          console.log("know policy", response.data.data);
-          onPolicyListLengthChange(response.data.data.length); // Update parent with policyList length
-          console.log("length btade", response.data.data.length);
-        } else {
-          console.error("Expected an array but got:", response.data);
-          setPolicyList([]);
-          onPolicyListLengthChange(0);
-        }
-      } catch (error) {
-        console.error("Error fetching policy list:", error);
-        setPolicyList([]);
-        onPolicyListLengthChange(0);
-      } finally {
-        setLoading(false); // Set loading to false after the fetch is complete
-      }
-    };
-
     fetchPolicyList();
   }, [value]);
+
+  const fetchPolicyList = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      let status = "active";
+      if (value === 1) {
+        status = "expired";
+      }
+
+      const response = await axios.get(`${API_URL}policy/getById`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          userId: userId,
+          policyType: status,
+        },
+      });
+      const data = response.data;
+      console.log("data response ka", data);
+
+      if (
+        response.data &&
+        response.data.data &&
+        Array.isArray(response.data.data)
+      ) {
+        console.log("hello");
+        setPolicyList(response.data.data);
+        console.log("know policy", response.data.data);
+        onPolicyListLengthChange(response.data.data.length);
+        console.log("length btade", response.data.data.length);
+      } else {
+        console.error("Expected an array but got:", response.data);
+        setPolicyList([]);
+        onPolicyListLengthChange(0);
+      }
+    } catch (error) {
+      console.error("Error fetching policy list:", error);
+      setPolicyList([]);
+      onPolicyListLengthChange(0);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchArchieveList = async () => {
@@ -183,6 +185,9 @@ export default function PolicyTabs({
           justifyContent: "center",
           boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
           backgroundColor: THEME_COLOR.BACKGROUND,
+          border: "0.5px solid grey",
+          padding: "20px 0px",
+          height: "100vh",
         }}
       >
         <TabContext value={value}>
@@ -284,6 +289,7 @@ export default function PolicyTabs({
                     minHeight: "83vh",
                     maxHeight: "83vh",
                     overflowY: "auto",
+                    paddingBottom: "10vh",
                   }}
                 >
                   {policyList.length === 0 ? (
@@ -550,6 +556,7 @@ export default function PolicyTabs({
                     minHeight: "79vh",
                     maxHeight: "79vh",
                     overflowY: "auto",
+                    paddingBottom: "10vh",
                   }}
                 >
                   {policyList.length === 0 ? (
@@ -581,7 +588,21 @@ export default function PolicyTabs({
                             onClick={() => handleCardClick(policy?._id)}
                           >
                             <CardContent style={{ position: "relative" }}>
-                              <div
+                              {status && (
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    right: 0,
+                                    width: "230px",
+                                    height: "60px",
+                                    backgroundImage: `url(${red})`,
+                                    backgroundSize: "cover",
+                                    opacity: 1,
+                                  }}
+                                ></div>
+                              )}
+                              {/* <div
                                 style={{
                                   position: "absolute",
                                   top: 0,
@@ -592,7 +613,7 @@ export default function PolicyTabs({
                                   backgroundSize: "cover",
                                   opacity: 1,
                                 }}
-                              ></div>
+                              ></div> */}
 
                               <Grid container spacing={0}>
                                 <Grid
@@ -663,16 +684,16 @@ export default function PolicyTabs({
                                       </Typography>
                                     </div>
                                     <h4 className="fw-bold">
-                                      {policy.insuredName}
+                                      {policy?.insuredName}
                                     </h4>
                                     <h6
                                       className="mb-4"
                                       style={{ color: "#585858" }}
                                     >
-                                      {policy.policyNumber}
+                                      {policy?.policyNumber}
                                     </h6>
                                     <h6 style={{ color: "#9E9E9E" }}>
-                                      Expires on {policy.policyEndDate}
+                                      Expires on {policy?.policyEndDate}
                                     </h6>
                                   </div>
 
@@ -742,6 +763,7 @@ export default function PolicyTabs({
                     minHeight: "79vh",
                     maxHeight: "79vh",
                     overflowY: "auto",
+                    paddingBottom: "10vh",
                   }}
                 >
                   {archieveList.length === 0 ? (
@@ -889,12 +911,12 @@ export default function PolicyTabs({
                       onChange={handlePageChangeArchive}
                       sx={{
                         "& .MuiPaginationItem-root": {
-                          color: "#fff", // text color
-                          borderColor: "#fff", // border color for outlined variant
+                          color: "#fff",
+                          borderColor: "#fff",
                         },
                         "& .MuiPaginationItem-root.Mui-selected": {
                           backgroundColor: "#fff",
-                          color: "#000", // text color when selected
+                          color: "#000",
                         },
                         "& .MuiPaginationItem-ellipsis": {
                           color: "#fff",
