@@ -7,6 +7,11 @@ export const REGISTER_DATA_REQUEST = "REGISTER_DATA_REQEUST"
 export const REGISTER_DATA_SUCCESS = "REGISTER_DATA_SUCCESS"
 export const REGISTER_DATA_FAILURE = "REGISTER_DATA_FAILURE"
 
+// Add GETALLTESTIMONIALS
+export const GETALLTESTIMONIALS_DATA_REQUEST = "GETALLTESTIMONIALS_DATA_REQUEST";
+export const GETALLTESTIMONIALS_DATA_SUCCESS = "GETALLTESTIMONIALS_DATA_SUCCESS";
+export const GETALLTESTIMONIALS_DATA_FAILURE = "GETALLTESTIMONIALS_DATA_FAILURE";
+
 //Verify user
 export const VERIFY_DATA_REQUEST = "VERIFY_DATA_REQUEST"
 export const VERIFY_DATA_SUCCESS = "VERIFY_DATA_SUCCESS"
@@ -31,6 +36,14 @@ export const UPDATEDOCUMENT_DATA_FAILURE = "UPDATEDOCUMENT_DATA_FAILURE"
 export const GETALLNOTIFICATION_DATA_REQUEST = "GETALLNOTIFICATION_DATA_REQUEST"
 export const GETALLNOTIFICATION_DATA_SUCCESS = "GETALLNOTIFICATION_DATA_SUCCESS"
 export const GETALLNOTIFICATION_DATA_FAILURE = "GETALLNOTIFICATION_DATA_FAILURE"
+//delete notification by userID
+export const DELETE_NOTIFICATION_REQUEST = "DELETE_NOTIFICATION_REQUEST";
+export const DELETE_NOTIFICATION_SUCCESS = "DELETE_NOTIFICATION_SUCCESS";
+export const DELETE_NOTIFICATION_FAILURE = "DELETE_NOTIFICATION_FAILURE";
+//delete all notification
+export const DELETE_ALL_NOTIFICATIONS_REQUEST = "DELETE_ALL_NOTIFICATIONS_REQUEST";
+export const DELETE_ALL_NOTIFICATIONS_SUCCESS = "DELETE_ALL_NOTIFICATIONS_SUCCESS";
+export const DELETE_ALL_NOTIFICATIONS_FAILURE = "DELETE_ALL_NOTIFICATIONS_FAILURE";
 
 //getall policytype doucment
 export const GETPOLICYTYPE_DATA_REQUEST = "GETPOLICYTYPE_DATA_REQUEST"
@@ -69,6 +82,35 @@ export const getAllNotification = (API_URL, data) => {
     };
 }
 
+// Delete a single notification by ID
+export const deleteNotification = (API_URL, notificationId) => {
+  return (dispatch) => {
+    dispatch({ type: DELETE_NOTIFICATION_REQUEST });
+    axios
+      .post(API_URL + "notification/delete", { _id: notificationId })
+      .then((response) => {
+        dispatch({ type: DELETE_NOTIFICATION_SUCCESS, payload: response.data });
+      })
+      .catch((error) => {
+        dispatch({ type: DELETE_NOTIFICATION_FAILURE, payload: error.message });
+      });
+  };
+};
+
+// Delete all notifications for a user
+export const deleteAllNotificationsByUser = (API_URL, userId) => {
+  return (dispatch) => {
+    dispatch({ type: DELETE_ALL_NOTIFICATIONS_REQUEST });
+    axios
+      .post(API_URL + "notification/deleteAllByUser", { userId })
+      .then((response) => {
+        dispatch({ type: DELETE_ALL_NOTIFICATIONS_SUCCESS, payload: response.data });
+      })
+      .catch((error) => {
+        dispatch({ type: DELETE_ALL_NOTIFICATIONS_FAILURE, payload: error.message });
+      });
+  };
+};
 // register start
 export const registrationCustomer = (API_URL, data) => {
     return (dispatch) => {
@@ -259,3 +301,23 @@ export const getAllState = (API_URL, data) => {
             });
     };
 }
+export const getAllTestimonials = (API_URL) => {
+  return (dispatch) => {
+    dispatch({ type: GETALLTESTIMONIALS_DATA_REQUEST });
+
+    axios
+      .get(`${API_URL}testimonial/`) // Make sure your backend route matches
+      .then((response) => {
+        dispatch({
+          type: GETALLTESTIMONIALS_DATA_SUCCESS,
+          payload: response.data,
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: GETALLTESTIMONIALS_DATA_FAILURE,
+          payload: error.message,
+        });
+      });
+  };
+};

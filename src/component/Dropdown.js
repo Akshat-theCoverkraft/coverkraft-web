@@ -33,7 +33,7 @@ const Dropdown = ({
           onChange={onChange}
           style={{
             borderRadius: "3rem",
-            color: THEME_COLOR.COLOR,
+            color: "#fff",
             padding: "0px 10px",
             height: "7vh",
           }}
@@ -44,7 +44,7 @@ const Dropdown = ({
           MenuProps={{
             PaperProps: {
               sx: {
-                backgroundColor: "#212529",
+                backgroundColor: "#121212 !important",
                 color: "#fff",
                 marginTop: "1rem",
                 borderRadius: "2rem",
@@ -68,13 +68,13 @@ const Dropdown = ({
               key={option.value}
               value={option.value}
               sx={{
-                backgroundColor: "#212529",
+                backgroundColor: "#121212",
                 color: "#ffffff",
                 "&:hover": {
                   backgroundColor: "#343a40",
                 },
                 "&.Mui-selected": {
-                  backgroundColor: "#343a40",
+                  backgroundColor: "#3E3E3E !important",
                 },
                 "&.Mui-selected:hover": {
                   backgroundColor: "#495057",

@@ -14,7 +14,7 @@ const UniversalHomeButton = () => {
             aria-label="Home"
             style={homeBtnStyle}
         >
-            <AiOutlineHome size={20} />
+            <AiOutlineHome size={32} /> {/* Increased icon size */}
         </button>
     );
 };
@@ -27,7 +27,7 @@ const homeBtnStyle = {
     color: "#8bc642",
     border: "1px solid #333",
     borderRadius: "50%",
-    padding: "0.6rem",
+    padding: "1.2rem", // Increased padding
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
     cursor: "pointer",
     transition: "all 0.2s ease-in-out",

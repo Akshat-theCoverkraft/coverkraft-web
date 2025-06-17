@@ -15,6 +15,8 @@ import Footer from "../Landing/component/Footer";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
 import { THEME_COLOR } from "../constants";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
@@ -24,36 +26,36 @@ const Notification = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${API_URL}notification/getAll`, {
-          params: { status: "active" },
-        });
-
-        const allNotifications = response?.data?.data || [];
-        const deletedIds =
-          JSON.parse(localStorage.getItem("deletedNotifications")) || [];
-
-        const filteredNotifications = allNotifications.filter(
-          (notification) => !deletedIds.includes(notification._id)
-        );
-
-        setNotifications(filteredNotifications);
-
-        const sentCount = filteredNotifications.filter(
-          (n) => n.notificationStatus === "sent"
-        ).length;
-        setSentNotificationsCount(sentCount);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchNotifications();
   }, []);
+
+  const fetchNotifications = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}notification/getAll`, {
+        params: { status: "active" },
+      });
+
+      const allNotifications = response?.data?.data || [];
+      const deletedIds =
+        JSON.parse(localStorage.getItem("deletedNotifications")) || [];
+
+      const filteredNotifications = allNotifications.filter(
+        (notification) => !deletedIds.includes(notification._id)
+      );
+
+      setNotifications(allNotifications);
+
+      const sentCount = filteredNotifications.filter(
+        (n) => n.notificationStatus === "sent"
+      ).length;
+      setSentNotificationsCount(sentCount);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const markAsSeen = async (id) => {
     try {
@@ -83,24 +85,20 @@ const Notification = () => {
     setSelectedNotification(null);
   };
 
-  const deleteNotification = (id) => {
-    const updatedList = notifications.filter((n) => n._id !== id);
-    setNotifications(updatedList);
-    setSentNotificationsCount(updatedList.length);
+  const handleDeleteNotificastion = async (id) => {
+    const res = await axios.post(`${API_URL}notification/delete`, { _id: id });
 
-    const deletedIds =
-      JSON.parse(localStorage.getItem("deletedNotifications")) || [];
-    localStorage.setItem(
-      "deletedNotifications",
-      JSON.stringify([...deletedIds, id])
-    );
+    if (res.status) {
+      fetchNotifications();
+    }
   };
 
-  const deleteAllNotifications = () => {
-    const allIds = notifications.map((n) => n._id);
-    localStorage.setItem("deletedNotifications", JSON.stringify(allIds));
-    setNotifications([]);
-    setSentNotificationsCount(0);
+  const deleteAllNotifications = async () => {
+    const res = await axios
+      .post(`${API_URL}notification/deleteAllByUser`, {
+        userId: localStorage.getItem("userId"),
+      })
+      .then(() => fetchNotifications());
   };
 
   if (loading) {
@@ -119,6 +117,37 @@ const Notification = () => {
     );
   }
 
+  if (notifications?.length === 0) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          backgroundColor: "#121212",
+          color: "#E0E0E0",
+        }}
+      >
+        <Navbar />
+        <div
+          style={{
+            minHeight: "80vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h5">
+            You have no notifications at the moment.
+          </Typography>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -128,7 +157,7 @@ const Notification = () => {
       }}
     >
       <Navbar />
-      <div className="m-5 p-5">
+      <div className="m-5 p-5" style={{ minHeight: "60vh" }}>
         <div
           style={{
             overflowY: "auto",
@@ -155,19 +184,21 @@ const Notification = () => {
               {sentNotificationsCount} new notification
               {sentNotificationsCount !== 1 ? "s" : ""}
             </Typography>
-            <Button
-              onClick={deleteAllNotifications}
-              style={{
-                backgroundColor: "#D32F2F",
-                color: "white",
-                padding: "3px 12px",
-                fontSize: "14px",
-                borderRadius: "4px",
-                marginBottom: "1rem",
-              }}
-            >
-              Delete All
-            </Button>
+            {notifications.length > 0 && (
+              <Button
+                onClick={deleteAllNotifications}
+                style={{
+                  backgroundColor: "#D32F2F",
+                  color: "white",
+                  padding: "8px 8px",
+                  fontSize: "14px",
+                  borderRadius: "4px",
+                  marginBottom: "1rem",
+                }}
+              >
+                <CloseIcon />
+              </Button>
+            )}
           </div>
 
           {notifications?.map((notification, index) => {
@@ -241,7 +272,9 @@ const Notification = () => {
                       {sentNotificationsCount > 1 ? "s" : ""} ago
                     </p>
                     <Button
-                      onClick={() => deleteNotification(notification._id)}
+                      onClick={() =>
+                        handleDeleteNotificastion(notification?._id)
+                      }
                       style={{
                         color: "#FF5252",
                         fontWeight: "bold",
@@ -250,7 +283,7 @@ const Notification = () => {
                         paddingLeft: "900px",
                       }}
                     >
-                      Delete
+                      <DeleteIcon />
                     </Button>
                   </Grid>
                 </Grid>

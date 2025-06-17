@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 // import { FaArrowUp } from "react-icons/fa"; // FontAwesome icon
-import { FaRocket } from "react-icons/fa";
+import { FaArrowUp, FaRocket } from "react-icons/fa";
 
 
 import "./BackToTop.css";
@@ -67,7 +67,7 @@ const BackToTop = () => {
                         animate={isFlying ? { rotate: 360 } : { rotate: 0 }}
                         transition={{ duration: 0.6, repeat: isFlying ? Infinity : 0, ease: "linear" }}
                     >
-                        <FaRocket />
+                        <FaArrowUp/>
                     </motion.div>
 
 

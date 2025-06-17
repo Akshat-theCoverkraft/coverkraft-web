@@ -20,13 +20,12 @@ import logout from "../Images/ic_logout.png";
 import rightArrow from "../Images/Symbol.png";
 import Family from "../profile/Family";
 import Communication from "../profile/Communication";
-import Help from "../profile/Help";
-import About from "../profile/About";
 import { useNavigate } from "react-router-dom";
 import CityDropdown from "./CityDropdown";
 import GlobalDatePicker from "./GlobalDatePicker";
 import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
+import ContactUs from "../profile/ContactUs";
 
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
@@ -69,6 +68,15 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     dispatch(getAllState(API_URL));
   }, [dispatch]);
 
+  const LOCAL_STORAGE_KEYS = [
+    "loggedIn",
+    "verificationId",
+    "userId",
+    "policyId",
+    "selectedPolicyId",
+    "token",
+  ];
+
   useEffect(() => {
     if (states !== null && states !== undefined) {
       if (states.getAllState !== null && states.getAllState !== undefined) {
@@ -87,25 +95,54 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     dispatch(getBYIDUsers(API_URL, userId));
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   if (userbyId.getUserById && userbyId.getUserById.data) {
+  //     const data = userbyId.getUserById.data;
+  //     console.log("data", data);
+  //     setuserName(data.userName);
+  //     setuserEmail(data.userEmail);
+  //     setuserPhone(data.userPhone);
+  //     setuserDob(new Date(data?.userDob?.split("/")?.reverse()?.join("-")));
+  //     setuserAddress(data.userAddress);
+  //     setstate(data.state === null ? null : data.state._id);
+  //     setCity(data.city === null ? null : data.city._id);
+  //     setpinCode(data.pinCode);
+  //     setgender(data.gender);
+  //     setProfileImage(
+  //       data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
+  //     );
+  //   }
+  // }, [userbyId]);
+  // console.log("userimg kya h", profileImage);
+
   useEffect(() => {
     if (userbyId.getUserById && userbyId.getUserById.data) {
       const data = userbyId.getUserById.data;
-      // console.log("data", data);
+
       setuserName(data.userName);
       setuserEmail(data.userEmail);
       setuserPhone(data.userPhone);
       setuserDob(new Date(data?.userDob?.split("/")?.reverse()?.join("-")));
       setuserAddress(data.userAddress);
-      setstate(data.state === null ? null : data.state._id);
-      setCity(data.city === null ? null : data.city._id);
+
+      const stateId = data?.state?._id || "";
+      const cityId = data?.city?._id || "";
+
+      setstate(stateId);
+      setSelectedStateId(stateId);
+
+      setCity(cityId);
+      setSelectedCityId(cityId);
+
       setpinCode(data.pinCode);
       setgender(data.gender);
+
       setProfileImage(
         data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
       );
     }
   }, [userbyId]);
-  // console.log("userimg kya h", profileImage);
+
   const handleStateSelect = (stateId) => {
     setSelectedStateId(stateId);
   };
@@ -145,8 +182,21 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     formData.append("pinCode", pinCode);
     formData.append("gender", gender);
     if (userImgFile) {
-      formData.append("userImg", userImgFile); // Append the file here
+      formData.append("userImg", userImgFile);
     }
+
+    console.log(
+      username,
+      useremail,
+      userPhone,
+      userDob,
+      userAddress,
+      selectedStateId,
+      selectedCityId,
+      pinCode,
+      gender,
+      userImgFile
+    );
     if (
       (username &&
         useremail &&
@@ -232,14 +282,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     navigate("/coverkraft/about");
   };
   const handleHelpOpen = () => {
-    alert("Coming soon !");
+    // alert("Coming soon !");
+    navigate("/coverkraft/contactus");
   };
   const handleLogout = () => {
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("verificationId");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("policyId");
-    navigate("/coverkraft");
+    LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+    navigate("/");
+    setTimeout(() => window.location.reload(), 100);
   };
 
   const handlePinCodeChange = (e) => {
@@ -299,7 +348,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       <ToastContainer />
       <Box
         sx={{
-          width: 850,
+          width: "40vw",
           padding: 0,
           overflowX: "hidden",
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
@@ -310,10 +359,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         <div className="main-container">
           <div
             className="background-image-container1"
-            style={{ height: "30vh", padding: " 0px 200px" }}
+            style={{ height: "35vh", padding: " 0px 200px" }}
           >
             <div className="profile-details">
-              <div className="profile-image-container">
+              <div className="profile-image-container bg-red-600">
                 <img
                   src={profileImage}
                   alt="Profile"
@@ -347,19 +396,27 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               <div className="spacer-small" />
               <p className="register-text">{useremail}</p>
               <div class="text-center text-lg-start ">
-                <Button
-                  text={!update ? "Edit Profile" : "View"}
-                  size="sm"
-                  block={true}
-                  onClick={handleEdit}
-                />
+                {!update && (
+                  <Button
+                    text={"Edit Profile"}
+                    size="sm"
+                    block={true}
+                    onClick={handleEdit}
+                    customStyle={{
+                      width: "20vw",
+                      height: "6vh",
+                      borderRadius: "3rem",
+                      fontSize: "1.2rem",
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
         </div>
         {!update ? (
           <Card
-            className="main-container m-5 p-4"
+            className="main-container m-3 p-4 my-4"
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
@@ -369,95 +426,100 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-5"
+              className="mb-4"
               alignItems="center"
               onClick={handleFamilyOpen}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={family} />
+                <img src={family} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 Family member
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
             <Grid
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-4"
+              className="mb-4"
               alignItems="center"
               onClick={handleCommunicationOpen}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={communication} />
+                <img src={communication} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 Communication preferances{" "}
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
             <Grid
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-4"
+              className="mb-4"
               alignItems="center"
               onClick={handleHelpOpen}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={help} />
+                <img src={help} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
-                Help
+                Contact Us
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
             <Grid
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-4"
+              className="mb-4"
               alignItems="center"
               onClick={handleAboutOpen}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={about} />
+                <img src={about} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 About
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
             <Grid
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-4"
+              className="mb-4"
               alignItems="center"
               onClick={handleLogout}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={logout} />
+                <img src={logout} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 Logout
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
           </Card>
         ) : (
-          <div className="main-container mt-4 p-4">
+          <div className="main-container mt-3 p-4">
             <Grid container spacing={4} xs={12}>
               <Grid item xs={6}>
                 <CustomInput
@@ -524,7 +586,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 />
               </Grid>
             </Grid>
-            <div className="col-12">
+            <div className="col-12 ">
               <CustomInput
                 label="Address"
                 placeholder="Enter your Address"
@@ -543,7 +605,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
                                     />
                                 )} */}
-            <Grid container spacing={3} className="px-3">
+            <Grid container spacing={2} className="px-3">
               <Grid item xs={12} md={6}>
                 <GlobalDropdown
                   onStateSelect={handleStateSelect}
@@ -594,7 +656,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   id="stateDropdown"
                   className="dropdown-select rounded-5 bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300"
                   value={gender}
-                  onChange={(e) => setgender(e.target.value)}
+                  onChange={(e) => {
+                    setgender(e.target.value);
+                    console.log(e.target.value);
+                  }}
                 >
                   <option disabled>Select Your Gender</option>
                   <option value="male">Male</option>
@@ -604,14 +669,32 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               </Grid>
             </Grid>
 
-            <div className="spacer-small" />
-            <Button
-              size="md"
-              text="Update"
-              onClick={handleUpateProfile}
-              disabled={!isValidEmail} // Disable button if email is not valid
-              bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
-            />
+            <div style={{ display: "flex", gap: "3vw", margin: "10px 0px" }}>
+              <Button
+                size="md"
+                text="Update"
+                onClick={handleUpateProfile}
+                disabled={!isValidEmail}
+                bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
+                customStyle={{
+                  width: "50%",
+                  height: "6vh",
+                  borderRadius: "3rem",
+                  fontSize: "1.5rem",
+                }}
+              />
+              <Button
+                size="md"
+                text="Cancel"
+                onClick={handleEdit}
+                customStyle={{
+                  width: "50%",
+                  height: "6vh",
+                  borderRadius: "3rem",
+                  fontSize: "1.5rem",
+                }}
+              />
+            </div>
           </div>
         )}
       </Box>
@@ -620,7 +703,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         communication={communicationDrawerOpen}
         onCommunicationClose={handleCommunicationclose}
       />
-      <Help help={helpDrawerOpen} onHelpClose={handleHelpclose} />
+      <ContactUs help={helpDrawerOpen} onHelpClose={handleHelpclose} />
       {/* <About about={aboutDrawerOpen} onAboutclose={handleAboutClose} /> */}
     </Drawer>
   );
