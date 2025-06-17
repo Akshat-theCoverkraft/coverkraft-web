@@ -20,8 +20,6 @@ import logout from "../Images/ic_logout.png";
 import rightArrow from "../Images/Symbol.png";
 import Family from "../profile/Family";
 import Communication from "../profile/Communication";
-import Help from "../profile/Help";
-import About from "../profile/About";
 import { useNavigate } from "react-router-dom";
 import CityDropdown from "./CityDropdown";
 import GlobalDatePicker from "./GlobalDatePicker";
@@ -275,7 +273,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     navigate("/coverkraft/about");
   };
   const handleHelpOpen = () => {
-    alert("Coming soon !");
+    // alert("Coming soon !");
+    navigate("/coverkraft/contactus");
   };
   const handleLogout = () => {
     localStorage.removeItem("loggedIn");
@@ -342,7 +341,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       <ToastContainer />
       <Box
         sx={{
-          width: 850,
+          width: "40vw",
           padding: 0,
           overflowX: "hidden",
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
@@ -390,19 +389,27 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               <div className="spacer-small" />
               <p className="register-text">{useremail}</p>
               <div class="text-center text-lg-start ">
-                <Button
-                  text={!update ? "Edit Profile" : "View"}
-                  size="sm"
-                  block={true}
-                  onClick={handleEdit}
-                />
+                {!update && (
+                  <Button
+                    text={"Edit Profile"}
+                    size="sm"
+                    block={true}
+                    onClick={handleEdit}
+                    customStyle={{
+                      width: "20vw",
+                      height: "6vh",
+                      borderRadius: "3rem",
+                      fontSize: "1.2rem",
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
         </div>
         {!update ? (
           <Card
-            className="main-container m-5 p-4"
+            className="main-container m-3 p-4 my-4"
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
@@ -412,90 +419,95 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-5"
+              className="mb-4"
               alignItems="center"
               onClick={handleFamilyOpen}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={family} />
+                <img src={family} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 Family member
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
             <Grid
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-4"
+              className="mb-4"
               alignItems="center"
               onClick={handleCommunicationOpen}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={communication} />
+                <img src={communication} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 Communication preferances{" "}
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
             <Grid
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-4"
+              className="mb-4"
               alignItems="center"
               onClick={handleHelpOpen}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={help} />
+                <img src={help} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 Contact Us
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
             <Grid
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-4"
+              className="mb-4"
               alignItems="center"
               onClick={handleAboutOpen}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={about} />
+                <img src={about} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 About
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
             <Grid
               container
               xs={12}
               spacing={4}
-              className="border-bottom mb-4"
+              className="mb-4"
               alignItems="center"
               onClick={handleLogout}
+              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
             >
               <Grid item xs={1}>
-                <img src={logout} />
+                <img src={logout} style={{ maxHeight: "2.5rem" }} />
               </Grid>
               <Grid item xs={9}>
                 Logout
               </Grid>
               <Grid item xs={2}>
-                <img style={{ maxHeight: "2.5rem" }} src={rightArrow} />
+                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
               </Grid>
             </Grid>
           </Card>
@@ -650,14 +662,32 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               </Grid>
             </Grid>
 
-            <div className="spacer-small" />
-            <Button
-              size="md"
-              text="Update"
-              onClick={handleUpateProfile}
-              disabled={!isValidEmail}
-              bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
-            />
+            <div style={{ display: "flex", gap: "3vw", margin: "10px 0px" }}>
+              <Button
+                size="md"
+                text="Update"
+                onClick={handleUpateProfile}
+                disabled={!isValidEmail}
+                bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
+                customStyle={{
+                  width: "50%",
+                  height: "6vh",
+                  borderRadius: "3rem",
+                  fontSize: "1.5rem",
+                }}
+              />
+              <Button
+                size="md"
+                text="Cancel"
+                onClick={handleEdit}
+                customStyle={{
+                  width: "50%",
+                  height: "6vh",
+                  borderRadius: "3rem",
+                  fontSize: "1.5rem",
+                }}
+              />
+            </div>
           </div>
         )}
       </Box>

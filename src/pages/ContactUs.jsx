@@ -4,7 +4,7 @@ import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import CallIcon from "@mui/icons-material/Call";
 import MailIcon from "@mui/icons-material/Mail";
 
-const ContactUs = () => {
+function ContactUs() {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -34,52 +34,45 @@ const ContactUs = () => {
       }}
     >
       <Navbar />
-
       <div
         style={{
-          width: "60vw",
-          minHeight: "60vh",
+          height: "60vh",
+          width: "50vw",
           backgroundColor: "#3E3E3E",
-          padding: "2rem",
-          borderRadius: "12px",
-          boxShadow: "0 0 15px rgba(139,198,66,0.1)",
-          marginTop: "2rem",
+          borderRadius: "3rem",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+          overflow: "hidden",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-around",
         }}
       >
-        <h2
-          style={{
-            color: "#8BC642",
-            marginBottom: "1.5rem",
-            fontSize: "2.2rem",
-            fontWeight: "bold",
-          }}
-        >
-          Get in touch
-        </h2>
-
-        <p
-          style={{
-            color: "white",
-            marginBottom: "2rem",
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-          }}
-        >
-          We are here for you! How can we help?
-        </p>
-
         <div
           style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: "2rem",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
+            width: "60%",
+            height: "100%",
+            padding: "30px 15px",
           }}
         >
+          <h2
+            style={{
+              color: "#8BC642",
+              marginBottom: "1.5rem",
+              fontSize: "2.2rem",
+              fontWeight: "bold",
+            }}
+          >
+            Get in touch
+          </h2>
+
+          <p
+            style={{
+              color: "white",
+              marginBottom: "2rem",
+              fontSize: "1.2rem",
+              fontWeight: "bold",
+            }}
+          >
+            We are here for you! How can we help?
+          </p>
           <form
             onSubmit={handleSubmit}
             style={{
@@ -120,22 +113,35 @@ const ContactUs = () => {
               Send Message
             </button>
           </form>
-
-          <div
+        </div>
+        <div
+          style={{
+            width: "40%",
+            height: "100%",
+            padding: "30px 15px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-around",
+          }}
+        >
+          <img
+            src={require("../Images/objects.png")}
             style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignSelf: "flex-end",
+              height: "22vh",
+              width: "25vh",
+              alignSelf: "center",
+              resize: "cover",
+              alignSelf: "center",
             }}
-          >
+          />
+          <div style={{}}>
             <div
               style={{
                 flex: 1,
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "flex-start",
-                padding: "5px 0",
+                padding: "0px 0",
               }}
             >
               <FmdGoodIcon style={{ fontSize: "2rem", color: "#8BC642" }} />
@@ -144,6 +150,7 @@ const ContactUs = () => {
                   fontSize: "1rem",
                   width: "93%",
                   fontWeight: "bold",
+                  marginLeft: "1rem",
                 }}
               >
                 16 D-1, Danish Nagar, Hoshangabad Road, Bhopal (M.P)
@@ -164,6 +171,7 @@ const ContactUs = () => {
                   fontSize: "1rem",
                   width: "93%",
                   fontWeight: "bold",
+                  marginLeft: "1rem",
                 }}
               >
                 +91-xxx-xxxx-xxxx
@@ -175,7 +183,7 @@ const ContactUs = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "flex-start",
-                padding: "5px 0",
+                padding: "0px 0",
               }}
             >
               <MailIcon style={{ fontSize: "1.8rem", color: "#8BC642" }} />
@@ -184,9 +192,15 @@ const ContactUs = () => {
                   fontSize: "1rem",
                   width: "93%",
                   fontWeight: "bold",
+                  marginLeft: "1rem",
                 }}
               >
-                contact@thecoverkraft.com
+                <a
+                  href="mailto:contact@thecoverkraft.com"
+                  style={{ textDecoration: "underline", color: "inherit" }}
+                >
+                  contact@thecoverkraft.com
+                </a>
               </p>
             </div>
           </div>
@@ -194,7 +208,7 @@ const ContactUs = () => {
       </div>
     </div>
   );
-};
+}
 
 const inputStyle = {
   padding: "0.9rem 1rem",
