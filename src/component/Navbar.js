@@ -45,7 +45,7 @@ const StyledButton = styled("button")(() => ({
   border: "1.5px solid #8AC642",
   borderRadius: "5px",
   padding: "8px 16px",
-  fontSize: "1rem",
+  fontSize: "1.4rem",
   fontWeight: "600",
   minWidth: "100px",
   cursor: "pointer",
@@ -207,6 +207,9 @@ function Navbar({ scrollToContactBottom }) {
                     color:
                       location.pathname === item.path ? "#8AC642" : "white",
                     fontWeight: location.pathname === item.path ? "600" : "400",
+                    fontSize: "1.5rem",
+                    padding: "4px 10px",
+                    transition: "color 0.3s ease",
                   }}
                   onClick={() => handleNavigation(item)}
                 >
