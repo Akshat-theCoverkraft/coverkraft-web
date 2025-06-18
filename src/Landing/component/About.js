@@ -34,7 +34,7 @@ const About = () => {
       width="100%"
       mx="auto"
       sx={{
-        backgroundColor: "#222222",
+        backgroundColor: "#121212",
         borderRadius: 4,
         textAlign: 'center',
       }}

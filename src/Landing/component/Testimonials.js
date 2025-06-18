@@ -458,7 +458,7 @@
 
 //   return (
 //     <div style={{
-//       background: THEME_COLOR.BACKGROUND,
+//       background: "#121212",
 //       minHeight: "100vh",
 //       position: "relative",
 //       padding: "80px 0"
@@ -699,7 +699,7 @@ export default function Testimonials() {
     ]
   };
 
-  // Always use placeholder data
+//   // Always use placeholder data
   const testimonialsToDisplay = placeholderTestimonials;
 
   return (
