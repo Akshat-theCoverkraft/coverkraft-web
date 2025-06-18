@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import symbol from "../../Images/Symbol.png";
-import Eye from "../../Images/ic-view.png";
+import Video from "../../Images/Video.svg";
 import API_URL from "../../ServiceModule/Service";
 import { Link, useNavigate } from "react-router-dom";
 import { capitalizeFirstLetter, truncateString } from "../../utils/helpers";
@@ -38,17 +38,18 @@ const ScrollingContent = styled("div")({
       transform: "translateX(0)",
     },
     "100%": {
-      transform: "translateX(-50%)", 
+      transform: "translateX(-50%)",
     },
   },
 });
 
 const Card = styled("div")({
   flex: "0 0 auto",
-  width: 400,
+  width: 500,
   borderRadius: 10,
   backgroundColor: THEME_COLOR.FADE_BACKGROUND,
   padding: 10,
+  borderRadius: 25,
   boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
   transition: "transform 0.3s ease",
   "&:hover": {
@@ -57,21 +58,22 @@ const Card = styled("div")({
 });
 
 const MediaContainer = styled("div")({
-  height: 170,
+  height: 250,
   borderRadius: 6,
   overflow: "hidden",
   backgroundColor: "#000",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  borderRadius: 20,
 });
 
 const CenteredContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  width: "100%",
-  maxWidth: "1200px", 
+  width: "150%",
+  maxWidth: "1200px",
   margin: "0 auto",
 });
 
@@ -119,61 +121,61 @@ const Blog = () => {
       key={`${post?._id}-${index}`}
       onClick={() => navigate(`/coverkraft/feed/${post?.type}`)}
     >
-<MediaContainer>
-  {post?.newsVideo ? (
-    <>
-      <video
-        key={post._id || index}
-        controls
-        playsInline
-        muted
-        preload="metadata"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          display: "block",
-        }}
-        onError={(e) => {
-          console.warn("📛 Video failed:", e);
-          const fallback = document.getElementById(`fallback-img-${index}`);
-          if (fallback) fallback.style.display = "block";
-          e.target.style.display = "none";
-        }}
-      >
-        <source src={post.newsVideo} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <img
-        id={`fallback-img-${index}`}
-        src={post?.newsImg || Eye}
-        alt={post?.title}
-        style={{
-          display: "none",
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-        }}
-        onError={(e) => {
-          e.target.src = Eye;
-        }}
-      />
-    </>
-  ) : (
-    <img
-      src={post?.newsImg || Eye}
-      alt={post?.title}
-      style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "cover",
-      }}
-      onError={(e) => {
-        e.target.src = Eye;
-      }}
-    />
-  )}
-</MediaContainer>
+      <MediaContainer>
+        {post?.newsVideo ? (
+          <>
+            <video
+              key={post._id || index}
+              controls
+              playsInline
+              muted
+              preload="metadata"
+              style={{
+                width: "100%",
+                height: "120%",
+                objectFit: "cover",
+                display: "block",
+              }}
+              onError={(e) => {
+                console.warn("📛 Video failed:", e);
+                const fallback = document.getElementById(`fallback-img-${index}`);
+                if (fallback) fallback.style.display = "block";
+                e.target.style.display = "none";
+              }}
+            >
+              <source src={post.newsVideo} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <img
+              id={`fallback-img-${index}`}
+              src={post?.newsImg || Video}
+              alt={post?.title}
+              style={{
+                display: "none",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+              onError={(e) => {
+                e.target.src = Video;
+              }}
+            />
+          </>
+        ) : (
+          <img
+            src={post?.newsImg || Video}
+            alt={post?.title}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+            onError={(e) => {
+              e.target.src = Video;
+            }}
+          />
+        )}
+      </MediaContainer>
 
 
 
@@ -228,7 +230,7 @@ const Blog = () => {
               fontSize: "14px",
             }}
           >
-            See More 
+            See More
           </Link>
           <img src={symbol} height={15} alt="symbol" />
         </div>
@@ -260,7 +262,7 @@ const Blog = () => {
         </Grid>
 
         {/* View All Button */}
-        <Grid item xs={12} style={{ textAlign: "center", marginTop: "40px", marginBottom: "20px",  }}>
+        <Grid item xs={12} style={{ textAlign: "center", marginTop: "40px", marginBottom: "20px", }}>
           <MuiButton
             variant="contained"
             onClick={() => navigate(`/coverkraft/feed/${firstPostType}`)}
@@ -270,9 +272,9 @@ const Blog = () => {
               backgroundColor: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.PRIMARY_TEXT || "#fff",
               boxShadow: "none",
-              width: "150px",
+              width: "250px",
               fontWeight: "bold",
-              height: "40px",
+              height: "60px",
               fontSize: "13px",
             }}
           >

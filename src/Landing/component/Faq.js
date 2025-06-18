@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -8,6 +8,7 @@ import { useTheme } from "@mui/material/styles";
 import xmark from "../../Images/_xmark.png";
 import plus from "../../Images/plus.png";
 import { THEME_COLOR } from "../../constants";
+import API_URL from "../../ServiceModule/Service";
 
 // Styled Components
 const StyledAccordion = styled(Accordion)({
@@ -26,47 +27,36 @@ const StyledAccordionSummary = styled(AccordionSummary)({
   },
 });
 
-// FAQ Data
-const faqList = [
-  {
-    id: "panel1",
-    question: "How can I get a quote?",
-    answer:
-      "You can get a quote by visiting our Get a Quote page, calling our customer service at 1-800-123-4567, or visiting one of our local offices.",
-  },
-  {
-    id: "panel2",
-    question: "What factors affect my premium?",
-    answer:
-      "Your premium depends on various factors such as age, location, type of coverage, past claims, and more.",
-  },
-  {
-    id: "panel3",
-    question: "What is covered under my auto policy?",
-    answer:
-      "Typically, it includes liability coverage, collision, comprehensive, medical payments, and uninsured motorist coverage.",
-  },
-  {
-    id: "panel4",
-    question: "What is covered under my health plan?",
-    answer:
-      "A health plan generally covers doctor visits, hospitalization, prescription drugs, preventive care, and more.",
-  },
-  {
-    id: "panel5",
-    question: "What does home protection cover?",
-    answer:
-      "Home protection usually covers damage to your home, personal belongings, liability, and temporary living expenses.",
-  },
-];
-
 export default function Faq() {
-  const [expanded, setExpanded] = React.useState(null);
+  const [faqList, setFaqList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(null);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleChange = (panel) => {
-    setExpanded(expanded === panel ? null : panel);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_URL}faq/all`);
+        const data = await res.json();
+        console.log("📦 FAQ Response:", data);
+
+        if (data?.status && Array.isArray(data.data)) {
+          setFaqList(data.data);
+        } else {
+          console.warn("⚠️ Invalid FAQ structure:", data);
+        }
+      } catch (err) {
+        console.error("🔥 FAQ Fetch Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleChange = (panelId) => {
+    setExpanded(expanded === panelId ? null : panelId);
   };
 
   return (
@@ -85,40 +75,46 @@ export default function Faq() {
             padding: "20px",
           }}
         >
-          {faqList.map((item, index) => (
-            <StyledAccordion
-              key={item.id}
-              expanded={expanded === item.id}
-              onChange={() => handleChange(item.id)}
-              className="p-3"
-              style={{
-                borderTopLeftRadius: index === 0 ? "20px" : "0px",
-                borderTopRightRadius: index === 0 ? "20px" : "0px",
-                borderBottomLeftRadius:
-                  index === faqList.length - 1 ? "20px" : "0px",
-                borderBottomRightRadius:
-                  index === faqList.length - 1 ? "20px" : "0px",
-              }}
-            >
-              <StyledAccordionSummary
-                expandIcon={
-                  <img
-                    src={expanded === item.id ? xmark : plus}
-                    alt={expanded === item.id ? "collapse" : "expand"}
-                    style={{ width: 20, height: 20 }}
-                  />
-                }
-                aria-controls={`${item.id}-content`}
-                id={`${item.id}-header`}
-                className="fw-bold"
-                style={{ fontSize: "1.25rem" }}
+          {loading ? (
+            <p style={{ textAlign: "center" }}>Loading FAQs...</p>
+          ) : faqList.length === 0 ? (
+            <p style={{ textAlign: "center" }}>No FAQs available at the moment.</p>
+          ) : (
+            faqList.map((item, index) => (
+              <StyledAccordion
+                key={item._id || index}
+                expanded={expanded === item._id}
+                onChange={() => handleChange(item._id)}
+                className="p-3"
+                style={{
+                  borderTopLeftRadius: index === 0 ? "20px" : "0px",
+                  borderTopRightRadius: index === 0 ? "20px" : "0px",
+                  borderBottomLeftRadius:
+                    index === faqList.length - 1 ? "20px" : "0px",
+                  borderBottomRightRadius:
+                    index === faqList.length - 1 ? "20px" : "0px",
+                }}
               >
-                <span className="mr-3" style={{ fontSize: "1.1rem" }}>{`0${index + 1}`}</span>
-                {item.question}
-              </StyledAccordionSummary>
-              <AccordionDetails style={{ fontSize: "1.1rem" }}>{item.answer}</AccordionDetails>
-            </StyledAccordion>
-          ))}
+                <StyledAccordionSummary
+                  expandIcon={
+                    <img
+                      src={expanded === item._id ? xmark : plus}
+                      alt={expanded === item._id ? "collapse" : "expand"}
+                      style={{ width: 20, height: 20 }}
+                    />
+                  }
+                  aria-controls={`${item._id}-content`}
+                  id={`${item._id}-header`}
+                  className="fw-bold"
+                  style={{ fontSize: "1.25rem" }}
+                >
+                  <span className="mr-3" style={{ fontSize: "1.1rem" }}>{`0${index + 1}`}</span>
+                  {item.question}
+                </StyledAccordionSummary>
+                <AccordionDetails style={{ fontSize: "1.1rem" }}>{item.answer}</AccordionDetails>
+              </StyledAccordion>
+            ))
+          )}
         </div>
       </div>
     </div>

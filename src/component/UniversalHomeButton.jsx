@@ -1,9 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { AiOutlineHome } from "react-icons/ai"; // Ant Design icon
+import { useNavigate, useLocation } from "react-router-dom";
+import { AiOutlineHome } from "react-icons/ai";
 
 const UniversalHomeButton = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Hide if already on /coverkraft
+    if (location.pathname === "/coverkraft") return null;
 
     return (
         <button
@@ -14,7 +18,7 @@ const UniversalHomeButton = () => {
             aria-label="Home"
             style={homeBtnStyle}
         >
-            <AiOutlineHome size={32} /> {/* Increased icon size */}
+            <AiOutlineHome size={32} />
         </button>
     );
 };
@@ -27,7 +31,7 @@ const homeBtnStyle = {
     color: "#8bc642",
     border: "1px solid #333",
     borderRadius: "50%",
-    padding: "1.2rem", // Increased padding
+    padding: "1.2rem",
     boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
     cursor: "pointer",
     transition: "all 0.2s ease-in-out",
