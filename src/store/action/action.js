@@ -1,5 +1,5 @@
 //action.js
-import { toast } from 'react-toastify'; 
+import { toast } from 'react-toastify';
 import axios from "axios";
 
 // Add REGISTER 
@@ -65,13 +65,18 @@ export const STATE_DATA_REQUEST = "STATE_DATA_REQUEST"
 export const STATE_DATA_SUCCESS = "STATE_DATA_SUCCESS"
 export const STATE_DATA_FAILURE = "STATE_DATA_FAILURE"
 
+// Get All FAQs (For users)
+export const GETALLFAQ_DATA_REQUEST = "GETALLFAQ_DATA_REQUEST";
+export const GETALLFAQ_DATA_SUCCESS = "GETALLFAQ_DATA_SUCCESS";
+export const GETALLFAQ_DATA_FAILURE = "GETALLFAQ_DATA_FAILURE";
+
 
 // get all NOTIFICATION data 
 export const getAllNotification = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: GETALLNOTIFICATION_DATA_REQUEST });
         axios
-            .get(API_URL + `notification/getAll`,data)
+            .get(API_URL + `notification/getAll`, data)
             .then((response) => {
                 dispatch({ type: GETALLNOTIFICATION_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -84,50 +89,50 @@ export const getAllNotification = (API_URL, data) => {
 
 // Delete a single notification by ID
 export const deleteNotification = (API_URL, notificationId) => {
-  return (dispatch) => {
-    dispatch({ type: DELETE_NOTIFICATION_REQUEST });
-    axios
-      .post(API_URL + "notification/delete", { _id: notificationId })
-      .then((response) => {
-        dispatch({ type: DELETE_NOTIFICATION_SUCCESS, payload: response.data });
-      })
-      .catch((error) => {
-        dispatch({ type: DELETE_NOTIFICATION_FAILURE, payload: error.message });
-      });
-  };
+    return (dispatch) => {
+        dispatch({ type: DELETE_NOTIFICATION_REQUEST });
+        axios
+            .post(API_URL + "notification/delete", { _id: notificationId })
+            .then((response) => {
+                dispatch({ type: DELETE_NOTIFICATION_SUCCESS, payload: response.data });
+            })
+            .catch((error) => {
+                dispatch({ type: DELETE_NOTIFICATION_FAILURE, payload: error.message });
+            });
+    };
 };
 
 // Delete all notifications for a user
 export const deleteAllNotificationsByUser = (API_URL, userId) => {
-  return (dispatch) => {
-    dispatch({ type: DELETE_ALL_NOTIFICATIONS_REQUEST });
-    axios
-      .post(API_URL + "notification/deleteAllByUser", { userId })
-      .then((response) => {
-        dispatch({ type: DELETE_ALL_NOTIFICATIONS_SUCCESS, payload: response.data });
-      })
-      .catch((error) => {
-        dispatch({ type: DELETE_ALL_NOTIFICATIONS_FAILURE, payload: error.message });
-      });
-  };
+    return (dispatch) => {
+        dispatch({ type: DELETE_ALL_NOTIFICATIONS_REQUEST });
+        axios
+            .post(API_URL + "notification/deleteAllByUser", { userId })
+            .then((response) => {
+                dispatch({ type: DELETE_ALL_NOTIFICATIONS_SUCCESS, payload: response.data });
+            })
+            .catch((error) => {
+                dispatch({ type: DELETE_ALL_NOTIFICATIONS_FAILURE, payload: error.message });
+            });
+    };
 };
 // register start
 export const registrationCustomer = (API_URL, data) => {
     return (dispatch) => {
-        dispatch({ type: REGISTER_DATA_REQUEST});
+        dispatch({ type: REGISTER_DATA_REQUEST });
         axios
-          .post(API_URL + "user/createUser", data)
-          .then((response) => {
-            dispatch({ type: REGISTER_DATA_SUCCESS, payload: response.data });
-              return response.data;
+            .post(API_URL + "user/createUser", data)
+            .then((response) => {
+                dispatch({ type: REGISTER_DATA_SUCCESS, payload: response.data });
+                return response.data;
 
-          })
+            })
             .catch((error) => {
                 // Check if the error response contains a message
 
-            dispatch({ type: REGISTER_DATA_FAILURE, payload: error.message });
-          });
-      };
+                dispatch({ type: REGISTER_DATA_FAILURE, payload: error.message });
+            });
+    };
 }
 
 //VERIFY USER
@@ -135,7 +140,7 @@ export const verifyUser = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: VERIFY_DATA_REQUEST });
         axios
-            .post(API_URL + `user/loginUser`,data)
+            .post(API_URL + `user/loginUser`, data)
             .then((response) => {
                 dispatch({ type: VERIFY_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -208,8 +213,8 @@ export const saveDocument = (API_URL, data) => {
             .catch((error) => {
                 const errorMessage = error.response?.data?.message || "Error in creating policy details";
                 dispatch({ type: SAVE_DATA_FAILURE, payload: errorMessage });
-                return Promise.reject({ status: error.response?.status, message: errorMessage }); 
-                        });
+                return Promise.reject({ status: error.response?.status, message: errorMessage });
+            });
     };
 };
 //update data 
@@ -218,11 +223,11 @@ export const updateDocument = (API_URL, data) => {
         dispatch({ type: UPDATEDOCUMENT_DATA_REQUEST });
         const token = localStorage.getItem('token');
         return axios
-            .post(API_URL + `policy/update`, data,{
+            .post(API_URL + `policy/update`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`, // Include the token in the headers
                 },
-             })
+            })
             .then((response) => {
                 dispatch({ type: UPDATEDOCUMENT_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -238,7 +243,7 @@ export const getAllPolicyType = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: GETPOLICYTYPE_DATA_REQUEST });
         axios
-            .get(API_URL + `policyType/getAll`,data)
+            .get(API_URL + `policyType/getAll`, data)
             .then((response) => {
                 dispatch({ type: GETPOLICYTYPE_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -278,7 +283,8 @@ export const updateUser = (API_URL, data) => {
             .then((response) => {
                 dispatch({ type: UPDATEUSER_DATA_SUCCESS, payload: response.data });
                 const userId = data.get('_id');
-                return dispatch(getBYIDUsers(API_URL, userId));           })
+                return dispatch(getBYIDUsers(API_URL, userId));
+            })
             .catch((error) => {
                 dispatch({ type: UPDATEUSER_DATA_FAILURE, payload: error.message });
             });
@@ -291,7 +297,7 @@ export const getAllState = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: STATE_DATA_REQUEST });
         axios
-            .get(API_URL + `state/getAll`,data)
+            .get(API_URL + `state/getAll`, data)
             .then((response) => {
                 dispatch({ type: STATE_DATA_SUCCESS, payload: response.data });
                 return response.data;
@@ -302,22 +308,42 @@ export const getAllState = (API_URL, data) => {
     };
 }
 export const getAllTestimonials = (API_URL) => {
-  return (dispatch) => {
-    dispatch({ type: GETALLTESTIMONIALS_DATA_REQUEST });
+    return (dispatch) => {
+        dispatch({ type: GETALLTESTIMONIALS_DATA_REQUEST });
 
-    axios
-      .get(`${API_URL}testimonial/`) // Make sure your backend route matches
-      .then((response) => {
-        dispatch({
-          type: GETALLTESTIMONIALS_DATA_SUCCESS,
-          payload: response.data,
-        });
-      })
-      .catch((error) => {
-        dispatch({
-          type: GETALLTESTIMONIALS_DATA_FAILURE,
-          payload: error.message,
-        });
-      });
-  };
+        axios
+            .get(`${API_URL}testimonial/`) // Make sure your backend route matches
+            .then((response) => {
+                dispatch({
+                    type: GETALLTESTIMONIALS_DATA_SUCCESS,
+                    payload: response.data,
+                });
+            })
+            .catch((error) => {
+                dispatch({
+                    type: GETALLTESTIMONIALS_DATA_FAILURE,
+                    payload: error.message,
+                });
+            });
+    };
+};
+
+export const getAllFAQs = (API_URL) => {
+    return (dispatch) => {
+        dispatch({ type: GETALLFAQ_DATA_REQUEST });
+        axios
+            .get(`${API_URL}faq/all`) // This hits the `/faq/all` public route
+            .then((response) => {
+                dispatch({
+                    type: GETALLFAQ_DATA_SUCCESS,
+                    payload: response.data.data, // adjust if structure is different
+                });
+            })
+            .catch((error) => {
+                dispatch({
+                    type: GETALLFAQ_DATA_FAILURE,
+                    payload: error.message,
+                });
+            });
+    };
 };

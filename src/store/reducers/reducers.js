@@ -16,10 +16,32 @@ const initialState = {
   error: null,
   deleteNotification: null,
   deleteAllNotificationsByUser: null,
+  getAllFAQs: [],
+
 };
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
+    // Then in the reducer:
+    case "GETALLFAQ_DATA_REQUEST":
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case "GETALLFAQ_DATA_SUCCESS":
+      return {
+        ...state,
+        getAllFAQs: action.payload,
+        loading: false,
+        error: null,
+      };
+    case "GETALLFAQ_DATA_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
     //GETALLPOLICYTYPE 
     case "GETALLNOTIFICATION_DATA_REQUEST":
       return {
@@ -282,6 +304,7 @@ const userReducer = (state = initialState, action) => {
     default:
       return state;
   }
+
 };
 
 export default userReducer;
