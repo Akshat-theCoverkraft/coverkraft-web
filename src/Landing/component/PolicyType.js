@@ -54,79 +54,76 @@ const PolicyType = () => {
     </div>
   );
 
-  const CustomPrevArrow = (props) => <CustomArrow {...props} direction="left" />;
-  const CustomNextArrow = (props) => <CustomArrow {...props} direction="right" />;
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: Math.min(5, policyType.length),
-    slidesToScroll: 1,
-    prevArrow: <CustomPrevArrow />,
-    nextArrow: <CustomNextArrow />,
-    appendDots: dots => (
-      <div
-        style={{
-          marginTop: '1.5em',
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <ul style={{ display: 'flex', gap: '0px' }}>{dots}</ul>
-      </div>
-    ),
-    customPaging: i => (
-      <div
-        style={{
-          width: '8px',
-          height: '8px',
-          borderRadius: '50%',
-          backgroundColor: '#ccc',
-          transition: 'all 0.3s ease',
-        }}
-      ></div>
-    ),
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: { slidesToShow: 4, slidesToScroll: 1 }
-      },
-      {
-        breakpoint: 768,
-        settings: { slidesToShow: 3, slidesToScroll: 1 }
-      },
-      {
-        breakpoint: 576,
-        settings: { slidesToShow: 2, slidesToScroll: 1 }
-      }
-    ]
-  };
+ const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: Math.min(5, policyType.length),
+  slidesToScroll: 1,
+  arrows: false,
+  appendDots: dots => (
+    <div
+      style={{
+        marginTop: '1.5em',
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      <ul style={{ display: 'flex', gap: '0px' }}>{dots}</ul>
+    </div>
+  ),
+  customPaging: i => (
+    <div
+      style={{
+        width: '8px',
+        height: '8px',
+        borderRadius: '50%',
+        backgroundColor: '#ccc',
+        transition: 'all 0.3s ease',
+      }}
+    ></div>
+  ),
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: { slidesToShow: 4, slidesToScroll: 1 }
+    },
+    {
+      breakpoint: 768,
+      settings: { slidesToShow: 3, slidesToScroll: 1 }
+    },
+    {
+      breakpoint: 576,
+      settings: { slidesToShow: 2, slidesToScroll: 1 }
+    }
+  ]
+};
 
   // Add the keyframe animation styles
   const animatedBorderStyles = `
     @keyframes borderFlow {
       0% {
-        border-image-source: linear-gradient(0deg, white, greenyellow, white, greenyellow);
+        border-image-source: linear-gradient(0deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       25% {
-        border-image-source: linear-gradient(90deg, white, greenyellow, white, greenyellow);
+        border-image-source: linear-gradient(90deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       50% {
-        border-image-source: linear-gradient(180deg, white, greenyellow, white, greenyellow);
+        border-image-source: linear-gradient(180deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       75% {
-        border-image-source: linear-gradient(270deg, white, greenyellow, white, greenyellow);
+        border-image-source: linear-gradient(270deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       100% {
-        border-image-source: linear-gradient(360deg, white, greenyellow, white, greenyellow);
+        border-image-source: linear-gradient(360deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
     }
     
     .animated-border {
       position: relative;
       border: 1px solid;
-      border-image: linear-gradient(45deg, white, greenyellow, white, greenyellow) 1;
+      border-image: linear-gradient(45deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D) 1;
       animation: borderFlow 3s linear infinite;
     }
     
@@ -138,7 +135,7 @@ const PolicyType = () => {
       right: 0;
       bottom: 0;
       padding: 1px;
-      background: linear-gradient(45deg, white, greenyellow, white, greenyellow);
+      background: linear-gradient(45deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       border-radius: 16px;
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask-composite: exclude;
@@ -148,19 +145,19 @@ const PolicyType = () => {
     
     @keyframes borderRotate {
       0% {
-        background: linear-gradient(0deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(0deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       25% {
-        background: linear-gradient(90deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(90deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       50% {
-        background: linear-gradient(180deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(180deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       75% {
-        background: linear-gradient(270deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(270deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       100% {
-        background: linear-gradient(360deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(360deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
     }
     
@@ -176,7 +173,7 @@ const PolicyType = () => {
       left: -1px;
       right: -1px;
       bottom: -1px;
-      background: linear-gradient(45deg, white, greenyellow, white, greenyellow);
+      background: linear-gradient(45deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       border-radius: 19px;
       z-index: -1;
       animation: borderSpin 3s linear infinite;
@@ -184,19 +181,19 @@ const PolicyType = () => {
     
     @keyframes borderSpin {
       0% {
-        background: linear-gradient(0deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(0deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       25% {
-        background: linear-gradient(90deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(90deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       50% {
-        background: linear-gradient(180deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(180deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       75% {
-        background: linear-gradient(270deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(270deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
       100% {
-        background: linear-gradient(360deg, white, greenyellow, white, greenyellow);
+        background: linear-gradient(360deg, #A8A8A8, #33A36D, #A8A8A8, #33A36D);
       }
     }
   `;
@@ -207,7 +204,7 @@ const PolicyType = () => {
       <div
         className="policy-container p-5 rounded-5 shadow-lg"
         style={{
-          margin: '0px 9%',
+          margin: '0px 6%',
           background: 'linear-gradient(105deg, #3E3E3E 0%, #121212 100%)',
           color: '#ffffff',
           borderRadius: '16px',
@@ -231,35 +228,35 @@ const PolicyType = () => {
         </h3>
 
         <div style={{ paddingTop: '0.05em', paddingBottom: '0.5em', }}>
-         <Slider
-    {...settings}
-    style={{ padding: '0.5em', paddingBottom: '2em' }}
-  >
-    {policyType.map((policy, index) => (
-      <div key={index} style={{ paddingTop: '0.02em', overflow: 'visible' }}>
-  <div
-    className="item-container"
-    style={{
-      backgroundColor: '#2c2c3e',
-      padding: '1.5em',
-      width: '90%',
-      margin: '0 auto',
-      textAlign: 'center',
-      borderRadius: '25px',
-      cursor: 'pointer',
-      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-      willChange: 'transform',
-    }}
-    onClick={() => navigate(`/policy-details/${policy._id}`)}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'scale(1.05)';
-      e.currentTarget.style.boxShadow = '0 6px 18px rgba(0, 0, 0, 0.5)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'scale(1)';
-      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
-    }}
-  >
+          <Slider
+            {...settings}
+            style={{ padding: '0.5em', paddingBottom: '2em' }}
+          >
+            {policyType.map((policy, index) => (
+              <div key={index} style={{ paddingTop: '0.02em', overflow: 'visible' }}>
+                <div
+                  className="item-container"
+                  style={{
+                    backgroundColor: '#2c2c3e',
+                    padding: '1.5em',
+                    width: '90%',
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    borderRadius: '25px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    willChange: 'transform',
+                  }}
+                  onClick={() => navigate(`/policy-details/${policy._id}`)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 6px 18px rgba(0, 0, 0, 0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
+                  }}
+                >
 
                   <div className="item-content" style={{ marginBottom: '1em' }}>
                     <img

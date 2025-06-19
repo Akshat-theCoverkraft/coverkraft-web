@@ -15,6 +15,7 @@ import Faq from "./component/Faq";
 import Testimonials from "./component/Testimonials";
 import Service from "./component/service";
 import { ToastContainer } from "react-toastify";
+import BlogSection from "./component/NewsBlogs";
 const Landing = () => {
   return (
     <div className="overflow-hidden">
@@ -23,11 +24,12 @@ const Landing = () => {
       <HeroSection />
       <Afterglow />
       <PolicyType />
-      <Cards3d />
+      {/* <Cards3d /> */}
+      <BlogSection/>
       <About />
       
       {/* <Card/> */}
-      <Blog />
+      {/* <Blog /> */}
       {/* <Count /> */}
       <Coverkraft />
       <Testimonials />
