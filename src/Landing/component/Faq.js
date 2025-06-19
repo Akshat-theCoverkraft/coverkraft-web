@@ -10,6 +10,27 @@ import plus from "../../Images/plus.png";
 import { THEME_COLOR } from "../../constants";
 import API_URL from "../../ServiceModule/Service";
 
+// 🔒 Fallback FAQs (shown if API fails or returns empty)
+const placeholderFAQs = [
+  {
+    _id: "fallback1",
+    question: "How can I get a quote?",
+    answer: "Visit our Get a Quote page or call 1-800-123-4567.",
+  },
+  {
+    _id: "fallback2",
+    question: "What does home protection cover?",
+    answer:
+      "Damage to your home, personal belongings, liability, and temporary living expenses.",
+  },
+  {
+    _id: "fallback3",
+    question: "What is covered under my auto policy?",
+    answer:
+      "Liability, collision, comprehensive, medical payments, and uninsured motorist coverage.",
+  },
+];
+
 // Styled Components
 const StyledAccordion = styled(Accordion)({
   margin: "0",
@@ -42,13 +63,15 @@ export default function Faq() {
         const data = await res.json();
         console.log("📦 FAQ Response:", data);
 
-        if (data?.status && Array.isArray(data.data)) {
+        if (data?.data && Array.isArray(data.data) && data.data.length > 0) {
           setFaqList(data.data);
         } else {
-          console.warn("⚠️ Invalid FAQ structure:", data);
+          console.warn("⚠️ No FAQs found. Showing placeholder.");
+          setFaqList(placeholderFAQs);
         }
       } catch (err) {
         console.error("🔥 FAQ Fetch Error:", err);
+        setFaqList(placeholderFAQs);
       } finally {
         setLoading(false);
       }
@@ -108,10 +131,10 @@ export default function Faq() {
                   className="fw-bold"
                   style={{ fontSize: "1.25rem" }}
                 >
-                  <span className="mr-3" style={{ fontSize: "1.1rem" }}>{`0${index + 1}`}</span>
+                  <span className="mr-3 fw-bold" style={{ fontSize: "1.8rem" }}>{`0${index + 1}`}</span>
                   {item.question}
                 </StyledAccordionSummary>
-                <AccordionDetails style={{ fontSize: "1.1rem" }}>{item.answer}</AccordionDetails>
+                <AccordionDetails style={{ fontSize: "1.5rem" }}>{item.answer}</AccordionDetails>
               </StyledAccordion>
             ))
           )}

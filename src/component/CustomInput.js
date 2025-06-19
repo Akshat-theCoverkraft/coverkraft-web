@@ -55,12 +55,12 @@ function CustomInput({
       {type === "select" ? (
         <select
           id={inputId}
-          className={`form-control form-control-lg ${className} bg-dark text-light border border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
+          className={`form-control form-control-lg ${className} bg-dark text-light border border-2 border-dark  shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
           value={value}
           onChange={onChange}
           name={name}
           style={{
-            padding: "10px 15px",
+            padding: "15px 15px",
             backgroundColor: backgroundColor || "#2c2c2c",
             ...inputStyle,
           }}
@@ -71,17 +71,17 @@ function CustomInput({
         <input
           type={type}
           id={inputId}
-          className={`form-control form-control-lg ${className} bg-dark text-light border-2 border-dark rounded-xxl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
+          className={`form-control form-control-lg ${className} bg-dark text-light border-5 border-dark shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300`}
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
           name={name}
           style={{
-            padding: "18px 15px",
+            padding: "22px 22px",
             backgroundColor: backgroundColor || "#2c2c2c",
             ...inputStyle,
-            borderRadius: padding,
+            borderRadius: '30px',
           }}
         />
       )}

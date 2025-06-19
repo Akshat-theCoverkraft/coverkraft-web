@@ -1,8 +1,16 @@
 import React from "react";
-import LegalPoliciesTabs from "../component/LegalPoliciesTabs"; // adjust if needed
+import LegalPoliciesTabs from "../component/LegalPoliciesTabs"; 
+import Navbar from "../component/Navbar";
+import Footer from "../Landing/component/Footer";
 
 const LegalPoliciesPage = () => {
-    return <LegalPoliciesTabs />;
+    return (
+        <>
+            <Navbar />
+            <LegalPoliciesTabs />
+            <Footer />
+        </>
+    );
 };
 
 export default LegalPoliciesPage;

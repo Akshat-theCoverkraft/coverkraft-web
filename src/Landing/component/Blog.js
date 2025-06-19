@@ -248,7 +248,7 @@ const Blog = () => {
       <CenteredContainer>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
-          <h3 style={{ color: "#FF9906", fontWeight: "bold", fontSize: "29px" }}>Latest from the blog</h3>
+          <h3 style={{ color: "#FF9906", fontWeight: "bold", fontSize: "29px" }}>Latest from the blogs</h3>
           {/* <h1 style={{ fontWeight: "bold", margin: "20px 0" }}>Latest from the blog</h1> */}
         </div>
 

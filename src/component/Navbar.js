@@ -1,6 +1,13 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { IconButton, Menu, MenuItem, styled } from "@mui/material";
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  styled,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -11,16 +18,12 @@ import profileIcon from "../Images/ic-profile.png";
 import notificationIcon from "../Images/ic-notification.png";
 import ProfileDrawer from "../component/profile";
 import { THEME_COLOR } from "../constants";
+import { Margin, MarginOutlined } from "@mui/icons-material";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/coverkraft" },
   { key: "about", label: "About Us", path: "/coverkraft/about", auth: true },
-  {
-    key: "contact",
-    label: "Contact Us",
-    path: "/coverkraft/contactus",
-    auth: true,
-  },
+  { key: "contact", label: "Contact Us", path: "/coverkraft/contactus", auth: true },
 ];
 
 const MORE_MENU_ITEMS = [
@@ -43,7 +46,7 @@ const StyledButton = styled("button")(() => ({
   backgroundColor: "transparent",
   color: "#8AC642",
   border: "1.5px solid #8AC642",
-  borderRadius: "5px",
+  borderRadius: "20px",
   padding: "8px 16px",
   fontSize: "1.4rem",
   fontWeight: "600",
@@ -70,20 +73,15 @@ const DarkMenu = styled(Menu)(({ theme }) => ({
 function Navbar({ scrollToContactBottom }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [mobileAnchor, setMobileAnchor] = useState(null);
   const [moreAnchor, setMoreAnchor] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const loggedIn = useMemo(
-    () => localStorage.getItem("loggedIn") === "true",
-    []
-  );
-  const isMobile = useMemo(() => window.innerWidth < 1260, []);
-  const isHomePage = useMemo(
-    () => location.pathname === "/coverkraft",
-    [location.pathname]
-  );
+  const loggedIn = useMemo(() => localStorage.getItem("loggedIn") === "true", []);
+  const isHomePage = useMemo(() => location.pathname === "/coverkraft", [location.pathname]);
 
   const visibleNavItems = useMemo(() => {
     return NAV_ITEMS.filter((item) => {
@@ -128,7 +126,7 @@ function Navbar({ scrollToContactBottom }) {
           left: 0,
           right: 0,
           zIndex: 1000,
-          padding: "10px 70px",
+          padding: isMobile ? "10px 20px" : "10px 70px",
           backgroundColor: "black",
           boxShadow: "0px 4px 6px rgba(0,0,0,0.3)",
         }}
@@ -156,8 +154,6 @@ function Navbar({ scrollToContactBottom }) {
                 anchorEl={mobileAnchor}
                 open={Boolean(mobileAnchor)}
                 onClose={() => setMobileAnchor(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
                 {visibleNavItems.map((item) => (
                   <MenuItem
@@ -171,7 +167,7 @@ function Navbar({ scrollToContactBottom }) {
                   </MenuItem>
                 ))}
                 {loggedIn ? (
-                  <>
+                  [
                     <MenuItem
                       key="notify"
                       onClick={() => {
@@ -180,11 +176,11 @@ function Navbar({ scrollToContactBottom }) {
                       }}
                     >
                       Notification
-                    </MenuItem>
+                    </MenuItem>,
                     <MenuItem key="logout" onClick={handleLogout}>
                       Logout
-                    </MenuItem>
-                  </>
+                    </MenuItem>,
+                  ]
                 ) : (
                   <MenuItem
                     onClick={() => {
@@ -204,12 +200,10 @@ function Navbar({ scrollToContactBottom }) {
                   key={item.key}
                   style={{
                     cursor: "pointer",
-                    color:
-                      location.pathname === item.path ? "#8AC642" : "white",
+                    color: location.pathname === item.path ? "#8AC642" : "white",
                     fontWeight: location.pathname === item.path ? "600" : "400",
                     fontSize: "1.5rem",
                     padding: "4px 10px",
-                    transition: "color 0.3s ease",
                   }}
                   onClick={() => handleNavigation(item)}
                 >
@@ -234,8 +228,6 @@ function Navbar({ scrollToContactBottom }) {
                     anchorEl={profileAnchor}
                     open={Boolean(profileAnchor)}
                     onClose={() => setProfileAnchor(null)}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }}
                   >
                     <MenuItem
                       onClick={() => {
@@ -251,9 +243,7 @@ function Navbar({ scrollToContactBottom }) {
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton onClick={() => navigate("/coverkraft/login")}>
-                  Login
-                </StyledButton>
+                <StyledButton onClick={() => navigate("/coverkraft/login")}>Login</StyledButton>
               )}
               <StyledButton onClick={handleVault}>Policy Vault</StyledButton>
               {isHomePage && (
@@ -268,8 +258,6 @@ function Navbar({ scrollToContactBottom }) {
                 anchorEl={moreAnchor}
                 open={Boolean(moreAnchor)}
                 onClose={() => setMoreAnchor(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
                 {MORE_MENU_ITEMS.map((item) => (
                   <MenuItem

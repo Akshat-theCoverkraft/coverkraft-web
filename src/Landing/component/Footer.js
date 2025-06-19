@@ -31,23 +31,19 @@ const Footer = () => {
     { to: "/coverkraft", label: "Home" },
     // { to: "/coverkraft/about", label: "About Us" },
     { to: "/coverkraft/vault", label: "Policy Vault" },
+    { to: "/coverkraft/contactus", label: "ContactUs" },
+        { label: "Grievance Redress Policy", to: "/coverkraft/legal#GrievanceRedressPolicy" },
+
   ];
 
   const companyLinks = [
     { label: "Privacy Policy", to: "/coverkraft/legal#PrivacyPolicy" },
-    {
-      label: "Grievance Redress Policy",
-      to: "/coverkraft/legal#GrievanceRedressPolicy",
-    },
-    { label: "License", to: "/coverkraft/legal#License" },
+    // { label: "License", to: "/coverkraft/legal#License" },
     { label: "Terms of Use", to: "/coverkraft/legal#TermsOfUse" },
-    {
-      label: "Refund & Cancellation Policy",
-      to: "/coverkraft/legal#RefundCancellationPolicy",
-    },
-    { label: "ISNP", to: "/coverkraft/legal#ISNP" },
-    { label: "Legal", to: "/coverkraft/legal" },
-    { to: "/coverkraft/about", label: "About Us" },
+    // { label: "Refund & Cancellation Policy", to: "/coverkraft/legal#RefundCancellationPolicy" },
+    // { label: "ISNP", to: "/coverkraft/legal#ISNP" },
+    { label: "Legal And Admin Policies", to: "/coverkraft/legal" },
+    { label: "About Us", to: "/coverkraft/about" },
   ];
 
   const socialIcons = [
@@ -60,12 +56,18 @@ const Footer = () => {
     <footer
       className="pt-5 text-lg-start px-3"
       style={{
-        background: THEME_COLOR.FADE_BACKGROUND,
+        background: "#212121",
         color: THEME_COLOR.COLOR,
       }}
     >
-      <div className="container-fluid">
-        <div className="row g-4 align-items-start">
+      <div
+        className="container-fluid"
+        style={{
+          marginLeft: '60px',
+          marginRight: '60px',
+        }}
+      >
+        <div className="row g-4 align-items-start mr-5">
           {/* Logo and Description */}
           <div className="col-12 col-md-6 col-lg-3 mb-4">
             <div className="d-flex flex-column h-100">
@@ -225,7 +227,7 @@ const Footer = () => {
                   style={{
                     textDecoration: "none",
                     borderRadius: "50%",
-                    padding: "8px",
+                    padding: "12px",
                     transition: "transform 0.2s ease",
                   }}
                   onMouseOver={(e) => (e.target.style.transform = "scale(1.1)")}
