@@ -45,7 +45,7 @@ const blogPosts = [
 
 const BlogSection = () => {
   return (
-    <Box sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1 }}>
+    <Box sx={{ backgroundColor: '#111', color: '#fff', px: 11, py: 6, mt: 1 }}>
       <Typography
         variant="h4"
         sx={{
