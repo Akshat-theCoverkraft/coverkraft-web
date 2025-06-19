@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./component/CSS/carousel1.css";
 import API_URL from "../ServiceModule/Service";
-import IMAGE_PATH from "../ServiceModule/imagePath";
+import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 
 const Carousel1 = () => {
   const [items, setItems] = useState([]);
-  const [activeIdx, setActiveIdx] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,69 +18,60 @@ const Carousel1 = () => {
           setItems(result.data);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching carousel data:", error);
       }
     };
     fetchData();
   }, []);
 
-  const prevSlide = () => {
-    setActiveIdx((prevIdx) => (prevIdx - 1 + items.length) % items.length);
-  };
-
-  const nextSlide = () => {
-    setActiveIdx((prevIdx) => (prevIdx + 1) % items.length);
-  };
-
   return (
     <div className="carousel__wrap">
       <div className="carousel__inner">
-        <button className="carousel__btn carousel__btn--prev" onClick={prevSlide}>
-          <i className="carousel__btn-arrow carousel__btn-arrow--left"></i>
-        </button>
+        <Carousel
+          showThumbs={false}
+          showStatus={false}
+          infiniteLoop
+          centerMode
+          centerSlidePercentage={33.33}
+          autoPlay={false}
+          swipeable
+          emulateTouch
+          renderIndicator={(onClickHandler, isSelected, index, label) => {
+            return (
+              <span
+                className={`dot ${isSelected ? "active" : ""}`}
+                onClick={onClickHandler}
+                key={index}
+                aria-label={`${label} ${index + 1}`}
+              />
+            );
+          }}
+          renderArrowPrev={(onClickHandler, hasPrev, label) =>
+            hasPrev && (
+              <button className="custom-arrow custom-arrow-left" onClick={onClickHandler} aria-label={label}>
+              <FaChevronLeft />
+              </button>
+            )
+          }
+          renderArrowNext={(onClickHandler, hasNext, label) =>
+            hasNext && (
+              <button className="custom-arrow custom-arrow-right" onClick={onClickHandler} aria-label={label}>
+                  <FaChevronRight  />
 
-        <ul className="carousel__slide-list">
+              </button>
+            )
+          }
+        >
           {items.map((item, idx) => (
-            <li
-              className="carousel__slide-item"
-              key={idx}
-              style={{
-                transform: `translateX(-${activeIdx * (100 / 3)}%)`,
-                transition: "transform 0.5s ease-in-out"
-              }}
-            >
+            <div className="carousel__slide-item" key={idx}>
               {item.video.endsWith(".mp4") ? (
-                <video
-                  controls
-                  src={item.video}
-                  className="carousel__slide-item-media"
-                />
+                <video src={item.video} controls className="carousel__slide-item-media" />
               ) : (
-                <img
-                  src={item.video}
-                  alt={item.subtitle}
-                  className="carousel__slide-item-media"
-                />
+                <img src={item.video} alt={item.subtitle} className="carousel__slide-item-media" />
               )}
-              <div className="carousel-play-icon">▶</div>
-            </li>
+            </div>
           ))}
-        </ul>
-
-        <button className="carousel__btn carousel__btn--next" onClick={nextSlide}>
-          <i className="carousel__btn-arrow carousel__btn-arrow--right"></i>
-        </button>
-      </div>
-
-      <div className="carousel__dots">
-        {items.map((_, idx) => (
-          <span
-            key={idx}
-            className={`dot ${idx === activeIdx ? "active playing" : ""}`}
-            onClick={() => setActiveIdx(idx)}
-            style={{ backgroundColor: idx === activeIdx ? "orange" : "#444" }}
-          />
-        ))}
+        </Carousel>
       </div>
     </div>
   );

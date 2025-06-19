@@ -4,13 +4,12 @@ import Carousel1 from "../Carousel1";
 
 const Afterglow = () => {
   return (
-    <div style={{ height: "60vh", margin: "0rem  0", padding: "0rem 0" }}>
-      <div className="bg-image p-3">
-        <div className="text-center text-white " style={{ marginBottom: "50px" }}>
-        </div>
-        <Carousel1 />
-      </div>
-    </div>
+   <div style={{ height: "50vh", overflow: "visible", position: "relative" }}>
+  <div className="bg-image p-6 mx-5" style={{ overflow: "visible", position: "relative" }}>
+    <Carousel1 />
+  </div>
+</div>
+
   );
 };
 
