@@ -10,6 +10,13 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+const observerErrorHandler = (e) => {
+  if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
+    e.stopImmediatePropagation();
+  }
+};
+
+window.addEventListener('error', observerErrorHandler);
 
 root.render(
   <React.StrictMode>
