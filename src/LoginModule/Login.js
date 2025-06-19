@@ -225,19 +225,7 @@ const Login = () => {
                   justifyContent: "center",
                 }}
               >
-                <Link
-                  to="/coverkraft"
-                  style={{
-                    display: "inline-block",
-                    marginBottom: "20px",
-                    color: "#5A9E1E",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    fontSize: "1.1rem",
-                  }}
-                >
-                  &larr; Back to Home
-                </Link>
+                
                 <div className="d-flex flex-row align-items-center justify-content-center mb-5">
                   <img
                     src={logo}
@@ -263,7 +251,7 @@ const Login = () => {
                         onChange={handlephonechange}
                         onKeyDown={handleKeyPress}
                         placeholder="Enter your number"
-                        className={`slim-input ${
+                        className={` ${
                           !valid && phoneNumber.length > 0 ? "is-invalid" : ""
                         }`}
                         required
@@ -271,7 +259,7 @@ const Login = () => {
                           fontSize: "14px",
                           padding: "8px 12px",
                           height: "60px",
-                          borderRadius: "40px",
+                          borderRadius: "50px",
                         }}
                       />
                       {!valid && phoneNumber.length > 0 && (
@@ -284,17 +272,17 @@ const Login = () => {
                       <div id="recaptcha-container"></div>
                       <div ref={recaptchRef}></div>
                       <Button
-                        borderRadius="30px"
+                        borderRadius="20"
                         text={loggedIn ? "Logging in..." : "Login"}
                         size="lg"
                         block={true}
                         onClick={handleLogin}
                         disabled={!valid || loggedIn}
-                        className="mt-2 slim-button"
+                        className="mt-2 "
                         customStyle={{
                           color: "#fff",
                           backgroundColor: "#5A9E1E",
-                          // borderRadius: "40px",
+                          borderRadius: "40px",
                           padding: "14px 32px",
                           fontSize: "1.4rem",
                           fontWeight: 700,

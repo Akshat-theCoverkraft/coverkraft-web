@@ -276,7 +276,7 @@ const Register = () => {
                                                 text="Cancel"
                                                 size="lg"
                                                 onClick={handleCancel}
-                                                className="mt-2 slim-button flex-fill"
+                                                className="mt-2 flex-fill"
                                                 style={{
                                                     color: "#fff",
                                                     backgroundColor: "#5A9E1E",
@@ -294,7 +294,7 @@ const Register = () => {
                                                 size="lg"
                                                 onClick={handleRegister}
                                                 disabled={!valid || !isValidEmail || !fullName || !email || !mobileNumber || isSubmitting}
-                                                className="mt-2 slim-button flex-fill"
+                                                className="mt-2 flex-fill"
                                             />
                                         </div>
                                         <p className="medium fw-bold mt-2 pt-1 mb-0 text-center">

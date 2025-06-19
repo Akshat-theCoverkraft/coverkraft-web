@@ -28,48 +28,49 @@ const HeroSection = () => {
         justifyContent="space-between"
         sx={{ px: { xs: 2, sm: 4, md: 10, lg: 12 } }}
       >
-        {/* LEFT TEXT SECTION */}
-        <Grid item xs={12} md={7}>
-          <h1
-            className="custom-size"
-            style={{
-              fontSize: "clamp(2rem, 5vw, 3.5rem)",
-              fontWeight: 700,
-              marginBottom: "1rem",
-            }}
-            dangerouslySetInnerHTML={{ __html: t("secureFuture") }}
-          />
-          <p
-            style={{
-              color: "#7B7B7B",
-              fontSize: "1.8rem",
-              lineHeight: 1.7,
-              marginBottom: "2rem",
-            }}
-          >
-            Choose us for tailored  coverage, exceptional customer
-            service, and peace of mind with reliable, comprehensive protection
-            for all your needs.
-          </p>
-          <Button
-            onClick={handleVault}
-            style={{
-              color: "#fff",
-              backgroundColor: "#5A9E1E",
-              borderRadius: "30px",
-              padding: "14px 32px",
-              fontSize: "1.4rem",
-              fontWeight: 700,
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-              textTransform: "uppercase",
-              letterSpacing: "1px",
-            }}
-          >
-            Policy Vault
-          </Button>
-        </Grid>
+       { /* LEFT TEXT SECTION */}
+          <Grid item xs={12} md={7}>
+            <h1
+              className="custom-size"
+              style={{
+                fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                fontWeight: 700,
+                marginBottom: "1rem",
+              }}
+              dangerouslySetInnerHTML={{ __html: t("secureFuture") }}
+            />
+            <p
+              style={{
+                color: "#f0f0f0",
+                fontSize: "1.8rem",
+                lineHeight: 1.7,
+                marginBottom: "2rem",
+              }}
+            >
+              Choose us for tailored coverage, exceptional customer
+              service,<br />
+              and peace of mind with reliable, comprehensive protection
+              for all your needs.
+            </p>
+            <Button
+              onClick={handleVault}
+              style={{
+                color: "#fff",
+                backgroundColor: "#5A9E1E",
+                borderRadius: "30px",
+                padding: "14px 32px",
+                fontSize: "1.4rem",
+                fontWeight: 700,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+              }}
+            >
+              Policy Vault
+            </Button>
+          </Grid>
 
-        {/* RIGHT IMAGE SECTION */}
+          {/* RIGHT IMAGE SECTION */}
         <Grid
           item
           xs={12}

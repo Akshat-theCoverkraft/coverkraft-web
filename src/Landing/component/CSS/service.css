@@ -1,4 +1,4 @@
-.service-section {
+/* .service-section {
   position: relative;
   background-color: #121212;
   width: 100%;
@@ -7,9 +7,9 @@
   padding: 60px 40px;
   box-sizing: border-box;
   padding: 10%;
-}
+} */
 
-.service-container {
+/* .service-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,18 +18,16 @@
   flex-wrap: wrap;
   position: relative;
   z-index: 2;
-}
+} */
 
 .service-left {
   flex: 1;
-  min-width: 300px;
+  min-width: 500px;
 }
 
 .service-title {
   font-family: 'DM Sans';
   color: #FF9906;
-  font-size: 100px;
-  font-weight: 700;
   margin-bottom: 10px;
 }
 
@@ -59,8 +57,8 @@
 }
 
 .service-image {
-  width: 100%;
-  max-width: 450px;
+  width: 80%;
+  max-width: 250px;
   border-radius: 18px;
 }
 
@@ -110,4 +108,49 @@
   height: 5px;
   left: 80%;
   top: 2%;
+}
+.service-section {
+  position: relative;
+  padding: 60px 40px 20px; /* ⬅️ reduced bottom padding */
+  color: #fff;
+  overflow: hidden;
+}
+
+.service-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.service-left {
+  max-width: 1000px;
+  z-index: 2;
+}
+
+.service-right .service-image {
+  max-width: 60%;
+  height: 50%;
+  z-index: 2;
+  position: relative;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+/* Adjust ellipses if needed */
+.ellipse {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(138, 198, 66, 0.4);
+  filter: blur(60px);
+  z-index: 0;
+}
+.ml-custom {
+  margin-left: 4rem;
 }
