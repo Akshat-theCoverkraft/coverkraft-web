@@ -31,6 +31,7 @@ import About from "../Landing/component/About";
 
 // Images and constants
 import share from "../Images/ic-share1.png";
+import cross from "../Images/xmark.png"
 import AddIcon from "../Images/addIcon.png";
 import uploadPdf from "../Images/uploadPdf.png";
 import uploadImg from "../Images/uploadImg.png";
@@ -337,15 +338,43 @@ const Vault = () => {
   );
 
   return (
-    <div className="overflow-hidden">
+    <div 
+      className="overflow-hidden" 
+      style={{
+        // Hide scrollbars but keep scrolling functionality
+        scrollbarWidth: 'none', // Firefox
+        msOverflowStyle: 'none', // IE/Edge
+        '&::-webkit-scrollbar': {
+          display: 'none', // Chrome/Safari/Opera
+        }
+      }}
+    >
+      <style jsx>{`
+        /* Global scrollbar hiding */
+        * {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE/Edge */
+        }
+        *::-webkit-scrollbar {
+          display: none; /* Chrome/Safari/Opera */
+        }
+        .overflow-hidden {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .overflow-hidden::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+      
       <Navbar />
       
       <div className="bg-color" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
         {/* Header Section */}
         <Stack spacing={2} className="p-5">
-          <div className="d-flex justify-content-between align-items-center flex-wrap">
-            <div className="d-flex align-items-center">
-              <Breadcrumbs aria-label="breadcrumb">
+          <div className="d-flex justify-content-between align-items-start flex-wrap">
+            <div className="d-flex flex-column">
+              <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '16px' }}>
                 <Link
                   className="text-decoration-none"
                   style={{
@@ -356,7 +385,7 @@ const Vault = () => {
                   }}
                   href="#"
                 >
-                  Vault
+                 Policy Vault
                 </Link>
                 <Typography
                   style={{ 
@@ -365,72 +394,111 @@ const Vault = () => {
                     color: THEME_COLOR.COLOR 
                   }}
                 >
-                  My Policies
+                  My Policy 
                 </Typography>
               </Breadcrumbs>
-              
-              {policyListLength > 0 && (
-                <img
-                  src={share}
-                  alt="Share"
-                  className="ml-4"
-                  onClick={handleShareIconClick}
+
+              {/* Buttons moved to left with flex column layout */}
+              <div className="d-flex align-items-center gap-2 flex-wrap" style={{ marginLeft: 55 }}>
+                {/* Share/Cross Button with margin-top */}
+                {policyListLength > 0 && (
+                  <div
+                    onClick={handleShareIconClick}
+                    style={{
+                      height: '50px',
+                      width: '50px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '40px',
+                      border: '1px solid #e0e0e0',
+                      backgroundColor: 'white',
+                      transition: 'all 0.2s ease',
+                      marginTop: '18px', // Added margin-top
+                    }}
+                  >
+                    <img
+                      src={shareAllPolicy ? cross : share}
+                      alt={shareAllPolicy ? "Close" : "Share"}
+                      style={{
+                        height: '40px',
+                        width: '40px',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Add Policy Button */}
+                <GradientButton
+                  text="Add Policy"
+                  size="sm"
+                  startIcon={AddIcon}
+                  onClick={() => toggleDialog('addPolicy', true)}
                   style={{
-                    height: '40px',
-                    width: '40px',
-                    cursor: 'pointer',
-                    objectFit: 'contain',
+                    padding: '8px 16px',
+                    minHeight: '36px',
+                    borderRadius: '8px',
+                    fontSize: '18px',
+                    marginTop: policyListLength > 0 ? '10px' : '0px', // Align with share button when both are visible
                   }}
                 />
-              )}
-            </div>
 
-            <div className="d-flex align-items-center gap-3 flex-wrap">
-              <GradientButton
-                text="Add Policy"
-                size="ml"
-                startIcon={AddIcon}
-                onClick={() => toggleDialog('addPolicy', true)}
-                style={{
-                  padding: '12px 24px',
-                  minHeight: '48px',
-                  borderRadius: '12px',
-                }}
-              />
-
-              {shareAllPolicy && (
-                <>
-                  <Button
-                    text={`Select All (${selectedPolicies.length}/${allPolicyIds.length})`}
-                    size="md"
-                    onClick={handleSelectAll}
-                    style={{
-                      backgroundColor: selectedPolicies.length === allPolicyIds.length ? '#28a745' : '#6c757d',
-                      color: 'white',
-                      border: 'none'
-                    }}
-                  />
-                  <Button
-                    text="Export to Excel"
-                    size="md"
-                    onClick={exportToExcel}
-                    disabled={selectedPolicies.length === 0}
-                  />
-                  <Button
-                    text="Export to PDF"
-                    size="md"
-                    onClick={exportToPDF}
-                    disabled={selectedPolicies.length === 0}
-                  />
-                </>
-              )}
+                {/* Share Options */}
+                {shareAllPolicy && (
+                  <>
+                    <Button
+                      text={`Select All (${selectedPolicies.length}/${allPolicyIds.length})`}
+                      size="sm"
+                      onClick={handleSelectAll}
+                      style={{
+                        backgroundColor: selectedPolicies.length === allPolicyIds.length ? '#28a745' : '#6c757d',
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 12px',
+                        minHeight: '36px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        marginTop: '10px',
+                      }}
+                    />
+                    <Button
+                      text="Excel"
+                      size="sm"
+                      onClick={exportToExcel}
+                      disabled={selectedPolicies.length === 0}
+                      style={{
+                        padding: '8px 12px',
+                        minHeight: '36px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        marginTop: '10px',
+                      }}
+                    />
+                    <Button
+                      text="PDF"
+                      size="sm"
+                      onClick={exportToPDF}
+                      disabled={selectedPolicies.length === 0}
+                      style={{
+                        padding: '8px 12px',
+                        minHeight: '36px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        marginTop: '10px',
+                      }}
+                    />
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </Stack>
 
-        {/* Main Content */}
+        {/* Main Content - Updated Grid ratios */}
         <Grid container spacing={2} className="px-4">
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} md={5.5}>
             <PolicyTabs
               handleCardClick={handleCardClick}
               shareAllPolicy={shareAllPolicy}
@@ -441,7 +509,7 @@ const Vault = () => {
               onAllPolicyIdsChange={setAllPolicyIds}
             />
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={6.5}>
             <PolicyDetail policyId={selectedPolicyId} />
           </Grid>
         </Grid>
@@ -465,7 +533,7 @@ const Vault = () => {
         </Typography>
         <IconButton
           onClick={() => toggleDialog('addPolicy', false)}
-          sx={{ position: "absolute", right: 8, top: 8 }}
+          sx={{ position: "absolute", right: 8, top: 8, }}
         >
           <CloseIcon />
         </IconButton>

@@ -46,8 +46,8 @@ const POLICY_CONFIGS = {
   car_policy: { label: "Car Insurance", image: car },
   bike_policy: { label: "Two Wheeler Insurance", image: scooty },
   other_vehicle: { label: "Other Vehicle Insurance", image: scooty },
-  life: { label: "Life Insurance", image: family },
-  accident: { label: "Accident Insurance", image: family },
+  life: { label: "Life Insurance", image: Life },
+  accident: { label: "Accident Insurance", image: Health },
   health: { label: "Health Insurance", image: HealthInsurance },
   other_health: { label: "Other Health Insurance", image: HealthInsurance },
 };
@@ -123,6 +123,7 @@ const PolicyCard = ({
         boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
         backgroundColor: THEME_COLOR.FADE_BACKGROUND,
         color: THEME_COLOR.COLOR,
+        width: "100%",
       }}
       onClick={() => handleCardClick(policy._id)}
     >
@@ -134,7 +135,7 @@ const PolicyCard = ({
               position: "absolute",
               top: 0,
               right: 0,
-              width: isExpired ? "150px" : "230px",
+              width: isExpired ? "100px" : "200px",
               height: "60px",
               backgroundImage: `url(${red})`,
               backgroundSize: "cover",

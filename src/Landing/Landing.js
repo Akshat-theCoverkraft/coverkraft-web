@@ -26,7 +26,7 @@ const Landing = () => {
       <PolicyType />
       {/* <Cards3d /> */}
       <BlogSection/>
-      <About />
+      {/* <About /> */}
       
       {/* <Card/> */}
       {/* <Blog /> */}
