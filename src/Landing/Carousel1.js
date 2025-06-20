@@ -58,7 +58,7 @@ const Carousel1 = () => {
         <Carousel
           showThumbs={false}
           showStatus={false}
-          infiniteLoop={false}
+          infiniteLoop={true}
           centerMode
           centerSlidePercentage={100 / slidesPerPage}
           autoPlay={true}
