@@ -218,8 +218,9 @@ const Register = () => {
                                             onKeyDown={handleKeyPress}
                                             placeholder="Enter your full name"
                                             className="slim-input"
+                                            name="fullName"
                                             required
-                                            style={{
+                                            inputStyle={{
                                                 fontSize: '14px',
                                                 padding: '8px 12px',
                                                 height: '60px',
@@ -230,13 +231,15 @@ const Register = () => {
                                     <div className="mb-3">
                                         <CustomInput
                                             label="Email"
+                                            type="email"
                                             value={email}
                                             onChange={handleEmailChange}
                                             onKeyDown={handleKeyPress}
                                             placeholder="Enter your email"
                                             className={`slim-input ${!isValidEmail && email.length > 0 ? 'is-invalid' : ''}`}
+                                            name="email"
                                             required
-                                            style={{
+                                            inputStyle={{
                                                 fontSize: '14px',
                                                 padding: '8px 12px',
                                                 height: '60px',
@@ -252,13 +255,15 @@ const Register = () => {
                                     <div className="mb-3">
                                         <CustomInput
                                             label="Mobile Number"
+                                            type="tel"
                                             value={mobileNumber}
                                             onChange={handlephonechange}
                                             onKeyDown={handleKeyPress}
                                             placeholder="Enter your number"
                                             className={`slim-input ${!valid && mobileNumber.length > 0 ? 'is-invalid' : ''}`}
+                                            name="mobileNumber"
                                             required
-                                            style={{
+                                            inputStyle={{
                                                 fontSize: '14px',
                                                 padding: '8px 12px',
                                                 height: '60px',
@@ -310,6 +315,55 @@ const Register = () => {
                     </div>
                 </div>
             </section>
+
+            {/* CSS to ensure placeholder visibility */}
+            <style jsx global>{`
+                /* Placeholder visibility enhancement */
+                .form-control::placeholder {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    opacity: 1 !important;
+                }
+                
+                .form-control::-webkit-input-placeholder {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    opacity: 1 !important;
+                }
+                
+                .form-control::-moz-placeholder {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    opacity: 1 !important;
+                }
+                
+                .form-control:-ms-input-placeholder {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    opacity: 1 !important;
+                }
+                
+                /* Ensure dark background inputs show light placeholders */
+                input[style*="background"]::placeholder,
+                input.bg-dark::placeholder {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    opacity: 1 !important;
+                }
+                
+                input[style*="background"]::-webkit-input-placeholder,
+                input.bg-dark::-webkit-input-placeholder {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    opacity: 1 !important;
+                }
+                
+                input[style*="background"]::-moz-placeholder,
+                input.bg-dark::-moz-placeholder {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    opacity: 1 !important;
+                }
+                
+                input[style*="background"]:-ms-input-placeholder,
+                input.bg-dark:-ms-input-placeholder {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                    opacity: 1 !important;
+                }
+            `}</style>
         </div>
     );
 };

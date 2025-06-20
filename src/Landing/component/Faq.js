@@ -5,8 +5,8 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import { styled } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import xmark from "../../Images/_xmark.png";
-import plus from "../../Images/plus.png";
+import xmark from "../../Images/xmark.png";
+import plus from "../../Images/plus2.png";
 import { THEME_COLOR } from "../../constants";
 import API_URL from "../../ServiceModule/Service";
 

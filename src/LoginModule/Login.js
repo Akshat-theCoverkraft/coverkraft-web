@@ -250,16 +250,17 @@ const Login = () => {
                         value={phoneNumber}
                         onChange={handlephonechange}
                         onKeyDown={handleKeyPress}
-                        placeholder="Enter your number"
+                        placeholder="Enter Your Number"
                         className={` ${
                           !valid && phoneNumber.length > 0 ? "is-invalid" : ""
                         }`}
                         required
                         style={{
                           fontSize: "14px",
-                          padding: "8px 12px",
+                          padding: "16px 20px",
                           height: "60px",
                           borderRadius: "50px",
+                          boxSizing: "border-box",
                         }}
                       />
                       {!valid && phoneNumber.length > 0 && (

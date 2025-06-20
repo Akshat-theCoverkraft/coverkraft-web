@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../Images/CoverKraft-beta.png";
+import logo from "../../Images/CKbig.png";
 import twitter from "../../Images/twitter.png";
 import facebook from "../../Images/facebook.png";
 import instagram from "../../Images/social.png";
@@ -31,19 +31,17 @@ const Footer = () => {
     { to: "/coverkraft", label: "Home" },
     // { to: "/coverkraft/about", label: "About Us" },
     { to: "/coverkraft/vault", label: "Policy Vault" },
-    { to: "/coverkraft/contactus", label: "ContactUs" },
-        { label: "Grievance Redress Policy", to: "/coverkraft/legal#GrievanceRedressPolicy" },
+    { to: "/coverkraft/contactus", label: "Contact Us" },
+    { label: "Grievance Redress Policy", to: "/coverkraft/legal#GrievanceRedressPolicy" },
 
   ];
 
   const companyLinks = [
-    { label: "Privacy Policy", to: "/coverkraft/legal#PrivacyPolicy" },
-    // { label: "License", to: "/coverkraft/legal#License" },
-    { label: "Terms of Use", to: "/coverkraft/legal#TermsOfUse" },
-    // { label: "Refund & Cancellation Policy", to: "/coverkraft/legal#RefundCancellationPolicy" },
-    // { label: "ISNP", to: "/coverkraft/legal#ISNP" },
-    { label: "Legal And Admin Policies", to: "/coverkraft/legal" },
     { label: "About Us", to: "/coverkraft/about" },
+    { label: "Privacy Policy", to: "/coverkraft/legal#PrivacyPolicy" },
+    { label: "Legal And Admin Policies", to: "/coverkraft/legal" },
+    { label: "Disclaimer", to: "/coverkraft/legal#Disclaimer" },
+    { label: "Terms of Use", to: "/coverkraft/legal#TermsOfUse" },
   ];
 
   const socialIcons = [
@@ -76,8 +74,8 @@ const Footer = () => {
                 alt="Coverkraft Logo"
                 style={{
                   height: "65px",
-                  width: "214px",
-                  objectFit: "contain",
+                  width: "300px",
+                  objectFit: "cover",
                 }}
                 className="mb-3"
               />

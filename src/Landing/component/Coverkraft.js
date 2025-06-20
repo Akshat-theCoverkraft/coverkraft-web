@@ -4,7 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import checkicon from "../../Images/Check-icon.png";
 import googleicon from "../../Images/Google-icon.png";
 import appleicon from "../../Images/Apple-icon.png";
-import mockup from "../../Images/Group 1000001136.png";
+import mockup from "../../Images/AppDI.png";
 import "./CSS/afterglow.css";
 
 const features = [

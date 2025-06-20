@@ -128,7 +128,7 @@ const PolicyType = () => {
     }
     
     .animated-border::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       left: 0;
@@ -167,7 +167,7 @@ const PolicyType = () => {
     }
     
     .policy-container::before {
-      content: '';
+      content: "";
       position: absolute;
       top: -1px;
       left: -1px;

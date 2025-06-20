@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
-import CardContent from "@mui/material/CardContent";
-import { Checkbox } from "@mui/material";
-import Typography from "@mui/material/Typography";
+import {
+  Box,
+  Tabs,
+  Tab,
+  Card,
+  Grid,
+  CardContent,
+  Checkbox,
+  Typography,
+  Pagination,
+  CircularProgress
+} from "@mui/material";
+import { TabList, TabContext, TabPanel } from "@mui/lab";
+import { makeStyles } from "@mui/styles";
+import axios from "axios";
+
+// Import images
 import scooty from "../../Images/Scooty.png";
 import HealthInsurance from "../../Images/FamilyHealthInsurance.png";
 import car from "../../Images/Car.png";
@@ -15,29 +24,260 @@ import Life from "../../Images/ic_life.png";
 import arrow from "../../Images/right-arrow.png";
 import red from "../../Images/red-bg.png";
 import family from "../../Images/Family.png";
-import "./policy.css";
-import { useDispatch, useSelector } from "react-redux";
-import API_URL from "../../ServiceModule/Service";
-import Pagination from "@mui/material/Pagination";
 import emptyImage from "../../Images/ic-empty.png";
-import TabList from "@mui/lab/TabList";
-import TabContext from "@mui/lab/TabContext";
-import TabPanel from "@mui/lab/TabPanel";
-import axios from "axios";
-import CircularProgress from "@mui/material/CircularProgress";
-import { makeStyles } from "@mui/styles";
+import "./policy.css";
+import API_URL from "../../ServiceModule/Service";
 import { THEME_COLOR } from "../../constants";
+
 const useStyles = makeStyles(() => ({
   loaderContainer: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "100vh", // Full viewport height
+    height: "100vh",
   },
   loader: {
     color: "#8AC642",
   },
 }));
+
+// Policy type configurations
+const POLICY_CONFIGS = {
+  car_policy: { label: "Car Insurance", image: car },
+  bike_policy: { label: "Two Wheeler Insurance", image: scooty },
+  other_vehicle: { label: "Other Vehicle Insurance", image: scooty },
+  life: { label: "Life Insurance", image: family },
+  accident: { label: "Accident Insurance", image: family },
+  health: { label: "Health Insurance", image: HealthInsurance },
+  other_health: { label: "Other Health Insurance", image: HealthInsurance },
+};
+
+// Tab configurations
+const TAB_CONFIGS = [
+  { label: "Active", value: 0, key: "active" },
+  { label: "Expired", value: 1, key: "expired" },
+  { label: "Archive", value: 2, key: "archive" },
+];
+
+// Empty state component
+const EmptyState = () => (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column",
+      height: "70vh",
+      color: THEME_COLOR.COLOR,
+    }}
+  >
+    <img src={emptyImage} alt="No Data" />
+    <p>Add your new policy effortlessly to your account</p>
+  </div>
+);
+
+// Policy card component
+const PolicyCard = ({
+  policy,
+  index,
+  shareAllPolicy,
+  selectedPolicies,
+  handleCheckboxChange,
+  handleCardClick,
+  showStatus = false,
+  isExpired = false,
+}) => {
+  const config = POLICY_CONFIGS[policy.policyType] || { label: "", image: scooty };
+  
+  // Calculate status for active policies
+  let status = null;
+  if (showStatus && policy.policyEndDate) {
+    try {
+      const datePart = policy.policyEndDate.split(" ")[0];
+      const [day, month, year] = datePart.split("/");
+      const endDate = new Date(year, month - 1, day);
+      
+      if (!isNaN(endDate)) {
+        const now = new Date();
+        const endDateWithoutTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+        const nowWithoutTime = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const diffInMs = endDateWithoutTime.getTime() - nowWithoutTime.getTime();
+        const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+        
+        if (diffInDays <= 0) {
+          status = "Expired";
+        } else if (diffInDays <= 60) {
+          status = `${diffInDays} days left`;
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing policy end date:", error);
+    }
+  }
+
+  return (
+    <Card
+      className="mb-5 rounded card-detail"
+      key={index}
+      style={{
+        boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+        backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+        color: THEME_COLOR.COLOR,
+      }}
+      onClick={() => handleCardClick(policy._id)}
+    >
+      <CardContent style={{ position: "relative" }}>
+        {/* Status overlay */}
+        {(status || isExpired) && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: isExpired ? "150px" : "230px",
+              height: "60px",
+              backgroundImage: `url(${red})`,
+              backgroundSize: "cover",
+              opacity: 1,
+            }}
+          />
+        )}
+        
+        <Grid container spacing={0} alignItems="center">
+          {shareAllPolicy && (
+            <Grid item xs={1}>
+              <Checkbox
+                checked={selectedPolicies.includes(policy._id)}
+                onChange={() => handleCheckboxChange(policy._id)}
+                sx={{
+                  color: "#ffffff",
+                  "&.Mui-checked": {
+                    color: THEME_COLOR.GREEN,
+                  },
+                }}
+              />
+            </Grid>
+          )}
+          
+          <Grid item xs={shareAllPolicy ? 2 : 3}>
+            <img
+              src={config.image}
+              alt="Policy Image"
+              style={{ width: "75%", maxWidth: "75%" }}
+              className="img-fluid rounded-start"
+            />
+          </Grid>
+          
+          <Grid
+            item
+            xs={shareAllPolicy ? 9 : 9}
+            className="d-flex align-items-end justify-content-between"
+          >
+            <div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span
+                  className="dot"
+                  style={{
+                    backgroundColor: "#8AC642",
+                    width: "10px",
+                    height: "10px",
+                    borderRadius: "50%",
+                    marginRight: "8px",
+                    marginBottom: "14px",
+                  }}
+                />
+                <p
+                  style={{
+                    color: "#8AC642",
+                    fontSize: "11px",
+                    fontWeight: "500",
+                  }}
+                  className="mb-3"
+                >
+                  {config.label}
+                </p>
+              </div>
+              <p
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "700",
+                }}
+                className="fw-bold"
+              >
+                {policy.insuredName}
+              </p>
+              <p
+                style={{
+                  fontSize: "11px",
+                  fontWeight: "500",
+                  color: "#585858",
+                }}
+                className="mb-4"
+              >
+                {policy.policyNumber}
+              </p>
+              <p
+                style={{
+                  fontSize: "10px",
+                  fontWeight: "500",
+                  color: "#9E9E9E",
+                }}
+              >
+                Expires on {policy.policyEndDate}
+              </p>
+            </div>
+            <div style={{ alignItems: "end" }}>
+              <img src={arrow} className="mr-2" height={40} alt="arrow" />
+            </div>
+          </Grid>
+        </Grid>
+        
+        {/* Status text overlay */}
+        {(status || isExpired) && (
+          <div
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 30,
+              color: "#ffffff",
+              fontSize: "24px",
+              fontWeight: "bold",
+            }}
+          >
+            {isExpired ? "Expired" : status}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+// Custom pagination component
+const CustomPagination = ({ totalItems, currentPage, onPageChange, itemsPerPage = 10 }) => (
+  <Box sx={{ display: "flex", justifyContent: "center", m: 2 }}>
+    <Pagination
+      variant="outlined"
+      size="large"
+      count={Math.ceil(totalItems / itemsPerPage)}
+      page={currentPage}
+      onChange={onPageChange}
+      sx={{
+        "& .MuiPaginationItem-root": {
+          color: "#fff",
+          borderColor: "#fff",
+        },
+        "& .MuiPaginationItem-root.Mui-selected": {
+          backgroundColor: "#fff",
+          color: "#000",
+        },
+        "& .MuiPaginationItem-ellipsis": {
+          color: "#fff",
+        },
+      }}
+    />
+  </Box>
+);
+
 export default function PolicyTabs({
   handleCardClick,
   shareAllPolicy,
@@ -45,32 +285,25 @@ export default function PolicyTabs({
   handleCheckboxChange,
   onPolicyListLengthChange,
   onArchieveListLength,
+  onAllPolicyIdsChange,
 }) {
-  const [value, setValue] = React.useState(0);
-  const [pagePolicy, setPagePolicy] = useState(1);
-  const [pageArchive, setPageArchive] = useState(1);
-  const itemsPerPage = 10;
+  const [value, setValue] = useState(0);
+  const [pages, setPages] = useState({ active: 1, expired: 1, archive: 1 });
   const [policyList, setPolicyList] = useState([]);
-  const [pageActive, setPageActive] = useState(1);
   const [archieveList, setArchieveList] = useState([]);
   const [activeTab, setActiveTab] = useState("active");
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
   const [activeCardId, setActiveCardId] = useState(null);
+  const itemsPerPage = 10;
+
   const handleCardClickWithState = (id) => {
     setActiveCardId(id);
     handleCardClick(id);
   };
 
-  const handlePageChangePolicy = (event, value) => {
-    setPagePolicy(value);
-  };
-  const handlePageActive = (event, value) => {
-    setPageActive(value);
-  };
-
-  const handlePageChangeArchive = (event, value) => {
-    setPageArchive(value);
+  const handlePageChange = (tabType) => (event, newPage) => {
+    setPages(prev => ({ ...prev, [tabType]: newPage }));
   };
 
   const getPaginatedData = (list, page) => {
@@ -79,98 +312,120 @@ export default function PolicyTabs({
     return list.slice(startIndex, endIndex);
   };
 
-  useEffect(() => {
-    fetchPolicyList();
-  }, [value]);
-
-  const fetchPolicyList = async () => {
+  // Unified fetch function
+  const fetchData = async (endpoint, params, isArchive = false) => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
-      let status = "active";
-      if (value === 1) {
-        status = "expired";
-      }
 
-      const response = await axios.get(`${API_URL}policy/getById`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          userId: userId,
-          policyType: activeTab,
-        },
+      const response = await axios.get(`${API_URL}${endpoint}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { userId, ...params },
       });
-      const data = response.data;
-      console.log("data response ka", data);
 
-      if (
-        response.data &&
-        response.data.data &&
-        Array.isArray(response.data.data)
-      ) {
-        console.log("hello");
-        setPolicyList(response.data.data);
-        console.log("know policy", response.data.data);
-        onPolicyListLengthChange(response.data.data.length);
-        console.log("length btade", response.data.data.length);
+      const data = response?.data?.data;
+      if (Array.isArray(data)) {
+        if (isArchive) {
+          setArchieveList(data);
+          onArchieveListLength(data.length);
+        } else {
+          setPolicyList(data);
+          onPolicyListLengthChange(data.length);
+          
+          // Call this when policy list is loaded with all policy IDs
+          const allPolicyIds = data.map(policy => policy._id);
+          onAllPolicyIdsChange?.(allPolicyIds);
+        }
       } else {
-        console.error("Expected an array but got:", response.data);
+        if (isArchive) {
+          setArchieveList([]);
+          onArchieveListLength(0);
+        } else {
+          setPolicyList([]);
+          onPolicyListLengthChange(0);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      if (isArchive) {
+        setArchieveList([]);
+        onArchieveListLength(0);
+      } else {
         setPolicyList([]);
         onPolicyListLengthChange(0);
       }
-    } catch (error) {
-      console.error("Error fetching policy list:", error);
-      setPolicyList([]);
-      onPolicyListLengthChange(0);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchPolicyList = () => {
+    fetchData("policy/getById", { policyType: activeTab });
+  };
+
+  const fetchArchieveList = () => {
+    fetchData("policy/archiveData", { status: "archive" }, true);
   };
 
   useEffect(() => {
-    fetchArchieveList();
-  }, [value]);
+    if (value === 2) {
+      fetchArchieveList();
+    } else {
+      fetchPolicyList();
+    }
+  }, [value, activeTab]);
 
-  const fetchArchieveList = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
-
-      const response = await axios.get(`${API_URL}policy/archiveData`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          userId: userId,
-          status: "archive",
-        },
-      });
-
-      if (
-        response?.data &&
-        response?.data?.data &&
-        Array.isArray(response?.data?.data)
-      ) {
-        setArchieveList(response?.data?.data);
-        onArchieveListLength(response?.data?.data?.length);
-      } else {
-        setArchieveList([]);
-        onArchieveListLength(0);
-      }
-    } catch (error) {
-      console.error("Error fetching policy list:", error);
-      setArchieveList([]);
-      onArchieveListLength(0);
-    } finally {
-      setLoading(false);
+  const handleTabChange = (event, newValue) => {
+    setValue(newValue);
+    if (newValue < 2) {
+      setActiveTab(TAB_CONFIGS[newValue].key);
     }
   };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  // Render tab content
+  const renderTabContent = (tabValue, dataList, pageKey, showStatus = false, isExpired = false) => {
+    const currentPage = pages[pageKey];
+    const paginatedData = getPaginatedData(dataList, currentPage);
+
+    return (
+      <TabPanel value={tabValue}>
+        <div
+          style={{
+            minHeight: tabValue === 0 ? "90vh" : "86vh", // SECTION HEIGHT: Edit these values to make tabs taller/shorter
+            maxHeight: tabValue === 0 ? "90vh" : "86vh", // SECTION HEIGHT: Active tab is slightly taller than others
+            overflowY: "auto",
+            paddingBottom: "10vh",
+          }}
+        >
+          {dataList.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <>
+              {paginatedData.map((policy, index) => (
+                <PolicyCard
+                  key={policy._id || index}
+                  policy={policy}
+                  index={index}
+                  shareAllPolicy={shareAllPolicy}
+                  selectedPolicies={selectedPolicies}
+                  handleCheckboxChange={handleCheckboxChange}
+                  handleCardClick={tabValue === 0 ? handleCardClickWithState : handleCardClick}
+                  showStatus={showStatus}
+                  isExpired={isExpired}
+                />
+              ))}
+              <CustomPagination
+                totalItems={dataList.length}
+                currentPage={currentPage}
+                onPageChange={handlePageChange(pageKey)}
+                itemsPerPage={itemsPerPage}
+              />
+            </>
+          )}
+        </div>
+      </TabPanel>
+    );
   };
 
   return (
@@ -187,7 +442,7 @@ export default function PolicyTabs({
         }}
       >
         <TabContext value={value}>
-          <Grid item xs={12} sm={12} md={12} lg={12}>
+          <Grid item xs={12}>
             <Box sx={{ width: "95%" }} className="m-3">
               <Box
                 sx={{
@@ -199,19 +454,14 @@ export default function PolicyTabs({
                   display: "flex",
                   justifyContent: "space-around",
                 }}
-                className=""
-                alignItems="center"
-                justifyContent="space-around"
                 style={{
                   backgroundColor: THEME_COLOR.FADE_BACKGROUND,
                   overflow: "hidden",
                 }}
               >
                 <TabList
-                  onChange={handleChange}
+                  onChange={handleTabChange}
                   variant="standard"
-                  aria-label="tabs with space around"
-                  textColor="#42988E"
                   TabIndicatorProps={{ style: { display: "none" } }}
                   style={{
                     backgroundColor: THEME_COLOR.FADE_BACKGROUND,
@@ -220,57 +470,26 @@ export default function PolicyTabs({
                     justifyContent: "space-around",
                   }}
                 >
-                  <Tab
-                    label="Active"
-                    value={0}
-                    className="m-2 fw-bolder px-5 "
-                    sx={{
-                      color: value === 0 ? "#8AC642" : "#777777",
-                      backgroundColor: value === 0 ? "white" : "inherit",
-                      textTransform: "capitalize",
-                      borderRadius: "25px",
-                      fontSize: "12px",
-                      fontWeight: "700",
-                      minWidth: "unset",
-                      flex: 1,
-                      mx: 1,
-                    }}
-                    onClick={() => setActiveTab("active")}
-                  />
-                  <Tab
-                    label="Expired"
-                    value={1}
-                    className="m-2 fw-bolder px-5 "
-                    sx={{
-                      color: value === 1 ? "#8AC642" : "#777777",
-                      backgroundColor: value === 1 ? "white" : "inherit",
-                      textTransform: "capitalize",
-                      borderRadius: "25px",
-                      fontSize: "12px",
-                      fontWeight: "700",
-                      minWidth: "unset",
-                      flex: 1,
-                      mx: 1,
-                    }}
-                    onClick={() => setActiveTab("expired")}
-                  />
-                  <Tab
-                    label="Archive"
-                    value={2}
-                    className="m-2 fw-bolder px-5 "
-                    sx={{
-                      color: value === 2 ? "#8AC642" : "#777777",
-                      backgroundColor: value === 2 ? "white" : "inherit",
-                      textTransform: "capitalize",
-                      borderRadius: "25px",
-                      fontSize: "12px",
-                      fontWeight: "700",
-                      minWidth: "unset",
-                      flex: 1,
-                      mx: 1,
-                    }}
-                    onClick={() => setActiveTab("archive")}
-                  />
+                  {TAB_CONFIGS.map((tab) => (
+                    <Tab
+                      key={tab.value}
+                      label={tab.label}
+                      value={tab.value}
+                      className="m-2 fw-bolder px-5"
+                      sx={{
+                        color: value === tab.value ? "#8AC642" : "#777777",
+                        backgroundColor: value === tab.value ? "white" : "inherit",
+                        textTransform: "capitalize",
+                        borderRadius: "25px",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                        minWidth: "unset",
+                        flex: 1,
+                        mx: 1,
+                      }}
+                      onClick={() => tab.value < 2 && setActiveTab(tab.key)}
+                    />
+                  ))}
                 </TabList>
               </Box>
             </Box>
@@ -282,778 +501,9 @@ export default function PolicyTabs({
             </div>
           ) : (
             <div>
-              <TabPanel value={0} className="">
-                <div
-                  style={{
-                    minHeight: "83vh",
-                    maxHeight: "83vh",
-                    overflowY: "auto",
-                    paddingBottom: "10vh",
-                  }}
-                >
-                  {policyList.length === 0 ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        height: "70vh",
-                        color: THEME_COLOR.COLOR,
-                      }}
-                    >
-                      <img src={emptyImage} alt="No Data" />
-                      <p>Add your new policy effortlessly to your account</p>
-                    </div>
-                  ) : (
-                    getPaginatedData(policyList, pageActive).map(
-                      (policy, index) => {
-                        let endDate, diffInDays, status;
-                        try {
-                          if (policy.policyEndDate) {
-                            const datePart = policy.policyEndDate.split(" ")[0];
-                            const [day, month, year] = datePart.split("/");
-
-                            endDate = new Date(year, month - 1, day);
-
-                            if (isNaN(endDate)) throw new Error("Invalid date");
-
-                            const now = new Date();
-
-                            const endDateWithoutTime = new Date(
-                              endDate.getFullYear(),
-                              endDate.getMonth(),
-                              endDate.getDate()
-                            );
-                            const nowWithoutTime = new Date(
-                              now.getFullYear(),
-                              now.getMonth(),
-                              now.getDate()
-                            );
-
-                            const diffInMs =
-                              endDateWithoutTime.getTime() -
-                              nowWithoutTime.getTime();
-                            diffInDays = Math.floor(
-                              diffInMs / (1000 * 60 * 60 * 24)
-                            );
-
-                            if (diffInDays <= 0) {
-                              status = "Expired";
-                            } else if (diffInDays <= 60) {
-                              status = `${diffInDays} days left`;
-                            }
-                          }
-                        } catch (error) {
-                          console.error(
-                            "Error parsing policy end date:",
-                            error
-                          );
-                        }
-
-                        return (
-                          <Card
-                            className="mb-5 rounded card-detail "
-                            key={index}
-                            style={{
-                              boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                              backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-                              color: THEME_COLOR.COLOR,
-                            }}
-                            onClick={() => handleCardClickWithState(policy._id)}
-                          >
-                            <CardContent style={{ position: "relative" }}>
-                              {status && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    top: 0,
-                                    right: 0,
-                                    width: "230px",
-                                    height: "60px",
-                                    backgroundImage: `url(${red})`,
-                                    backgroundSize: "cover",
-                                    opacity: 1,
-                                  }}
-                                ></div>
-                              )}
-                              <Grid container spacing={0} alignItems="center">
-                                {shareAllPolicy && (
-                                  <Grid item xs={1}>
-                                    <Checkbox
-                                      checked={selectedPolicies.includes(
-                                        policy._id
-                                      )}
-                                      onChange={() =>
-                                        handleCheckboxChange(policy._id)
-                                      }
-                                      sx={{
-                                        color: "#ffffff",
-                                        "&.Mui-checked": {
-                                          color: THEME_COLOR.GREEN,
-                                        },
-                                      }}
-                                    />
-                                  </Grid>
-                                )}
-                                <Grid item xs={shareAllPolicy ? 2 : 3}>
-                                  <img
-                                    src={
-                                      policy.policyType === "car_policy"
-                                        ? car
-                                        : policy.policyType === "bike_policy"
-                                        ? scooty
-                                        : policy.policyType === "other_vehicle"
-                                        ? scooty
-                                        : policy.policyType === "life"
-                                        ? family
-                                        : policy.policyType === "accident"
-                                        ? family
-                                        : policy.policyType === "health"
-                                        ? HealthInsurance
-                                        : policy.policyType === "other_health"
-                                        ? HealthInsurance
-                                        : ""
-                                    }
-                                    alt="Policy Image"
-                                    style={{ width: "75%", maxWidth: "75%" }}
-                                    className="img-fluid rounded-start"
-                                  />
-                                </Grid>
-                                <Grid
-                                  item
-                                  xs={shareAllPolicy ? 9 : 9}
-                                  className="d-flex align-items-end justify-content-between"
-                                >
-                                  <div>
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                      }}
-                                    >
-                                      <span
-                                        className="dot"
-                                        style={{
-                                          backgroundColor: "#8AC642",
-                                          width: "10px",
-                                          height: "10px",
-                                          borderRadius: "50%",
-                                          marginRight: "8px",
-                                          marginBottom: "14px",
-                                        }}
-                                      ></span>
-                                      <p
-                                        component="p"
-                                        gutterBottom
-                                        style={{
-                                          color: "#8AC642",
-                                          fontSize: "11px",
-                                          fontWeight: "500",
-                                        }}
-                                        className="mb-3"
-                                      >
-                                        {policy.policyType === "car_policy"
-                                          ? "Car Insurance"
-                                          : policy.policyType === "bike_policy"
-                                          ? "Two Wheeler Insurance"
-                                          : policy.policyType ===
-                                            "other_vehicle"
-                                          ? "Other Vehicle Insurance"
-                                          : policy.policyType === "life"
-                                          ? "Life Insurance"
-                                          : policy.policyType === "accident"
-                                          ? "Accident Insurance"
-                                          : policy.policyType === "health"
-                                          ? "Health Insurance"
-                                          : policy.policyType === "other_health"
-                                          ? "Other Health Insurance"
-                                          : ""}
-                                      </p>
-                                    </div>
-                                    <p
-                                      style={{
-                                        fontSize: "15px",
-                                        fontWeight: "700",
-                                      }}
-                                      className="fw-bold"
-                                    >
-                                      {policy.insuredName}
-                                    </p>
-                                    <p
-                                      style={{
-                                        fontSize: "11px",
-                                        fontWeight: "500",
-                                        color: "#585858",
-                                      }}
-                                      className="mb-4"
-                                    >
-                                      {policy.policyNumber}
-                                    </p>
-                                    <p
-                                      style={{
-                                        fontSize: "10px",
-                                        fontWeight: "500",
-                                        color: "#9E9E9E",
-                                      }}
-                                      gutterBottom
-                                    >
-                                      Expires on {policy.policyEndDate}
-                                    </p>
-                                  </div>
-                                  <div style={{ alignItems: "end" }}>
-                                    <img
-                                      src={arrow}
-                                      className="mr-2"
-                                      height={40}
-                                    />
-                                  </div>
-                                </Grid>
-                              </Grid>
-                              {status && (
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    top: 10,
-                                    right: 30,
-                                    color: "#ffffff",
-                                    fontSize: "24px",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  {status}
-                                </div>
-                              )}
-                            </CardContent>
-                          </Card>
-                        );
-                      }
-                    )
-                  )}
-                  <Box sx={{ display: "flex", justifyContent: "center", m: 2 }}>
-                    <Pagination
-                      variant="outlined"
-                      size="large"
-                      count={Math.ceil(policyList.length / itemsPerPage)}
-                      page={pageActive}
-                      onChange={handlePageActive}
-                      sx={{
-                        "& .MuiPaginationItem-root": {
-                          color: "#fff",
-                          borderColor: "#fff",
-                        },
-                        "& .MuiPaginationItem-root.Mui-selected": {
-                          backgroundColor: "#fff",
-                          color: "#000",
-                        },
-                        "& .MuiPaginationItem-ellipsis": {
-                          color: "#fff",
-                        },
-                      }}
-                    />
-                  </Box>
-                </div>
-              </TabPanel>
-
-              <TabPanel value={1}>
-                <div
-                  style={{
-                    minHeight: "79vh",
-                    maxHeight: "79vh",
-                    overflowY: "auto",
-                    paddingBottom: "10vh",
-                  }}
-                >
-                  {policyList.length === 0 ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        height: "70vh",
-                        color: THEME_COLOR.COLOR,
-                      }}
-                    >
-                      <img src={emptyImage} alt="No Data" />
-                      <p>Add your new policy effortlessly to your account</p>
-                    </div>
-                  ) : (
-                    <>
-                      {getPaginatedData(policyList, pagePolicy).map(
-                        (policy, index) => (
-                          <Card
-                            className="rounded card-detail mb-5"
-                            key={index}
-                            style={{
-                              boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                              backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-                              color: THEME_COLOR.COLOR,
-                            }}
-                            onClick={() => handleCardClick(policy?._id)}
-                          >
-                            <CardContent style={{ position: "relative" }}>
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  top: 0,
-                                  right: 0,
-                                  width: "150px",
-                                  height: "60px",
-                                  backgroundImage: `url(${red})`,
-                                  backgroundSize: "cover",
-                                  opacity: 1,
-                                }}
-                              ></div>
-
-                              <Grid container spacing={0} alignItems={"center"}>
-                                {shareAllPolicy && (
-                                  <Grid item xs={1}>
-                                    <Checkbox
-                                      checked={selectedPolicies.includes(
-                                        policy._id
-                                      )}
-                                      onChange={() =>
-                                        handleCheckboxChange(policy._id)
-                                      }
-                                      sx={{
-                                        color: "#ffffff",
-                                        "&.Mui-checked": {
-                                          color: THEME_COLOR.GREEN,
-                                        },
-                                      }}
-                                    />
-                                  </Grid>
-                                )}
-                                {/* <Grid
-                                  item
-                                  md={3}
-                                  sx={{ overflow: "hidden" }}
-                                  xs={shareAllPolicy ? 2 : 3}
-                                >
-                                  <img
-                                    src={
-                                      policy.policyType === "car_policy"
-                                        ? car
-                                        : policy.policyType === "bike_policy"
-                                        ? scooty
-                                        : policy.policyType === "health"
-                                        ? Health
-                                        : policy.policyType === "life"
-                                        ? Life
-                                        : scooty
-                                    }
-                                    alt="Policy Image"
-                                    style={{ width: "75%", maxWidth: "75%" }}
-                                    className="img-fluid rounded-start"
-                                  />
-                                </Grid>
-                                <Grid
-                                  item
-                                  xs={12}
-                                  md={9}
-                                  className="d-flex align-items-end justify-content-between"
-                                >
-                                  <div>
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                      }}
-                                    >
-                                      <span
-                                        className="dot"
-                                        style={{
-                                          backgroundColor: "#42988E",
-                                          width: "10px",
-                                          height: "10px",
-                                          borderRadius: "50%",
-                                          marginRight: "8px",
-                                          marginBottom: "14px",
-                                        }}
-                                      ></span>
-                                      <Typography
-                                        variant="body1"
-                                        component="p"
-                                        gutterBottom
-                                        style={{ color: "#89CFC7" }}
-                                        className="mb-3"
-                                      >
-                                        {policy.policyType === "car_policy"
-                                          ? "Car Insurance"
-                                          : policy.policyType === "bike_policy"
-                                          ? "Two Wheeler Insurance"
-                                          : policy.policyType === "health"
-                                          ? "Health Insurance"
-                                          : policy.policyType === "life"
-                                          ? "Life Insurance"
-                                          : policy.policyType === "accident"
-                                          ? "Accident Insurance"
-                                          : "Other Insurance"}
-                                      </Typography>
-                                    </div>
-                                    <h4 className="fw-bold">
-                                      {policy?.insuredName}
-                                    </h4>
-                                    <h6
-                                      className="mb-4"
-                                      style={{ color: "#585858" }}
-                                    >
-                                      {policy?.policyNumber}
-                                    </h6>
-                                    <h6 style={{ color: "#9E9E9E" }}>
-                                      Expires on {policy?.policyEndDate}
-                                    </h6>
-                                  </div>
-
-                                  <div style={{ alignItems: "end" }}>
-                                    <img
-                                      src={arrow}
-                                      className="mr-2"
-                                      height={40}
-                                      alt="arrow"
-                                    />
-                                  </div>
-                                </Grid> */}
-                                <Grid item xs={shareAllPolicy ? 2 : 3}>
-                                  <img
-                                    src={
-                                      policy.policyType === "car_policy"
-                                        ? car
-                                        : policy.policyType === "bike_policy"
-                                        ? scooty
-                                        : policy.policyType === "other_vehicle"
-                                        ? scooty
-                                        : policy.policyType === "life"
-                                        ? family
-                                        : policy.policyType === "accident"
-                                        ? family
-                                        : policy.policyType === "health"
-                                        ? HealthInsurance
-                                        : policy.policyType === "other_health"
-                                        ? HealthInsurance
-                                        : ""
-                                    }
-                                    alt="Policy Image"
-                                    style={{ width: "75%", maxWidth: "75%" }}
-                                    className="img-fluid rounded-start"
-                                  />
-                                </Grid>
-                                <Grid
-                                  item
-                                  xs={shareAllPolicy ? 9 : 9}
-                                  className="d-flex align-items-end justify-content-between"
-                                >
-                                  <div>
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                      }}
-                                    >
-                                      <span
-                                        className="dot"
-                                        style={{
-                                          backgroundColor: "#8AC642",
-                                          width: "10px",
-                                          height: "10px",
-                                          borderRadius: "50%",
-                                          marginRight: "8px",
-                                          marginBottom: "14px",
-                                        }}
-                                      ></span>
-                                      <p
-                                        component="p"
-                                        gutterBottom
-                                        style={{
-                                          color: "#8AC642",
-                                          fontSize: "11px",
-                                          fontWeight: "500",
-                                        }}
-                                        className="mb-3"
-                                      >
-                                        {policy.policyType === "car_policy"
-                                          ? "Car Insurance"
-                                          : policy.policyType === "bike_policy"
-                                          ? "Two Wheeler Insurance"
-                                          : policy.policyType ===
-                                            "other_vehicle"
-                                          ? "Other Vehicle Insurance"
-                                          : policy.policyType === "life"
-                                          ? "Life Insurance"
-                                          : policy.policyType === "accident"
-                                          ? "Accident Insurance"
-                                          : policy.policyType === "health"
-                                          ? "Health Insurance"
-                                          : policy.policyType === "other_health"
-                                          ? "Other Health Insurance"
-                                          : ""}
-                                      </p>
-                                    </div>
-                                    <p
-                                      style={{
-                                        fontSize: "15px",
-                                        fontWeight: "700",
-                                      }}
-                                      className="fw-bold"
-                                    >
-                                      {policy.insuredName}
-                                    </p>
-                                    <p
-                                      style={{
-                                        fontSize: "11px",
-                                        fontWeight: "500",
-                                        color: "#585858",
-                                      }}
-                                      className="mb-4"
-                                    >
-                                      {policy.policyNumber}
-                                    </p>
-                                    <p
-                                      style={{
-                                        fontSize: "10px",
-                                        fontWeight: "500",
-                                        color: "#9E9E9E",
-                                      }}
-                                      gutterBottom
-                                    >
-                                      Expires on {policy.policyEndDate}
-                                    </p>
-                                  </div>
-                                  <div style={{ alignItems: "end" }}>
-                                    <img
-                                      src={arrow}
-                                      className="mr-2"
-                                      height={40}
-                                    />
-                                  </div>
-                                </Grid>
-                              </Grid>
-
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  top: 10,
-                                  right: 30,
-                                  color: "#ffffff",
-                                  fontSize: "24px",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                Expired
-                              </div>
-                            </CardContent>
-                          </Card>
-                        )
-                      )}
-
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          m: 2,
-                        }}
-                      >
-                        <Pagination
-                          variant="outlined"
-                          size="large"
-                          count={Math.ceil(policyList.length / itemsPerPage)}
-                          page={pagePolicy}
-                          onChange={handlePageChangePolicy}
-                          sx={{
-                            "& .MuiPaginationItem-root": {
-                              color: "#fff", // text color
-                              borderColor: "#fff", // border color for outlined variant
-                            },
-                            "& .MuiPaginationItem-root.Mui-selected": {
-                              backgroundColor: "#fff",
-                              color: "#000", // text color when selected
-                            },
-                            "& .MuiPaginationItem-ellipsis": {
-                              color: "#fff",
-                            },
-                          }}
-                        />
-                      </Box>
-                    </>
-                  )}
-                </div>
-              </TabPanel>
-              <TabPanel value={2}>
-                <div
-                  style={{
-                    minHeight: "79vh",
-                    maxHeight: "79vh",
-                    overflowY: "auto",
-                    paddingBottom: "10vh",
-                  }}
-                >
-                  {archieveList.length === 0 ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        height: "70vh",
-                        color: THEME_COLOR.COLOR,
-                      }}
-                    >
-                      <img src={emptyImage} alt="No Data" />
-                      <p>Add your new policy effortlessly to your account</p>
-                    </div>
-                  ) : (
-                    getPaginatedData(archieveList, pageArchive).map(
-                      (policy, index) => (
-                        <div key={index}>
-                          <Card
-                            className="mb-5 rounded card-detail"
-                            style={{
-                              boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                              backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-                              color: THEME_COLOR.COLOR,
-                            }}
-                            onClick={() => handleCardClick(policy._id)}
-                          >
-                            <CardContent style={{ position: "relative" }}>
-                              <Grid container spacing={2} alignItems="center">
-                                {shareAllPolicy && (
-                                  <Grid item>
-                                    <Checkbox
-                                      checked={selectedPolicies.includes(
-                                        policy._id
-                                      )}
-                                      onChange={() =>
-                                        handleCheckboxChange(policy._id)
-                                      }
-                                      sx={{
-                                        color: "#ffffff",
-                                        "&.Mui-checked": {
-                                          color: THEME_COLOR.GREEN,
-                                        },
-                                      }}
-                                    />
-                                  </Grid>
-                                )}
-
-                                <Grid item>
-                                  <img
-                                    src={
-                                      policy.policyType === "car_policy"
-                                        ? car
-                                        : policy.policyType === "bike_policy"
-                                        ? scooty
-                                        : policy.policyType === "health"
-                                        ? Health
-                                        : policy.policyType === "life"
-                                        ? Life
-                                        : scooty
-                                    }
-                                    alt="Policy"
-                                    style={{
-                                      width: "75px",
-                                      height: "auto",
-                                      objectFit: "contain",
-                                    }}
-                                    className="img-fluid rounded-start"
-                                  />
-                                </Grid>
-
-                                <Grid item xs zeroMinWidth>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "space-between",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    <div style={{ overflow: "hidden" }}>
-                                      <div
-                                        style={{
-                                          display: "flex",
-                                          alignItems: "center",
-                                        }}
-                                      >
-                                        <span
-                                          className="dot"
-                                          style={{
-                                            backgroundColor: "#42988E",
-                                            width: "10px",
-                                            height: "10px",
-                                            borderRadius: "50%",
-                                            marginRight: "8px",
-                                          }}
-                                        ></span>
-                                        <Typography
-                                          variant="body1"
-                                          component="p"
-                                          gutterBottom
-                                          style={{ color: "#89CFC7" }}
-                                        >
-                                          {policy.policyType === "car_policy"
-                                            ? "Car Insurance"
-                                            : policy.policyType ===
-                                              "bike_policy"
-                                            ? "Two Wheeler Insurance"
-                                            : policy.policyType === "health"
-                                            ? "Health Insurance"
-                                            : policy.policyType === "life"
-                                            ? "Life Insurance"
-                                            : policy.policyType === "accident"
-                                            ? "Accident Insurance"
-                                            : "Other Insurance"}
-                                        </Typography>
-                                      </div>
-                                      <h4 className="fw-bold">
-                                        {policy.insuredName}
-                                      </h4>
-                                      <h6 style={{ color: "#585858" }}>
-                                        {policy.policyNumber}
-                                      </h6>
-                                      <h6 style={{ color: "#9E9E9E" }}>
-                                        Expires on {policy.policyEndDate}
-                                      </h6>
-                                    </div>
-                                    <div>
-                                      <img
-                                        src={arrow}
-                                        alt="arrow"
-                                        height={40}
-                                      />
-                                    </div>
-                                  </div>
-                                </Grid>
-                              </Grid>
-                            </CardContent>
-                          </Card>
-                        </div>
-                      )
-                    )
-                  )}
-                  <Box sx={{ display: "flex", justifyContent: "center", m: 2 }}>
-                    <Pagination
-                      variant="outlined"
-                      size="large"
-                      count={Math.ceil(archieveList.length / itemsPerPage)}
-                      page={pageArchive}
-                      onChange={handlePageChangeArchive}
-                      sx={{
-                        "& .MuiPaginationItem-root": {
-                          color: "#fff",
-                          borderColor: "#fff",
-                        },
-                        "& .MuiPaginationItem-root.Mui-selected": {
-                          backgroundColor: "#fff",
-                          color: "#000",
-                        },
-                        "& .MuiPaginationItem-ellipsis": {
-                          color: "#fff",
-                        },
-                      }}
-                    />
-                  </Box>
-                </div>
-              </TabPanel>
+              {renderTabContent(0, policyList, "active", true, false)}
+              {renderTabContent(1, policyList, "expired", false, true)}
+              {renderTabContent(2, archieveList, "archive", false, false)}
             </div>
           )}
         </TabContext>

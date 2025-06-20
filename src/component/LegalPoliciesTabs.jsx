@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
-
+const td = {
+    border: '1px solid #444',
+    padding: '1rem',
+    verticalAlign: 'top',
+};
 const policies = [
     {
         label: "Privacy Policy",
         id: "PrivacyPolicy",
         content: (
             <div style={{
-                maxWidth: '900px',
+                maxWidth: '1500px',
                 margin: '2rem auto',
-                padding: '1rem',
+                // padding: '1rem',
                 color: '#E0E0E0',
                 lineHeight: '1.8',
                 fontSize: '1.7rem',
@@ -145,24 +149,212 @@ const policies = [
         label: "Refund & Cancellation Policy",
         id: "RefundCancellationPolicy",
         content: (
-            <div id="RefundCancellationPolicy">
-                <h2 style={{ color: "#FFFFFF", marginBottom: "2rem", fontSize: "1.8rem", fontWeight: "700" }}>Refund & Cancellation Policy</h2>
-                <div style={{ color: "#FFFFFF", lineHeight: "1.9", fontSize: "1.1rem", fontWeight: "500" }}>
-                    <p style={{ margin: "0", textAlign: "left" }}>Your refund and cancellation policy content will go here...</p>
-                </div>
+            <div
+                id="RefundCancellationPolicy"
+                style={{
+                    maxWidth: '1500px',
+                    margin: '2rem auto',
+                    color: '#E0E0E0',
+                    lineHeight: '1.8',
+                    fontSize: '1.7rem',
+                    borderRadius: '10px',
+                    fontFamily: 'Arial, sans-serif',
+                }}
+            >
+                <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+                    Refund & Cancellation Policy
+                </h2>
+
+                <h3 style={{ color: '#8BC642', marginTop: '1.5rem' }}>Refund Policy</h3>
+                <p>
+                    In case of a refund due to an erroneous transaction or policy cancellation, the premium amount paid will be refunded through direct credit or cheque, depending on the prevailing refund policy of the respective Insurance Company from whom you purchased the insurance product.
+                </p>
+
+                <h3 style={{ color: '#8BC642', marginTop: '1.5rem' }}>Cancellation Policy</h3>
+                <p>
+                    For cancellations, the refund of the premium amount will also be processed by the respective Insurance Company, either via direct credit or cheque, based on their individual cancellation and refund terms. Please refer to your insurer’s policy document for detailed procedures and timelines.
+                </p>
+
+                <p style={{ marginTop: '2rem', fontStyle: 'italic', color: '#CCCCCC' }}>
+                    Note: TheCoverKraft acts as an intermediary and does not directly handle premium refunds or cancellations. All transactions are subject to the insurer's terms and conditions.
+                </p>
             </div>
+
         ),
     },
     {
         label: "ISNP",
         id: "ISNP",
         content: (
-            <div id="ISNP">
-                <h2 style={{ color: "#FFFFFF", marginBottom: "2rem", fontSize: "1.8rem", fontWeight: "700" }}>ISNP</h2>
-                <div style={{ color: "#FFFFFF", lineHeight: "1.9", fontSize: "1.1rem", fontWeight: "500" }}>
-                    <p style={{ margin: "0", textAlign: "left" }}>Your ISNP content will go here...</p>
-                </div>
+            <div
+                id="ISNPPolicyServicing"
+                style={{
+                    maxWidth: '1500px',
+                    margin: '2rem auto',
+                    color: '#E0E0E0',
+                    lineHeight: '1.8',
+                    fontSize: '1.7rem',
+                    borderRadius: '10px',
+                    fontFamily: 'Arial, sans-serif',
+                }}
+            >
+                <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+                    ISNP – Procedures, Processes and Timelines for Post-Sales Servicing of Insurance Policies
+                </h2>
+                <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+                    Service TAT - Health
+                </h2>
+                <p>
+                    In accordance with Schedule I of the Insurance ecommerce guidelines issued by IRDAI on 9th March 2017, Coverkraft Insurance Brokers Private Limited as an ISNP follows the following service TAT’s for online sale of Health Insurance products:                 </p>
+
+                {/* Health Insurance Section */}
+                {/* <h3 style={{ color: '#8BC642', marginTop: '2rem' }}>Service TAT – Health Insurance</h3> */}
+
+                <p style={{ marginBottom: '1rem',color: '#8BC642' }}>
+Policyholder Servicing Turnaround Times Are As Follows:                 </p>
+
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
+                    <thead>
+                        <tr style={{ backgroundColor: '#1E1E1E', color: '#8BC642' }}>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Service Parameters</th>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Maximum Turnaround Time (Calendar Days) </th>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Turnaround Time To Be Calculated From </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style={td}>Written communication of decisions on the proposal / raising additional requirements on the proposal</td>
+                            <td style={td}>15 days</td>
+                            <td style={td}>Date of receipt of the proposal or the date of receipt of any requirement called for, whichever is later </td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Providing copy of accepted proposal form </td>
+                            <td style={td}>5 days</td>
+                            <td style={td}>Date of acceptance of the proposal </td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Refund post cancellation</td>
+                            <td style={td}>10 days</td>
+                            <td style={td}>From decision date / last document / cancellation request</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Requests for refund towards free look cancellation, surrender and withdrawal; refund of proposal deposit; refund of outstanding proposal deposit, if any </td>
+                            <td style={td}>10 days</td>
+                            <td style={td}>Date of receipt of request/last necessary document, whichever is later </td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Acknowledgement of Grievance </td>
+                            <td style={td}>5 days</td>
+                            <td style={td}>Date of receipt of Grievance </td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Resolution of Grievance </td>
+                            <td style={td}>30 days</td>
+                            <td style={td}>Date of receipt of Grievance </td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Compliance of KYC norms </td>
+                            <td style={td}>—</td>
+                            <td style={td}>KYC not needed if premium &lt; ₹50K. PAN required if &gt; ₹50K.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                {/* General Insurance Workflow Section */}
+                <h4 style={{ color: '#8BC642' }}>The General Insurance Policy (Including Health Insurance) Servicing Details May Include The Process And Timelines For: </h4>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
+                    <thead>
+                        <tr style={{ backgroundColor: '#1E1E1E', color: '#8BC642' }}>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Process</th>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Timeline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style={td}>Filling up of proposal form </td>
+                            <td style={td}>45 days</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Electronic copy of proposal form and payment acknowledgement </td>
+                            <td style={td}>5 days</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>One Time Password (OTP) for authentication of details mentioned in proposal form </td>
+                            <td style={td}>10 minutes</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>KYC documentation</td>
+                            <td style={td}>The Customer relationship team will follow up on completion of proposal form </td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Medical scheduling</td>
+                            <td style={td}>The Customer relationship team will follow up on completion of proposal form </td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Proposal form acceptance</td>
+                            <td style={td}>15 days post completion of documentation & medicals, if any </td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Refund</td>
+                            <td style={td}>15 days from the date of underwriting </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                {/* Life Insurance Section */}
+                <h3 style={{ color: '#8BC642', marginTop: '2rem' }}>Service TAT – Life Insurance</h3>
+                <p style={{ marginBottom: '1rem' }}>
+                    The following turnaround times apply to Life Insurance post-sales services:
+                </p>
+
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
+                    <thead>
+                        <tr style={{ backgroundColor: '#1E1E1E', color: '#8BC642' }}>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Service Parameters</th>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Max TAT (Calendar Days)</th>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>TAT Calculated From</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style={td}>Decision communication / Additional requirement</td>
+                            <td style={td}>15 days</td>
+                            <td style={td}>From receipt of proposal or requirement, whichever is later</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Copy of accepted proposal form</td>
+                            <td style={td}>5 days</td>
+                            <td style={td}>From acceptance date</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Refund post cancellation</td>
+                            <td style={td}>10 days</td>
+                            <td style={td}>From decision date / last document / cancellation request</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Free look / surrender / withdrawal refunds</td>
+                            <td style={td}>10 days</td>
+                            <td style={td}>From request or last document, whichever is later</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Grievance Acknowledgement</td>
+                            <td style={td}>5 days</td>
+                            <td style={td}>From receipt of grievance</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>Grievance Resolution</td>
+                            <td style={td}>30 days</td>
+                            <td style={td}>From receipt of grievance</td>
+                        </tr>
+                        <tr>
+                            <td style={td}>KYC Compliance</td>
+                            <td style={td}>45 days</td>
+                            <td style={td}>From transaction date on website</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+
         ),
     },
     {
@@ -172,14 +364,14 @@ const policies = [
             <div
                 id="TermsOfUse"
                 style={{
-                    maxWidth: '1200px',
+                    maxWidth: '1500px',
                     margin: '2rem auto',
-                    padding: '2rem',
+                    // padding: '1rem',
                     color: '#E0E0E0',
                     lineHeight: '1.8',
                     fontSize: '1.7rem',
                     borderRadius: '10px',
-                    fontFamily: 'Arial, sans-serif',
+                    fontFamily: 'Arial, sans-serif'
                 }}
             >
                 <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
@@ -326,9 +518,9 @@ const LegalPoliciesTabs = () => {
     }, []);
 
     const activePolicy = policies.find((p) => p.label === activeTab);
-useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}, [activeTab]); // Runs whenever activeTab changes
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [activeTab]); // Runs whenever activeTab changes
 
     return (
         <div style={{
@@ -338,8 +530,8 @@ useEffect(() => {
             fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
             minHeight: "100vh",
             minWidth: "70vw",
-            width: "80%",
-            paddingLeft: "20%",
+            width: "100%",
+
         }}>
             {/* Centered Heading */}
             <h1 style={{
@@ -361,7 +553,7 @@ useEffect(() => {
                 marginBottom: "2rem",
             }}>
                 <div style={{
-                    backgroundColor: "#1A1A1A",
+                    backgroundColor: "#121212",
                     padding: "0.5rem",
                     borderRadius: "50px",
                     display: "flex",
@@ -398,7 +590,7 @@ useEffect(() => {
 
             {/* Scrollable Policy Content */}
             <div style={{
-                backgroundColor: "#1A1A1A",
+                backgroundColor: "#121212",
                 padding: "2.5rem",
                 borderRadius: "12px",
                 boxShadow: "0 0 20px rgba(139, 198, 66, 0.1), 0 8px 32px rgba(0,0,0,0.4)",

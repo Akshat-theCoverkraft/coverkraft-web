@@ -15,7 +15,7 @@ const Carousel1 = () => {
         const response = await fetch(`${API_URL}featureVideo/getAll`);
         const result = await response.json();
         if (result.status) {
-          const activeItems = result.data.filter(item => item.status === "inactive");
+          const activeItems = result.data.filter(item => item.status === "active");
           setItems(activeItems);
         }
       } catch (error) {
