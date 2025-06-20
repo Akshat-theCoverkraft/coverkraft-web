@@ -1,24 +1,3 @@
-/* .service-section {
-  position: relative;
-  background-color: #121212;
-  width: 100%;
-  min-height: 644px;
-  overflow: hidden;
-  padding: 60px 40px;
-  box-sizing: border-box;
-  padding: 10%;
-}
-
-.service-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1440px;
-  margin: 0 auto;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 2;
-} */
 
 .service-left {
   flex: 1;
