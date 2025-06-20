@@ -4,12 +4,12 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./component/CSS/carousel1.css";
 import API_URL from "../ServiceModule/Service";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
+ 
 const Carousel1 = () => {
   const [items, setItems] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const slidesPerPage = 3;
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,33 +25,33 @@ const Carousel1 = () => {
     };
     fetchData();
   }, []);
-
+ 
   const totalPages = Math.ceil(items.length / slidesPerPage);
-
+ 
   const handleDotClick = (pageIndex) => {
     const slideIndex = pageIndex * slidesPerPage;
     setCurrentSlide(slideIndex);
   };
-
+ 
   const getCurrentPage = () => Math.floor(currentSlide / slidesPerPage);
-
+ 
   const goToPrev = () => {
     const newIndex = Math.max(currentSlide - slidesPerPage, 0);
     setCurrentSlide(newIndex);
   };
-
+ 
   const goToNext = () => {
     const maxIndex = Math.max(items.length - slidesPerPage, 0);
     const newIndex = Math.min(currentSlide + slidesPerPage, maxIndex);
     setCurrentSlide(newIndex);
   };
-
+ 
   const handleSlideChange = (index) => {
     // Always align to page start (e.g., 0, 3, 6)
     const pageStart = Math.floor(index / slidesPerPage) * slidesPerPage;
     setCurrentSlide(pageStart);
   };
-
+ 
   return (
     <div className="carousel__wrap">
       <div className="carousel__inner">
@@ -62,7 +62,7 @@ const Carousel1 = () => {
           centerMode
           centerSlidePercentage={100 / slidesPerPage}
           autoPlay={true}
-          interval={2000} 
+          interval={2000}
           transitionTime={600}
           swipeable
           emulateTouch
@@ -100,7 +100,7 @@ const Carousel1 = () => {
             </div>
           ))}
         </Carousel>
-
+ 
         {items.length > slidesPerPage && (
           <div className="custom-pagination">
             {Array.from({ length: totalPages }, (_, index) => (
@@ -117,5 +117,6 @@ const Carousel1 = () => {
     </div>
   );
 };
-
+ 
 export default Carousel1;
+ 
