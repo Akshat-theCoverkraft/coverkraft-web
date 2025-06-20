@@ -141,4 +141,3 @@ const PolicyType = () => {
 };
  
 export default PolicyType;
- 
