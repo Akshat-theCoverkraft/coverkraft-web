@@ -184,9 +184,12 @@ position: relative !important;}
   color: teal;
   font-size: 20px;
 }
-
+.custom-arrow.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
 .custom-arrow-left {
-  left: -2px;
+  left: 0px;
 }
 
 .carousel__slide-item {
