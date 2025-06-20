@@ -55,6 +55,7 @@ function ContactUs() {
     };
 
     return (
+        <>
         <div className="contact-container">
             <Navbar />
             <div className="contact-heading text-center mt-5 mb-5">
@@ -161,7 +162,7 @@ function ContactUs() {
             .contact-card {
                 width: 100%;
                 max-width: 1200px;
-                background-color: #3e3e3e;
+                background-color: #212121;
                 border-radius: 2rem;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
                 overflow: hidden;
@@ -278,7 +279,10 @@ function ContactUs() {
                 }
             }
         `}</style>
+
         </div>
+            <Footer/>
+</>
     );
 }
 

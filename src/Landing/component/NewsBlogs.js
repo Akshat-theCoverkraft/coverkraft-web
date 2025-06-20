@@ -1,219 +1,198 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
   CardMedia,
-  Button,
   Box,
   Grid,
   Chip,
   Typography,
 } from '@mui/material';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { styled } from '@mui/material/styles';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
-
-const blogPosts = [
-  {
-    id: 1,
-    title: 'Health insurance: Family floater policies can include new-borns and children, till they turn 25',
-    date: 'May 23, 2024',
-    category: 'Travel',
-    image: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?fit=crop&w=800&q=80',
-  },
-  {
-    id: 2,
-    title: 'Health insurance: Family floater policies can include new-borns and children, till they turn 25',
-    date: 'May 23, 2024',
-    category: 'Health',
-    image: 'https://images.unsplash.com/photo-1576765607924-adef6d6b8f3f?fit=crop&w=800&q=80',
-  },
-  {
-    id: 3,
-    title: 'Health insurance: Family floater policies can include new-borns and children, till they turn 25',
-    date: 'May 23, 2024',
-    category: 'Travel',
-    image: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?fit=crop&w=800&q=80',
-  },
-  {
-    id: 4,
-    title: 'Health insurance: Family floater policies can include new-borns and children, till they turn 25',
-    date: 'May 23, 2024',
-    category: 'Health',
-    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?fit=crop&w=800&q=80',
-  },
-];
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 
 const BlogSection = () => {
+  const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await axios.get('http://52.52.154.65:5242/news/getAll');
+        const sorted = (res.data?.data || []).sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setPosts(sorted.slice(0, 6));
+      } catch (err) {
+        console.error('Failed fetching:', err);
+      }
+    };
+    fetchNews();
+  }, []);
+
+  if (posts.length === 0) return null;
+
+  const short = posts.find(p => p.type === 'short') || posts[0];
+  const newsItems = posts.filter(p => p.type === 'news').slice(0, 3);
+  const blogs = posts.filter(p => p.type === 'blog').slice(0, 3);
+
+  const getUrl = (p) =>
+    p.videoUrl
+      ? p.videoUrl.startsWith('http')
+        ? p.videoUrl
+        : `http://52.52.154.65:5242/${p.videoUrl}`
+      : p.newsImg.startsWith('http')
+        ? p.newsImg
+        : `http://52.52.154.65:5242/${p.newsImg}`;
+
+  const renderCardHeader = (type) => (
+    <Chip
+      icon={<TravelExploreIcon />}
+      label={type.charAt(0).toUpperCase() + type.slice(1)}
+      size="small"
+      sx={{ bgcolor: '#2f2f2f', color: '#fff', mb: 1 }}
+    />
+  );
+  const StyledButton = styled('button')(() => ({
+    backgroundColor: 'transparent',
+    color: '#8AC642',
+    border: '1px solid #8AC642',
+    borderRadius: '40px',
+    padding: '12px 32px',
+    fontSize: '1.8rem',
+    fontWeight: '600',
+    minWidth: '180px',
+    cursor: 'pointer',
+    userSelect: 'none',
+    transition: 'all 0.3s ease',
+    textTransform: 'uppercase',
+    '&:hover': {
+      backgroundColor: '#8AC642',
+      color: '#000',
+    },
+  }));
+
   return (
-    <Box sx={{ backgroundColor: '#111', color: '#fff', px: 11, py: 6, mt: 1 }}>
-      <Typography
-        variant="h4"
-        sx={{
-          color: '#FF9906',
-          fontWeight: 700,
-          mb: 4,
-          fontSize: { xs: '26px', sm: '30px', md: '32px' },
-          letterSpacing: '0.5px',
-          textAlign: 'center',
-        }}
-      >
+    <Box sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1, pl:12, pr: 12}}>
+      <Typography variant="h4" sx={{ color: '#FF9906', fontWeight: 700, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
         News And Blogs
       </Typography>
+      <Typography variant="h4" sx={{ color: '#FFf', fontWeight: 500, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
+Latest From The Blogs      </Typography>
 
-      <Grid container spacing={4}>
-        {/* Left Card */}
-        <Grid item xs={12} md={5.5}>
-          <Card
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-              minHeight: 450,
-              borderRadius: 3,
-              bgcolor: '#1c1c1c',
-              color: '#fff',
-            }}
-          >
-            <CardMedia
-              component="img"
-              height="260"
-              image={blogPosts[0].image}
-              alt="blog"
-              sx={{ objectFit: 'cover' }}
-            />
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Chip
-                  icon={<TravelExploreIcon />}
-                  label={blogPosts[0].category}
-                  size="medium"
-                  sx={{ mr: 2, bgcolor: '#2f2f2f', color: '#fff', pl: 1 }}
-                />
+      <Grid container spacing={4} alignItems="stretch">
+        {/* LEFT SIDE: Vertical Short Video */}
+    {/* LEFT SIDE: Vertical Short Video */}
+<Grid item xs={12} md={4}>
+  <Card
+    sx={{
+      borderRadius: '40px',
+      bgcolor: '#212121',
+      overflow: 'hidden',
+      cursor: 'pointer',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    }}
+    onClick={() => navigate(`/coverkraft/feed/${short.type}/${short._id}`)}
+  >
+    {/* VIDEO SECTION */}
+    <Box sx={{ width: '100%', height: '450px', overflow: 'hidden' }}>
+      <video
+        src={getUrl(short)}
+        autoPlay
+        muted
+        loop
+        playsInline
+        controls={false}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: '40px 40px 0 0',
+        }}
+      />
+    </Box>
+
+    {/* DETAILS BELOW VIDEO */}
+    <CardContent sx={{ p: 3 }}>
+      {renderCardHeader(short.type)}
+      <Typography
+        variant="h6"
+        color="#fff"
+        gutterBottom
+        sx={{ fontSize: '1.4rem', fontWeight: 'bold' }}
+      >
+        {short.subtitle}
+      </Typography>
+      <Typography
+        variant="body2"
+        color="#DCDCDC"
+        sx={{
+          fontSize: '1.05rem',
+          mb: 1.5,
+          lineHeight: 1.5,
+        }}
+      >
+        {short.description}
+      </Typography>
+      <Typography variant="body2" color="#888">
+        {moment(short.createdAt).format('MMM DD, YYYY')}
+      </Typography>
+    </CardContent>
+  </Card>
+</Grid>
+
+
+
+        { /* RIGHT SIDE: News and Blogs */}
+        <Grid item xs={12} md={8} mt={3}>
+          {[...newsItems, ...blogs].map(p => (
+            <Card
+              key={p._id}
+              sx={{ mb: 3, display: 'flex', height: 200, borderRadius: 3, bgcolor: '#212121', color: '#fff', cursor: 'pointer' }}
+              onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
+            >
+              <CardMedia
+                component="img"
+                image={getUrl(p)}
+                alt={p.subtitle}
+                sx={{ width: 180, objectFit: 'cover', borderRadius: '12px 0 0 12px' }}
+              />
+              <CardContent sx={{ flex: 1 }}>
+                {renderCardHeader(p.type)}
+                <Typography variant="h6" color="#fff" gutterBottom sx={{ fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.5rem' } }}>
+                  {p.subtitle}
+                </Typography>
+                <Typography variant="body1" color="#DCDCDC" sx={{ fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.15rem' } }}>
+                  {p.description}
+                </Typography>
+                <Typography variant="body2" color="#888" mt={1} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                  {moment(p.createdAt).format('MMM DD, YYYY')}
+                </Typography>
                 <Typography
                   variant="body1"
-                  sx={{ display: 'flex', alignItems: 'center', color: '#fff' }}
+                  color="#7BC043"
+                  sx={{ mt: 1, fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' } }}
+                  onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
                 >
-                  <CalendarMonthIcon fontSize="small" sx={{ mr: 0.5 }} />
-                  {blogPosts[0].date}
+                  Read More →
                 </Typography>
-              </Box>
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 600, fontSize: '1.7rem', color: 'white', mb: 1.5 }}
-              >
-                {blogPosts[0].title}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  fontSize: '1.5rem',
-                  color: '#DCDCDC',
-                  lineHeight: 1.6,
-                }}
-              >
-                {blogPosts[0].title}
-              </Typography>
-              <Button
-                size="medium"
-                sx={{
-                  mt: 2,
-                  color: '#8AC642',
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                  fontSize:'1.5rem'
-                }}
-              >
-                Read More →
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Right Cards */}
-        <Grid item xs={12} md={6.5}>
-          <Grid container spacing={2}>
-            {blogPosts.slice(1).map((post) => (
-              <Grid item xs={12} key={post.id}>
-                <Card
-                  sx={{
-                    display: 'flex',
-                    height: 160,
-                    borderRadius: 3,
-                    bgcolor: '#1c1c1c',
-                    color: '#fff',
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    image={post.image}
-                    alt="blog"
-                    sx={{
-                      width: 180,
-                      height: '100%',
-                      objectFit: 'cover',
-                      borderTopLeftRadius: '12px',
-                      borderBottomLeftRadius: '12px',
-                    }}
-                  />
-                  <CardContent sx={{ flex: '1 0 auto', p: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <Chip
-                        icon={<TravelExploreIcon />}
-                        label={post.category}
-                        size="small"
-                        sx={{ mr: 2, bgcolor: '#2f2f2f', color: '#fff', pl: 1 }}
-                      />
-                      <Typography
-                        variant="body1"
-                        sx={{ display: 'flex', alignItems: 'center', color: '#fff' }}
-                      >
-                        <CalendarMonthIcon fontSize="small" sx={{ mr: 0.5 }} />
-                        {post.date}
-                      </Typography>
-                    </Box>
-                    <Typography
-                      variant="h6"
-                      sx={{ fontWeight: 600, fontSize: '1.5rem', color: 'white', mb: 0.5 }}
-                    >
-                      {post.title}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      sx={{ fontSize: '1.2rem', color: '#DCDCDC' }}
-                      noWrap
-                    >
-                      {post.title}
-                    </Typography>
-                    <Button
-                      size="small"
-                      sx={{ mt: 1, color: '#8AC642', textTransform: 'none', fontWeight: 'bold', fontSize: '1.2rem' }}
-                    >
-                      Read More →
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+              </CardContent>
+            </Card>
+          ))}
         </Grid>
       </Grid>
 
-      {/* View All Button */}
-      <Box textAlign="center" mt={5}>
-        <Button
-          variant="contained"
-          sx={{
-            bgcolor: '#8AC642',
-            color: '#fff',
-            px: 4,
-            py: 1,
-            borderRadius: 3,
-            fontWeight: 'bold',
-            '&:hover': { bgcolor: '#43a047' },
-          }}
-        >
-          View all
-        </Button>
+      {/* VIEW ALL BUTTON */}
+      <Box textAlign="center" mt={6}>
+        <StyledButton onClick={() => navigate('/coverkraft/feed/:type')}>
+          VIEW ALL
+        </StyledButton>
       </Box>
     </Box>
   );

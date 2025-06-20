@@ -41,7 +41,7 @@ function CustomInput({
   children,
   backgroundColor,
   inputStyle = {},
-  padding = "0.9rem",
+  padding = "0.5rem",
   height = "1vh",
 }) {
   const inputId = `inputField-${name}`;

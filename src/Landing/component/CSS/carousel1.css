@@ -96,10 +96,10 @@ position: relative !important;}
   transition: background 0.3s, box-shadow 0.3s;
 }
 
-/* .carousel__btn:hover {
+.carousel__btn:hover {
   background: var(--btn-hover);
   box-shadow: 0 0 12px rgba(90, 232, 141, 0.4);
-} */
+} 
 
 .carousel__btn--prev {
   left: calc(16.66% - 24px);
@@ -114,7 +114,15 @@ position: relative !important;}
   border-width: 0 4px 4px 0;
   display: inline-block;
   padding: 8px;
-} */
+} 
+
+/* .carousel__btn-arrow--left {
+  transform: rotate(135deg);
+}
+
+.carousel__btn-arrow--right {
+  transform: rotate(-45deg);
+} 
 
 /* Dot Indicators BELOW carousel */
 .carousel .control-dots {
@@ -184,26 +192,8 @@ position: relative !important;}
   left: 0px;
 }
 
-.custom-arrow-right {
-  right: 0px;
-}
-.custom-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.custom-pagination .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #fff;
-  cursor: pointer;
-  /* transition: background-color 0.3s ease; */
-}
-
-.custom-pagination .dot.active {
-  background-color: #ffa500 !important;
+.carousel__slide-item {
+  min-width: calc(33.33% - 16px); /* Decreased width further to fit 3 slides fully */
+  box-sizing: border-box;
 }
 

@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Logo from "../Images/CoverKraft-beta.png";
+import Logo from "../Images/CKbig.png";
 import profileIcon from "../Images/ic-profile.png";
 import notificationIcon from "../Images/ic-notification.png";
 import ProfileDrawer from "../component/profile";
@@ -62,11 +62,15 @@ const StyledButton = styled("button")(() => ({
 
 const DarkMenu = styled(Menu)(({ theme }) => ({
   "& .MuiMenu-paper": {
-    backgroundColor: "#333",
+    backgroundColor: "#212121",
     color: "white",
     borderRadius: "8px",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-    minWidth: 160,
+    minWidth: 150,
+  },
+  // Fix z-index to appear above navbar
+  "& .MuiModal-root": {
+    zIndex: 1,
   },
 }));
 
@@ -135,8 +139,8 @@ function Navbar({ scrollToContactBottom }) {
           <img
             src={Logo}
             alt="Logo"
-            height={65}
-            width={214}
+            height={70}
+            width={280}
             style={{ cursor: "pointer" }}
             onClick={() => navigate("/coverkraft")}
           />
@@ -225,10 +229,24 @@ function Navbar({ scrollToContactBottom }) {
                     onClick={(e) => setProfileAnchor(e.currentTarget)}
                   />
                   <DarkMenu
-                    anchorEl={profileAnchor}
-                    open={Boolean(profileAnchor)}
-                    onClose={() => setProfileAnchor(null)}
-                  >
+  anchorEl={profileAnchor}
+  open={Boolean(profileAnchor)}
+  onClose={() => setProfileAnchor(null)}
+  anchorOrigin={{
+    vertical: 'bottom',
+    horizontal: 'right',
+  }}
+  transformOrigin={{
+    vertical: 'top',
+    horizontal: 'right',
+  }}
+  PaperProps={{
+    sx: {
+      mt: 1.2, // <-- THIS is what actually pushes it down
+    },
+  }}
+>
+
                     <MenuItem
                       onClick={() => {
                         setDrawerOpen(true);
@@ -254,11 +272,25 @@ function Navbar({ scrollToContactBottom }) {
                   <MoreVertIcon />
                 </IconButton>
               )}
-              <DarkMenu
-                anchorEl={moreAnchor}
-                open={Boolean(moreAnchor)}
-                onClose={() => setMoreAnchor(null)}
-              >
+             <DarkMenu
+  anchorEl={moreAnchor}
+  open={Boolean(moreAnchor)}
+  onClose={() => setMoreAnchor(null)}
+  anchorOrigin={{
+    vertical: 'bottom',
+    horizontal: 'right',
+  }}
+  transformOrigin={{
+    vertical: 'top',
+    horizontal: 'right',
+  }}
+  PaperProps={{
+    sx: {
+      mt: 1.2, // Adjust this value to your taste (e.g., 1.5, 2)
+    },
+  }}
+>
+
                 {MORE_MENU_ITEMS.map((item) => (
                   <MenuItem
                     key={item?.key}

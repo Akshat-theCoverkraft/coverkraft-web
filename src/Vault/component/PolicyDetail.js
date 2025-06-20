@@ -190,7 +190,7 @@ const PolicyDetail = ({ policyId }) => {
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
-            height: "98vh",
+            height: "100vh",
             boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
             backgroundColor: THEME_COLOR.BACKGROUND,
             color: THEME_COLOR.COLOR,

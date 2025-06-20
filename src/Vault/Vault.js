@@ -1,57 +1,48 @@
 import React, { useState, useRef } from "react";
-import Navbar from "../component/Navbar";
-import Footer from "../Landing/component/Footer";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Typography,
+  Card,
+  Grid,
+  Breadcrumbs,
+  Link,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
-import { makeStyles } from "@mui/styles";
-import share from "../Images/ic-share1.png";
-import Button from "../component/Button";
-import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
-import AddIcon from "../Images/addIcon.png";
-import PolicyTabs from "./component/PolicyTabs";
-import "./vault.css";
-import PolicyDetail from "./component/PolicyDetail";
-import uploadPdf from "../Images/uploadPdf.png";
-import uploadImg from "../Images/uploadImg.png";
-import { extractData } from "../store/action/action";
-import API_URL from "../ServiceModule/Service";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
-import IMAGE_PATH from "../ServiceModule/imagePath";
-import GradientButton from "../component/GradientButton";
-import { THEME_COLOR } from "../constants";
-//styling for breadcrumbs
-const useStyles = makeStyles(() => ({
-  separator: {
-    color: "#42988E",
-    fontSize: "1.6rem",
-    marginBottom: "12px",
-  },
-  breadcrumbsContainer: {
-    display: "flex",
-    alignItems: "center",
-    // backgroundColor: "red",
-    // justifyContent: "center",
-  },
-}));
+import { useNavigate } from "react-router-dom";
 
-//styling for dialog box
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+// Components
+import Navbar from "../component/Navbar";
+import Footer from "../Landing/component/Footer";
+import PolicyTabs from "./component/PolicyTabs";
+import PolicyDetail from "./component/PolicyDetail";
+import Button from "../component/Button";
+import GradientButton from "../component/GradientButton";
+import About from "../Landing/component/About";
+
+// Images and constants
+import share from "../Images/ic-share1.png";
+import AddIcon from "../Images/addIcon.png";
+import uploadPdf from "../Images/uploadPdf.png";
+import uploadImg from "../Images/uploadImg.png";
+import API_URL from "../ServiceModule/Service";
+import IMAGE_PATH from "../ServiceModule/imagePath";
+import { THEME_COLOR } from "../constants";
+
+// Styles
+import "./vault.css";
+import "react-toastify/dist/ReactToastify.css";
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
   borderRadius: "300px",
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -62,87 +53,69 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const Vault = () => {
-  const [open, setOpen] = React.useState(false);
+  // State management
+  const [dialogs, setDialogs] = useState({
+    addPolicy: false,
+    confirm: false,
+  });
   const [files, setFiles] = useState(null);
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [responseData, setResponseData] = useState(null);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [selectedPolicyId, setSelectedPolicyId] = useState("");
+  const [shareAllPolicy, setShareAllPolicy] = useState(false);
+  const [selectedPolicies, setSelectedPolicies] = useState([]);
+  const [policyListLength, setPolicyListLength] = useState(0);
+  const [allPolicyIds, setAllPolicyIds] = useState([]);
+
+  // Refs
   const inputRef = useRef();
   const imageRef = useRef();
   const navigate = useNavigate();
-  const [selectedPolicyId, setSelectedPolicyId] = React.useState("");
-  const [shareAllPolicy, setShareAllPolicy] = useState(false);
-  const [selectedPolicies, setSelectedPolicies] = useState([]);
-  const [showShareDialog, setShowShareDialog] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null);
-  //function for share icon
-  const handleShareIconClick = () => {
-    setShareAllPolicy((prevState) => !prevState);
-    setShowShareDialog(false);
+
+  // Dialog handlers
+  const toggleDialog = (dialogType, state = null) => {
+    setDialogs(prev => ({
+      ...prev,
+      [dialogType]: state !== null ? state : !prev[dialogType]
+    }));
   };
 
-  //function for checkbox selected for sharing card
-  const handleCardClick = (policyId) => {
-    console.log("what is policy id", policyId);
-    setSelectedPolicyId(policyId);
-    localStorage.setItem("selectedPolicyId", policyId);
-  };
-  // console.log("selectedpolicyid", selectedPolicyId);
-  //function for share dialog
-  const toggleShareDialog = () => {
-    setShowShareDialog(!showShareDialog);
-    // console.log("dialog of share", showShareDialog);
+  // File upload handlers
+  const handleFileUpload = (e, type) => {
+    const uploadedFiles = e.target.files;
+    if (type === 'pdf') {
+      setFiles(uploadedFiles);
+    } else {
+      setImage(uploadedFiles);
+    }
+    toggleDialog('confirm', true);
   };
 
-  //add policy dialog box open and close function start
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
+  const resetFiles = (type) => {
+    if (type === 'pdf') {
+      setFiles(null);
+    } else {
+      setImage(null);
+    }
   };
 
-
-  const handleConfirmDialogClose = () => {
-    setConfirmDialogOpen(false);
-  };
-  //confirm box open and close function end
-
-  //upload pdf handle function start
-  const handleFile = (e) => {
-    setFiles(e.target.files);
-    setConfirmDialogOpen(true);
-  };
-  //upload pdf handle function end
-
-  //upload image handle function start
-  const handleImage = (e) => {
-    setImage(e.target.files);
-    setConfirmDialogOpen(true);
-  };
-  //upload image handle function end
-
-  //function to handle ocr data extraction API start
+  // OCR data extraction
   const handleConfirm = async () => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        formData.append("ocrText", files[i]);
-      }
-    } else if (image) {
-      for (let i = 0; i < image.length; i++) {
-        formData.append("ocrText", image[i]);
-      }
-    }
+    
+    const filesToUpload = files || image;
+    if (!filesToUpload) return;
 
-    console.log(formData);
+    for (let i = 0; i < filesToUpload.length; i++) {
+      formData.append("ocrText", filesToUpload[i]);
+    }
 
     setLoading(true);
     try {
       const response = await axios.post(
-        API_URL + "document/ocrExtractData",
+        `${API_URL}document/ocrExtractData`,
         formData,
         {
           headers: {
@@ -151,61 +124,88 @@ const Vault = () => {
           },
         }
       );
-      setLoading(false);
 
       if (response.status === 200) {
-        const responseData = response.data; // Use the response data directly here
+        const responseData = response.data;
         setResponseData(responseData);
-        console.log("responsedata", responseData);
+        
         const documentId = responseData.documentId;
         localStorage.setItem("documentId", documentId);
+        
         const ocrTextObject = JSON.parse(responseData.ocrText);
-        const PolicyType = ocrTextObject.policyType.toLowerCase();
-        console.log("policyytyype", PolicyType);
-        if (
-          PolicyType === "car_policy" ||
-          PolicyType === "bike_policy" ||
-          PolicyType === "other_vehicle"
-        ) {
-          navigate("/coverkraft/motor-policy", {
-            state: { responseData: ocrTextObject },
-          });
-        } else if (PolicyType === "health" || PolicyType === "other_health") {
-          navigate("/coverkraft/health-policy", {
-            state: { responseData: ocrTextObject },
-          });
-        } else if (PolicyType === "life" || PolicyType === "accident") {
-          navigate("/coverkraft/life-policy", {
-            state: { responseData: ocrTextObject },
-          });
+        const policyType = ocrTextObject.policyType.toLowerCase();
+        
+        // Navigation based on policy type
+        const navigationMap = {
+          car_policy: "/coverkraft/motor-policy",
+          bike_policy: "/coverkraft/motor-policy", 
+          other_vehicle: "/coverkraft/motor-policy",
+          health: "/coverkraft/health-policy",
+          other_health: "/coverkraft/health-policy",
+          life: "/coverkraft/life-policy",
+          accident: "/coverkraft/life-policy"
+        };
+
+        const route = navigationMap[policyType];
+        if (route) {
+          navigate(route, { state: { responseData: ocrTextObject } });
         }
       } else {
-        toast.error("File is not 200 status due to some issue!");
+        toast.error("File processing failed!");
       }
+      
       setFiles(null);
+      setImage(null);
+      toggleDialog('confirm', false);
     } catch (error) {
+      toast.error("File extraction failed!");
+    } finally {
       setLoading(false);
-      toast.error("File is not extracted due to some issue!");
     }
   };
 
-  //function to handle ocr data extraction API start
+  // Share functionality
+  const handleShareIconClick = () => {
+    setShareAllPolicy(prev => !prev);
+    if (!shareAllPolicy) {
+      setSelectedPolicies([]);
+    }
+  };
 
-  //handle the css on breadcrumbs
-  const classes = useStyles();
+  const handleSelectAll = () => {
+    if (selectedPolicies.length === allPolicyIds.length) {
+      setSelectedPolicies([]);
+    } else {
+      setSelectedPolicies([...allPolicyIds]);
+    }
+  };
 
-  // function to handle breadcrumbs start
-  function handleClick(event) {
-    event.preventDefault();
-    console.info("You clicked a breadcrumb.");
-  }
-  // function to handle breadcrumbs end
+  const handleCheckboxChange = (policyId) => {
+    setSelectedPolicies(prev =>
+      prev.includes(policyId)
+        ? prev.filter(id => id !== policyId)
+        : [...prev, policyId]
+    );
+  };
 
-  const handleShareClick = async () => {
-    console.log("policyids---------", selectedPolicies);
+  const handleCardClick = (policyId) => {
+    setSelectedPolicyId(policyId);
+    localStorage.setItem("selectedPolicyId", policyId);
+  };
+
+  // Export functions
+  const exportToExcel = async () => {
+    if (selectedPolicies.length === 0) {
+      toast.error("Please select at least one policy to export");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
-      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
+      const queryParams = selectedPolicies.map(id => `_id=${id}`).join("&");
+
+      console.log("Exporting to Excel with IDs:", selectedPolicies);
+      console.log("Query params:", queryParams);
 
       const response = await axios.get(
         `${API_URL}policy/excelTable?${queryParams}`,
@@ -213,33 +213,41 @@ const Vault = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          responseType: 'blob' // Important for file download
         }
       );
-      const filePath = response.data.filePath;
-      console.log("file path:", IMAGE_PATH + filePath);
-      setPdfUrl(IMAGE_PATH + filePath);
-      console.log("pdfurl", pdfUrl);
 
-      // const link = document.createElement('a');
-      // link.href = IMAGE_PATH + filePath;
-      // link.setAttribute('download', 'policies.xlsx');
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-      toggleShareDialog();
+      // Create blob and download
+      const blob = new Blob([response.data], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      });
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `policies_${new Date().toISOString().split('T')[0]}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Excel file downloaded successfully!");
     } catch (error) {
-      console.error("Error fetching policy list:", error);
+      console.error("Error exporting to Excel:", error);
+      toast.error("Failed to export to Excel");
     }
   };
 
-  const handleSharePdf = async () => {
-    console.log("policyids---------", selectedPolicies);
+  const exportToPDF = async () => {
+    if (selectedPolicies.length === 0) {
+      toast.error("Please select at least one policy to export");
+      return;
+    }
 
     try {
       const token = localStorage.getItem("token");
-      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
+      const queryParams = selectedPolicies.map(id => `_id=${id}`).join("&");
 
-      // Step 1: Get the actual PDF file path from backend
       const response = await axios.get(
         `${API_URL}policy/pdfTable?${queryParams}`,
         {
@@ -251,30 +259,24 @@ const Vault = () => {
 
       const filePath = response.data.filePath;
       const url = IMAGE_PATH + filePath;
-      console.log("file path:", url);
 
-      // Step 2: Fetch the file as blob
+      // Fetch and share/download PDF
       const pdfResponse = await fetch(url);
       const blob = await pdfResponse.blob();
-
-      // Step 3: Create a File object from blob
-      const filename = filePath.split("/").pop() || "policy.pdf";
+      const filename = filePath.split("/").pop() || "policies.pdf";
       const file = new File([blob], filename, {
         type: "application/pdf",
         lastModified: new Date(),
       });
 
-      // Step 4: Share using Web Share API with files
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
-          title: "Policy Document",
-          text: "Here is your policy document.",
-          files: [file], // THIS is the actual document being shared
+          title: "Policy Documents",
+          text: "Here are your policy documents.",
+          files: [file],
         });
       } else {
-        alert("Your device/browser does not support direct document sharing.");
-
-        // Optional fallback — auto download
+        // Fallback download
         const link = document.createElement("a");
         link.href = URL.createObjectURL(file);
         link.download = filename;
@@ -283,375 +285,294 @@ const Vault = () => {
         document.body.removeChild(link);
       }
 
-      toggleShareDialog();
+      toast.success("PDF processed successfully!");
     } catch (error) {
-      console.error("Error sharing policy document:", error);
+      console.error("Error exporting PDF:", error);
+      toast.error("Failed to export PDF");
     }
   };
 
-  const handleCheckboxChange = (policyId) => {
-    setSelectedPolicies((prevSelected) =>
-      prevSelected.includes(policyId)
-        ? prevSelected.filter((id) => id !== policyId)
-        : [...prevSelected, policyId]
-    );
-  };
-  console.log("selected policiedddd", selectedPolicies);
-  const [policyListLength, setPolicyListLength] = useState(0);
-  const [archieveList, setArchieveList] = useState(0);
+  // Render file upload card
+  const renderFileUploadCard = (type, files, icon, text, inputRef, onChange) => (
+    <Card className="border mx-3 mb-3" style={{ boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px" }}>
+      {!files ? (
+        <>
+          <input
+            type="file"
+            multiple
+            onChange={onChange}
+            hidden
+            ref={inputRef}
+            accept={type === 'pdf' ? '.pdf,.doc,.docx' : 'image/*'}
+          />
+          <Card
+            className="p-3 cursor-pointer d-flex justify-content-center align-items-center"
+            onClick={() => inputRef.current.click()}
+            style={{
+              backgroundColor: "white",
+              fontSize: "18px",
+              boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+              minHeight: "60px"
+            }}
+          >
+            <img src={icon} alt="" height={28} className="mr-3" />
+            <span>{text}</span>
+          </Card>
+        </>
+      ) : (
+        Array.from(files).map((file, idx) => (
+          <Card
+            key={idx}
+            className="d-flex justify-content-between align-items-center p-3"
+            style={{ backgroundColor: "white", fontSize: "18px" }}
+          >
+            <span>{file.name}</span>
+            <IconButton onClick={() => resetFiles(type)}>
+              <CloseIcon />
+            </IconButton>
+          </Card>
+        ))
+      )}
+    </Card>
+  );
 
-  const handlePolicyListLengthChange = (length) => {
-    setPolicyListLength(length);
-    console.log("policylistlength", policyListLength);
-  };
-
-  const handleArchieveListChange = (length) => {
-    setArchieveList(length);
-  };
   return (
-    <>
-      <div className="overflow-hidden">
-        <Navbar />
-
-        <div
-          className="bg-color"
-          style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
-        >
-          <Stack spacing={2} className="p-5">
-            <div className={classes.breadcrumbsContainer}>
-              <Breadcrumbs
-                // separator={<span className={classes.separator}>:</span>}
-                aria-label="breadcrumb"
-              >
+    <div className="overflow-hidden">
+      <Navbar />
+      
+      <div className="bg-color" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
+        {/* Header Section */}
+        <Stack spacing={2} className="p-5">
+          <div className="d-flex justify-content-between align-items-center flex-wrap">
+            <div className="d-flex align-items-center">
+              <Breadcrumbs aria-label="breadcrumb">
                 <Link
-                  key="1"
-                  className="text-decoration-none font-size"
-                  onClick={handleClick}
+                  className="text-decoration-none"
                   style={{
-                    paddingTop: '10px',
                     fontSize: '21px',
                     fontWeight: 'bold',
                     color: "#A5A5A5",
-                    display: 'inline-block',
-                    marginLeft:55,
+                    marginLeft: 55,
                   }}
+                  href="#"
                 >
-  Vault
+                  Vault
                 </Link>
-
                 <Typography
-                  className="cursor-pointer font-size"
-                  style={{ paddingTop: '10px', fontSize: "21px", fontWeight: "bolder", color: THEME_COLOR.COLOR }}
+                  style={{ 
+                    fontSize: "21px", 
+                    fontWeight: "bolder", 
+                    color: THEME_COLOR.COLOR 
+                  }}
                 >
                   My Policies
                 </Typography>
               </Breadcrumbs>
+              
               {policyListLength > 0 && (
                 <img
                   src={share}
-                  alt="Share Icon"
+                  alt="Share"
                   className="ml-4"
                   onClick={handleShareIconClick}
                   style={{
-                    paddingTop: '10px',
-                    height: '70px',
-                    width: '50px', // maintain aspect ratio if needed
+                    height: '40px',
+                    width: '40px',
                     cursor: 'pointer',
-                    objectFit: 'contain', // ensures it doesn’t stretch weirdly
+                    objectFit: 'contain',
                   }}
-                  width={30}
                 />
               )}
+            </div>
+
+            <div className="d-flex align-items-center gap-3 flex-wrap">
               <GradientButton
                 text="Add Policy"
                 size="ml"
-                className="ml-5 mb-3 responsive-gradient-btn"
                 startIcon={AddIcon}
-                onClick={handleClickOpen}
+                onClick={() => toggleDialog('addPolicy', true)}
                 style={{
-                  padding: '1rem 1.5rem', // vertical & horizontal padding
-                  height: 'auto',
+                  padding: '12px 24px',
                   minHeight: '48px',
-                  width: 'auto',
-                  maxWidth: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1rem',
                   borderRadius: '12px',
-                  cursor: 'pointer',
                 }}
               />
 
               {shareAllPolicy && (
                 <>
                   <Button
+                    text={`Select All (${selectedPolicies.length}/${allPolicyIds.length})`}
+                    size="md"
+                    onClick={handleSelectAll}
+                    style={{
+                      backgroundColor: selectedPolicies.length === allPolicyIds.length ? '#28a745' : '#6c757d',
+                      color: 'white',
+                      border: 'none'
+                    }}
+                  />
+                  <Button
                     text="Export to Excel"
                     size="md"
-                    className="ml-4 "
-                    onClick={handleShareClick}
+                    onClick={exportToExcel}
+                    disabled={selectedPolicies.length === 0}
                   />
                   <Button
                     text="Export to PDF"
                     size="md"
-                    className="ml-4 "
-                    onClick={handleSharePdf}
+                    onClick={exportToPDF}
+                    disabled={selectedPolicies.length === 0}
                   />
                 </>
               )}
             </div>
-          </Stack>
-          <Grid container spacing={-4}>
-            <Grid item xs={12} md={7} lg={7} xl={7}>
-              <PolicyTabs
-                handleCardClick={handleCardClick}
-                shareAllPolicy={shareAllPolicy}
-                selectedPolicies={selectedPolicies}
-                handleCheckboxChange={handleCheckboxChange}
-                onPolicyListLengthChange={handlePolicyListLengthChange}
-                onArchieveListLength={handleArchieveListChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={5} lg={5} xl={5}>
-              <PolicyDetail policyId={selectedPolicyId} />
-            </Grid>
+          </div>
+        </Stack>
+
+        {/* Main Content */}
+        <Grid container spacing={2} className="px-4">
+          <Grid item xs={12} md={7}>
+            <PolicyTabs
+              handleCardClick={handleCardClick}
+              shareAllPolicy={shareAllPolicy}
+              selectedPolicies={selectedPolicies}
+              handleCheckboxChange={handleCheckboxChange}
+              onPolicyListLengthChange={setPolicyListLength}
+              onArchieveListLength={(length) => {}}
+              onAllPolicyIdsChange={setAllPolicyIds}
+            />
           </Grid>
-        </div>
-        <Footer />
-
-        <BootstrapDialog
-          onClose={handleClose}
-          aria-labelledby="customized-dialog-title"
-          open={open}
-          className=""
-          fullWidth
-          maxWidth="sm"
-        >
-          <DialogTitle
-            className="text-center fw-bold pt-5 fs-2"
-            id="customized-dialog-title"
-          >
-            Add Policies
-          </DialogTitle>
-          <Typography
-            className=" text-center px-5"
-            style={{ color: "#616060", fontSize: "20px" }}
-          >
-            Effortlessly upload documents, fill forms with ease.
-          </Typography>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <DialogContent className="p-5">
-            <Card
-              className="border mx-3"
-              style={{ boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px" }}
-            >
-              {!files ? (
-                <React.Fragment>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleFile}
-                    hidden
-                    ref={inputRef}
-                  />
-                  <Card
-                    className=" p-3  cursor-pointer d-flex justify-content-center"
-                    onClick={() => inputRef.current.click()}
-                    style={{
-                      backgroundColor: "white",
-                      color: "black",
-                      fontSize: "18px",
-                      boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                    }}
-                  >
-                    <img src={uploadPdf} alt="" height={28} className="mr-3" />
-                    <p>Upload Document</p>
-                  </Card>
-                </React.Fragment>
-              ) : (
-                Array.from(files).map((file, indx) => (
-                  <Card
-                    className="d-flex justify-content-between p-3 cursor-pointer "
-                    style={{
-                      backgroundColor: "white",
-                      color: "black",
-                      fontSize: "18px",
-                    }}
-                    key={indx}
-                  >
-                    {file.name}
-                    <IconButton
-                      aria-label="close"
-                      onClick={() => setFiles(null)}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </Card>
-                ))
-              )}
-            </Card>
-
-            <Card
-              className="m-3 border"
-              style={{ boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px" }}
-            >
-              {!image ? (
-                <React.Fragment>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleImage}
-                    hidden
-                    ref={imageRef}
-                  />
-                  <Card
-                    className="d-flex justify-content-center card-detail p-3  cursor-pointer"
-                    onClick={() => imageRef.current.click()}
-                    style={{
-                      fontSize: "18px",
-                      boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                    }}
-                  >
-                    <img src={uploadImg} alt="" height={32} className="mr-3" />
-                    <p>Upload Image</p>
-                  </Card>
-                </React.Fragment>
-              ) : (
-                Array.from(image).map((image, indx) => (
-                  <Card
-                    className="d-flex justify-content-between p-3 cursor-pointer "
-                    style={{
-                      backgroundColor: "white",
-                      color: "black",
-                      fontSize: "18px",
-                    }}
-                    key={indx}
-                  >
-                    {image.name}
-                    <IconButton
-                      aria-label="close"
-                      onClick={() => setImage(null)}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </Card>
-                ))
-              )}
-            </Card>
-          </DialogContent>
-        </BootstrapDialog>
-
-        {/* Dialog box of confirm box start */}
-        <BootstrapDialog
-          onClose={handleConfirmDialogClose}
-          aria-labelledby="confirmation-dialog-title"
-          open={confirmDialogOpen}
-          fullWidth
-          maxWidth="sm"
-          PaperProps={{
-            style: {
-              borderRadius: '16px',
-              padding: '24px',
-              backgroundColor: '#ffffff',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-            },
-          }}
-        >
-          <DialogContent style={{ position: 'relative' }}>
-            {loading && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  height: '100%',
-                  width: '100%',
-                  backgroundColor: 'rgba(255,255,255,0.7)',
-                  zIndex: 10,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: '16px',
-                }}
-              >
-                <Spinner
-                  style={{ width: '3rem', height: '3rem', color: '#8AC642' }}
-                  animation="border"
-                  role="status"
-                >
-                  <span className="sr-only">Loading...</span>
-                </Spinner>
-              </div>
-            )}
-
-            <Typography
-              variant="h6"
-              align="center"
-              gutterBottom
-              style={{
-                fontWeight: 600,
-                fontSize: '20px',
-                color: '#333',
-                zIndex: 1,
-                position: 'relative',
-                paddingTop: loading ? '20px' : '0',
-              }}
-            >
-              Are you sure you want to proceed?
-            </Typography>
-          </DialogContent>
-
-          <DialogActions
-            style={{
-              justifyContent: 'center',
-              padding: '16px 32px',
-              gap: '16px',
-            }}
-          >
-            <Button
-              text="Cancel"
-              size="md"
-              block={false}
-              onClick={handleConfirmDialogClose}
-              style={{
-                border: '2px solid #8AC642',
-                color: '#8AC642',
-                backgroundColor: 'transparent',
-                borderRadius: '8px',
-                fontWeight: 600,
-                padding: '8px 24px',
-              }}
-            />
-
-            <Button
-              text="Confirm"
-              size="md"
-              block={false}
-              onClick={handleConfirm}
-              style={{
-                backgroundColor: '#8AC642',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-                fontWeight: 600,
-                padding: '8px 24px',
-              }}
-            />
-          </DialogActions>
-        </BootstrapDialog>
+          <Grid item xs={12} md={5}>
+            <PolicyDetail policyId={selectedPolicyId} />
+          </Grid>
+        </Grid>
       </div>
-    </>
+
+      <About />
+      <Footer />
+
+      {/* Add Policy Dialog */}
+      <StyledDialog
+        open={dialogs.addPolicy}
+        onClose={() => toggleDialog('addPolicy', false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle className="text-center fw-bold pt-4 fs-2">
+          Add Policies
+        </DialogTitle>
+        <Typography className="text-center px-4 pb-2" style={{ color: "#616060", fontSize: "18px" }}>
+          Effortlessly upload documents, fill forms with ease.
+        </Typography>
+        <IconButton
+          onClick={() => toggleDialog('addPolicy', false)}
+          sx={{ position: "absolute", right: 8, top: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+        
+        <DialogContent className="p-4">
+          {renderFileUploadCard(
+            'pdf', 
+            files, 
+            uploadPdf, 
+            'Upload Document', 
+            inputRef, 
+            (e) => handleFileUpload(e, 'pdf')
+          )}
+          {renderFileUploadCard(
+            'image', 
+            image, 
+            uploadImg, 
+            'Upload Image', 
+            imageRef, 
+            (e) => handleFileUpload(e, 'image')
+          )}
+        </DialogContent>
+      </StyledDialog>
+
+      {/* Confirmation Dialog */}
+      <StyledDialog
+        open={dialogs.confirm}
+        onClose={() => toggleDialog('confirm', false)}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{
+          style: {
+            borderRadius: '16px',
+            padding: '24px',
+            backgroundColor: '#ffffff',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          },
+        }}
+      >
+        <DialogContent style={{ position: 'relative', minHeight: '120px' }}>
+          {loading && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: '100%',
+                width: '100%',
+                backgroundColor: 'rgba(255,255,255,0.8)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '16px',
+                zIndex: 10,
+              }}
+            >
+              <Spinner
+                style={{ width: '3rem', height: '3rem', color: '#8AC642' }}
+                animation="border"
+              />
+            </div>
+          )}
+          <Typography
+            variant="h6"
+            align="center"
+            style={{
+              fontWeight: 600,
+              fontSize: '20px',
+              color: '#333',
+              paddingTop: '20px',
+            }}
+          >
+            Are you sure you want to proceed?
+          </Typography>
+        </DialogContent>
+
+        <DialogActions style={{ justifyContent: 'center', gap: '16px', padding: '16px 32px' }}>
+          <Button
+            text="Cancel"
+            size="md"
+            onClick={() => toggleDialog('confirm', false)}
+            style={{
+              border: '2px solid #8AC642',
+              color: '#8AC642',
+              backgroundColor: 'transparent',
+              borderRadius: '8px',
+              fontWeight: 600,
+              padding: '8px 24px',
+            }}
+          />
+          <Button
+            text="Confirm"
+            size="md"
+            onClick={handleConfirm}
+            disabled={loading}
+            style={{
+              backgroundColor: '#8AC642',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: 600,
+              padding: '8px 24px',
+            }}
+          />
+        </DialogActions>
+      </StyledDialog>
+    </div>
   );
 };
 
