@@ -61,7 +61,9 @@ const Carousel1 = () => {
           infiniteLoop={false}
           centerMode
           centerSlidePercentage={100 / slidesPerPage}
-          autoPlay={false}
+          autoPlay={true}
+          interval={2000} 
+          transitionTime={600}
           swipeable
           emulateTouch
           selectedItem={Math.min(currentSlide, items.length - 1)}
