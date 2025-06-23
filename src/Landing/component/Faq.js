@@ -9,6 +9,7 @@ import xmark from "../../Images/xmark.png";
 import plus from "../../Images/plus2.png";
 import { THEME_COLOR } from "../../constants";
 import API_URL from "../../ServiceModule/Service";
+import { Typography } from "@mui/material";
 
 // 🔒 Fallback FAQs (shown if API fails or returns empty)
 const placeholderFAQs = [
@@ -85,17 +86,21 @@ export default function Faq() {
   return (
     <div id="faq" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
       <div className="text-center p-3">
-        <h1 className="mt-3 fw-bold" style={{ color: "#FF9906", fontSize: "2.8rem" }}>
-          FAQs
-        </h1>
+        <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
+            FAQs
+       </Typography>     
+      <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
+            Frequently Asked Questions
+      </Typography>
+
       </div>
 
       <div style={{ padding: "20px 0" }}>
         <div
           style={{
-            width: isMobile ? "90%" : "70%",
+            width: isMobile ? "90%" : "95%",
             margin: "0 auto",
-            padding: "20px",
+            padding: "10px",
           }}
         >
           {loading ? (
