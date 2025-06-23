@@ -1,42 +1,32 @@
 import { parse, format, isValid } from "date-fns";
-import moment from "moment";
 
-export const formatDate = (dateString) => {
-  if (!dateString) return "";
-
-  try {
-    const parsedDate = parse(dateString, "dd/MM/yyyy HH:mm:ss", new Date());
-
-    if (!isValid(parsedDate)) {
-      console.warn("Invalid date input:", dateString);
-      return "";
-    }
-
-    return format(parsedDate, "dd/MM/yyyy");
-  } catch (error) {
-    console.error("Error formatting date:", error);
-    return "";
+/**
+ * Try multiple date formats to parse the input reliably.
+ */
+const tryParseDate = (input, formats) => {
+  for (const fmt of formats) {
+    const parsed = parse(input, fmt, new Date());
+    if (isValid(parsed)) return parsed;
   }
+  return null;
 };
 
-export function dateformat(inputDate) {
-  const desiredFormat = "DD/MM/YYYY";
+export const formatDate = (inputDate) => {
+  if (!inputDate || typeof inputDate !== "string") return "";
 
-  // Check if the inputDate contains time and date, and remove the time part if it does
-  const datePart = inputDate.split(" ")[0]; // Split by space to get the date part
-  const formattedDatePart = moment(datePart, "DD/MM/YYYY", true);
+  const supportedFormats = [
+    "dd/MM/yyyy HH:mm:ss",
+    "dd/MM/yyyy",
+    "yyyy-MM-dd",
+    "yyyy-MM-dd HH:mm:ss",
+  ];
 
-  if (formattedDatePart.isValid()) {
-    console.log("Correct format:", formattedDatePart.format(desiredFormat));
-    return formattedDatePart.format(desiredFormat);
-  } else {
-    const date = moment(inputDate, "DD/MM/YYYY HH:mm:ss");
-    if (!date.isValid()) {
-      // console.error('Invalid date provided:', inputDate);
-      return null;
-    }
-    const formattedDate = date.format(desiredFormat);
-    console.log("--*******", formattedDate);
-    return formattedDate;
+  const parsedDate = tryParseDate(inputDate.trim(), supportedFormats);
+
+  if (!parsedDate) {
+    console.warn("Invalid date input:", inputDate);
+    return "";
   }
-}
+
+  return format(parsedDate, "dd/MM/yyyy");
+};

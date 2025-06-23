@@ -14,6 +14,7 @@ import {
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 import { makeStyles } from "@mui/styles";
 import axios from "axios";
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 // Import images
 import scooty from "../../Images/Scooty.png";
@@ -34,7 +35,7 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "100vh",
+    height: "300px", // Reduced height for loader
   },
   loader: {
     color: "#8AC642",
@@ -67,7 +68,7 @@ const EmptyState = () => (
       justifyContent: "center",
       alignItems: "center",
       flexDirection: "column",
-      height: "70vh",
+      height: "400px", // Fixed height instead of viewport height
       color: THEME_COLOR.COLOR,
     }}
   >
@@ -88,7 +89,7 @@ const PolicyCard = ({
   isExpired = false,
 }) => {
   const config = POLICY_CONFIGS[policy.policyType] || { label: "", image: scooty };
-  
+
   // Calculate status for active policies
   let status = null;
   if (showStatus && policy.policyEndDate) {
@@ -96,14 +97,14 @@ const PolicyCard = ({
       const datePart = policy.policyEndDate.split(" ")[0];
       const [day, month, year] = datePart.split("/");
       const endDate = new Date(year, month - 1, day);
-      
+
       if (!isNaN(endDate)) {
         const now = new Date();
         const endDateWithoutTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
         const nowWithoutTime = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const diffInMs = endDateWithoutTime.getTime() - nowWithoutTime.getTime();
         const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-        
+
         if (diffInDays <= 0) {
           status = "Expired";
         } else if (diffInDays <= 60) {
@@ -117,7 +118,7 @@ const PolicyCard = ({
 
   return (
     <Card
-      className="mb-5 rounded card-detail"
+      className="mb-3 rounded card-detail" // Reduced margin bottom
       key={index}
       style={{
         boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
@@ -143,7 +144,7 @@ const PolicyCard = ({
             }}
           />
         )}
-        
+
         <Grid container spacing={0} alignItems="center">
           {shareAllPolicy && (
             <Grid item xs={1}>
@@ -159,7 +160,7 @@ const PolicyCard = ({
               />
             </Grid>
           )}
-          
+
           <Grid item xs={shareAllPolicy ? 2 : 3}>
             <img
               src={config.image}
@@ -168,7 +169,7 @@ const PolicyCard = ({
               className="img-fluid rounded-start"
             />
           </Grid>
-          
+
           <Grid
             item
             xs={shareAllPolicy ? 9 : 9}
@@ -190,7 +191,7 @@ const PolicyCard = ({
                 <p
                   style={{
                     color: "#8AC642",
-                    fontSize: "11px",
+                    fontSize: "16px",
                     fontWeight: "500",
                   }}
                   className="mb-3"
@@ -209,9 +210,9 @@ const PolicyCard = ({
               </p>
               <p
                 style={{
-                  fontSize: "11px",
+                  fontSize: "15px",
                   fontWeight: "500",
-                  color: "#585858",
+                  color: "#fff",
                 }}
                 className="mb-4"
               >
@@ -219,20 +220,22 @@ const PolicyCard = ({
               </p>
               <p
                 style={{
-                  fontSize: "10px",
+                  fontSize: "15px",
                   fontWeight: "500",
-                  color: "#9E9E9E",
+                  color: "#fff",
                 }}
               >
                 Expires on {policy.policyEndDate}
               </p>
             </div>
             <div style={{ alignItems: "end" }}>
-              <img src={arrow} className="mr-2" height={40} alt="arrow" />
+              <OverlayTrigger placement="top" overlay={<Tooltip>Policy Details</Tooltip>}>
+                <img src={arrow} className="mr-2" height={40} alt="arrow" />
+              </OverlayTrigger>
             </div>
           </Grid>
         </Grid>
-        
+
         {/* Status text overlay */}
         {(status || isExpired) && (
           <div
@@ -241,7 +244,7 @@ const PolicyCard = ({
               top: 10,
               right: 30,
               color: "#ffffff",
-              fontSize: "24px",
+              fontSize: "20px",
               fontWeight: "bold",
             }}
           >
@@ -253,9 +256,9 @@ const PolicyCard = ({
   );
 };
 
-// Custom pagination component
-const CustomPagination = ({ totalItems, currentPage, onPageChange, itemsPerPage = 10 }) => (
-  <Box sx={{ display: "flex", justifyContent: "center", m: 2 }}>
+// Custom pagination component with fixed hover styles
+const CustomPagination = ({ totalItems, currentPage, onPageChange, itemsPerPage = 3 }) => (
+  <Box sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 2 }}>
     <Pagination
       variant="outlined"
       size="large"
@@ -266,12 +269,25 @@ const CustomPagination = ({ totalItems, currentPage, onPageChange, itemsPerPage 
         "& .MuiPaginationItem-root": {
           color: "#fff",
           borderColor: "#fff",
+          "&:hover": {
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            borderColor: "#fff",
+            color: "#fff",
+          },
         },
         "& .MuiPaginationItem-root.Mui-selected": {
           backgroundColor: "#fff",
           color: "#000",
+          borderColor: "#fff",
+          "&:hover": {
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            color: "#000",
+          },
         },
         "& .MuiPaginationItem-ellipsis": {
+          color: "#fff",
+        },
+        "& .MuiPaginationItem-icon": {
           color: "#fff",
         },
       }}
@@ -296,7 +312,7 @@ export default function PolicyTabs({
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
   const [activeCardId, setActiveCardId] = useState(null);
-  const itemsPerPage = 10;
+  const itemsPerPage = 3; // 3 policies per page
 
   const handleCardClickWithState = (id) => {
     setActiveCardId(id);
@@ -333,7 +349,7 @@ export default function PolicyTabs({
         } else {
           setPolicyList(data);
           onPolicyListLengthChange(data.length);
-          
+
           // Call this when policy list is loaded with all policy IDs
           const allPolicyIds = data.map(policy => policy._id);
           onAllPolicyIdsChange?.(allPolicyIds);
@@ -382,46 +398,48 @@ export default function PolicyTabs({
     if (newValue < 2) {
       setActiveTab(TAB_CONFIGS[newValue].key);
     }
+    // Reset page to 1 when switching tabs
+    setPages(prev => ({ ...prev, [TAB_CONFIGS[newValue]?.key || 'archive']: 1 }));
   };
 
   // Render tab content
   const renderTabContent = (tabValue, dataList, pageKey, showStatus = false, isExpired = false) => {
     const currentPage = pages[pageKey];
     const paginatedData = getPaginatedData(dataList, currentPage);
+    const totalPages = Math.ceil(dataList.length / itemsPerPage);
 
     return (
-      <TabPanel value={tabValue}>
-        <div
-          style={{
-            minHeight: tabValue === 0 ? "90vh" : "86vh", // SECTION HEIGHT: Edit these values to make tabs taller/shorter
-            maxHeight: tabValue === 0 ? "90vh" : "86vh", // SECTION HEIGHT: Active tab is slightly taller than others
-            overflowY: "auto",
-            paddingBottom: "10vh",
-          }}
-        >
+      <TabPanel value={tabValue} sx={{ padding: "16px" }}>
+        <div style={{ minHeight: "400px" }}>
           {dataList.length === 0 ? (
             <EmptyState />
           ) : (
             <>
-              {paginatedData.map((policy, index) => (
-                <PolicyCard
-                  key={policy._id || index}
-                  policy={policy}
-                  index={index}
-                  shareAllPolicy={shareAllPolicy}
-                  selectedPolicies={selectedPolicies}
-                  handleCheckboxChange={handleCheckboxChange}
-                  handleCardClick={tabValue === 0 ? handleCardClickWithState : handleCardClick}
-                  showStatus={showStatus}
-                  isExpired={isExpired}
+              <div style={{ marginBottom: "20px" }}>
+                {paginatedData.map((policy, index) => (
+                  <PolicyCard
+                    key={policy._id || index}
+                    policy={policy}
+                    index={index}
+                    shareAllPolicy={shareAllPolicy}
+                    selectedPolicies={selectedPolicies}
+                    handleCheckboxChange={handleCheckboxChange}
+                    handleCardClick={tabValue === 0 ? handleCardClickWithState : handleCardClick}
+                    showStatus={showStatus}
+                    isExpired={isExpired}
+                  />
+                ))}
+              </div>
+
+              {/* Show pagination only if there are multiple pages */}
+              {totalPages > 1 && (
+                <CustomPagination
+                  totalItems={dataList.length}
+                  currentPage={currentPage}
+                  onPageChange={handlePageChange(pageKey)}
+                  itemsPerPage={itemsPerPage}
                 />
-              ))}
-              <CustomPagination
-                totalItems={dataList.length}
-                currentPage={currentPage}
-                onPageChange={handlePageChange(pageKey)}
-                itemsPerPage={itemsPerPage}
-              />
+              )}
             </>
           )}
         </div>
@@ -439,7 +457,7 @@ export default function PolicyTabs({
           backgroundColor: THEME_COLOR.BACKGROUND,
           border: "0.5px solid white",
           padding: "20px 0px",
-          height: "100vh",
+          minHeight: "85vh", // Changed from fixed height to min-height
         }}
       >
         <TabContext value={value}>

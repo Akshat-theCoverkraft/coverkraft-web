@@ -74,6 +74,26 @@ const Vault = () => {
   const imageRef = useRef();
   const navigate = useNavigate();
 
+  const StyledButton = styled("button")(({ isAllSelected }) => ({
+    backgroundColor: "transparent",
+    color: isAllSelected ? "#000" : "#8AC642",
+    border: "1.5px solid #8AC642",
+    borderRadius: "20px",
+    padding: "8px 16px",
+    marginTop: "19px",
+    fontSize: "1.4rem",
+    fontWeight: 600,
+    minWidth: "100px",
+    cursor: "pointer",
+    userSelect: "none",
+    transition: "all 0.25s ease",
+    background: isAllSelected ? "#8AC642" : "transparent",
+    "&:hover": {
+      backgroundColor: "#8AC642",
+      color: "#000",
+    },
+  }));
+
   // Dialog handlers
   const toggleDialog = (dialogType, state = null) => {
     setDialogs(prev => ({
@@ -105,7 +125,7 @@ const Vault = () => {
   const handleConfirm = async () => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
-    
+
     const filesToUpload = files || image;
     if (!filesToUpload) return;
 
@@ -129,17 +149,17 @@ const Vault = () => {
       if (response.status === 200) {
         const responseData = response.data;
         setResponseData(responseData);
-        
+
         const documentId = responseData.documentId;
         localStorage.setItem("documentId", documentId);
-        
+
         const ocrTextObject = JSON.parse(responseData.ocrText);
         const policyType = ocrTextObject.policyType.toLowerCase();
-        
+
         // Navigation based on policy type
         const navigationMap = {
           car_policy: "/coverkraft/motor-policy",
-          bike_policy: "/coverkraft/motor-policy", 
+          bike_policy: "/coverkraft/motor-policy",
           other_vehicle: "/coverkraft/motor-policy",
           health: "/coverkraft/health-policy",
           other_health: "/coverkraft/health-policy",
@@ -154,7 +174,7 @@ const Vault = () => {
       } else {
         toast.error("File processing failed!");
       }
-      
+
       setFiles(null);
       setImage(null);
       toggleDialog('confirm', false);
@@ -219,10 +239,10 @@ const Vault = () => {
       );
 
       // Create blob and download
-      const blob = new Blob([response.data], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
-      
+
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -295,7 +315,7 @@ const Vault = () => {
 
   // Render file upload card
   const renderFileUploadCard = (type, files, icon, text, inputRef, onChange) => (
-    <Card className="border mx-3 mb-3" style={{ boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px" }}>
+    <Card className="border mx-1 mb-1" style={{ boxShadow: "rgba(27, 186, 54, 0.1) 0px 0px 16px" }}>
       {!files ? (
         <>
           <input
@@ -338,8 +358,8 @@ const Vault = () => {
   );
 
   return (
-    <div 
-      className="overflow-hidden" 
+    <div
+      className="overflow-hidden"
       style={{
         // Hide scrollbars but keep scrolling functionality
         scrollbarWidth: 'none', // Firefox
@@ -366,9 +386,9 @@ const Vault = () => {
           display: none;
         }
       `}</style>
-      
+
       <Navbar />
-      
+
       <div className="bg-color" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
         {/* Header Section */}
         <Stack spacing={2} className="p-5">
@@ -385,37 +405,37 @@ const Vault = () => {
                   }}
                   href="#"
                 >
-                 Policy Vault
+                  Policy Vault
                 </Link>
                 <Typography
-                  style={{ 
-                    fontSize: "21px", 
-                    fontWeight: "bolder", 
-                    color: THEME_COLOR.COLOR 
+                  style={{
+                    fontSize: "21px",
+                    fontWeight: "bolder",
+                    color: THEME_COLOR.COLOR
                   }}
                 >
-                  My Policy 
+                  My Policy
                 </Typography>
               </Breadcrumbs>
 
               {/* Buttons moved to left with flex column layout */}
               <div className="d-flex align-items-center gap-2 flex-wrap" style={{ marginLeft: 55 }}>
-                {/* Share/Cross Button with margin-top */}
                 {policyListLength > 0 && (
                   <div
                     onClick={handleShareIconClick}
                     style={{
-                      height: '50px',
-                      width: '50px',
+                      height: '40px',
+                      width: '40px', // Make it a square for perfect circle
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: '40px',
+                      borderRadius: '50%', // Proper circle
                       border: '1px solid #e0e0e0',
-                      backgroundColor: 'white',
+                      backgroundColor: '#fff',
                       transition: 'all 0.2s ease',
-                      marginTop: '18px', // Added margin-top
+                      marginTop: '18px',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                     }}
                   >
                     <img
@@ -424,11 +444,13 @@ const Vault = () => {
                       style={{
                         height: '40px',
                         width: '40px',
-                        objectFit: 'cover',
+                        objectFit: 'contain',
                       }}
                     />
                   </div>
                 )}
+
+
 
                 {/* Add Policy Button */}
                 <GradientButton
@@ -438,57 +460,35 @@ const Vault = () => {
                   onClick={() => toggleDialog('addPolicy', true)}
                   style={{
                     padding: '8px 16px',
-                    minHeight: '36px',
+                    minHeight: '28px',
                     borderRadius: '8px',
                     fontSize: '18px',
-                    marginTop: policyListLength > 0 ? '10px' : '0px', // Align with share button when both are visible
+                    marginTop: policyListLength > 0 ? '10px' : '0px',
                   }}
                 />
 
                 {/* Share Options */}
                 {shareAllPolicy && (
                   <>
-                    <Button
-                      text={`Select All (${selectedPolicies.length}/${allPolicyIds.length})`}
-                      size="sm"
+                    <StyledButton
                       onClick={handleSelectAll}
-                      style={{
-                        backgroundColor: selectedPolicies.length === allPolicyIds.length ? '#28a745' : '#6c757d',
-                        color: 'white',
-                        border: 'none',
-                        padding: '8px 12px',
-                        minHeight: '36px',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        marginTop: '10px',
-                      }}
-                    />
-                    <Button
-                      text="Excel"
-                      size="sm"
+                      isAllSelected={selectedPolicies.length === allPolicyIds.length}
+                    >
+                      Select All ({selectedPolicies.length}/{allPolicyIds.length})
+                    </StyledButton>
+                    <StyledButton
                       onClick={exportToExcel}
                       disabled={selectedPolicies.length === 0}
-                      style={{
-                        padding: '8px 12px',
-                        minHeight: '36px',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        marginTop: '10px',
-                      }}
-                    />
-                    <Button
-                      text="PDF"
-                      size="sm"
+                    >
+                      Excel
+                    </StyledButton>
+                    <StyledButton
                       onClick={exportToPDF}
                       disabled={selectedPolicies.length === 0}
-                      style={{
-                        padding: '8px 12px',
-                        minHeight: '36px',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        marginTop: '10px',
-                      }}
-                    />
+                    >
+                      PDF
+                    </StyledButton>
+
                   </>
                 )}
               </div>
@@ -497,15 +497,15 @@ const Vault = () => {
         </Stack>
 
         {/* Main Content - Updated Grid ratios */}
-        <Grid container spacing={2} className="px-4">
-          <Grid item xs={12} md={5.5}>
+        <Grid container spacing={2} className="px-5">
+          <Grid item xs={12} md={5.5} >
             <PolicyTabs
               handleCardClick={handleCardClick}
               shareAllPolicy={shareAllPolicy}
               selectedPolicies={selectedPolicies}
               handleCheckboxChange={handleCheckboxChange}
               onPolicyListLengthChange={setPolicyListLength}
-              onArchieveListLength={(length) => {}}
+              onArchieveListLength={(length) => { }}
               onAllPolicyIdsChange={setAllPolicyIds}
             />
           </Grid>
@@ -533,26 +533,26 @@ const Vault = () => {
         </Typography>
         <IconButton
           onClick={() => toggleDialog('addPolicy', false)}
-          sx={{ position: "absolute", right: 8, top: 8, }}
+          sx={{ position: "absolute", right: 8, top: 8 }}
         >
           <CloseIcon />
         </IconButton>
-        
+
         <DialogContent className="p-4">
           {renderFileUploadCard(
-            'pdf', 
-            files, 
-            uploadPdf, 
-            'Upload Document', 
-            inputRef, 
+            'pdf',
+            files,
+            uploadPdf,
+            'Upload Document',
+            inputRef,
             (e) => handleFileUpload(e, 'pdf')
           )}
           {renderFileUploadCard(
-            'image', 
-            image, 
-            uploadImg, 
-            'Upload Image', 
-            imageRef, 
+            'image',
+            image,
+            uploadImg,
+            'Upload Image',
+            imageRef,
             (e) => handleFileUpload(e, 'image')
           )}
         </DialogContent>

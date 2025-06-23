@@ -40,7 +40,7 @@ const Footer = () => {
     { label: "About Us", to: "/coverkraft/about" },
     { label: "Privacy Policy", to: "/coverkraft/legal#PrivacyPolicy" },
     { label: "Legal And Admin Policies", to: "/coverkraft/legal" },
-    { label: "Disclaimer", to: "/coverkraft/legal#Disclaimer" },
+    { label: "Disclaimer", to: "/coverkraft/legal#disclaimer" },
     { label: "Terms of Use", to: "/coverkraft/legal#TermsOfUse" },
   ];
 

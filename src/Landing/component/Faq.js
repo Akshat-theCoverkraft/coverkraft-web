@@ -85,7 +85,7 @@ export default function Faq() {
   return (
     <div id="faq" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
       <div className="text-center p-3">
-        <h1 className="mt-3 fw-bold" style={{ color: "#FF9906", fontSize: "2.6rem" }}>
+        <h1 className="mt-3 fw-bold" style={{ color: "#FF9906", fontSize: "2.8rem" }}>
           FAQs
         </h1>
       </div>
@@ -123,15 +123,15 @@ export default function Faq() {
                     <img
                       src={expanded === item._id ? xmark : plus}
                       alt={expanded === item._id ? "collapse" : "expand"}
-                      style={{ width: 20, height: 20 }}
+                      style={{ width: 35, height: 35 }}
                     />
                   }
                   aria-controls={`${item._id}-content`}
                   id={`${item._id}-header`}
                   className="fw-bold"
-                  style={{ fontSize: "1.25rem" }}
+                  style={{ fontSize: "1.6rem" }}
                 >
-                  <span className="mr-3 fw-bold" style={{ fontSize: "1.8rem" }}>{`0${index + 1}`}</span>
+                  <span className="mr-3 fw-bold" style={{ fontSize: "3rem" }}>{`0${index + 1}`}</span>
                   {item.question}
                 </StyledAccordionSummary>
                 <AccordionDetails style={{ fontSize: "1.5rem" }}>{item.answer}</AccordionDetails>

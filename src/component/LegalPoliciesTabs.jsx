@@ -113,11 +113,66 @@ const policies = [
         label: "Grievance Redress Policy",
         id: "GrievanceRedressPolicy",
         content: (
-            <div id="GrievanceRedressPolicy">
-                <h2 style={{ color: "#FFFFFF", marginBottom: "2rem", fontSize: "1.8rem", fontWeight: "700" }}>Grievance Redress Policy</h2>
-                <div style={{ color: "#FFFFFF", lineHeight: "1.9", fontSize: "1.1rem", fontWeight: "500" }}>
-                    <p style={{ margin: "0", textAlign: "left" }}>Your grievance redress policy content will go here...</p>
-                </div>
+            <div
+                style={{
+                    maxWidth: '1500px',
+                    margin: '2rem auto',
+                    // padding: '1rem',
+                    color: '#E0E0E0',
+                    lineHeight: '1.8',
+                    fontSize: '1.7rem',
+                    borderRadius: '10px',
+                    fontFamily: 'Arial, sans-serif'
+                }}
+                id="GrievanceRedressPolicy">
+                <h2 style={{ color: '#8BC642' }}>Grievance Redressal Mechanism</h2>
+                <p>
+                    All our customers can log queries or requests via the website or mobile app to register a grievance.
+                </p>
+
+                <ol style={{ paddingLeft: '1.5rem' }}>
+                    <li style={{ marginBottom: '1rem' }}>
+                        All grievances will be properly recorded and acknowledged to the customer.
+                    </li>
+                    <li style={{ marginBottom: '1rem' }}>
+                        Each grievance will be reviewed in coordination with the respective Insurance Company(s) as needed.
+                    </li>
+                    <li style={{ marginBottom: '1rem' }}>
+                        The company will make all reasonable efforts to address the grievance quickly, including escalating it to the concerned Insurance Company for prompt resolution.
+                    </li>
+                    <li style={{ marginBottom: '1rem' }}>
+                        Customers will receive a resolution within regulatory timelines, along with the contact details of the respective Insurance Company.
+                    </li>
+                    <li style={{ marginBottom: '1rem' }}>
+                        The Company aims to resolve all grievances within <strong>14 days</strong> from the date of receiving the request.
+                    </li>
+                    <li style={{ marginBottom: '1rem' }}>
+                        If unresolved within 14 days or if dissatisfied with the response, customers may escalate by:
+                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
+                            <li>Emailing the Grievance Officer, Mr. Vivek Lalan, at <a href="mailto:support@thecoverkraft.com" style={{ color: '#8BC642' }}>support@thecoverkraft.com</a></li>
+                            <li>Calling us at [Toll Free Number — to be provided]</li>
+                            <li>Visiting or writing to:<br />
+                                CoverKraft Insurance Brokers Pvt. Ltd.,<br />
+                                16 D-1, Danish Nagar, Hoshangabad Road,<br />
+                                Bhopal, Madhya Pradesh, PIN – 462026
+                            </li>
+                        </ul>
+                    </li>
+                    <li style={{ marginBottom: '1rem' }}>
+                        For escalations, you can write directly to Mr. Vivek Lalan at <a href="mailto:vivek.lalan@thecoverkraft.com" style={{ color: '#8BC642' }}>vivek.lalan@thecoverkraft.com</a>
+                    </li>
+                    <li style={{ marginBottom: '1rem' }}>
+                        If you are still unsatisfied with the outcome, you may:
+                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
+                            <li>Register and monitor your complaint through IRDAI’s <strong>Integrated Grievance Management System (IGMS)</strong>: <a href="https://igms.irda.gov.in" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>igms.irda.gov.in</a></li>
+                            <li>Approach the <strong>Insurance Ombudsman</strong>: For details, visit <a href="http://ecoi.co.in" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>ecoi.co.in</a></li>
+                        </ul>
+                    </li>
+                    <li style={{ marginBottom: '1rem' }}>
+                        If no reply is received from the complainant within 2 weeks of us requesting any clarification, the grievance will be considered <strong>closed</strong>.
+                    </li>
+                </ol>
+
             </div>
         ),
     },
@@ -137,13 +192,109 @@ const policies = [
         label: "Terms & Conditions",
         id: "TermsAndConditions",
         content: (
-            <div id="TermsAndConditions">
-                <h2 style={{ color: "#FFFFFF", marginBottom: "2rem", fontSize: "1.8rem", fontWeight: "700" }}>Terms & Conditions</h2>
-                <div style={{ color: "#FFFFFF", lineHeight: "1.9", fontSize: "1.1rem", fontWeight: "500" }}>
-                    <p style={{ margin: "0", textAlign: "left" }}>Your terms and conditions content will go here...</p>
-                </div>
+            <div style={{
+                maxWidth: '1500px',
+                margin: '2rem auto',
+                color: '#E0E0E0',
+                lineHeight: '1.8',
+                fontSize: '1.7rem',
+                borderRadius: '10px',
+                fontFamily: 'Arial, sans-serif'
+            }}>
+                <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+                    Terms & Conditions for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642', textDecoration: 'underline' }}>www.TheCoverKraft.com</a> and “CoverKraft” App
+                </h2>
+
+                <ol style={{ paddingLeft: '1.5rem' }}>
+                    <li>
+                        Welcome to <strong>www.thecoverkraft.com</strong> (the "Site") operated by <strong>COVERKRAFT INSURANCE BROKERS PRIVATE LIMITED</strong> ("Coverkraft Insurance"), providing an easy way to buy insurance products from multiple Insurance Companies. Coverkraft Insurance is a licensed Insurance Broking Company holding a Broking license from the Insurance Regulatory and Development Authority. The IRDAI Direct Broker (General & Life) License Code: <strong>xxx</strong>.
+                    </li>
+
+                    <li>
+                        Coverkraft Insurance provides its services to you subject to the following conditions. Before you use the portal, you must read and accept all of the terms and conditions in this Terms of Use (ToU) and the Privacy Policy. Use of any functionality of the portal constitutes acceptance of this ToU. If this ToU conflicts with any other documents, the ToU will control. If you do not agree to be bound by this ToU and the Privacy Policy, you may not use the portal. Please revisit this page periodically to review the most current version.
+                    </li>
+
+                    <li>
+                        We reserve the right, at our sole discretion, to change or modify the ToU without prior notice. Continued use of this site signifies your acceptance of the updated ToU.
+                    </li>
+
+                    <li>
+                        This Site provides users with access to information focused on insurance products and services. To the maximum extent permitted by law, Coverkraft Insurance Brokers is not liable for Website Information or recommendations. You are responsible for your product choice. Review all information before proceeding. If in doubt, consult Coverkraft Insurance Brokers or the provider.
+                    </li>
+
+                    <li>
+                        By visiting our website and accessing the Resources we provide, you agree to use them only for their intended purpose and in accordance with (a) this User Agreement, and (b) applicable laws and accepted online practices.
+                    </li>
+
+                    <li>
+                        We reserve the right to remove any content that we determine violates this agreement, is offensive, harmful, inaccurate, or infringes copyrights or trademarks. We are not liable for any delay in removing such content. Posting such content implies your consent to its removal and a waiver of claims.
+                    </li>
+
+                    <li>
+                        By using the Portal/site, you confirm you are of legal age to form a binding contract and are not barred from receiving services under Indian law or applicable jurisdiction. You may use the site to make legitimate purchases for yourself or others for whom you are legally authorized. You are responsible for sharing these terms with them. You must provide accurate, up-to-date information for registration or access.
+                    </li>
+
+                    <li>
+                        You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities under your account. We strongly recommend logging out at the end of each session. Notify us immediately of any unauthorized use.
+                    </li>
+
+                    <li>
+                        You agree to indemnify and hold harmless Coverkraft Insurance Brokers Private Limited and its team from all losses, damages, and costs (including legal fees) resulting from any violation of this ToU or unauthorized use of your account.
+                    </li>
+
+                    <li>
+                        When you use the site or send emails to Coverkraft, you are communicating electronically. You consent to receive electronic communications from us. These may include emails, notices posted on the portal, calls, or other available methods. All communications satisfy legal requirements for written documentation.
+                    </li>
+
+                    <li>
+                        The site may include links to external websites. Coverkraft Insurance Brokers has no control over those sites and is not responsible for their content, availability, products, or services.
+                    </li>
+
+                    <li>
+                        By using our website, you agree that all Resources are provided “as is” and “as available.” We do not warrant that:
+                        <ul style={{ paddingLeft: '1.5rem' }}>
+                            <li>The Resources will meet your needs or expectations.</li>
+                            <li>The use of Resources will be uninterrupted, timely, or error-free.</li>
+                            <li>The information will be accurate or reliable.</li>
+                            <li>Any defects or issues will be corrected.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        All content and materials on <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>www.TheCoverKraft.com</a>, including but not limited to text, graphics, code, images, and logos, are the intellectual property of Coverkraft Insurance Brokers Private Limited and protected under copyright and trademark law. Unauthorized use is prohibited unless explicitly authorized.
+                    </li>
+
+                    <li>
+                        Coverkraft Insurance Brokers does not guarantee the timeliness, accuracy, or completeness of Website Information or the quality of outcomes from using the site.
+                    </li>
+
+                    <li>
+                        By using this Site, you accept this policy. If you do not agree, do not use the Site. Continued use after changes implies acceptance of those changes.
+                    </li>
+
+                    <li>
+                        You authorize Coverkraft Insurance and its representatives to contact you on the provided phone number for your insurance needs. This authorization overrides any NDNC registration.
+                    </li>
+
+                    <li>
+                        Ensure you enter the correct PYP number and declare your previous year’s NCB status accurately. (NCB should be zero if a claim was made last year.) Misrepresentation or nondisclosure, including pre-existing health conditions, may lead to policy cancellation or claim denial.
+                    </li>
+
+                    <li>
+                        If you have any questions or comments about these Terms of Service, please contact us at:
+                        <br />
+                        <strong>Email:</strong> <a href="mailto:contact@thecoverkraft.com" style={{ color: '#8BC642' }}>contact@thecoverkraft.com</a><br />
+                        <strong>Address:</strong> 16 D-1, Danish Nagar, Hoshangabad Road, Bhopal, Madhya Pradesh, PIN - 462026
+                    </li>
+                </ol>
+
+                <p style={{ marginTop: '2rem', fontStyle: 'italic', color: '#CCCCCC' }}>
+                    Please review this policy regularly to stay updated on any changes or amendments.
+                </p>
             </div>
-        ),
+        )
+
+
     },
     {
         label: "Refund & Cancellation Policy",
@@ -210,8 +361,8 @@ const policies = [
                 {/* Health Insurance Section */}
                 {/* <h3 style={{ color: '#8BC642', marginTop: '2rem' }}>Service TAT – Health Insurance</h3> */}
 
-                <p style={{ marginBottom: '1rem',color: '#8BC642' }}>
-Policyholder Servicing Turnaround Times Are As Follows:                 </p>
+                <p style={{ marginBottom: '1rem', color: '#8BC642' }}>
+                    Policyholder Servicing Turnaround Times Are As Follows:                 </p>
 
                 <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
                     <thead>
@@ -304,52 +455,55 @@ Policyholder Servicing Turnaround Times Are As Follows:                 </p>
                 {/* Life Insurance Section */}
                 <h3 style={{ color: '#8BC642', marginTop: '2rem' }}>Service TAT – Life Insurance</h3>
                 <p style={{ marginBottom: '1rem' }}>
-                    The following turnaround times apply to Life Insurance post-sales services:
+                    In accordance with Schedule I of the Insurance ecommerce guidelines issued by IRDAI on 9th March 2017, Coverkraft Insurance Brokers Private Limited (formerly known as Coverkraft Insurance Web Aggregator Private Limited), as an ISNP follows the following service TAT’s for online sale of Life Insurance products:
                 </p>
 
                 <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
                     <thead>
+                        <tr style={{ backgroundColor: '#121212', color: '#8BC642' }}>
+                            <th >Policyholder Servicing Turnaround Times Are As Follows: </th>
+                        </tr>
                         <tr style={{ backgroundColor: '#1E1E1E', color: '#8BC642' }}>
                             <th style={{ border: '1px solid #333', padding: '1rem' }}>Service Parameters</th>
-                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Max TAT (Calendar Days)</th>
-                            <th style={{ border: '1px solid #333', padding: '1rem' }}>TAT Calculated From</th>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Maximum Turnaround Time (Calendar Days) </th>
+                            <th style={{ border: '1px solid #333', padding: '1rem' }}>Turnaround Time To Be Calculated From </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style={td}>Decision communication / Additional requirement</td>
+                            <td style={td}>Written communication of decisions on the proposal / raising additional requirements on the proposal </td>
                             <td style={td}>15 days</td>
-                            <td style={td}>From receipt of proposal or requirement, whichever is later</td>
+                            <td style={td}>Date of receipt of the proposal or the date of receipt of any requirement called for, whichever is later </td>
                         </tr>
                         <tr>
-                            <td style={td}>Copy of accepted proposal form</td>
+                            <td style={td}>Providing copy of accepted proposal form </td>
                             <td style={td}>5 days</td>
                             <td style={td}>From acceptance date</td>
                         </tr>
                         <tr>
-                            <td style={td}>Refund post cancellation</td>
+                            <td style={td}>Refund of proposal deposit post cancellation of proposal </td>
                             <td style={td}>10 days</td>
-                            <td style={td}>From decision date / last document / cancellation request</td>
+                            <td style={td}>Date of case decision/date of receipt of last necessary document /date of receipt of request for cancellation of proposal, whichever is later </td>
                         </tr>
                         <tr>
-                            <td style={td}>Free look / surrender / withdrawal refunds</td>
+                            <td style={td}>Requests for refund towards free look cancellation, surrender and withdrawal; refund of proposal deposit; refund of outstanding proposal deposit, if any </td>
                             <td style={td}>10 days</td>
-                            <td style={td}>From request or last document, whichever is later</td>
+                            <td style={td}>Date of receipt of request/last necessary document, whichever is later </td>
                         </tr>
                         <tr>
-                            <td style={td}>Grievance Acknowledgement</td>
+                            <td style={td}>Acknowledgement of Grievance </td>
                             <td style={td}>5 days</td>
-                            <td style={td}>From receipt of grievance</td>
+                            <td style={td}>Date of receipt of Grievance </td>
                         </tr>
                         <tr>
-                            <td style={td}>Grievance Resolution</td>
+                            <td style={td}>Resolution of Grievance </td>
                             <td style={td}>30 days</td>
-                            <td style={td}>From receipt of grievance</td>
+                            <td style={td}>Date of receipt of Grievance </td>
                         </tr>
                         <tr>
-                            <td style={td}>KYC Compliance</td>
+                            <td style={td}>Compliance of KYC norms </td>
                             <td style={td}>45 days</td>
-                            <td style={td}>From transaction date on website</td>
+                            <td style={td}>Date of transaction of the Website. </td>
                         </tr>
                     </tbody>
                 </table>
@@ -500,6 +654,92 @@ Policyholder Servicing Turnaround Times Are As Follows:                 </p>
         ),
 
     },
+
+    {
+        label: "Disclaimer",
+        id: "disclaimer",
+        content: (
+            <div style={{
+                maxWidth: '1500px',
+                margin: '2rem auto',
+                color: '#E0E0E0',
+                lineHeight: '1.8',
+                fontSize: '1.7rem',
+                borderRadius: '10px',
+                fontFamily: 'Arial, sans-serif'
+            }}>
+                <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+                    Disclaimer for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642', textDecoration: 'underline' }}>www.TheCoverKraft.com</a> and “CoverKraft” App
+                </h2>
+
+                <h3 style={{ color: '#8BC642' }}>General Information</h3>
+                <p>
+                    The information, content, and materials provided on <strong>www.TheCoverKraft.com</strong> and the “CoverKraft” App (collectively, “the Platform”) are for general informational and educational purposes only. The Platform is owned and operated by <strong>CoverKraft Insurance Brokers Private Limited</strong>, an IRDAI-licensed insurance broker in India.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>No Professional Advice</h3>
+                <p>
+                    The content, including but not limited to videos, blogs, articles, policy comparisons, and policy wordings, is intended to increase insurance awareness and help users make informed decisions. However, the information provided does not constitute professional financial, legal, or insurance advice. Users are encouraged to consult with qualified professionals or directly with insurance companies for advice tailored to their individual circumstances.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>Accuracy of Information</h3>
+                <p>
+                    While we strive to ensure that all information on the Platform is accurate, current, and complete, we make no representations or warranties, express or implied, regarding the accuracy, reliability, suitability, or availability of any information, products, services, or related graphics contained on the Platform. Insurance product details, premiums, coverage, and terms are subject to change by insurers without notice.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>No Endorsement</h3>
+                <p>
+                    References to specific insurance companies, products, or services on the Platform do not constitute or imply endorsement, recommendation, or favouring by CoverKraft Insurance Brokers Private Limited or its affiliates.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>Third-Party Links</h3>
+                <p>
+                    The Platform may contain links to third-party websites or services for your convenience and information. We do not control, endorse, or assume responsibility for the content, privacy policies, or practices of any third-party sites.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>Limitation of Liability</h3>
+                <p>
+                    To the fullest extent permitted by law, CoverKraft Insurance Brokers Private Limited, its owners, directors, employees, affiliates, and agents disclaim all liability for any direct, indirect, incidental, consequential, or special damages arising out of or in any way connected with your use of, or inability to use, the Platform or reliance on any information provided on the Platform.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>Policy Vault and User Content</h3>
+                <p>
+                    Users are solely responsible for the accuracy, legality, and completeness of any insurance documents or personal information uploaded to the Policy Vault. We do not guarantee the security or retention of user-uploaded content beyond our stated security practices.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>Regulatory Status</h3>
+                <p>
+                    CoverKraft Insurance Brokers Private Limited operates as an insurance broker in accordance with the regulations of the Insurance Regulatory and Development Authority of India (IRDAI). All insurance products offered through the Platform are underwritten by respective insurance companies, and all claims, renewals, and policy servicing are subject to the terms and conditions of the respective insurers.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>Changes to Disclaimer</h3>
+                <p>
+                    We reserve the right to update or modify this Disclaimer at any time without prior notice. Please review this Disclaimer periodically for changes. Continued use of the Platform constitutes acceptance of any changes.
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>Contact</h3>
+                <p>
+                    For any questions or clarifications regarding this Disclaimer, please contact:
+                    <br />
+                    <strong>TheCoverKraft.com</strong><br />
+                    16 D-1, Danish Nagar, Hoshangabad Road,<br />
+                    Bhopal, Madhya Pradesh, PIN - 462026<br />
+                    <strong>Email:</strong> <a href="mailto:contact@thecoverkraft.com" style={{ color: '#8BC642' }}>contact@thecoverkraft.com</a><br />
+                    <strong>Phone:</strong> [To be provided]
+                </p>
+
+                <h3 style={{ color: '#8BC642' }}>Shape</h3>
+                <p>
+                    By using TheCoverKraft.com and the CoverKraft App, you acknowledge that you have read, understood, and agreed to this Disclaimer.
+                </p>
+
+                <p style={{ marginTop: '2rem', fontStyle: 'italic', color: '#CCCCCC' }}>
+                    This Disclaimer was last updated on [insert date here if needed].
+                </p>
+            </div>
+        )
+
+    }
 ];
 
 const LegalPoliciesTabs = () => {
@@ -571,12 +811,12 @@ const LegalPoliciesTabs = () => {
                                     color: isActive ? "#121212" : "#E0E0E0",
                                     padding: "0.75rem 1.5rem",
                                     borderRadius: "40px",
-                                    border: "none",
+                                    border: "2px solid #8BC642",
                                     fontSize: "1.4rem",
                                     fontWeight: isActive ? "600" : "500",
                                     cursor: "pointer",
                                     transition: "all 0.3s ease",
-                                    minWidth: "120px", // uniform size
+                                    minWidth: "120px",
                                     textAlign: "center"
                                 }}
                             >

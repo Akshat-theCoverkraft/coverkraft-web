@@ -24,7 +24,7 @@ const Landing = () => {
       <HeroSection />
       <Afterglow />
       <PolicyType />
-      {/* <Cards3d /> */}
+      <Cards3d />
       <BlogSection/>
       {/* <About /> */}
       
