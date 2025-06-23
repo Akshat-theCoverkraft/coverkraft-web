@@ -74,6 +74,26 @@ const Vault = () => {
   const imageRef = useRef();
   const navigate = useNavigate();
 
+  const StyledButton = styled("button")(({ isAllSelected }) => ({
+    backgroundColor: "transparent",
+    color: isAllSelected ? "#000" : "#8AC642",
+    border: "1.5px solid #8AC642",
+    borderRadius: "20px",
+    padding: "8px 16px",
+    marginTop: "19px",
+    fontSize: "1.4rem",
+    fontWeight: 600,
+    minWidth: "100px",
+    cursor: "pointer",
+    userSelect: "none",
+    transition: "all 0.25s ease",
+    background: isAllSelected ? "#8AC642" : "transparent",
+    "&:hover": {
+      backgroundColor: "#8AC642",
+      color: "#000",
+    },
+  }));
+
   // Dialog handlers
   const toggleDialog = (dialogType, state = null) => {
     setDialogs(prev => ({
@@ -440,57 +460,35 @@ const Vault = () => {
                   onClick={() => toggleDialog('addPolicy', true)}
                   style={{
                     padding: '8px 16px',
-                    minHeight: '36px',
+                    minHeight: '28px',
                     borderRadius: '8px',
                     fontSize: '18px',
-                    marginTop: policyListLength > 0 ? '10px' : '0px', // Align with share button when both are visible
+                    marginTop: policyListLength > 0 ? '10px' : '0px',
                   }}
                 />
 
                 {/* Share Options */}
                 {shareAllPolicy && (
                   <>
-                    <Button
-                      text={`Select All (${selectedPolicies.length}/${allPolicyIds.length})`}
-                      size="sm"
+                    <StyledButton
                       onClick={handleSelectAll}
-                      style={{
-                        backgroundColor: selectedPolicies.length === allPolicyIds.length ? '#28a745' : '#6c757d',
-                        color: 'white',
-                        border: 'none',
-                        padding: '8px 12px',
-                        minHeight: '36px',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        marginTop: '10px',
-                      }}
-                    />
-                    <Button
-                      text="Excel"
-                      size="sm"
+                      isAllSelected={selectedPolicies.length === allPolicyIds.length}
+                    >
+                      Select All ({selectedPolicies.length}/{allPolicyIds.length})
+                    </StyledButton>
+                    <StyledButton
                       onClick={exportToExcel}
                       disabled={selectedPolicies.length === 0}
-                      style={{
-                        padding: '8px 12px',
-                        minHeight: '36px',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        marginTop: '10px',
-                      }}
-                    />
-                    <Button
-                      text="PDF"
-                      size="sm"
+                    >
+                      Excel
+                    </StyledButton>
+                    <StyledButton
                       onClick={exportToPDF}
                       disabled={selectedPolicies.length === 0}
-                      style={{
-                        padding: '8px 12px',
-                        minHeight: '36px',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        marginTop: '10px',
-                      }}
-                    />
+                    >
+                      PDF
+                    </StyledButton>
+
                   </>
                 )}
               </div>
