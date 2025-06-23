@@ -30,6 +30,8 @@ import { useDispatch } from "react-redux";
 import GradientButton from "../../component/GradientButton";
 import { toast } from "react-toastify";
 import { THEME_COLOR } from "../../constants";
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+
 
 const PolicyDetail = ({ policyId }) => {
   console.log("policydetail ma gye", policyId);
@@ -190,7 +192,7 @@ const PolicyDetail = ({ policyId }) => {
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
-            height: "100vh",
+            height: "85vh",
             boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
             backgroundColor: THEME_COLOR.BACKGROUND,
             color: THEME_COLOR.COLOR,
@@ -249,8 +251,8 @@ const PolicyDetail = ({ policyId }) => {
               style={{
                 justifyContent: "center",
                 boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                height: "100vh",
-                minHeight: "90vh",
+                height: "85vh",
+                minHeight: "85.6vh",
                 marginBottom: "5vh",
                 backgroundColor: THEME_COLOR.BACKGROUND,
                 color: THEME_COLOR.COLOR,
@@ -284,8 +286,8 @@ const PolicyDetail = ({ policyId }) => {
                   </p>
                   <p
                     style={{
-                      color: "#585858",
-                      fontSize: "14px",
+                      color: "#fff",
+                      fontSize: "16px",
                       fontWeight: "500",
                     }}
                     className="pl-4"
@@ -295,8 +297,8 @@ const PolicyDetail = ({ policyId }) => {
                   </p>
                   <p
                     style={{
-                      color: "#9E9E9E",
-                      fontSize: "14px",
+                      color: "#fff",
+                      fontSize: "16px",
                       fontWeight: "500",
                     }}
                     className="pl-4"
@@ -310,19 +312,20 @@ const PolicyDetail = ({ policyId }) => {
                       policy?.policyType === "car_policy"
                         ? car
                         : policy?.policyType === "bike_policy"
-                        ? scooty
-                        : policy?.policyType === "other_vehicle"
-                        ? scooty
-                        : policy?.policyType === "life"
-                        ? family
-                        : policy?.policyType === "accident"
-                        ? family
-                        : policy?.policyType === "health"
-                        ? Health
-                        : policy?.policyType === "other_health"
-                        ? HealthInsurance
-                        : emptyImage
+                          ? scooty
+                          : policy?.policyType === "other_vehicle"
+                            ? scooty
+                            : policy?.policyType === "life"
+                              ? family
+                              : policy?.policyType === "accident"
+                                ? family
+                                : policy?.policyType === "health"
+                                  ? Health
+                                  : policy?.policyType === "other_health"
+                                    ? HealthInsurance
+                                    : emptyImage
                     }
+                    alt="Policy Type"
                   />
                 </div>
               </div>
@@ -363,27 +366,34 @@ const PolicyDetail = ({ policyId }) => {
                   className="rounded-4"
                   style={{
                     marginTop: "48px",
+                    paddingTop:"50px",
                     boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                     backgroundColor: THEME_COLOR.FADE_BACKGROUND,
                     color: THEME_COLOR.COLOR,
                   }}
                 >
                   <div className="d-flex justify-content-end m-4">
-                    <img
-                      src={view}
-                      onClick={() => handleViewDocument(documentPath)}
-                      className="mr-2 cursor-pointer"
-                    />
+                    <OverlayTrigger placement="top" overlay={<Tooltip>View Policy</Tooltip>}>
+                      <img
+                        src={view}
+                        onClick={() => handleViewDocument(documentPath)}
+                        className="mr-2 cursor-pointer"
+                      />
+                    </OverlayTrigger>
+                  <OverlayTrigger placement="top" overlay={<Tooltip>DownLoad Policy</Tooltip>}>
                     <img
                       src={download}
                       onClick={() => handleDownloadDocument(documentPath)}
                       className="mr-2 cursor-pointer"
-                    />
+                      />
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={<Tooltip>Share Policy</Tooltip>}>
                     <img
                       src={share}
                       onClick={() => sharePolicyDocument(documentPath)}
                       className="cursor-pointer"
-                    />
+                      />
+                       </OverlayTrigger>
                   </div>
                   <Grid
                     container

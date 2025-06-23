@@ -1,27 +1,13 @@
-.image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 7em 0;
-  }
-  
-  .hover-image {
-    width: 10%;
-    margin-left: 3em;
-    transition: transform 0.5s, background-color 0.5s;
+.card-container {
+  position: relative;
+  border-radius: 25px;
+  padding: 1px;
+  z-index: 1;
+  box-shadow: 4px 4px 0 2px #33A36D, 6px 6px 0 0 #A8A8A8;
 }
-  
-  .hover-image:first-child {
-    margin-left: 0;
-  }
-  
-  .hover-image:hover {
-    transform: scale(1.1);
-  }
-  
-  .hover-image {
-    width: 20%;
-  }
-  
 
-  
+.bottom-right {
+  position: absolute;
+  right: 16px;   /* adjust as needed */
+  bottom: 16px;  /* adjust as needed */
+}

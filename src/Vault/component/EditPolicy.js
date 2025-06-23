@@ -58,12 +58,12 @@ const EditPolicy = () => {
 
     const { policyDetails } = location.state;
     const responseData = policyDetails[0];
-   console.log("responseData", responseData)
+    console.log("responseData", responseData)
 
     // const responseData = JSON.parse(responseData.ocrText);
     const PolicyType = responseData.policyType.toLowerCase();
     console.log("PolicyType", PolicyType)
-  
+
 
     //useState
     const [policyNumber, setPolicyNumber] = useState(responseData.policyNumber);
@@ -103,7 +103,7 @@ const EditPolicy = () => {
     const [consumables, setConsumables] = useState(responseData.policyDetails.consumables);
     const [coPayment, setCoPayment] = useState(responseData.policyDetails.coPayment);
     const [filledFields, setFilledFields] = useState(0);
-   
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -241,171 +241,173 @@ const EditPolicy = () => {
         //         return prevCount;
         //     }
         // });
-      
+
     };
     // Update filledFields when any input field is changed end
 
-   //save api for health insurance form 
-   const handleHealthInsurance = () => {
-    const userId = localStorage.getItem('userId');
-    const policyId = localStorage.getItem('selectedPolicyId');
-    const documentId = localStorage.getItem('documentId');
-    if (
-        userId &&
-        documentId &&
-        PolicyType &&
-        dob &&
-        policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
-        type && idv && netPremium && totalPremium && premiumPaid && restoration && consumables && coPayment
-    ) {
-        const formData = new FormData();
-       formData.append('_id', policyId)
-        formData.append('userId', userId);
-        formData.append('documentId', documentId);
-        formData.append('policyType', PolicyType);
-        formData.append('dob', dob);
-        formData.append('policyNumber', policyNumber);
-        formData.append('policyName', policyName);
-        formData.append('policyStartDate', startDate);
-        formData.append('policyEndDate', endDate);
-        formData.append('insuredName', insuredName);
-        formData.append('sumInsured', sumInsured);
-        formData.append('insuranceCompany', insuranceCompany);
-        formData.append('totalSumInsured', totalSumInsured);
-        formData.append('type', type);
-        formData.append('idv', idv);
-        formData.append('netPremium', netPremium);
-        formData.append('totalPremium', totalPremium);
-        formData.append('premiumPaid', premiumPaid);
-        formData.append('restoration', restoration);
-        formData.append('consumables', consumables);
-        formData.append('coPayment', coPayment);
-        dispatch(updateDocument(API_URL, formData));
+    //save api for health insurance form 
+    const handleHealthInsurance = () => {
+        const userId = localStorage.getItem('userId');
+        const policyId = localStorage.getItem('selectedPolicyId');
+        const documentId = localStorage.getItem('documentId');
+        if (
+            userId &&
+            documentId &&
+            PolicyType &&
+            dob &&
+            policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
+            type && idv && netPremium && totalPremium && premiumPaid && restoration && consumables && coPayment
+        ) {
+            const formData = new FormData();
+            formData.append('_id', policyId)
+            formData.append('userId', userId);
+            formData.append('documentId', documentId);
+            formData.append('policyType', PolicyType);
+            formData.append('dob', dob);
+            formData.append('policyNumber', policyNumber);
+            formData.append('policyName', policyName);
+            formData.append('policyStartDate', startDate);
+            formData.append('policyEndDate', endDate);
+            formData.append('insuredName', insuredName);
+            formData.append('sumInsured', sumInsured);
+            formData.append('insuranceCompany', insuranceCompany);
+            formData.append('totalSumInsured', totalSumInsured);
+            formData.append('type', type);
+            formData.append('idv', idv);
+            formData.append('netPremium', netPremium);
+            formData.append('totalPremium', totalPremium);
+            formData.append('premiumPaid', premiumPaid);
+            formData.append('restoration', restoration);
+            formData.append('consumables', consumables);
+            formData.append('coPayment', coPayment);
+            dispatch(updateDocument(API_URL, formData));
+            navigate('/coverkraft/vault')
+        }
+        else {
+            toast.error("Please fill all required fields", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+    }
+
+    //save api for life insurance
+    const handleLifeInsurance = () => {
+        const policyId = localStorage.getItem('selectedPolicyId');
+        const userId = localStorage.getItem('userId');
+        const documentId = localStorage.getItem('documentId');
+        if (
+            userId &&
+            documentId &&
+            PolicyType &&
+            startDate &&
+            renewalDate && policyName && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
+            sumInsured && others && type && pa && netPremium && totalPremium && illness && disability &&
+            waiverPremium && hospitalCare && terminalIllness
+        ) {
+            const formData = new FormData();
+            formData.append('_id', policyId)
+            formData.append('userId', userId);
+            formData.append('documentId', documentId);
+            formData.append('policyType', PolicyType);
+            formData.append('policyName', policyName);
+            formData.append('policyStartDate', startDate);
+            formData.append('renewalDate', renewalDate);
+            formData.append('insuredName', insuredName);
+            formData.append('maturityDate', maturityDate);
+            formData.append('dayRenewal', dayRenewal);
+            formData.append('dob', dob);
+            formData.append('insuranceCompany', insuranceCompany);
+            formData.append('sumInsured', sumInsured);
+            formData.append('others', others);
+            formData.append('type', type);
+            formData.append('pa', pa);
+            formData.append('netPremium', netPremium);
+            formData.append('totalPremium', totalPremium);
+            formData.append('criticalIllness', illness);
+            formData.append('accidentalIllness', disability);
+            formData.append('waiverOfPremium', waiverPremium);
+            formData.append('hospitalCare', hospitalCare);
+            formData.append('terminalIllness', terminalIllness);
+            dispatch(updateDocument(API_URL, formData))
+            navigate('/coverkraft/vault')
+        } else {
+            toast.error("Please fill all required fields", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+    }
+
+    //save api for motor insurance
+    const handleMotorInsurance = () => {
+        const policyId = localStorage.getItem('selectedPolicyId');
+        const userId = localStorage.getItem('userId');
+        const documentId = localStorage.getItem('documentId');
+        if (
+            userId &&
+            documentId &&
+            PolicyType &&
+            startDate &&
+            endDate && policyNumber && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
+            assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
+            vehicleType
+        ) {
+            const formData = new FormData();
+            formData.append('_id', policyId)
+            formData.append('userId', userId);
+            formData.append('documentId', documentId);
+            formData.append('policyType', PolicyType);
+            formData.append('policyNumber', policyNumber);
+            formData.append('policyStartDate', startDate);
+            formData.append('policyEndDate', endDate);
+            formData.append('insuredName', insuredName);
+            formData.append('netPremium', netPremium);
+            formData.append('ncpPercentage', ncb);
+            formData.append('tpPremium', tpPremium);
+            formData.append('odPremium', odPremium);
+            formData.append('totalPremium', totalPremium);
+            formData.append('insuranceCompany', insuranceCompany);
+            formData.append('assetType', assetType);
+            formData.append('make_Model', model);
+            formData.append('registrationYear', registrationYear);
+            formData.append('registrationNumber', registrationNumber);
+            formData.append('vechileEngineNumber', engineCC);
+            formData.append('idv', idv);
+            formData.append('vehicleType', vehicleType);
+
+            dispatch(updateDocument(API_URL, formData))
+            navigate('/coverkraft/vault')
+        } else {
+
+            toast.error("Please fill all required fields", {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
+
+        // if (mode === 'add') {
+        //     dispatch(saveDocument(API_URL, formData));
+        // } else if (mode === 'edit') {
+        //     dispatch(updateDocument(API_URL, formData)); 
+        // }
+    }
+
+    const handleCancel = () => {
         navigate('/coverkraft/vault')
     }
-    else {
-        toast.error("Please fill all required fields", {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-        });
-    }
-}
-
-//save api for life insurance
-const handleLifeInsurance = () => {
-    const policyId = localStorage.getItem('selectedPolicyId');
-    const userId = localStorage.getItem('userId');
-    const documentId = localStorage.getItem('documentId');
-    if (
-        userId &&
-        documentId &&
-        PolicyType &&
-        startDate &&
-        renewalDate && policyName  && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
-        sumInsured && others && type && pa && netPremium && totalPremium && illness && disability &&
-        waiverPremium && hospitalCare && terminalIllness
-    ) {
-    const formData = new FormData();
-    formData.append('_id', policyId)
-    formData.append('userId', userId);
-    formData.append('documentId', documentId);
-    formData.append('policyType', PolicyType);
-    formData.append('policyName', policyName);
-    formData.append('policyStartDate', startDate);
-    formData.append('renewalDate', renewalDate);
-    formData.append('insuredName', insuredName);
-    formData.append('maturityDate', maturityDate);
-    formData.append('dayRenewal', dayRenewal);
-    formData.append('dob', dob);
-    formData.append('insuranceCompany', insuranceCompany);
-    formData.append('sumInsured', sumInsured);
-    formData.append('others', others);
-    formData.append('type', type);
-    formData.append('pa', pa);
-    formData.append('netPremium', netPremium);
-    formData.append('totalPremium', totalPremium);
-    formData.append('criticalIllness', illness);
-    formData.append('accidentalIllness', disability);
-    formData.append('waiverOfPremium', waiverPremium);
-    formData.append('hospitalCare', hospitalCare);
-    formData.append('terminalIllness', terminalIllness);
-    dispatch(updateDocument(API_URL, formData))
-    navigate('/coverkraft/vault')
-}else {
-    toast.error("Please fill all required fields", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-    });
-}
-}
-
-//save api for motor insurance
-const handleMotorInsurance = () => {
-    const policyId = localStorage.getItem('selectedPolicyId');
-    const userId = localStorage.getItem('userId');
-    const documentId = localStorage.getItem('documentId');
-    if (
-        userId &&
-        documentId &&
-        PolicyType &&
-        startDate &&
-        endDate && policyNumber  && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
-        assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
-        vehicleType 
-    ) {
-    const formData = new FormData();
-    formData.append('_id', policyId)
-    formData.append('userId', userId);
-    formData.append('documentId', documentId);
-    formData.append('policyType', PolicyType);
-    formData.append('policyNumber', policyNumber);
-    formData.append('policyStartDate', startDate);
-    formData.append('policyEndDate', endDate);
-    formData.append('insuredName', insuredName);
-    formData.append('netPremium', netPremium);
-    formData.append('ncpPercentage', ncb);
-    formData.append('tpPremium', tpPremium);
-    formData.append('odPremium', odPremium);
-    formData.append('totalPremium', totalPremium);
-    formData.append('insuranceCompany', insuranceCompany);
-    formData.append('assetType', assetType);
-    formData.append('make_Model', model);
-    formData.append('registrationYear', registrationYear);
-    formData.append('registrationNumber', registrationNumber);
-    formData.append('vechileEngineNumber', engineCC);
-    formData.append('idv', idv);
-    formData.append('vehicleType', vehicleType);
-
-    dispatch(updateDocument(API_URL, formData))
-    navigate('/coverkraft/vault')
-    }else {
-       
-        toast.error("Please fill all required fields", {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-        });
-    }
-
-    // if (mode === 'add') {
-    //     dispatch(saveDocument(API_URL, formData));
-    // } else if (mode === 'edit') {
-    //     dispatch(updateDocument(API_URL, formData)); 
-    // }
-}
-
-
 
     return (
         <div>
@@ -419,209 +421,241 @@ const handleMotorInsurance = () => {
                         </div>
                         <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}> Details</p>
                         <div>
-                            {PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle' ? (
+                           {PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle' ? (
+    <>
+        {/* motor insurance */}
+        <Grid container spacing={6}>
+            <Grid item xs={12} md={6}>
+                <CustomInput
+                    type="text"
+                    label="Policy Number"
+                    name="policyNumber"
+                    value={policyNumber}
+                    onChange={(e) => {
+                        setPolicyNumber(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
 
-                                <>
-                                    {/* motor insurance */}
-                                    <Grid container spacing={6}>
-                                        <Grid item xs={12} md={6}>
-                                            <CustomInput
-                                                type="text"
-                                                label="Policy Number"
-                                                // placeholder="policy number"
-                                                value={policyNumber}
-                                                onChange={(e) => {
-                                                    setPolicyNumber(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+                        <CustomInput
+                            type="text"
+                            label="Start Date"
+                            name="startDate"
+                            value={startDate}
+                            onChange={(e) => {
+                                setStartDate(e.target.value);
+                                handleInputChange(e);
+                            }}
+                            required
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <CustomInput
+                            type="text"
+                            label="End Date"
+                            name="endDate"
+                            value={endDate}
+                            onChange={(e) => {
+                                setEndDate(e.target.value);
+                                handleInputChange(e);
+                            }}
+                            required
+                        />
+                    </Grid>
+                </Grid>
 
-                                            <Grid container spacing={3}>
-                                                <Grid item xs={12} md={6}>
-                                                    <CustomInput
-                                                        type="text"
-                                                        label=" Start Date"
-                                                        value={startDate}
-                                                        onChange={(e) => {
-                                                            setStartDate(e.target.value);
-                                                            handleInputChange(e);
-                                                        }}
-                                                        required
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} md={6}>
-                                                    <CustomInput
-                                                        type="text"
-                                                        label=" End Date"
-                                                        value={endDate}
-                                                        onChange={(e) => {
-                                                            setEndDate(e.target.value);
-                                                            handleInputChange(e);
-                                                        }}
-                                                        required
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                            <CustomInput
-                                                type="text"
-                                                label="Insured Name"
-                                                value={insuredName}
-                                                onChange={(e) => {
-                                                    setInsuredName(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="number"
-                                                label="Net Premium"
-                                                value={netPremium}
-                                                onChange={(e) => {
-                                                    setNetPremium(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="number"
-                                                label="NCB %"
-                                                value={ncb}
-                                                onChange={(e) => {
-                                                    setNcb(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="number"
-                                                label="TP Premium"
-                                                value={tpPremium}
-                                                onChange={(e) => {
-                                                    setTpPremium(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="number"
-                                                label="OD Premium"
-                                                value={odPremium}
-                                                onChange={(e) => {
-                                                    setOdPremium(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="text"
-                                                label="Total Premium"
-                                                value={totalPremium}
-                                                onChange={(e) => {
-                                                    setTotalPremium(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <Button
-                                                text='Update'
-                                                size="lg"
-                                                block={true}
-                                                onClick={handleMotorInsurance}
+                <CustomInput
+                    type="text"
+                    label="Insured Name"
+                    name="insuredName"
+                    value={insuredName}
+                    onChange={(e) => {
+                        setInsuredName(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="number"
+                    label="Net Premium"
+                    name="netPremium"
+                    value={netPremium}
+                    onChange={(e) => {
+                        setNetPremium(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="number"
+                    label="NCB %"
+                    name="ncb"
+                    value={ncb}
+                    onChange={(e) => {
+                        setNcb(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="number"
+                    label="TP Premium"
+                    name="tpPremium"
+                    value={tpPremium}
+                    onChange={(e) => {
+                        setTpPremium(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="number"
+                    label="OD Premium"
+                    name="odPremium"
+                    value={odPremium}
+                    onChange={(e) => {
+                        setOdPremium(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="text"
+                    label="Total Premium"
+                    name="totalPremium"
+                    value={totalPremium}
+                    onChange={(e) => {
+                        setTotalPremium(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+            </Grid>
 
-                                            />
+            <Grid item xs={12} md={6}>
+                <CustomInput
+                    type="text"
+                    label="Insurance Company"
+                    name="insuranceCompany"
+                    value={insuranceCompany}
+                    onChange={(e) => {
+                        setInsuranceCompany(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="text"
+                    label="Asset Type"
+                    name="assetType"
+                    value={assetType}
+                    onChange={(e) => {
+                        setAssetType(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="text"
+                    label="Make / Model"
+                    name="model"
+                    value={model}
+                    onChange={(e) => {
+                        setModel(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="number"
+                    label="Registration Year"
+                    name="registrationYear"
+                    value={registrationYear}
+                    onChange={(e) => {
+                        setRegistrationYear(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="text"
+                    label="Registration Number"
+                    name="registrationNumber"
+                    value={registrationNumber}
+                    onChange={(e) => {
+                        setRegistrationNumber(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="text"
+                    label="Engine CC"
+                    name="engineCC"
+                    value={engineCC}
+                    onChange={(e) => {
+                        setEngineCC(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="text"
+                    label="IDV"
+                    name="idv"
+                    value={idv}
+                    onChange={(e) => {
+                        setIdv(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+                <CustomInput
+                    type="text"
+                    label="Vehicle Type"
+                    name="vehicleType"
+                    value={vehicleType}
+                    onChange={(e) => {
+                        setVehicleType(e.target.value);
+                        handleInputChange(e);
+                    }}
+                    required
+                />
+            </Grid>
+        </Grid>
 
-
-                                        </Grid>
-                                        <Grid item xs={12} md={6}>
-                                            {/* <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}>Vehicle Details</p> */}
-
-                                            <CustomInput
-                                                type="text"
-                                                label="Insurance Company"
-                                                value={insuranceCompany}
-                                                onChange={(e) => {
-                                                    setInsuranceCompany(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="text"
-                                                label="Asset Type"
-                                                value={assetType}
-                                                onChange={(e) => {
-                                                    setAssetType(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="text"
-                                                label="Make / Model"
-                                                value={model}
-                                                onChange={(e) => {
-                                                    setModel(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="number"
-                                                label="Registration Year"
-                                                value={registrationYear}
-                                                onChange={(e) => {
-                                                    setRegistrationYear(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="text"
-                                                label="Registration Number"
-                                                value={registrationNumber}
-                                                onChange={(e) => {
-                                                    setRegistrationNumber(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="text"
-                                                label="Engine CC"
-                                                value={engineCC}
-                                                onChange={(e) => {
-                                                    setEngineCC(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="text"
-                                                label="IDV"
-                                                value={idv}
-                                                onChange={(e) => {
-                                                    setIdv(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-                                            <CustomInput
-                                                type="text"
-                                                label="Vehicle Type"
-                                                value={vehicleType}
-                                                onChange={(e) => {
-                                                    setVehicleType(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            />
-
-
-
-                                        </Grid>
-                                    </Grid>
-                                </>
+        {/* Buttons placed OUTSIDE the grid container */}
+        <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            marginTop: '30px', 
+            justifyContent: 'center' 
+        }}>
+            <Button
+                text='Update'
+                size="lg"
+                block={false}
+                onClick={handleMotorInsurance}
+                customStyle={{ minWidth: '120px' }}
+            />
+            <Button
+                text='Cancel'
+                size="lg"
+                block={false}
+                onClick={handleCancel}
+                bgcolor="transparent"
+                color="#6c757d"
+                borderColor="#6c757d"
+                customStyle={{
+                    minWidth: '120px',
+                    border: '1px solid #6c757d'
+                }}
+            />
+        </div>
+    </>
                             ) : PolicyType === 'health' || PolicyType === 'other_health' ? (
                                 // Render health insurance form fields
                                 <>
@@ -731,6 +765,13 @@ const handleMotorInsurance = () => {
                                                 size="lg"
                                                 block={true}
                                                 onClick={handleHealthInsurance}
+
+                                            />
+                                            <Button
+                                                text='Cancel'
+                                                size="lg"
+                                                block={true}
+                                                onClick={handleCancel}
 
                                             />
 
@@ -943,6 +984,13 @@ const handleMotorInsurance = () => {
                                                 size="lg"
                                                 block={true}
                                                 onClick={handleLifeInsurance}
+                                            />
+                                            <Button
+                                                text='Cancel'
+                                                size="lg"
+                                                block={true}
+                                                onClick={handleCancel}
+
                                             />
 
                                         </Grid>

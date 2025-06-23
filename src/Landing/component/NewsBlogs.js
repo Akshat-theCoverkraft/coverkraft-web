@@ -76,76 +76,84 @@ const BlogSection = () => {
   }));
 
   return (
-    <Box sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1, pl:12, pr: 12}}>
+    <Box sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1, pl: 12, pr: 12 }}>
       <Typography variant="h4" sx={{ color: '#FF9906', fontWeight: 700, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
         News And Blogs
       </Typography>
       <Typography variant="h4" sx={{ color: '#FFf', fontWeight: 500, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
-Latest From The Blogs      </Typography>
+        Latest From The Blogs      </Typography>
 
       <Grid container spacing={4} alignItems="stretch">
         {/* LEFT SIDE: Vertical Short Video */}
-    {/* LEFT SIDE: Vertical Short Video */}
-<Grid item xs={12} md={4}>
-  <Card
-    sx={{
-      borderRadius: '40px',
-      bgcolor: '#212121',
-      overflow: 'hidden',
-      cursor: 'pointer',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-    }}
-    onClick={() => navigate(`/coverkraft/feed/${short.type}/${short._id}`)}
-  >
-    {/* VIDEO SECTION */}
-    <Box sx={{ width: '100%', height: '450px', overflow: 'hidden' }}>
-      <video
-        src={getUrl(short)}
-        autoPlay
-        muted
-        loop
-        playsInline
-        controls={false}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          borderRadius: '40px 40px 0 0',
-        }}
-      />
-    </Box>
+        {/* LEFT SIDE: Vertical Short Video */}
+        <Grid item xs={12} md={4}>
+          <Card
+            sx={{
+              borderRadius: '40px',
+              bgcolor: '#212121',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+            onClick={() => navigate(`/coverkraft/feed/${short.type}/${short._id}`)}
+          >
+            {/* VIDEO SECTION */}
+            <Box sx={{ width: '100%', height: '450px', overflow: 'hidden' }}>
+              <video
+                src={getUrl(short)}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls={false}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '40px 40px 0 0',
+                }}
+              />
+            </Box>
 
-    {/* DETAILS BELOW VIDEO */}
-    <CardContent sx={{ p: 3 }}>
-      {renderCardHeader(short.type)}
-      <Typography
-        variant="h6"
-        color="#fff"
-        gutterBottom
-        sx={{ fontSize: '1.4rem', fontWeight: 'bold' }}
-      >
-        {short.subtitle}
-      </Typography>
-      <Typography
-        variant="body2"
-        color="#DCDCDC"
-        sx={{
-          fontSize: '1.05rem',
-          mb: 1.5,
-          lineHeight: 1.5,
-        }}
-      >
-        {short.description}
-      </Typography>
-      <Typography variant="body2" color="#888">
-        {moment(short.createdAt).format('MMM DD, YYYY')}
-      </Typography>
-    </CardContent>
-  </Card>
-</Grid>
+            {/* DETAILS BELOW VIDEO */}
+            <CardContent sx={{ p: 3 }}>
+              {renderCardHeader(short.type)}
+              <Typography
+                variant="h6"
+                color="#fff"
+                gutterBottom
+                sx={{ fontSize: '1.4rem', fontWeight: 'bold' }}
+              >
+                {short.subtitle}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="#DCDCDC"
+                sx={{
+                  fontSize: '1.05rem',
+                  mb: 1.5,
+                  lineHeight: 1.5,
+                }}
+              >
+                {short.description}
+              </Typography>
+              <Typography variant="body2" color="#888">
+                {moment(short.createdAt).format('MMM DD, YYYY')}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="#7BC043"
+                sx={{mt: '-15px',  fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' }, paddingLeft: "78%" }}
+                onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
+              >
+                Read More →
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
 
 
 
@@ -177,7 +185,7 @@ Latest From The Blogs      </Typography>
                 <Typography
                   variant="body1"
                   color="#7BC043"
-                  sx={{ mt: 1, fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' } }}
+                  sx={{mt: '-15px', fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' }, paddingLeft: "90%" }}
                   onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
                 >
                   Read More →
