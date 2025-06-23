@@ -9,12 +9,13 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import API_URL from '../../ServiceModule/Service';
-import "./CSS/3dCard.css"
+import "./CSS/3dCard.css";
 
-const CARD_WIDTH = 350;
-const CARD_GAP = 24;
+const CARD_WIDTH = 410;
+const CARD_GAP = 28;
 const CARDS_VISIBLE = 3;
 const AUTO_SLIDE_INTERVAL = 5000;
+const CARD_HEIGHT = 300; // fixed uniform height
 
 const truncateText = (text, maxLength = 100) =>
   text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
@@ -23,7 +24,14 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
   const isTruncated = description.length > 120;
 
   return (
-    <Box position="relative" sx={{ width: CARD_WIDTH, flexShrink: 0 }}>
+    <Box
+      position="relative"
+      sx={{
+        width: CARD_WIDTH,
+        flexShrink: 0,
+        height: CARD_HEIGHT,
+      }}
+    >
       <Typography
         component="div"
         sx={{
@@ -41,47 +49,55 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         {number < 10 ? `0${number}` : number}
       </Typography>
 
-      <Card
-        className="text-white card-container"
-        sx={{
-          background: 'linear-gradient(to right, rgb(67, 65, 65), rgb(0, 0, 0))',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: '20px',
-          minHeight: '180px',
-          p: 3,
-          position: 'relative',
-          height: '100%',
-          width: '130%',
-        }}
-      >
-        <CardContent>
-          <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#fff', paddingLeft: "20px" }}>
-            {title}
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontSize: '16px', color: '#ccc', lineHeight: '1.5', mt: 1,paddingLeft: "20px" }}
-          >
-            {truncateText(description, 120)}
-          </Typography>
-
-          {isTruncated && (
+      <Box className="policy-container" sx={{ height: '100%' }}>
+        <Card
+          className="text-white"
+          sx={{
+            background: 'linear-gradient(to right, #212121, #121212)',
+            borderRadius: '25px',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            p: 3,
+            position: 'relative',
+          }}
+        >
+          <CardContent sx={{ flexGrow: 1 }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#fff', paddingLeft: "20px" }}>
+              {title}
+            </Typography>
             <Typography
-              onClick={onSeeMore}
+              variant="body1"
               sx={{
-                color: '#5A9F1D',
-                cursor: 'pointer',
-                mt: 2,
-                fontWeight: 'bold',
-                fontSize: '14px',
-                paddingLeft: "70%"
+                fontSize: '16px',
+                color: '#ccc',
+                lineHeight: '1.5',
+                mt: 1,
+                paddingLeft: "20px"
               }}
             >
-              See More...
+              {truncateText(description, 120)}
             </Typography>
-          )}
-        </CardContent>
-      </Card>
+
+            {isTruncated && (
+              <Typography
+                onClick={onSeeMore}
+                sx={{
+                  color: '#5A9F1D',
+                  cursor: 'pointer',
+                  mt: 2,
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  paddingLeft: "70%",
+                }}
+              >
+                See More...
+              </Typography>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
     </Box>
   );
 };
@@ -135,7 +151,6 @@ const WhyCoverKraft = () => {
     }
   };
 
-  // Auto-slide logic
   useEffect(() => {
     const interval = setInterval(() => {
       const nextPage = (currentPage + 1) % totalPages;
@@ -152,9 +167,6 @@ const WhyCoverKraft = () => {
         <Typography variant="subtitle1" sx={{ color: '#f39c12', fontSize: '2.7rem', fontWeight: 600 }}>
           TIPS & TRICKS
         </Typography>
-        {/* <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#fff', mt: 1, mb: 2 }}>
-          Why Prefer <span style={{ color: '#fff' }}>CoverKraft</span>
-        </Typography> */}
         <Typography
           variant="body1"
           sx={{
@@ -164,21 +176,23 @@ const WhyCoverKraft = () => {
             fontSize: '18px',
           }}
         >
-          Choose us for personalized  solutions, exceptional customer care,
+          Choose us for personalized solutions, exceptional customer care,
           and unwavering commitment to protecting what matters most to you.
         </Typography>
       </Box>
 
-      {/* Card carousel container */}
+      {/* Card carousel */}
       <Box
         ref={scrollRef}
         sx={{
           display: 'flex',
           overflowX: 'auto',
-          gap: '200px',
+          gap: `${CARD_GAP}px`,
           mt: 6,
-          px: 1,
+          px: 5,
           scrollBehavior: 'smooth',
+          // maxWidth: `${(CARD_WIDTH + CARD_GAP) * CARDS_VISIBLE - CARD_GAP + 10}px`,
+          mx: 'auto',
           scrollbarWidth: 'none',
           '&::-webkit-scrollbar': { display: 'none' },
         }}
@@ -237,7 +251,7 @@ const WhyCoverKraft = () => {
           >
             <CloseIcon />
           </IconButton>
-          <Typography variant="h5" mb={2} sx={{paddingLeft: "50px"}}>
+          <Typography variant="h5" mb={2} sx={{ paddingLeft: "50px" }}>
             {popupContent?.title}
           </Typography>
           <Box
