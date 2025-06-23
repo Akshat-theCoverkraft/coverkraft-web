@@ -119,7 +119,7 @@ const Blog = () => {
   const renderCard = (post, index) => (
     <Card
       key={`${post?._id}-${index}`}
-      onClick={() => navigate(`/coverkraft/feed/${post?.type}`)}
+      onClick={() => navigate(`/feed/${post?.type}`)}
     >
       <MediaContainer>
         {post?.newsVideo ? (
@@ -221,7 +221,7 @@ const Blog = () => {
           }}
         >
           <Link
-            to={`/coverkraft/feed/${post?.type}`}
+            to={`/feed/${post?.type}`}
             style={{
               textDecoration: "none",
               fontWeight: "bold",
@@ -265,7 +265,7 @@ const Blog = () => {
         <Grid item xs={12} style={{ textAlign: "center", marginTop: "40px", marginBottom: "20px", }}>
           <MuiButton
             variant="contained"
-            onClick={() => navigate(`/coverkraft/feed/${firstPostType}`)}
+            onClick={() => navigate(`/feed/${firstPostType}`)}
             style={{
               borderRadius: "25px",
               padding: "10px 20px",

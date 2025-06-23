@@ -115,7 +115,7 @@ console.log(type, id, "<===type")
                     <p className="card-text">
                         {truncateString(mBlog?.description)}
                     </p>
-                    <MuiButton onClick={() => navigate(`/coverkraft/feed/blog/${mBlog?._id}`)} variant="text" className="text-light">
+                    <MuiButton onClick={() => navigate(`/feed/blog/${mBlog?._id}`)} variant="text" className="text-light">
                      Read More <img src={arrow} style={{height: '16px'}} className='ml-2' alt="arrow-right" />
                     </MuiButton>
                   </div>

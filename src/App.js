@@ -67,7 +67,7 @@ function App() {
     if (loginTime) {
       const resetTimer = () => {
         if (logoutTimer) clearTimeout(logoutTimer);
-        const excludedPages = ["/coverkraft", "/coverkraft/login"];
+        const excludedPages = ["", "/login"];
         if (!excludedPages.includes(window.location.pathname)) {
           logoutTimer = setTimeout(() => {
             handleLogout();
@@ -82,15 +82,15 @@ function App() {
   const handleLogout = () => {
     setLogout(true);
     setIsLoggedIn(false);
-    navigate("/coverkraft");
+    navigate("");
   };
 
   const handleRefresh = () => {
-    const excludedPages = ["/coverkraft", "/coverkraft/login"];
+    const excludedPages = ["", "/login"];
     if (!excludedPages.includes(window.location.pathname)) {
       setLogout(true);
       setIsLoggedIn(false);
-      navigate("/coverkraft");
+      navigate("");
     }
   };
 
@@ -103,29 +103,29 @@ function App() {
       <UniversalHomeButton />
 
       <Routes>
-        <Route path="/coverkraft" element={<Landing />} />
-        <Route path="/coverkraft/register" element={<Register />} />
-        <Route path="/coverkraft/login" element={<Login />} />
-        <Route path="/coverkraft/vault" element={<Vault />} />
-        <Route path="/coverkraft/motor-policy" element={<MotorPolicyForm />} />
+        <Route path="" element={<Landing />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/vault" element={<Vault />} />
+        <Route path="/motor-policy" element={<MotorPolicyForm />} />
         <Route
-          path="/coverkraft/health-policy"
+          path="/health-policy"
           element={<HealthPolicyForm />}
         />
-        <Route path="/coverkraft/life-policy" element={<LifePolicyForm />} />
-        <Route path="/coverkraft/add-policy" element={<AddPolicy />} />
-        <Route path="/coverkraft/edit-policy" element={<EditPolicy />} />
-        <Route path="/coverkraft/profile" element={<ProfileDrawer />} />
-        <Route path="/coverkraft/family" element={<Family />} />
-        <Route path="/coverkraft/about" element={<About />} />
-        <Route path="/coverkraft/notification" element={<NotificationPage />} />
-        <Route path="/coverkraft/feed/:type" element={<Feeds />} />
-        <Route path="/coverkraft/feed/:type/:id" element={<BlogDetails />} />
-        <Route path="/coverkraft/privacypolicy" element={<PrivacyPolicy />} />
-        <Route path='/coverkraft/privacypolicy' element={<PrivacyPolicy />} />
-        <Route path="/coverkraft/legal" element={<LegalPoliciesPage />} />
-        <Route path="/coverkraft/contactus" element={<ContactUs />} />
-        <Route path="/coverkraft/policy-type" element={<PolicyType />} />
+        <Route path="/life-policy" element={<LifePolicyForm />} />
+        <Route path="/add-policy" element={<AddPolicy />} />
+        <Route path="/edit-policy" element={<EditPolicy />} />
+        <Route path="/profile" element={<ProfileDrawer />} />
+        <Route path="/family" element={<Family />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/notification" element={<NotificationPage />} />
+        <Route path="/feed/:type" element={<Feeds />} />
+        <Route path="/feed/:type/:id" element={<BlogDetails />} />
+        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+        <Route path='/privacypolicy' element={<PrivacyPolicy />} />
+        <Route path="/legal" element={<LegalPoliciesPage />} />
+        <Route path="/contactus" element={<ContactUs />} />
+        <Route path="/policy-type" element={<PolicyType />} />
         <Route path="/policy-details/:id" element={<PolicyDetails />} />
         {/* Add more routes as needed */}
       </Routes>

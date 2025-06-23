@@ -199,7 +199,7 @@ console.log('policydetails',policyDetails)
     //     .then((response) => {
     //         if (response && response.status === 200) { // Ensure the response is successful
     //             toast.success("Successfully Created");
-    //             navigate('/coverkraft/vault');
+    //             navigate('/vault');
     //         } else {
     //             throw new Error("Failed to create policy");
     //         }
@@ -246,7 +246,7 @@ console.log('policydetails',policyDetails)
     //         if (response && response.status === 200) {
 
     //             toast.success("Successfully Created");
-    //             navigate('/coverkraft/vault');
+    //             navigate('/vault');
     //         } else {
     //             console.log('hello error',response.response.status)
     //             toast.error('Error creating policy')
@@ -294,7 +294,7 @@ console.log('policydetails',policyDetails)
     
             if (response && response.status === 200) {
                 toast.success("Successfully Created");
-                navigate('/coverkraft/vault');
+                navigate('/vault');
             } else {
                 console.log('hello error', response.status);
                 toast.error('Error creating policy');
@@ -334,7 +334,7 @@ console.log('policydetails',policyDetails)
         dispatch(updateDocument(API_URL, formData))
             .then(() => {
                 toast.success("Successfully Updated");
-                navigate('/coverkraft/vault')
+                navigate('/vault')
             })
             .catch((error) => {
                 toast.error("Error updating policy");

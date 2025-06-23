@@ -21,9 +21,9 @@ import { THEME_COLOR } from "../constants";
 import { Margin, MarginOutlined } from "@mui/icons-material";
 
 const NAV_ITEMS = [
-  { key: "home", label: "Home", path: "/coverkraft" },
-  { key: "about", label: "About Us", path: "/coverkraft/about", auth: true },
-  { key: "contact", label: "Contact Us", path: "/coverkraft/contactus", auth: true },
+  { key: "home", label: "Home", path: "" },
+  { key: "about", label: "About Us", path: "/about", auth: true },
+  { key: "contact", label: "Contact Us", path: "/contactus", auth: true },
 ];
 
 const MORE_MENU_ITEMS = [
@@ -85,7 +85,7 @@ function Navbar({ scrollToContactBottom }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const loggedIn = useMemo(() => localStorage.getItem("loggedIn") === "true", []);
-  const isHomePage = useMemo(() => location.pathname === "/coverkraft", [location.pathname]);
+  const isHomePage = useMemo(() => location.pathname === "", [location.pathname]);
 
   const visibleNavItems = useMemo(() => {
     return NAV_ITEMS.filter((item) => {
@@ -96,7 +96,7 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleNavigation = useCallback(
     (item) => {
-      if (item.auth && !loggedIn) return navigate("/coverkraft/login");
+      if (item.auth && !loggedIn) return navigate("/login");
       navigate(item.path);
     },
     [loggedIn, navigate]
@@ -117,7 +117,7 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleVault = () => {
     navigate(
-      localStorage.getItem("token") ? "/coverkraft/vault" : "/coverkraft/login"
+      localStorage.getItem("token") ? "/vault" : "/login"
     );
   };
 
@@ -142,7 +142,7 @@ function Navbar({ scrollToContactBottom }) {
             height={70}
             width={280}
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("/coverkraft")}
+            onClick={() => navigate("")}
           />
 
           {isMobile ? (
@@ -175,7 +175,7 @@ function Navbar({ scrollToContactBottom }) {
                     <MenuItem
                       key="notify"
                       onClick={() => {
-                        navigate("/coverkraft/notification");
+                        navigate("/notification");
                         setMobileAnchor(null);
                       }}
                     >
@@ -188,7 +188,7 @@ function Navbar({ scrollToContactBottom }) {
                 ) : (
                   <MenuItem
                     onClick={() => {
-                      navigate("/coverkraft/login");
+                      navigate("/login");
                       setMobileAnchor(null);
                     }}
                   >
@@ -220,7 +220,7 @@ function Navbar({ scrollToContactBottom }) {
                     src={notificationIcon}
                     alt="notification"
                     style={{ height: 24, width: 24, cursor: "pointer" }}
-                    onClick={() => navigate("/coverkraft/notification")}
+                    onClick={() => navigate("/notification")}
                   />
                   <img
                     src={profileIcon}
@@ -261,7 +261,7 @@ function Navbar({ scrollToContactBottom }) {
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton onClick={() => navigate("/coverkraft/login")}>Login</StyledButton>
+                <StyledButton onClick={() => navigate("/login")}>Login</StyledButton>
               )}
               <StyledButton onClick={handleVault}>Policy Vault</StyledButton>
               {isHomePage && (
