@@ -66,7 +66,7 @@ const Register = () => {
         try {
             await dispatch(registrationCustomer(API_URL, formData));
             toast.success('Successfully Registered');
-            navigate("/coverkraft/login");
+            navigate("/login");
         } catch (error) {
             toast.error('Registration failed');
         } finally {
@@ -75,7 +75,7 @@ const Register = () => {
     };
 
     const handleCancel = () => {
-        navigate("/coverkraft"); // Navigate to home page
+        navigate("/"); // Navigate to home page
     };
 
     // Trigger register on Enter key
@@ -304,7 +304,7 @@ const Register = () => {
                                         </div>
                                         <p className="medium fw-bold mt-2 pt-1 mb-0 text-center">
                                             Already have an account?{' '}
-                                            <Link to="/coverkraft/login" className="custom-color">
+                                            <Link to="/login" className="custom-color">
                                                 Login
                                             </Link>
                                         </p>

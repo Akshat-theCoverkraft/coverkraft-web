@@ -158,13 +158,13 @@ const Vault = () => {
 
         // Navigation based on policy type
         const navigationMap = {
-          car_policy: "/coverkraft/motor-policy",
-          bike_policy: "/coverkraft/motor-policy",
-          other_vehicle: "/coverkraft/motor-policy",
-          health: "/coverkraft/health-policy",
-          other_health: "/coverkraft/health-policy",
-          life: "/coverkraft/life-policy",
-          accident: "/coverkraft/life-policy"
+          car_policy: "/motor-policy",
+          bike_policy: "/motor-policy",
+          other_vehicle: "/motor-policy",
+          health: "/health-policy",
+          other_health: "/health-policy",
+          life: "/life-policy",
+          accident: "/life-policy"
         };
 
         const route = navigationMap[policyType];

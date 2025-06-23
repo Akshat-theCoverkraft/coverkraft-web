@@ -16,11 +16,11 @@ const Footer = () => {
 
   const handleStaticNav = (route) => () => {
     // Check login status only for 'Policy Vault'
-    if (route === "/coverkraft/vault") {
+    if (route === "/vault") {
       const isLoggedIn = localStorage.getItem("isLoggedIn"); // replace with actual key if needed
       if (!isLoggedIn || isLoggedIn === "false") {
         // Redirect to login if not logged in
-        navigate("/coverkraft/login");
+        navigate("/login");
         return;
       }
     }
@@ -28,20 +28,20 @@ const Footer = () => {
   };
 
   const servicesLinks = [
-    { to: "/coverkraft", label: "Home" },
-    // { to: "/coverkraft/about", label: "About Us" },
-    { to: "/coverkraft/vault", label: "Policy Vault" },
-    { to: "/coverkraft/contactus", label: "Contact Us" },
-    { label: "Grievance Redress Policy", to: "/coverkraft/legal#GrievanceRedressPolicy" },
+    { to: "", label: "Home" },
+    // { to: "/about", label: "About Us" },
+    { to: "/vault", label: "Policy Vault" },
+    { to: "/contactus", label: "Contact Us" },
+    { label: "Grievance Redress Policy", to: "/legal#GrievanceRedressPolicy" },
 
   ];
 
   const companyLinks = [
-    { label: "About Us", to: "/coverkraft/about" },
-    { label: "Privacy Policy", to: "/coverkraft/legal#PrivacyPolicy" },
-    { label: "Legal And Admin Policies", to: "/coverkraft/legal" },
-    { label: "Disclaimer", to: "/coverkraft/legal#disclaimer" },
-    { label: "Terms of Use", to: "/coverkraft/legal#TermsOfUse" },
+    { label: "About Us", to: "/about" },
+    { label: "Privacy Policy", to: "/legal#PrivacyPolicy" },
+    { label: "Legal And Admin Policies", to: "/legal" },
+    { label: "Disclaimer", to: "/legal#disclaimer" },
+    { label: "Terms of Use", to: "/legal#TermsOfUse" },
   ];
 
   const socialIcons = [

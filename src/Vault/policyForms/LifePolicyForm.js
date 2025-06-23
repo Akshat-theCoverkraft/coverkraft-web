@@ -215,7 +215,7 @@ const LifePolicyForm = () => {
     dispatch(saveDocument(API_URL, formData))
       .then(() => {
         toast.success("Successfully Created");
-        navigate("/coverkraft/vault");
+        navigate("/vault");
       })
       .catch((error) => {
         toast.error("Error creating policy");
@@ -247,7 +247,7 @@ const LifePolicyForm = () => {
     dispatch(updateDocument(API_URL, formData))
       .then(() => {
         toast.success("Successfully Updated");
-        navigate("/coverkraft/vault");
+        navigate("/vault");
       })
       .catch((error) => {
         toast.error("Error updating policy");
