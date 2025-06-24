@@ -177,17 +177,149 @@ const policies = [
         ),
     },
     {
-        label: "License",
-        id: "License",
+        label: "Terms of Use",
+        id: "TermsOfUse",
         content: (
-            <div id="License">
-                <h2 style={{ color: "#FFFFFF", marginBottom: "2rem", fontSize: "1.8rem", fontWeight: "700" }}>License</h2>
-                <div style={{ color: "#FFFFFF", lineHeight: "1.9", fontSize: "1.1rem", fontWeight: "500" }}>
-                    <p style={{ margin: "0", textAlign: "left" }}>Your license information will go here...</p>
-                </div>
+            <div
+                id="TermsOfUse"
+                style={{
+                    maxWidth: '1500px',
+                    margin: '2rem auto',
+                    // padding: '1rem',
+                    color: '#E0E0E0',
+                    lineHeight: '1.8',
+                    fontSize: '1.7rem',
+                    borderRadius: '10px',
+                    fontFamily: 'Arial, sans-serif'
+                }}
+            >
+                <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+                    Terms of Use for{' '}
+                    <a
+                        href="http://www.TheCoverKraft.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#8BC642', textDecoration: 'underline' }}
+                    >
+                        www.TheCoverKraft.com
+                    </a>{' '}
+                    and “CoverKraft” App
+                </h2>
+
+                <p>
+                    Welcome to www.TheCoverKraft.com and the “CoverKraft” mobile application (“we,” “us,” or “our”). These Terms of Use (“Terms”) govern your access to and use of our website and mobile application (collectively, the “Services”). By accessing or using our Services, you agree to be bound by these Terms. If you do not agree, please do not use our Services.
+                </p>
+
+                <h2 style={{ color: '#8BC642' }}>1. Acceptance of Terms</h2>
+                <ul>
+                    <li>You are at least 18 years old and legally capable of entering into contracts.</li>
+                    <li>You agree to comply with all applicable laws and regulations.</li>
+                    <li>You accept these Terms and our Privacy Policy.</li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>2. Description of Services</h2>
+                <p>
+                    www.TheCoverKraft.com and the “CoverKraft” App provide insurance awareness, educational content, policy comparison, quote generation, policy purchase facilitation, and a Policy Vault for storing insurance documents and renewal reminders. <br />
+                    We do not provide insurance coverage directly but act as an insurance intermediary/broker authorized under IRDAI regulations.
+                </p>
+
+                <h2 style={{ color: '#8BC642' }}>3. User Account</h2>
+                <ul>
+                    <li>To access certain features, you may need to create an account.</li>
+                    <li>You agree to provide accurate, current, and complete information during registration.</li>
+                    <li>You are responsible for safeguarding your login credentials and for all activities under your account.</li>
+                    <li>Notify us immediately if you suspect unauthorized use of your account.</li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>4. User Obligations</h2>
+                <ul>
+                    <li>Do not use the Services for any unlawful or fraudulent purposes.</li>
+                    <li>Do not upload or post any harmful, defamatory, obscene, or infringing content.</li>
+                    <li>Do not attempt unauthorized access to systems or user accounts.</li>
+                    <li>Do not interfere with our servers or use bots/scrapers without consent.</li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>5. Intellectual Property Rights</h2>
+                <ul>
+                    <li>All content, trademarks, software, and materials are owned or licensed by us.</li>
+                    <li>You may use the content only for personal, non-commercial purposes.</li>
+                    <li>No part may be copied or redistributed without our written consent.</li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>6. Insurance Products and Advice</h2>
+                <ul>
+                    <li>We help you understand insurance options, but don’t provide guarantees on accuracy.</li>
+                    <li>Purchases are governed by individual insurer terms.</li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>7. Payments and Transactions</h2>
+                <ul>
+                    <li>Payments are processed securely through third-party gateways.</li>
+                    <li>We are not liable for failures caused by payment processors.</li>
+                    <li>Refunds and claims are managed by insurers.</li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>8. Policy Vault</h2>
+                <ul>
+                    <li>You may upload and store policy documents in your account.</li>
+                    <li>You are responsible for the legality and correctness of uploaded documents.</li>
+                    <li>We protect your data but cannot guarantee absolute security.</li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>9. Limitation of Liability</h2>
+                <ul>
+                    <li>
+                        To the extent permitted by law:
+                        <ul>
+                            <li>We disclaim all warranties, express or implied.</li>
+                            <li>We are not liable for indirect, incidental, or consequential damages.</li>
+                            <li>We don’t guarantee uninterrupted access or service error-free.</li>
+                            <li>We are not responsible for third-party sites or services.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>10. Indemnification</h2>
+                <p>
+                    You agree to indemnify and hold harmless TheCoverKraft.com and its officers, agents, and partners against all claims arising from your use of our Services.
+                </p>
+
+                <h2 style={{ color: '#8BC642' }}>11. Termination</h2>
+                <ul>
+                    <li>We may suspend or terminate access for violations or any reason.</li>
+                    <li>Upon termination, all rights to access Services cease immediately.</li>
+                    <li>Certain sections survive post-termination.</li>
+                </ul>
+
+                <h2 style={{ color: '#8BC642' }}>12. Changes to Terms</h2>
+                <p>
+                    We may update these Terms periodically. Changes will be communicated via website or app notifications. Continued use means acceptance.
+                </p>
+
+                <h2 style={{ color: '#8BC642' }}>13. Governing Law and Jurisdiction</h2>
+                <p>
+                    These Terms are governed by Indian law. Disputes shall be handled in the courts of Bhopal, Madhya Pradesh.
+                </p>
+
+                <h2 style={{ color: '#8BC642' }}>14. Contact Us</h2>
+                <p>
+                    For queries regarding these Terms, contact us at:<br />
+                    <strong>CoverKraft Insurance Brokers Private Limited</strong><br />
+                    16 D-1, Danish Nagar, Hoshangabad Road, Bhopal, Madhya Pradesh – 462026<br />
+                    Email:{' '}
+                    <a href="mailto:contact@thecoverkraft.com" style={{ color: '#8BC642', textDecoration: 'underline' }}>
+                        contact@thecoverkraft.com
+                    </a>
+                </p>
+
+                <p style={{ marginTop: '2rem', fontStyle: 'italic', color: '#CCCCCC' }}>
+                    By using TheCoverKraft.com and the CoverKraft App, you acknowledge that you have read, understood, and agreed to these Terms of Use.
+                </p>
             </div>
         ),
+
     },
+    
     {
         label: "Terms & Conditions",
         id: "TermsAndConditions",
@@ -512,149 +644,17 @@ const policies = [
         ),
     },
     {
-        label: "Terms of Use",
-        id: "TermsOfUse",
+        label: "License",
+        id: "License",
         content: (
-            <div
-                id="TermsOfUse"
-                style={{
-                    maxWidth: '1500px',
-                    margin: '2rem auto',
-                    // padding: '1rem',
-                    color: '#E0E0E0',
-                    lineHeight: '1.8',
-                    fontSize: '1.7rem',
-                    borderRadius: '10px',
-                    fontFamily: 'Arial, sans-serif'
-                }}
-            >
-                <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
-                    Terms of Use for{' '}
-                    <a
-                        href="http://www.TheCoverKraft.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: '#8BC642', textDecoration: 'underline' }}
-                    >
-                        www.TheCoverKraft.com
-                    </a>{' '}
-                    and “CoverKraft” App
-                </h2>
-
-                <p>
-                    Welcome to www.TheCoverKraft.com and the “CoverKraft” mobile application (“we,” “us,” or “our”). These Terms of Use (“Terms”) govern your access to and use of our website and mobile application (collectively, the “Services”). By accessing or using our Services, you agree to be bound by these Terms. If you do not agree, please do not use our Services.
-                </p>
-
-                <h2 style={{ color: '#8BC642' }}>1. Acceptance of Terms</h2>
-                <ul>
-                    <li>You are at least 18 years old and legally capable of entering into contracts.</li>
-                    <li>You agree to comply with all applicable laws and regulations.</li>
-                    <li>You accept these Terms and our Privacy Policy.</li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>2. Description of Services</h2>
-                <p>
-                    www.TheCoverKraft.com and the “CoverKraft” App provide insurance awareness, educational content, policy comparison, quote generation, policy purchase facilitation, and a Policy Vault for storing insurance documents and renewal reminders. <br />
-                    We do not provide insurance coverage directly but act as an insurance intermediary/broker authorized under IRDAI regulations.
-                </p>
-
-                <h2 style={{ color: '#8BC642' }}>3. User Account</h2>
-                <ul>
-                    <li>To access certain features, you may need to create an account.</li>
-                    <li>You agree to provide accurate, current, and complete information during registration.</li>
-                    <li>You are responsible for safeguarding your login credentials and for all activities under your account.</li>
-                    <li>Notify us immediately if you suspect unauthorized use of your account.</li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>4. User Obligations</h2>
-                <ul>
-                    <li>Do not use the Services for any unlawful or fraudulent purposes.</li>
-                    <li>Do not upload or post any harmful, defamatory, obscene, or infringing content.</li>
-                    <li>Do not attempt unauthorized access to systems or user accounts.</li>
-                    <li>Do not interfere with our servers or use bots/scrapers without consent.</li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>5. Intellectual Property Rights</h2>
-                <ul>
-                    <li>All content, trademarks, software, and materials are owned or licensed by us.</li>
-                    <li>You may use the content only for personal, non-commercial purposes.</li>
-                    <li>No part may be copied or redistributed without our written consent.</li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>6. Insurance Products and Advice</h2>
-                <ul>
-                    <li>We help you understand insurance options, but don’t provide guarantees on accuracy.</li>
-                    <li>Purchases are governed by individual insurer terms.</li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>7. Payments and Transactions</h2>
-                <ul>
-                    <li>Payments are processed securely through third-party gateways.</li>
-                    <li>We are not liable for failures caused by payment processors.</li>
-                    <li>Refunds and claims are managed by insurers.</li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>8. Policy Vault</h2>
-                <ul>
-                    <li>You may upload and store policy documents in your account.</li>
-                    <li>You are responsible for the legality and correctness of uploaded documents.</li>
-                    <li>We protect your data but cannot guarantee absolute security.</li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>9. Limitation of Liability</h2>
-                <ul>
-                    <li>
-                        To the extent permitted by law:
-                        <ul>
-                            <li>We disclaim all warranties, express or implied.</li>
-                            <li>We are not liable for indirect, incidental, or consequential damages.</li>
-                            <li>We don’t guarantee uninterrupted access or service error-free.</li>
-                            <li>We are not responsible for third-party sites or services.</li>
-                        </ul>
-                    </li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>10. Indemnification</h2>
-                <p>
-                    You agree to indemnify and hold harmless TheCoverKraft.com and its officers, agents, and partners against all claims arising from your use of our Services.
-                </p>
-
-                <h2 style={{ color: '#8BC642' }}>11. Termination</h2>
-                <ul>
-                    <li>We may suspend or terminate access for violations or any reason.</li>
-                    <li>Upon termination, all rights to access Services cease immediately.</li>
-                    <li>Certain sections survive post-termination.</li>
-                </ul>
-
-                <h2 style={{ color: '#8BC642' }}>12. Changes to Terms</h2>
-                <p>
-                    We may update these Terms periodically. Changes will be communicated via website or app notifications. Continued use means acceptance.
-                </p>
-
-                <h2 style={{ color: '#8BC642' }}>13. Governing Law and Jurisdiction</h2>
-                <p>
-                    These Terms are governed by Indian law. Disputes shall be handled in the courts of Bhopal, Madhya Pradesh.
-                </p>
-
-                <h2 style={{ color: '#8BC642' }}>14. Contact Us</h2>
-                <p>
-                    For queries regarding these Terms, contact us at:<br />
-                    <strong>CoverKraft Insurance Brokers Private Limited</strong><br />
-                    16 D-1, Danish Nagar, Hoshangabad Road, Bhopal, Madhya Pradesh – 462026<br />
-                    Email:{' '}
-                    <a href="mailto:contact@thecoverkraft.com" style={{ color: '#8BC642', textDecoration: 'underline' }}>
-                        contact@thecoverkraft.com
-                    </a>
-                </p>
-
-                <p style={{ marginTop: '2rem', fontStyle: 'italic', color: '#CCCCCC' }}>
-                    By using TheCoverKraft.com and the CoverKraft App, you acknowledge that you have read, understood, and agreed to these Terms of Use.
-                </p>
+            <div id="License">
+                <h2 style={{ color: "#FFFFFF", marginBottom: "2rem", fontSize: "1.8rem", fontWeight: "700" }}>License</h2>
+                <div style={{ color: "#FFFFFF", lineHeight: "1.9", fontSize: "1.1rem", fontWeight: "500" }}>
+                    <p style={{ margin: "0", textAlign: "left" }}>Your license information will go here...</p>
+                </div>
             </div>
         ),
-
     },
-
     {
         label: "Disclaimer",
         id: "disclaimer",
@@ -739,7 +739,8 @@ const policies = [
             </div>
         )
 
-    }
+    },
+    
 ];
 
 const LegalPoliciesTabs = () => {

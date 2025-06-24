@@ -13,6 +13,7 @@
 section.testimonials {
   padding-top: 50px;
   padding-bottom: 60px;
+  padding-left: 45px;
 
   .container {
     .quotes {
@@ -30,7 +31,7 @@ section.testimonials {
         height: 40px;
         color: transparent;
         border: none;
-        background-color: transparent;
+        /* background-color: transparent; */
         cursor: pointer;
       }
 

@@ -222,7 +222,7 @@ const WhyCoverKraft = () => {
               borderRadius: '50%',
               mx: 1,
               cursor: 'pointer',
-              backgroundColor: currentPage === i ? '#5A9F1D' : '#555',
+              backgroundColor: currentPage === i ? '#f39c12' : '#555',
               transition: '0.3s',
             }}
           />

@@ -198,7 +198,10 @@ const HealthPolicyForm = () => {
       })
       .catch((error) => {
         toast.error("Error updating policy");
-     });
+      });
+  }
+  const handleCancel = () => {
+    navigate('/vault')
   }
   return (
     <div>
@@ -333,6 +336,17 @@ const HealthPolicyForm = () => {
                       setTotalSumAssured(e.target.value);
                     }}
                   />
+                  <div className='mt-5'></div>
+                  <div className='mt-5'></div>
+                  <div className='mt-5'></div>
+                  <Button
+                  text='Cancel'
+                  size="sm"
+                  block={true}
+                    onClick={handleCancel}
+                    className='mt-5 mb-2'
+
+                />
                 </Grid>
               </Grid>
             </div>
