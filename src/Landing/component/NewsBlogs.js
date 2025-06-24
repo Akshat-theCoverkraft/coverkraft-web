@@ -21,10 +21,9 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await axios.get('http://52.52.154.65:5242/news/getAll');
-        const sorted = (res.data?.data || []).sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
+        const res = await axios.get('http://52.52.154.65:5242/news/getAll?isActive=true');
+        const sorted = (res.data?.data || [])
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setPosts(sorted.slice(0, 6));
       } catch (err) {
         console.error('Failed fetching:', err);

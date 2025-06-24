@@ -64,8 +64,15 @@ export default function Faq() {
         const data = await res.json();
         console.log("📦 FAQ Response:", data);
 
-        if (data?.data && Array.isArray(data.data) && data.data.length > 0) {
-          setFaqList(data.data);
+        if (data?.data && Array.isArray(data.data)) {
+          // Only include FAQs with status 'active'
+          const activeFaqs = data.data.filter(faq => faq.status === "active");
+          if (activeFaqs.length > 0) {
+            setFaqList(activeFaqs);
+          } else {
+            console.warn("⚠️ No active FAQs found. Showing placeholder.");
+            setFaqList(placeholderFAQs);
+          }
         } else {
           console.warn("⚠️ No FAQs found. Showing placeholder.");
           setFaqList(placeholderFAQs);
