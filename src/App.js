@@ -32,6 +32,7 @@ import ContactUs from "./pages/ContactUs.jsx";
 import PolicyType from './Landing/component/PolicyType';
 import PolicyDetails from './pages/PolicyDetails';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
+import ScrollToTop from "./component/ScrollToTop.jsx";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
@@ -103,6 +104,7 @@ function App() {
       <UniversalHomeButton />
 
       <Routes>
+        
         <Route path="" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

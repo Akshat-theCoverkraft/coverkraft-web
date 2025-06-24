@@ -6,16 +6,16 @@ import {
   CardContent,
   Modal,
   IconButton,
+  useMediaQuery
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import API_URL from '../../ServiceModule/Service';
 import "./CSS/3dCard.css";
 
-const CARD_WIDTH = 410;
+const CARD_WIDTH = 450;
 const CARD_GAP = 28;
-const CARDS_VISIBLE = 3;
 const AUTO_SLIDE_INTERVAL = 5000;
-const CARD_HEIGHT = 300; // fixed uniform height
+const CARD_HEIGHT = 240;
 
 const truncateText = (text, maxLength = 100) =>
   text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
@@ -86,10 +86,11 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
                 sx={{
                   color: '#5A9F1D',
                   cursor: 'pointer',
-                  mt: 2,
+                  mt: 1,
                   fontWeight: 'bold',
                   fontSize: '14px',
-                  paddingLeft: "70%",
+                  textAlign: 'right',
+                  pr: '20px',
                 }}
               >
                 See More...
@@ -109,6 +110,10 @@ const WhyCoverKraft = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const scrollRef = useRef(null);
 
+  const isSmall = useMediaQuery('(max-width:600px)');
+  const isMedium = useMediaQuery('(max-width:960px)');
+  const CARDS_VISIBLE = isSmall ? 1 : isMedium ? 2 : 3;
+
   const totalPages = Math.ceil(cardData.length / CARDS_VISIBLE);
 
   useEffect(() => {
@@ -117,7 +122,6 @@ const WhyCoverKraft = () => {
         const response = await fetch(`${API_URL}tips/getAll`);
         const result = await response.json();
         if (result.status) {
-          // Only keep cards with status 'active'
           const activeCards = result.data.filter(card => card.status === 'active');
           setCardData(activeCards);
         } else {
@@ -160,12 +164,12 @@ const WhyCoverKraft = () => {
     }, AUTO_SLIDE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [currentPage, cardData.length]);
+  }, [currentPage, totalPages, CARDS_VISIBLE]);
 
   return (
-    <Box sx={{ backgroundColor: '#121212', p: '60px 6%' }}>
+    <Box sx={{ backgroundColor: '#121212', p: '60px 6%', marginLeft: '2%' }}>
       {/* Header */}
-      <Box textAlign="center">
+      <Box textAlign="center ">
         <Typography variant="subtitle1" sx={{ color: '#f39c12', fontSize: '2.7rem', fontWeight: 600 }}>
           TIPS & TRICKS
         </Typography>
@@ -191,9 +195,8 @@ const WhyCoverKraft = () => {
           overflowX: 'auto',
           gap: `${CARD_GAP}px`,
           mt: 6,
-          px: 5,
+          px: 2,
           scrollBehavior: 'smooth',
-          // maxWidth: `${(CARD_WIDTH + CARD_GAP) * CARDS_VISIBLE - CARD_GAP + 10}px`,
           mx: 'auto',
           scrollbarWidth: 'none',
           '&::-webkit-scrollbar': { display: 'none' },
