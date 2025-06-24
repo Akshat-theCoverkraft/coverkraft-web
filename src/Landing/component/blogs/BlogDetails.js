@@ -20,18 +20,17 @@ const NewsBlog = () => {
 console.log(type, id, "<===type")
   const fetchBlogDetails = async () => {
     try {
-        const {data} = await axios.get(`${API_URL}news/get-blog-details?blogId=${id}`);
-        console.log(data?.success, "<===data")
-        if(data?.success){
-            setBlog(data?.blog);
-            setMoreBlogs(data?.moreBlogs);
-        }
-        else{
-            toast.error("Error fetching blog dataelse:", data?.message);
-        }
-
+      const { data } = await axios.get(`${API_URL}news/get-blog-details?blogId=${id}`);
+      if (data?.success) {
+        setBlog(data?.blog);
+        // Only set moreBlogs with status 'active'
+        const activeBlogs = (data?.moreBlogs || []).filter(blog => blog.status === 'active');
+        setMoreBlogs(activeBlogs);
+      } else {
+        toast.error("Error fetching blog data:", data?.message);
+      }
     } catch (error) {
-        toast.error("Error fetching blog datacat:", error);
+      toast.error("Error fetching blog data:", error);
     }
   }
 

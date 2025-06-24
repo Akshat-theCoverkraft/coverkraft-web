@@ -13,11 +13,10 @@ const Carousel1 = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_URL}featureVideo/getAll`);
+        const response = await fetch(`${API_URL}featureVideo/getAll?status=active`);
         const result = await response.json();
         if (result.status) {
-          const activeItems = result.data.filter(item => item.status === "active");
-          setItems(activeItems);
+          setItems(result.data);
         }
       } catch (error) {
         console.error("Error fetching carousel data:", error);

@@ -101,7 +101,9 @@ const WhyCoverKraft = () => {
         const response = await fetch(`${API_URL}tips/getAll`);
         const result = await response.json();
         if (result.status) {
-          setCardData(result.data);
+          // Only keep cards with status 'active'
+          const activeCards = result.data.filter(card => card.status === 'active');
+          setCardData(activeCards);
         } else {
           console.error('Error: Data not retrieved');
         }
