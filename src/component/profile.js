@@ -279,11 +279,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const handleAboutOpen = () => {
     // setAboutDrawerOpen(true);
     onClose();
-    navigate("/coverkraft/about");
+    navigate("/about");
   };
   const handleHelpOpen = () => {
     // alert("Coming soon !");
-    navigate("/coverkraft/contactus");
+    navigate("/contactus");
   };
   const handleLogout = () => {
     LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));

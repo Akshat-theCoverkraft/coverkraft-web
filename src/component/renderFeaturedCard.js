@@ -6,7 +6,7 @@ export const renderFeaturedCard = (post, index) => (
       backgroundColor: "#2c2c3e",
       padding: "1.5em",
     }}
-    onClick={() => navigate(`/coverkraft/feed/${post?.type}`)}
+    onClick={() => navigate(`/feed/${post?.type}`)}
   >
     {/* Date Badge */}
     <div
@@ -70,7 +70,7 @@ export const renderFeaturedCard = (post, index) => (
         {truncateString(post?.description, 150)}
       </Typography>
       <Link
-        to={`/coverkraft/feed/${post?.type}`}
+        to={`/feed/${post?.type}`}
         style={{ color: "#1BD47B", fontWeight: "bold", display: "inline-block", marginTop: "10px" }}
       >
         Read More →

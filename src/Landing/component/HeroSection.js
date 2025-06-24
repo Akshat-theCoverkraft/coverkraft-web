@@ -13,9 +13,9 @@ const HeroSection = () => {
     const isLoggedIn = !!localStorage.getItem("token"); // Change 'token' to your actual key if different
 
     if (isLoggedIn) {
-      navigate("/coverkraft/vault");
+      navigate("/vault");
     } else {
-      navigate("/coverkraft/login"); // Redirect to login if not logged in
+      navigate("/login"); // Redirect to login if not logged in
     }
   };
 

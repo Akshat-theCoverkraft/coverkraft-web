@@ -107,7 +107,7 @@ const Login = () => {
     dispatch(verifyUser(API_URL, formData));
     localStorage.setItem("loggedIn", "true");
     toast.success("Phone number authentication done");
-    navigate("/coverkraft");
+    navigate("/");
   };
   // Trigger login on Enter key
   const handleKeyPress = (e) => {
@@ -295,7 +295,7 @@ const Login = () => {
                       <p className="medium fw-bold mt-2 pt-1 mb-0 text-center">
                         Don't have an account?{" "}
                         <Link
-                          to="/coverkraft/register"
+                          to="/register"
                           className="custom-color"
                         >
                           Register

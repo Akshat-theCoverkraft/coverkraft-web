@@ -5,7 +5,7 @@ import CallIcon from "@mui/icons-material/Call";
 import MailIcon from "@mui/icons-material/Mail";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import Footer from "../Landing/component/Footer";
 function ContactUs() {
     const [form, setForm] = useState({
         name: "",

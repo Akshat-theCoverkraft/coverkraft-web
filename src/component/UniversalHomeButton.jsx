@@ -6,12 +6,12 @@ const UniversalHomeButton = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Hide if already on /coverkraft
-    if (location.pathname === "/coverkraft") return null;
+    // Hide if already on 
+    if (location.pathname === "") return null;
 
     return (
         <button
-            onClick={() => navigate("/coverkraft")}
+            onClick={() => navigate("")}
             className="universal-home-button"
             type="button"
             title="Go to Home"

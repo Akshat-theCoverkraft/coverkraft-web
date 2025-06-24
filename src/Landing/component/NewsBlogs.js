@@ -99,7 +99,7 @@ const BlogSection = () => {
               flexDirection: 'column',
               justifyContent: 'space-between',
             }}
-            onClick={() => navigate(`/coverkraft/feed/${short.type}/${short._id}`)}
+            onClick={() => navigate(`/feed/${short.type}/${short._id}`)}
           >
             {/* VIDEO SECTION */}
             <Box sx={{ width: '100%', height: '450px', overflow: 'hidden' }}>
@@ -148,7 +148,7 @@ const BlogSection = () => {
                 variant="body1"
                 color="#7BC043"
                 sx={{mt: '-15px',  fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' }, paddingLeft: "78%" }}
-                onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
+                onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
               >
                 Read More →
               </Typography>
@@ -164,7 +164,7 @@ const BlogSection = () => {
             <Card
               key={p._id}
               sx={{ mb: 3, display: 'flex', height: 200, borderRadius: 3, bgcolor: '#212121', color: '#fff', cursor: 'pointer' }}
-              onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
+              onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
             >
               <CardMedia
                 component="img"
@@ -187,7 +187,7 @@ const BlogSection = () => {
                   variant="body1"
                   color="#7BC043"
                   sx={{mt: '-15px', fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' }, paddingLeft: "90%" }}
-                  onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
+                  onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
                 >
                   Read More →
                 </Typography>
@@ -199,7 +199,7 @@ const BlogSection = () => {
 
       {/* VIEW ALL BUTTON */}
       <Box textAlign="center" mt={6}>
-        <StyledButton onClick={() => navigate('/coverkraft/feed/:type')}>
+        <StyledButton onClick={() => navigate('/feed/:type')}>
           VIEW ALL
         </StyledButton>
       </Box>
