@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import parse from "html-react-parser"; // ← Import parser
 import API_URL from "../ServiceModule/Service";
 import Button from "../component/Button";
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
-import { toast, ToastContainer } from "react-toastify";
 
 const getImageForType = (type) => {
   if (!type) return require("../Images/img_lifecard.png");
@@ -25,7 +25,7 @@ const getImageForType = (type) => {
   } else if (lowerType.includes("travel")) {
     return require("../Images/img_travelCard.png");
   } else {
-    return require("../Images/img_defaultcard.png"); // default fallback
+    return require("../Images/img_defaultcard.png");
   }
 };
 
@@ -46,47 +46,38 @@ const PolicyDetails = () => {
       .catch(() => setLoading(false));
   }, [id]);
 
-  if (loading)
-    return <div style={{ padding: 50, color: "#fff" }}>Loading...</div>;
-  if (!policy)
-    return <div style={{ padding: 50, color: "#fff" }}>No data found</div>;
+  if (loading) return <div style={{ padding: 50, color: "#fff" }}>Loading...</div>;
+  if (!policy) return <div style={{ padding: 50, color: "#fff" }}>No data found</div>;
 
-  // Static image based on policy type
   const bannerImage = getImageForType(policy.policyType);
 
   return (
     <>
-    <ToastContainer/>
-    <Navbar />
-  
-    <div style={styles.pageWrapper}>
-      {/* Banner */}
-      <div style={styles.bannerWrapper}>
-        <img src={bannerImage} alt="Policy" style={styles.bannerImage} />
+      <Navbar />
+      <div style={styles.pageWrapper}>
+        {/* Banner */}
+        <div style={styles.bannerWrapper}>
+          <img src={bannerImage} alt="Policy" style={styles.bannerImage} />
+        </div>
+
+        {/* Title */}
+        <h1 style={styles.policyTitle}>{policy.policyType}</h1>
+
+        {/* Description */}
+        <div style={styles.policyDescription}>
+          {policy.details ? parse(policy.details) : "No description available."}
+        </div>
+
+        <Button
+          text={"Buy Now"}
+          size="lg"
+          block={true}
+          onClick={() => {
+            alert("Feature coming soon!");
+          }}
+        />
       </div>
-
-      {/* Title */}
-      <h1 style={styles.policyTitle}>{policy.policyType}</h1>
-
-      {/* Description */}
-      <p style={styles.policyDescription}>
-        {(policy.details || '')
-          .replace(/<\/?p[^>]*>/g, '')        // remove opening & closing <p> tags
-          || 'No description available.'}
-      </p>
-
-
-      <Button
-        text={"Buy Now"}
-        size="lg"
-        block={true}
-        onClick={() => {
-          toast.info
-          ("Feature coming soon!");
-        }}
-      />
-    </div>
-    <Footer/>
+      <Footer />
     </>
   );
 };
@@ -95,11 +86,9 @@ const styles = {
   pageWrapper: {
     padding: "2em",
     maxWidth: "900px",
-    height: "100%",
     margin: "0 auto",
     fontFamily: "'Segoe UI', sans-serif",
     background: "linear-gradient(135deg, #1e1e1e, #2c2c2c)",
-    // maxHeight: '100vh',
     color: "#ccc",
     borderRadius: "12px",
     boxShadow: "0 0 20px rgba(0,0,0,0.5)",
@@ -127,7 +116,7 @@ const styles = {
   bannerImage: {
     width: "100%",
     height: "100%",
-    objectFit: "contain", // shows full image
+    objectFit: "contain",
     borderRadius: "35px",
   },
   policyTitle: {
@@ -140,6 +129,9 @@ const styles = {
     fontSize: "1.2em",
     color: "#ccc",
     lineHeight: "1.8",
+    textAlign: "left",
+    maxWidth: "100%",
+    marginBottom: "2em",
   },
 };
 
