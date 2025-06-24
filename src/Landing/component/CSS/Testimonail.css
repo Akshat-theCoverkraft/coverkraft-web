@@ -126,3 +126,31 @@ section.testimonials {
     }
   }
 }
+.quote-wrapper {
+  &.has-video {
+    flex-direction: row;
+    gap: 20px;
+
+    .video-section {
+      flex: 1;
+      video {
+        width: 100%;
+        height: auto;
+        max-height: 240px;
+        border-radius: 10px;
+      }
+    }
+
+    .text-section {
+      flex: 1;
+      /* display: flex; */
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
+}
+@media (max-width: 620px) {
+  .quote-wrapper {
+    flex-direction: column !important;
+  }
+}

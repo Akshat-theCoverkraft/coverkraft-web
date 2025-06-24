@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
 import Button from "../component/Button";
+import Navbar from "../component/Navbar";
+import Footer from "../Landing/component/Footer";
+import { toast, ToastContainer } from "react-toastify";
 
 const getImageForType = (type) => {
   if (!type) return require("../Images/img_lifecard.png");
@@ -52,6 +55,10 @@ const PolicyDetails = () => {
   const bannerImage = getImageForType(policy.policyType);
 
   return (
+    <>
+    <ToastContainer/>
+    <Navbar />
+  
     <div style={styles.pageWrapper}>
       {/* Banner */}
       <div style={styles.bannerWrapper}>
@@ -61,12 +68,12 @@ const PolicyDetails = () => {
       {/* Title */}
       <h1 style={styles.policyTitle}>{policy.policyType}</h1>
 
-     {/* Description */}
-<p style={styles.policyDescription}>
-  {(policy.details || '')
-    .replace(/<\/?p[^>]*>/g, '')        // remove opening & closing <p> tags
-    || 'No description available.'}
-</p>
+      {/* Description */}
+      <p style={styles.policyDescription}>
+        {(policy.details || '')
+          .replace(/<\/?p[^>]*>/g, '')        // remove opening & closing <p> tags
+          || 'No description available.'}
+      </p>
 
 
       <Button
@@ -74,10 +81,13 @@ const PolicyDetails = () => {
         size="lg"
         block={true}
         onClick={() => {
-          alert("Feature coming soon!");
+          toast.info
+          ("Feature coming soon!");
         }}
       />
     </div>
+    <Footer/>
+    </>
   );
 };
 

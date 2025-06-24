@@ -76,11 +76,12 @@ const BlogSection = () => {
 
   return (
     <Box sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1, pl: 12, pr: 12 }}>
-      <Typography variant="h4" sx={{ color: '#FF9906', fontWeight: 700, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
+      <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
         News And Blogs
       </Typography>
       <Typography variant="h4" sx={{ color: '#FFf', fontWeight: 500, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
-        Latest From The Blogs      </Typography>
+        Latest From The Blogs      
+      </Typography>
 
       <Grid container spacing={4} alignItems="stretch">
         {/* LEFT SIDE: Vertical Short Video */}
@@ -97,7 +98,7 @@ const BlogSection = () => {
               flexDirection: 'column',
               justifyContent: 'space-between',
             }}
-            onClick={() => navigate(`/coverkraft/feed/${short.type}/${short._id}`)}
+            onClick={() => navigate(`/feed/${short.type}/${short._id}`)}
           >
             {/* VIDEO SECTION */}
             <Box sx={{ width: '100%', height: '450px', overflow: 'hidden' }}>
@@ -146,7 +147,7 @@ const BlogSection = () => {
                 variant="body1"
                 color="#7BC043"
                 sx={{mt: '-15px',  fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' }, paddingLeft: "78%" }}
-                onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
+                onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
               >
                 Read More →
               </Typography>
@@ -162,7 +163,7 @@ const BlogSection = () => {
             <Card
               key={p._id}
               sx={{ mb: 3, display: 'flex', height: 200, borderRadius: 3, bgcolor: '#212121', color: '#fff', cursor: 'pointer' }}
-              onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
+              onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
             >
               <CardMedia
                 component="img"
@@ -185,7 +186,7 @@ const BlogSection = () => {
                   variant="body1"
                   color="#7BC043"
                   sx={{mt: '-15px', fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' }, paddingLeft: "90%" }}
-                  onClick={() => navigate(`/coverkraft/feed/${p.type}/${p._id}`)}
+                  onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
                 >
                   Read More →
                 </Typography>
@@ -197,7 +198,7 @@ const BlogSection = () => {
 
       {/* VIEW ALL BUTTON */}
       <Box textAlign="center" mt={6}>
-        <StyledButton onClick={() => navigate('/coverkraft/feed/:type')}>
+        <StyledButton onClick={() => navigate('/feed/:type')}>
           VIEW ALL
         </StyledButton>
       </Box>

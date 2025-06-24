@@ -7,7 +7,7 @@ export const renderSmallCard = (post, index) => (
       overflow: "hidden",
       cursor: "pointer",
     }}
-    onClick={() => navigate(`/coverkraft/feed/${post?.type}`)}
+    onClick={() => navigate(`/feed/${post?.type}`)}
   >
     {/* Date Badge */}
     <div
@@ -72,7 +72,7 @@ export const renderSmallCard = (post, index) => (
       </Typography>
       <div style={{ marginTop: "6px" }}>
         <Link
-          to={`/coverkraft/feed/${post?.type}`}
+          to={`/feed/${post?.type}`}
           style={{ color: "#1BD47B", fontWeight: "bold", fontSize: "0.9rem" }}
         >
           Read More →

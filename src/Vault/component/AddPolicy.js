@@ -345,7 +345,7 @@ const AddPolicy = () => {
             formData.append('consumables', consumables);
             formData.append('coPayment', coPayment);
             dispatch(saveDocument(API_URL, formData));
-            navigate('/coverkraft/vault')
+            navigate('/vault')
         // }
         // else {
         //     toast.error("Please fill all required fields", {
@@ -397,7 +397,7 @@ const AddPolicy = () => {
         formData.append('hospitalCare', hospitalCare);
         formData.append('terminalIllness', terminalIllness);
         dispatch(saveDocument(API_URL, formData))
-        navigate('/coverkraft/vault')
+        navigate('/vault')
         // } else {
         //     toast.error("Please fill all required fields", {
         //         position: "top-center",
@@ -447,7 +447,7 @@ const AddPolicy = () => {
             formData.append('vehicleType', vehicleType);
 
             dispatch(saveDocument(API_URL, formData))
-            navigate('/coverkraft/vault')
+            navigate('/vault')
         // } else {
 
         //     toast.error("Please fill all required fields", {

@@ -213,7 +213,7 @@ function Feeds() {
                     </Typography>
                     <MuiButton
                       onClick={() =>
-                        navigate(`/coverkraft/feed/${selectedTab}/${item?._id}`)
+                        navigate(`/feed/${selectedTab}/${item?._id}`)
                       }
                       variant="text"
                       sx={{ color: THEME_COLOR.SECONDARY_TEXT }}

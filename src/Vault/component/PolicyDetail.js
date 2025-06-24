@@ -127,19 +127,19 @@ const PolicyDetail = ({ policyId }) => {
       PolicyType === "bike_policy" ||
       PolicyType === "other_vehicle"
     ) {
-      navigate("/coverkraft/motor-policy", {
+      navigate("/motor-policy", {
         state: { policyDetails: responseData, mode: "edit" },
       });
     } else if (PolicyType === "health" || PolicyType === "other_health") {
-      navigate("/coverkraft/health-policy", {
+      navigate("/health-policy", {
         state: { policyDetails: responseData, mode: "edit" },
       });
     } else if (PolicyType === "life" || PolicyType === "accident") {
-      navigate("/coverkraft/life-policy", {
+      navigate("/life-policy", {
         state: { policyDetails: responseData, mode: "edit" },
       });
     }
-    // navigate('/coverkraft/edit-policy', { state: { policyDetails: policyDetails } });
+    // navigate('/edit-policy', { state: { policyDetails: policyDetails } });
   };
 
   //function for share policy document
