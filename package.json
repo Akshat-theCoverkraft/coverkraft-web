@@ -26,6 +26,7 @@
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
     "framer-motion": "^12.16.0",
+    "html-react-parser": "^5.2.5",
     "i18next": "^23.11.3",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.47",
