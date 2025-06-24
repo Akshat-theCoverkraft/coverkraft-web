@@ -21,7 +21,7 @@ import { THEME_COLOR } from "../constants";
 import { Margin, MarginOutlined } from "@mui/icons-material";
 
 const NAV_ITEMS = [
-  { key: "home", label: "Home", path: "" },
+  { key: "home", label: "Home", path: "/" },
   { key: "about", label: "About Us", path: "/about", auth: true },
   { key: "contact", label: "Contact Us", path: "/contactus", auth: true },
 ];
@@ -85,7 +85,7 @@ function Navbar({ scrollToContactBottom }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const loggedIn = useMemo(() => localStorage.getItem("loggedIn") === "true", []);
-  const isHomePage = useMemo(() => location.pathname === "", [location.pathname]);
+  const isHomePage = useMemo(() => location.pathname === "/", [location.pathname]);
 
   const visibleNavItems = useMemo(() => {
     return NAV_ITEMS.filter((item) => {
@@ -96,7 +96,7 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleNavigation = useCallback(
     (item) => {
-      if (item.auth && !loggedIn) return navigate("/login");
+      if (item.auth && !loggedIn) return navigate("//login");
       navigate(item.path);
     },
     [loggedIn, navigate]
@@ -142,7 +142,7 @@ function Navbar({ scrollToContactBottom }) {
             height={70}
             width={280}
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("")}
+            onClick={() => navigate("/")}
           />
 
           {isMobile ? (
