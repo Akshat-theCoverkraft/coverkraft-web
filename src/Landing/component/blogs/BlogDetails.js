@@ -5,7 +5,6 @@ import axios from 'axios'
 import { Button as MuiButton } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import API_URL from "../../../ServiceModule/Service";
-import IMAGE_PATH from "../../../ServiceModule/imagePath";
 import moment from 'moment-timezone'
 import { capitalizeFirstLetter, truncateString } from "../../../utils/helpers";
 import arrow from '../../../Images/Symbol.png'
@@ -23,8 +22,8 @@ console.log(type, id, "<===type")
       const { data } = await axios.get(`${API_URL}news/get-blog-details?blogId=${id}`);
       if (data?.success) {
         setBlog(data?.blog);
-        // Only set moreBlogs with status 'active'
-        const activeBlogs = (data?.moreBlogs || []).filter(blog => blog.status === 'active');
+        // Only set moreBlogs with status 'active' and exclude current blog
+        const activeBlogs = (data?.moreBlogs || []).filter(blog => blog.status === 'active' && blog._id !== id);
         setMoreBlogs(activeBlogs);
       } else {
         toast.error("Error fetching blog data:", data?.message);
@@ -38,6 +37,39 @@ console.log(type, id, "<===type")
     window.scrollTo(0, 0);
     fetchBlogDetails();
   },[id])
+
+  // Function to render media content (image or video)
+  const renderMediaContent = (mediaUrl, altText, isMainBlog = false) => {
+    if (!mediaUrl) return null;
+    
+    const isVideo = mediaUrl.match(/\.(mp4|mov|avi|mkv|webm)$/i);
+    
+    if (isVideo) {
+      return (
+        <video 
+          controls 
+          style={isMainBlog ? { maxWidth: "80%", maxHeight: '80vh', margin: "auto" } : { width: "100%", height: "200px", objectFit: "cover" }}
+          className={isMainBlog ? "" : "card-img-top"}
+        >
+          <source src={mediaUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      );
+    } else {
+      return (
+        <img
+          src={mediaUrl}
+          style={isMainBlog ? { maxWidth: "80%", maxHeight: '80vh', margin: "auto" } : { width: "100%", height: "200px", objectFit: "cover" }}
+          className={isMainBlog ? "" : "card-img-top"}
+          alt={altText}
+        />
+      );
+    }
+  };
+
+  const handleCardClick = (blogId) => {
+    navigate(`/feed/blog/${blogId}`);
+  };
 
   return (
     <>
@@ -53,20 +85,12 @@ console.log(type, id, "<===type")
           style={{ cursor: "pointer" }}
           onClick={() => navigate(-1)}
         >
-          <i className="fas fa-arrow-left"></i> Back
+          <i className="fas fa-arrow-left color-white"></i> Back
         </p>
         <h1 className="text-center mb-4">{capitalizeFirstLetter(type) === "News" ? 'News' : capitalizeFirstLetter(type) + 's'}</h1>
-        {/* <div className="d-flex justify-content-center mb-4">
-          <button className="btn mx-2" style={{background: 'rgb(138, 198, 66)', color: 'white'}}>Blog</button>
-          <button className="btn btn-secondary mx-2">News</button>
-          <button className="btn btn-secondary mx-2">Short</button>
-        </div> */}
+        
         <div className="card mb-4" style={{backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.SECONDARY_TEXT}}>
-          <img
-            src={blog?.newsImg}
-            style={{ maxWidth: "80%", maxHeight: '80vh', margin: "auto" }}
-            alt={blog?.subtitle}
-          />
+          {renderMediaContent(blog?.newsImg, blog?.subtitle, true)}
           <div className="card-body">
             <h2 className="text-center">
               <strong>
@@ -86,21 +110,29 @@ console.log(type, id, "<===type")
             </p>
           </div>
         </div>
-        {moreBlogs?.length > 1 && <>
+        
+        {moreBlogs?.length > 0 && <>
         <h2 className="text-center mb-4">
-          <strong>More Blogs</strong>
+          <strong>More From Blogs And News</strong>
         </h2>
         <div className="row">
           {moreBlogs?.map((mBlog, index) => (
-              <div className="col-md-4 mb-4" key={index} >
-                <div className="card text-left" style={{backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.SECONDARY_TEXT}}>
-                  <img
-                    src={mBlog?.newsImg}
-                    className="card-img-top"
-                    alt={mBlog?.subtitle}
-                  />
-                  <div className="card-body">
-                    <h3 className="card-title h4">
+              <div className="col-md-4 mb-4" key={index}>
+                <div 
+                  className="card text-left h-100" 
+                  style={{
+                    backgroundColor: THEME_COLOR.FADE_BACKGROUND, 
+                    color: THEME_COLOR.SECONDARY_TEXT,
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s ease-in-out'
+                  }}
+                  onClick={() => handleCardClick(mBlog?._id)}
+                  onMouseEnter={(e) => e.target.style.transform = 'translateY(-5px)'}
+                  onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                >
+                  {renderMediaContent(mBlog?.newsImg, mBlog?.subtitle)}
+                  <div className="card-body d-flex flex-column">
+                    <h3 className="card-title h5">
                       {mBlog?.subtitle}
                     </h3>
                     <div className="text-muted mb-2">
@@ -111,12 +143,34 @@ console.log(type, id, "<===type")
                         <i className="fas fa-calendar-alt" style={{color: 'rgb(138, 198, 66)'}}></i> {moment(mBlog?.createdAt).format("MMM DD, YYYY")}
                       </span>
                     </div>
-                    <p className="card-text">
+                    <p className="card-text flex-grow-1">
                         {truncateString(mBlog?.description)}
                     </p>
-                    <MuiButton onClick={() => navigate(`/feed/blog/${mBlog?._id}`)} variant="text" className="text-light">
-                     Read More <img src={arrow} style={{height: '16px'}} className='ml-2' alt="arrow-right" />
-                    </MuiButton>
+                    <div className="mt-auto">
+                      <MuiButton 
+                        variant="text" 
+                      className="text-light p-0"
+                      onClick={() => { 
+                        handleCardClick(mBlog?._id)
+                      }}
+                        style={{
+                          color: 'rgb(138, 198, 66)',
+                          textTransform: 'none',
+                          fontSize: '14px'
+                        }}
+                      >
+                        Read More 
+                        <img 
+                          src={arrow} 
+                          style={{
+                            height: '16px', 
+                            marginLeft: '8px',
+                            filter: 'brightness(0) saturate(100%) invert(69%) sepia(45%) saturate(425%) hue-rotate(54deg) brightness(94%) contrast(89%)'
+                          }} 
+                          alt="arrow-right" 
+                        />
+                      </MuiButton>
+                    </div>
                   </div>
                 </div>
               </div>

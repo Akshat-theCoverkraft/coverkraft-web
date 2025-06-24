@@ -21,7 +21,7 @@ import view from "../../Images/ic-view.png";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../ServiceModule/Service";
 import axios from "axios";
-import emptyImage from "../../Images/ic-empty.png";
+import emptyImage from "../../Images/NoData.png";
 import IMAGE_PATH from "../../ServiceModule/imagePath";
 import moment from "moment";
 import { formatDate } from "../../utils/dateUtils";
@@ -198,8 +198,8 @@ const PolicyDetail = ({ policyId }) => {
             color: THEME_COLOR.COLOR,
           }}
         >
-          <img src={emptyImage} alt="No Data" />
-          <p>Add your new policy effortlessly to your account</p>
+          <img src={emptyImage} alt="No Data" style={{ width: '40%', height: 'auto', marginTop: '10%', }} />
+          <p className="mt-5 fs-bold ">Add your new policy effortlessly to your account</p>
         </Card>
       ) : (
         policyDetails.map((policy, index) => {
@@ -322,7 +322,7 @@ const PolicyDetail = ({ policyId }) => {
                                 : policy?.policyType === "health"
                                   ? Health
                                   : policy?.policyType === "other_health"
-                                    ? HealthInsurance
+                                    ? Health
                                     : emptyImage
                     }
                     alt="Policy Type"
@@ -366,7 +366,7 @@ const PolicyDetail = ({ policyId }) => {
                   className="rounded-4"
                   style={{
                     marginTop: "48px",
-                    paddingTop:"50px",
+                    paddingTop: "50px",
                     boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                     backgroundColor: THEME_COLOR.FADE_BACKGROUND,
                     color: THEME_COLOR.COLOR,
@@ -380,20 +380,20 @@ const PolicyDetail = ({ policyId }) => {
                         className="mr-2 cursor-pointer"
                       />
                     </OverlayTrigger>
-                  <OverlayTrigger placement="top" overlay={<Tooltip>DownLoad Policy</Tooltip>}>
-                    <img
-                      src={download}
-                      onClick={() => handleDownloadDocument(documentPath)}
-                      className="mr-2 cursor-pointer"
+                    <OverlayTrigger placement="top" overlay={<Tooltip>DownLoad Policy</Tooltip>}>
+                      <img
+                        src={download}
+                        onClick={() => handleDownloadDocument(documentPath)}
+                        className="mr-2 cursor-pointer"
                       />
                     </OverlayTrigger>
                     <OverlayTrigger placement="top" overlay={<Tooltip>Share Policy</Tooltip>}>
-                    <img
-                      src={share}
-                      onClick={() => sharePolicyDocument(documentPath)}
-                      className="cursor-pointer"
+                      <img
+                        src={share}
+                        onClick={() => sharePolicyDocument(documentPath)}
+                        className="cursor-pointer"
                       />
-                       </OverlayTrigger>
+                    </OverlayTrigger>
                   </div>
                   <Grid
                     container

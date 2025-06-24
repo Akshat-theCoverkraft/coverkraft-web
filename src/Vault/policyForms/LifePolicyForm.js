@@ -25,11 +25,13 @@ import dayjs from "dayjs";
 import ProgressBarCircle from "../../component/ProgressBarCircle";
 import DateTimePicker from "../../component/DateTimePicker";
 import { formatDate } from "../../utils/dateUtils";
+
 const LifePolicyForm = () => {
   const location = useLocation();
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
   const policyDetails = location.state?.policyDetails;
+  
   // Now you can use the responseData and mode in your component
   let headingText;
   if (mode === "edit") {
@@ -37,8 +39,8 @@ const LifePolicyForm = () => {
   } else {
     headingText = "Add Policy";
   }
-  //   const PolicyType = responseData.policyType.toLowerCase();
-  // console.log('pollcitype',PolicyType)
+  
+  // State variables
   const [policyNumber, setPolicyNumber] = useState(
     responseData?.policyNumber || policyDetails?.policyNumber || ""
   );
@@ -65,18 +67,18 @@ const LifePolicyForm = () => {
   );
   const [criticalIllness, setCriticalIllness] = useState(
     responseData?.criticalIllness ||
-      policyDetails?.policyDetails?.criticalIllness ||
-      ""
+    policyDetails?.policyDetails?.criticalIllness ||
+    ""
   );
   const [accidentalDisability, setAccidentalDisability] = useState(
     responseData?.accidentalDisability ||
-      policyDetails?.policyDetails?.accidentalDisability ||
-      ""
+    policyDetails?.policyDetails?.accidentalDisability ||
+    ""
   );
   const [terminalIllness, setTerminalIllness] = useState(
     responseData?.terminalIllness ||
-      policyDetails?.policyDetails?.terminalIllness ||
-      ""
+    policyDetails?.policyDetails?.terminalIllness ||
+    ""
   );
   const [pa, setPa] = useState(responseData?.pa || "");
   const [policyRenewalDate, setPolicyRenewalDate] = useState(
@@ -111,6 +113,7 @@ const LifePolicyForm = () => {
     insuredCompany,
     policyName,
   ];
+  
   const calculateProgress = () => {
     const filledFields = inputFields.filter((field) => field !== "").length;
     const totalFields = inputFields.length;
@@ -145,6 +148,7 @@ const LifePolicyForm = () => {
     insuredCompany,
     policyName,
   ]);
+
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -221,6 +225,7 @@ const LifePolicyForm = () => {
         toast.error("Error creating policy");
       });
   };
+
   const updatePolicy = (payload) => {
     const formData = new FormData();
     formData.append("userId", userId);
@@ -253,275 +258,380 @@ const LifePolicyForm = () => {
         toast.error("Error updating policy");
       });
   };
+
+  const handleCancel = () => {
+    navigate('/vault')
+  }
+
   return (
-    <div>
+    <Box sx={{ backgroundColor: "#000", minHeight: "100vh" }}>
       <Navbar />
       <ToastContainer />
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        sx={{ backgroundColor: "#000" }}
-      >
-        <Grid item xs={12} sm={10} md={8}>
-          <Card
-            className="my-4"
-            style={{
-              padding: "40px 70px",
-              boxShadow: " rgba(17, 17, 26, 0.1) 0px 0px 16px",
-              borderRadius: "20px",
-              backgroundColor: "#3E3E3E",
-            }}
-          >
-            <div className="d-flex justify-content-between">
-              <Typography
-                variant="h4"
-                component="h2"
-                className="fw-bold"
-                style={{ color: "#fff" }}
-              >
-                {headingText}
-              </Typography>
-              <ProgressBarCircle progress={calculateProgress()} />{" "}
-            </div>
-            <p
-              className="custom-color my-4"
-              style={{ fontSize: "18px", fontWeight: "700" }}
+      
+      <Box sx={{ padding: { xs: 2, sm: 3, md: 4 } }}>
+        <Grid container justifyContent="center">
+          <Grid item xs={12} lg={10} xl={8}>
+            <Card
+              sx={{
+                padding: { xs: 3, sm: 4, md: 6 },
+                boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+                borderRadius: 3,
+                backgroundColor: "#212121",
+                border: "1px solid #333",
+              }}
             >
-              {" "}
-              Details
-            </p>
-            <div>
-              <Grid container spacing={6}>
-                <Grid item xs={12} md={6}>
-                  <CustomInput
-                    type="text"
-                    label="Policy Number"
-                    // placeholder="policy number"
-                    value={policyNumber}
-                    // onChange={(e) => {
-                    //   setPolicyNumber(e.target.value);
-                    // }}
-                    disabled={true}
-                    required
-                  />
+              {/* Header Section */}
+              <Box 
+                sx={{ 
+                  display: "flex", 
+                  justifyContent: "space-between", 
+                  alignItems: "center",
+                  marginBottom: 4,
+                  flexWrap: "wrap",
+                  gap: 2
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  sx={{
+                    fontWeight: 700,
+                    color: "#fff",
+                    fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" }
+                  }}
+                >
+                  {headingText}
+                </Typography>
+                <ProgressBarCircle progress={calculateProgress()} />
+              </Box>
 
-                  <Grid container spacing={3} className="mt-2">
-                    <Grid item xs={12} md={6}>
-                      <label
-                        className="form-label fw-bold"
-                        htmlFor="inputField"
-                      >
-                        Start date <span className="text-danger">*</span>
-                      </label>
-                      <DateTimePicker
-                        height={50}
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(policyStartDate)}
-                        onChange={handleStartDateChange}
+              {/* Section Title */}
+              <Typography
+                variant="h6"
+                sx={{
+                  color: "#4FC3F7",
+                  fontSize: "1.25rem",
+                  fontWeight: 600,
+                  marginBottom: 3,
+                  letterSpacing: "0.5px"
+                }}
+              >
+                Policy Details
+              </Typography>
+
+              {/* Form Content */}
+              <Grid container spacing={4}>
+                {/* Left Column */}
+                <Grid item xs={12} lg={6}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    {/* Policy Number */}
+                    <Box>
+                      <CustomInput
+                        type="text"
+                        label="Policy Number"
+                        value={policyNumber}
+                        disabled={true}
+                        required
                       />
+                    </Box>
+
+                    {/* Date Fields Row */}
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Box>
+                          <Typography
+                            component="label"
+                            sx={{
+                              display: "block",
+                              fontWeight: 600,
+                              color: "#fff",
+                              marginBottom: 1,
+                              fontSize: "0.95rem"
+                            }}
+                          >
+                            Start Date <span style={{ color: "#f44336" }}>*</span>
+                          </Typography>
+                          <DateTimePicker
+                            height={50}
+                            isIcon={false}
+                            label="DD/MM/YYYY"
+                            value={formatDate(policyStartDate)}
+                            onChange={handleStartDateChange}
+                          />
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box>
+                          <Typography
+                            component="label"
+                            sx={{
+                              display: "block",
+                              fontWeight: 600,
+                              color: "#fff",
+                              marginBottom: 1,
+                              fontSize: "0.95rem"
+                            }}
+                          >
+                            End Date <span style={{ color: "#f44336" }}>*</span>
+                          </Typography>
+                          <DateTimePicker
+                            height={50}
+                            isIcon={false}
+                            label="DD/MM/YYYY"
+                            value={formatDate(policyEndDate)}
+                            onChange={handleEndDateChange}
+                          />
+                        </Box>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                      <label
-                        className="form-label fw-bold"
-                        htmlFor="inputField"
-                      >
-                        End date <span className="text-danger">*</span>
-                      </label>
-                      <DateTimePicker
-                        height={50}
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(policyEndDate)}
-                        onChange={handleEndDateChange}
-                      />
+
+                    {/* Renewal and Maturity Date Row */}
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Box>
+                          <Typography
+                            component="label"
+                            sx={{
+                              display: "block",
+                              fontWeight: 600,
+                              color: "#fff",
+                              marginBottom: 1,
+                              fontSize: "0.95rem"
+                            }}
+                          >
+                            Policy Renewal Date
+                          </Typography>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={["DatePicker"]}>
+                              <DatePicker
+                                defaultValue={dayjs(policyRenewalDate)}
+                                selected={policyRenewalDate}
+                                onChange={(newValue) => {
+                                  setPolicyRenewalDate(newValue);
+                                }}
+                                selectsStart
+                                startDate={policyRenewalDate}
+                                placeholderText="MM/DD/YYYY"
+                                sx={{ width: "100%" }}
+                              />
+                            </DemoContainer>
+                          </LocalizationProvider>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box>
+                          <Typography
+                            component="label"
+                            sx={{
+                              display: "block",
+                              fontWeight: 600,
+                              color: "#fff",
+                              marginBottom: 1,
+                              fontSize: "0.95rem"
+                            }}
+                          >
+                            Maturity Date
+                          </Typography>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={["DatePicker"]}>
+                              <DatePicker
+                                defaultValue={dayjs(maturityDate)}
+                                selected={maturityDate}
+                                onChange={(newValue) => {
+                                  setMaturityDate(newValue);
+                                }}
+                                selectsStart
+                                startDate={maturityDate}
+                                placeholderText="MM/DD/YYYY"
+                                sx={{ width: "100%" }}
+                              />
+                            </DemoContainer>
+                          </LocalizationProvider>
+                        </Box>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                  <Grid container spacing={1} className="mt-2">
-                    <Grid item xs={12} md={6}>
-                      <label
-                        className="form-label fw-bold"
-                        htmlFor="inputField"
+
+                    {/* DOB Field */}
+                    <Box>
+                      <Typography
+                        component="label"
+                        sx={{
+                          display: "block",
+                          fontWeight: 600,
+                          color: "#fff",
+                          marginBottom: 1,
+                          fontSize: "0.95rem"
+                        }}
                       >
-                        Policy Renewal date
-                      </label>
+                        Date of Birth
+                      </Typography>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={["DatePicker"]}>
                           <DatePicker
-                            defaultValue={dayjs(policyRenewalDate)}
-                            selected={policyRenewalDate}
+                            defaultValue={dayjs(dob)}
+                            selected={dob}
                             onChange={(newValue) => {
-                              setPolicyRenewalDate(newValue); // Set the new date directly
+                              setDob(newValue);
                             }}
                             selectsStart
-                            startDate={policyRenewalDate}
+                            startDate={dob}
                             placeholderText="MM/DD/YYYY"
-                            style={{ width: "100%" }}
+                            sx={{ width: "100%" }}
                           />
                         </DemoContainer>
                       </LocalizationProvider>
-                      {/* <DateTimePicker
-                        height={50}
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(policyRenewalDate)}
-                        onChange={handleRenewalDate}
-                      /> */}
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <label
-                        className="form-label fw-bold"
-                        htmlFor="inputField"
-                      >
-                        Maturity date
-                      </label>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={["DatePicker"]}>
-                          <DatePicker
-                            defaultValue={dayjs(maturityDate)}
-                            selected={maturityDate}
-                            onChange={(newValue) => {
-                              setMaturityDate(newValue); // Set the new date directly
-                            }}
-                            selectsStart
-                            startDate={maturityDate}
-                            placeholderText="MM/DD/YYYY"
-                            style={{ width: "100%" }}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
-                    </Grid>
-                  </Grid>
-                  <Grid xs={12} md={6} className="my-3">
-                    <label className="form-label fw-bold" htmlFor="inputField">
-                      DOB
-                    </label>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DemoContainer components={["DatePicker"]}>
-                        <DatePicker
-                          defaultValue={dayjs(dob)}
-                          selected={dob}
-                          onChange={(newValue) => {
-                            setDob(newValue); // Set the new date directly
-                          }}
-                          selectsStart
-                          startDate={dob}
-                          placeholderText="MM/DD/YYYY"
-                          style={{ width: "100%" }}
-                        />
-                      </DemoContainer>
-                    </LocalizationProvider>
-                  </Grid>
-                  <CustomInput
-                    type="text"
-                    label="Insured Name"
-                    value={insuredName}
-                    onChange={(e) => {
-                      setInsuredName(e.target.value);
-                    }}
-                    required
-                  />
-                  <CustomInput
-                    type="text"
-                    label="Insurance Company"
-                    value={insuredCompany}
-                    onChange={(e) => {
-                      setInsuredCompany(e.target.value);
-                    }}
-                    required
-                  />
-                  <CustomInput
-                    type="text"
-                    label="Critical Illness"
-                    value={criticalIllness}
-                    onChange={(e) => {
-                      setCriticalIllness(e.target.value);
-                    }}
-                  />
-                  <CustomInput
-                    type="number"
-                    label="Accidental disability"
-                    value={accidentalDisability}
-                    onChange={(e) => {
-                      setAccidentalDisability(e.target.value);
-                    }}
-                  />
-                  <Button
-                    text={mode === "edit" ? "Update" : "Save"}
-                    size="lg"
-                    block={true}
-                    onClick={handleSubmit}
-                  />
+                    </Box>
+
+                    {/* Personal Details */}
+                    <Box>
+                      <CustomInput
+                        type="text"
+                        label="Insured Name"
+                        value={insuredName}
+                        onChange={(e) => setInsuredName(e.target.value)}
+                        required
+                      />
+                    </Box>
+
+                    <Box>
+                      <CustomInput
+                        type="text"
+                        label="Insurance Company"
+                        value={insuredCompany}
+                        onChange={(e) => setInsuredCompany(e.target.value)}
+                        required
+                      />
+                    </Box>
+
+                    {/* Coverage Details */}
+                    <Box>
+                      <CustomInput
+                        type="text"
+                        label="Critical Illness Coverage"
+                        value={criticalIllness}
+                        onChange={(e) => setCriticalIllness(e.target.value)}
+                      />
+                    </Box>
+
+                    <Box>
+                      <CustomInput
+                        type="number"
+                        label="Accidental Disability Coverage"
+                        value={accidentalDisability}
+                        onChange={(e) => setAccidentalDisability(e.target.value)}
+                      />
+                    </Box>
+
+                    {/* Action Buttons - Left Column */}
+                    <Box sx={{ marginTop: 4 }}>
+                      <Button
+                        text={mode === "edit" ? "Update Policy" : "Save Policy"}
+                        size="lg"
+                        block={true}
+                        onClick={handleSubmit}
+                        disabled={loading}
+                      />
+                    </Box>
+                  </Box>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <CustomInput
-                    type="number"
-                    label="Net Premium"
-                    value={netPremium}
-                    onChange={(e) => {
-                      setNetPremium(e.target.value);
-                    }}
-                  />
-                  <CustomInput
-                    type="number"
-                    label="Total Premium"
-                    value={premiumPaid}
-                    onChange={(e) => {
-                      setPremiumPaid(e.target.value);
-                    }}
-                    required
-                  />
-                  <CustomInput
-                    type="text"
-                    label="Sum Assured"
-                    value={sumAssured}
-                    onChange={(e) => {
-                      setSumAssured(e.target.value);
-                    }}
-                    required
-                  />
-                  <CustomInput
-                    type="number"
-                    label="pa"
-                    value={pa}
-                    onChange={(e) => {
-                      setPa(e.target.value);
-                    }}
-                  />
-                  <CustomInput
-                    type="text"
-                    label="Others"
-                    value={others}
-                    onChange={(e) => {
-                      setOthers(e.target.value);
-                    }}
-                  />
-                  <CustomInput
-                    type="text"
-                    label="Policy Name"
-                    value={policyName}
-                    onChange={(e) => {
-                      setPolicyName(e.target.value);
-                    }}
-                    required
-                  />
-                  <CustomInput
-                    type="number"
-                    label="Terminal illness"
-                    value={terminalIllness}
-                    onChange={(e) => {
-                      setTerminalIllness(e.target.value);
-                    }}
-                  />
+
+                {/* Right Column */}
+                <Grid item xs={12} lg={6}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    {/* Premium Details */}
+                    <Box>
+                      <CustomInput
+                        type="number"
+                        label="Net Premium"
+                        value={netPremium}
+                        onChange={(e) => setNetPremium(e.target.value)}
+                      />
+                    </Box>
+
+                    <Box>
+                      <CustomInput
+                        type="number"
+                        label="Total Premium"
+                        value={premiumPaid}
+                        onChange={(e) => setPremiumPaid(e.target.value)}
+                        required
+                      />
+                    </Box>
+
+                    <Box>
+                      <CustomInput
+                        type="text"
+                        label="Sum Assured"
+                        value={sumAssured}
+                        onChange={(e) => setSumAssured(e.target.value)}
+                        required
+                      />
+                    </Box>
+
+                    {/* Additional Coverage */}
+                    <Box>
+                      <CustomInput
+                        type="number"
+                        label="Personal Accident Coverage"
+                        value={pa}
+                        onChange={(e) => setPa(e.target.value)}
+                      />
+                    </Box>
+
+                    <Box>
+                      <CustomInput
+                        type="number"
+                        label="Terminal Illness Coverage"
+                        value={terminalIllness}
+                        onChange={(e) => setTerminalIllness(e.target.value)}
+                      />
+                    </Box>
+
+                    {/* Policy Information */}
+                    <Box>
+                      <CustomInput
+                        type="text"
+                        label="Policy Name"
+                        value={policyName}
+                        onChange={(e) => setPolicyName(e.target.value)}
+                        required
+                      />
+                    </Box>
+
+                    <Box>
+                      <CustomInput
+                        type="text"
+                        label="Additional Notes"
+                        value={others}
+                        onChange={(e) => setOthers(e.target.value)}
+                      />
+                    </Box>
+
+                    {/* Action Buttons - Right Column */}
+                    <Box sx={{ marginTop: 9}}>
+                      <Button
+                        text="Cancel"
+                        size="lg"
+                        block={true}
+                        onClick={handleCancel}
+                        style={{ 
+                          backgroundColor: "transparent", 
+                          border: "2px solid #666",
+                          color: "#fff"
+                        }}
+                      />
+                    </Box>
+                  </Box>
                 </Grid>
               </Grid>
-            </div>
-          </Card>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
+      </Box>
+
       <Footer />
-    </div>
+    </Box>
   );
 };
+
 export default LifePolicyForm;

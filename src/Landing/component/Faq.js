@@ -91,7 +91,7 @@ export default function Faq() {
   };
 
   return (
-    <div id="faq" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
+    <div id="faq" style={{ backgroundColor: THEME_COLOR.BACKGROUND, padding: "20px 30px" }}>
       <div className="text-center p-3">
         <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
             FAQs

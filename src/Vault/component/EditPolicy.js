@@ -17,6 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import API_URL from '../../ServiceModule/Service';
 import { updateDocument } from '../../store/action/action';
 import { useNavigate } from 'react-router-dom'
+import { DatePicker } from '@mui/x-date-pickers';
 
 //function for progress bar start
 function CircularProgressWithLabel(props) {
@@ -421,241 +422,267 @@ const EditPolicy = () => {
                         </div>
                         <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}> Details</p>
                         <div>
-                           {PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle' ? (
-    <>
-        {/* motor insurance */}
-        <Grid container spacing={6}>
-            <Grid item xs={12} md={6}>
-                <CustomInput
-                    type="text"
-                    label="Policy Number"
-                    name="policyNumber"
-                    value={policyNumber}
-                    onChange={(e) => {
-                        setPolicyNumber(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
+                            {PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle' ? (
+                                <>
+                                    {/* motor insurance */}
+                                    <Grid container spacing={6}>
+                                        <Grid item xs={12} md={6}>
+                                            <CustomInput
+                                                type="text"
+                                                label="Policy Number"
+                                                name="policyNumber"
+                                                value={policyNumber}
+                                                onChange={(e) => {
+                                                    setPolicyNumber(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
 
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                        <CustomInput
-                            type="text"
-                            label="Start Date"
-                            name="startDate"
-                            value={startDate}
-                            onChange={(e) => {
-                                setStartDate(e.target.value);
-                                handleInputChange(e);
-                            }}
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <CustomInput
-                            type="text"
-                            label="End Date"
-                            name="endDate"
-                            value={endDate}
-                            onChange={(e) => {
-                                setEndDate(e.target.value);
-                                handleInputChange(e);
-                            }}
-                            required
-                        />
-                    </Grid>
-                </Grid>
+                                            <Grid container spacing={3}>
+                                                <Grid item xs={12} md={6}>
+                                                    <CustomInput
+                                                        type="date"
+                                                        label="Start Date"
+                                                        name="startDate"
+                                                        value={startDate}
+                                                        onChange={(date) => {
+                                                            const formatted = date?.toISOString()?.split("T")[0] || "";
+                                                            setStartDate(formatted);
+                                                            handleInputChange({ target: { name: "startDate", value: formatted } });
+                                                        }}
+                                                        required
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} md={6}>
+                                                    <CustomInput
+                                                        type="date"
+                                                        label="End Date"
+                                                        name="endDate"
+                                                        value={endDate}
+                                                        onChange={(date) => {
+                                                            const formatted = date?.toISOString()?.split("T")[0] || "";
+                                                            setEndDate(formatted);
+                                                            handleInputChange({ target: { name: "endDate", value: formatted } });
+                                                        }}
+                                                        required
+                                                    />
+                                                </Grid>
+                                            </Grid>
 
-                <CustomInput
-                    type="text"
-                    label="Insured Name"
-                    name="insuredName"
-                    value={insuredName}
-                    onChange={(e) => {
-                        setInsuredName(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="number"
-                    label="Net Premium"
-                    name="netPremium"
-                    value={netPremium}
-                    onChange={(e) => {
-                        setNetPremium(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="number"
-                    label="NCB %"
-                    name="ncb"
-                    value={ncb}
-                    onChange={(e) => {
-                        setNcb(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="number"
-                    label="TP Premium"
-                    name="tpPremium"
-                    value={tpPremium}
-                    onChange={(e) => {
-                        setTpPremium(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="number"
-                    label="OD Premium"
-                    name="odPremium"
-                    value={odPremium}
-                    onChange={(e) => {
-                        setOdPremium(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="text"
-                    label="Total Premium"
-                    name="totalPremium"
-                    value={totalPremium}
-                    onChange={(e) => {
-                        setTotalPremium(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-            </Grid>
+                                            <CustomInput
+                                                type="text"
+                                                label="Insured Name"
+                                                name="insuredName"
+                                                value={insuredName}
+                                                onChange={(e) => {
+                                                    setInsuredName(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="number"
+                                                label="Net Premium"
+                                                name="netPremium"
+                                                value={netPremium}
+                                                onChange={(e) => {
+                                                    setNetPremium(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="number"
+                                                label="NCB %"
+                                                name="ncb"
+                                                value={ncb}
+                                                onChange={(e) => {
+                                                    setNcb(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="number"
+                                                label="TP Premium"
+                                                name="tpPremium"
+                                                value={tpPremium}
+                                                onChange={(e) => {
+                                                    setTpPremium(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="number"
+                                                label="OD Premium"
+                                                name="odPremium"
+                                                value={odPremium}
+                                                onChange={(e) => {
+                                                    setOdPremium(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="text"
+                                                label="Total Premium"
+                                                name="totalPremium"
+                                                value={totalPremium}
+                                                onChange={(e) => {
+                                                    setTotalPremium(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                        </Grid>
 
-            <Grid item xs={12} md={6}>
-                <CustomInput
-                    type="text"
-                    label="Insurance Company"
-                    name="insuranceCompany"
-                    value={insuranceCompany}
-                    onChange={(e) => {
-                        setInsuranceCompany(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="text"
-                    label="Asset Type"
-                    name="assetType"
-                    value={assetType}
-                    onChange={(e) => {
-                        setAssetType(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="text"
-                    label="Make / Model"
-                    name="model"
-                    value={model}
-                    onChange={(e) => {
-                        setModel(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="number"
-                    label="Registration Year"
-                    name="registrationYear"
-                    value={registrationYear}
-                    onChange={(e) => {
-                        setRegistrationYear(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="text"
-                    label="Registration Number"
-                    name="registrationNumber"
-                    value={registrationNumber}
-                    onChange={(e) => {
-                        setRegistrationNumber(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="text"
-                    label="Engine CC"
-                    name="engineCC"
-                    value={engineCC}
-                    onChange={(e) => {
-                        setEngineCC(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="text"
-                    label="IDV"
-                    name="idv"
-                    value={idv}
-                    onChange={(e) => {
-                        setIdv(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-                <CustomInput
-                    type="text"
-                    label="Vehicle Type"
-                    name="vehicleType"
-                    value={vehicleType}
-                    onChange={(e) => {
-                        setVehicleType(e.target.value);
-                        handleInputChange(e);
-                    }}
-                    required
-                />
-            </Grid>
-        </Grid>
+                                        <Grid item xs={12} md={6}>
+                                            <CustomInput
+                                                type="text"
+                                                label="Insurance Company"
+                                                name="insuranceCompany"
+                                                value={insuranceCompany}
+                                                onChange={(e) => {
+                                                    setInsuranceCompany(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="text"
+                                                label="Asset Type"
+                                                name="assetType"
+                                                value={assetType}
+                                                onChange={(e) => {
+                                                    setAssetType(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="text"
+                                                label="Make / Model"
+                                                name="model"
+                                                value={model}
+                                                onChange={(e) => {
+                                                    setModel(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="number"
+                                                label="Registration Year"
+                                                name="registrationYear"
+                                                value={registrationYear}
+                                                onChange={(e) => {
+                                                    setRegistrationYear(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="text"
+                                                label="Registration Number"
+                                                name="registrationNumber"
+                                                value={registrationNumber}
+                                                onChange={(e) => {
+                                                    setRegistrationNumber(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="text"
+                                                label="Engine CC"
+                                                name="engineCC"
+                                                value={engineCC}
+                                                onChange={(e) => {
+                                                    setEngineCC(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="text"
+                                                label="IDV"
+                                                name="idv"
+                                                value={idv}
+                                                onChange={(e) => {
+                                                    setIdv(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                            <CustomInput
+                                                type="text"
+                                                label="Vehicle Type"
+                                                name="vehicleType"
+                                                value={vehicleType}
+                                                onChange={(e) => {
+                                                    setVehicleType(e.target.value);
+                                                    handleInputChange(e);
+                                                }}
+                                                required
+                                            />
+                                        </Grid>
+                                        <Button
+                                            text='Cancel'
+                                            size="lg"
+                                            block={false}
+                                            onClick={handleCancel}
+                                            bgcolor="transparent"
+                                            color="#6c757d"
+                                            borderColor="#6c757d"
+                                            customStyle={{
+                                                minWidth: '120px',
+                                                border: '1px solid #6c757d'
+                                            }}
+                                        />
+                                    </Grid>
 
-        {/* Buttons placed OUTSIDE the grid container */}
-        <div style={{ 
-            display: 'flex', 
-            gap: '10px', 
-            marginTop: '30px', 
-            justifyContent: 'center' 
-        }}>
-            <Button
-                text='Update'
-                size="lg"
-                block={false}
-                onClick={handleMotorInsurance}
-                customStyle={{ minWidth: '120px' }}
-            />
-            <Button
-                text='Cancel'
-                size="lg"
-                block={false}
-                onClick={handleCancel}
-                bgcolor="transparent"
-                color="#6c757d"
-                borderColor="#6c757d"
-                customStyle={{
-                    minWidth: '120px',
-                    border: '1px solid #6c757d'
-                }}
-            />
-        </div>
-    </>
+                                    {/* Buttons placed OUTSIDE the grid container */}
+                                    <div style={{
+                                        display: 'flex',
+                                        gap: '15px',
+                                        marginTop: '30px',
+                                        justifyContent: 'center',
+                                        // Debug styles - make container highly visible
+                                        backgroundColor: 'red',
+                                        border: '2px solid blue',
+                                        padding: '20px',
+                                        minHeight: '100px'
+                                    }}>
+                                        <Button
+                                            text='Update'
+                                            size="lg"
+                                            block={false}
+                                            onClick={handleMotorInsurance}
+                                            customStyle={{
+                                                minWidth: '120px',
+                                                backgroundColor: 'yellow !important',
+                                                color: 'black !important',
+                                                border: '3px solid green !important'
+                                            }}
+                                        />
+                                        <Button
+                                            text='Cancel'
+                                            size="lg"
+                                            block={false}
+                                            onClick={handleCancel}
+                                            bgcolor="orange" 
+                                            color="black"
+                                            borderColor="purple"
+                                            customStyle={{
+                                                minWidth: '120px',
+                                                border: '3px solid purple !important',
+                                                backgroundColor: 'orange !important'
+                                            }}
+                                        />
+                                    </div>
+                                </>
                             ) : PolicyType === 'health' || PolicyType === 'other_health' ? (
                                 // Render health insurance form fields
                                 <>

@@ -32,8 +32,8 @@ const MotorPolicyForm = () => {
     const responseData = location.state?.responseData;
     const mode = location.state?.mode;
     const policyDetails = location.state?.policyDetails;
-    console.log('responsethedata',responseData)
-console.log('policydetails',policyDetails)
+    console.log('responsethedata', responseData)
+    console.log('policydetails', policyDetails)
     // Now you can use the responseData and mode in your component
     let headingText;
     if (mode === 'edit') {
@@ -42,7 +42,7 @@ console.log('policydetails',policyDetails)
         headingText = 'Add Policy';
     }
     const PolicyType = policyDetails?.policyType.toLowerCase();
-    console.log('policythe tpe',PolicyType)
+    console.log('policythe tpe', PolicyType)
     const [policyNumber, setPolicyNumber] = useState(responseData?.policyNumber || policyDetails?.policyNumber || "");
     const [policyStartDate, setPolicyStartDate] = useState(responseData?.policyStartDate || policyDetails?.policyStartDate || "");
     const [policyEndDate, setPolicyEndDate] = useState(responseData?.policyEndDate || policyDetails?.policyEndDate || "");
@@ -70,7 +70,7 @@ console.log('policydetails',policyDetails)
     const token = localStorage.getItem('token')
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
+
     const inputFields = [
         policyNumber,
         policyStartDate,
@@ -211,9 +211,9 @@ console.log('policydetails',policyDetails)
     // }
     // const createPolicy = (payload) => {
     //     console.log('================')
-    
+
     //     const formData = new FormData();
-    
+
     //     formData.append('userId', userId);
     //     formData.append('documentId', documentId);
     //     formData.append('policyType', responseData?.policyType.toLowerCase());
@@ -242,7 +242,7 @@ console.log('policydetails',policyDetails)
     //             },
     //         });
     //         console.log('respnse bhi btaoo',response)
-            
+
     //         if (response && response.status === 200) {
 
     //             toast.success("Successfully Created");
@@ -260,9 +260,9 @@ console.log('policydetails',policyDetails)
 
     const createPolicy = async (payload) => {
         console.log('================')
-    
+
         const formData = new FormData();
-    
+
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', responseData?.policyType.toLowerCase());
@@ -283,15 +283,15 @@ console.log('policydetails',policyDetails)
         formData.append('tpPremium', tpPremium);
         formData.append('odPremium', odPremium);
         formData.append('idv', idv);
-    
+
         try {
             const response = await axios.post(`${API_URL}policy/create`, formData, {
                 headers: {
-                    'Authorization': `Bearer ${token}`, 
-                    'Content-Type': 'multipart/form-data', 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
                 },
             });
-    
+
             if (response && response.status === 200) {
                 toast.success("Successfully Created");
                 navigate('/vault');
@@ -305,8 +305,8 @@ console.log('policydetails',policyDetails)
             console.error("Error:", errorMessage);
         }
     }
-    
-    
+
+
     const updatePolicy = (payload) => {
         console.log('================')
         const formData = new FormData();
@@ -340,6 +340,11 @@ console.log('policydetails',policyDetails)
                 toast.error("Error updating policy");
             });
     }
+
+    const handleCancel = () => {
+        navigate('/vault')
+    }
+
 
     return (
         <div>
@@ -551,7 +556,13 @@ console.log('policydetails',policyDetails)
                                         }}
 
                                     />
+                                    <Button
+                                        text='Cancel'
+                                        size="sm"
+                                        block={true}
+                                        onClick={handleCancel}
 
+                                    />
                                 </Grid>
                             </Grid>
 

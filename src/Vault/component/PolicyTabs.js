@@ -25,7 +25,7 @@ import Life from "../../Images/ic_life.png";
 import arrow from "../../Images/right-arrow.png";
 import red from "../../Images/red-bg.png";
 import family from "../../Images/Family.png";
-import emptyImage from "../../Images/ic-empty.png";
+import emptyImage from "../../Images/NoData.png";
 import "./policy.css";
 import API_URL from "../../ServiceModule/Service";
 import { THEME_COLOR } from "../../constants";
@@ -49,7 +49,7 @@ const POLICY_CONFIGS = {
   other_vehicle: { label: "Other Vehicle Insurance", image: scooty },
   life: { label: "Life Insurance", image: Life },
   accident: { label: "Accident Insurance", image: Health },
-  health: { label: "Health Insurance", image: HealthInsurance },
+  health: { label: "Health Insurance", image: Health },
   other_health: { label: "Other Health Insurance", image: HealthInsurance },
 };
 
@@ -72,8 +72,8 @@ const EmptyState = () => (
       color: THEME_COLOR.COLOR,
     }}
   >
-    <img src={emptyImage} alt="No Data" />
-    <p>Add your new policy effortlessly to your account</p>
+          <img src={emptyImage} alt="No Data" style={{ width: '40%', height: 'auto', marginTop: '40%',  }} />
+    <p className="mt-5 fs-bold">Add your new policy effortlessly to your account</p>
   </div>
 );
 
