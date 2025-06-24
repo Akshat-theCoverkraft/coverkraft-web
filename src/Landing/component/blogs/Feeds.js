@@ -22,8 +22,15 @@ import API_URL from "../../../ServiceModule/Service";
 import { THEME_COLOR } from "../../../constants";
 
 function Feeds() {
-  const { type } = useParams(); // Get type from URL (blog, shorts, etc.)
+  const { type } = useParams();
   const navigate = useNavigate();
+
+  const tabLabels = {
+    blog: "Blogs",
+    news: "News",
+    short: "Shorts",
+    video: "Videos",
+  };
 
   const [selectedTab, setSelectedTab] = useState(type || "blog");
   const [contentData, setContentData] = useState([]);
@@ -34,9 +41,18 @@ function Feeds() {
     limit: 10,
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect to /feed/blog if no type in URL
+  useEffect(() => {
+    if (!type) {
+      navigate("/feed/blog", { replace: true });
+    }
+  }, [type, navigate]);
+
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
-    fetchData(newValue, 1); // Reset to page 1 when changing tab
+    navigate(`/feed/${newValue}`);
+    fetchData(newValue, 1);
   };
 
   const fetchData = async (contentType, page = 1) => {
@@ -61,76 +77,47 @@ function Feeds() {
     }
   };
 
-  // Fetch data when component mounts or when selected tab changes
   useEffect(() => {
-    fetchData(selectedTab);
-  }, [selectedTab]);
+    if (type) {
+      setSelectedTab(type);
+      fetchData(type);
+    }
+  }, [type]);
 
-  // Handle page change
   const handlePageChange = (event, newPage) => {
-    fetchData(selectedTab, newPage); // Fetch data for the selected tab and new page
+    fetchData(selectedTab, newPage);
   };
 
   return (
     <Box sx={{ width: "100%" }}>
       <Navbar />
-      {/* Tabs Section */}
+
+      {/* Tabs */}
       <Tabs
         sx={{ pt: 3 }}
         value={selectedTab}
         onChange={handleTabChange}
         centered
-        indicatorColor={THEME_COLOR.GREEN}
+        indicatorColor="secondary"
       >
-        <Tab
-          label="Blogs"
-          value="blog"
-          sx={{
-            fontSize: "14px",
-            color: THEME_COLOR.COLOR,
-            "&.Mui-selected": {
-              color: THEME_COLOR.GREEN,
-            },
-          }}
-        />
-        <Tab
-          label="News"
-          value="news"
-          sx={{
-            fontSize: "14px",
-            color: THEME_COLOR.COLOR,
-            "&.Mui-selected": {
-              color: THEME_COLOR.GREEN,
-            },
-          }}
-        />
-        <Tab
-          label="Shorts"
-          value="short"
-          sx={{
-            fontSize: "14px",
-            color: THEME_COLOR.COLOR,
-            "&.Mui-selected": {
-              color: THEME_COLOR.GREEN,
-            },
-          }}
-        />
-        <Tab
-          label="Videos"
-          value="video"
-          sx={{
-            fontSize: "14px",
-            color: THEME_COLOR.COLOR,
-            "&.Mui-selected": {
-              color: THEME_COLOR.GREEN,
-            },
-          }}
-        />
+        {Object.entries(tabLabels).map(([value, label]) => (
+          <Tab
+            key={value}
+            label={label}
+            value={value}
+            sx={{
+              fontSize: "14px",
+              color: THEME_COLOR.COLOR,
+              "&.Mui-selected": {
+                color: THEME_COLOR.GREEN,
+              },
+            }}
+          />
+        ))}
       </Tabs>
 
-      {/* Content Section */}
+      {/* Content */}
       <Box sx={{ p: 2, pt: 5, width: "80%" }} className="container">
-        {/* Show "No data found" if no contentData */}
         {isLoading ? (
           <Box sx={{ textAlign: "center", mt: 4, minHeight: "40vh" }}>
             <CircularProgress size={50} sx={{ color: THEME_COLOR.GREEN }} />
@@ -143,7 +130,7 @@ function Feeds() {
           </Box>
         ) : (
           <Grid container spacing={4} className="d-flex justify-content-center">
-            {contentData?.map((item, index) => (
+            {contentData.map((item, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card
                   sx={{
@@ -184,12 +171,19 @@ function Feeds() {
                   <CardContent sx={{ padding: "16px" }}>
                     <Typography
                       variant="h6"
-                      sx={{ fontWeight: "bold", mb: 1, color: THEME_COLOR.SECONDARY_TEXT }}
+                      sx={{
+                        fontWeight: "bold",
+                        mb: 1,
+                        color: THEME_COLOR.SECONDARY_TEXT,
+                      }}
                     >
                       {truncateString(item?.subtitle, 50)}
                     </Typography>
                     <Typography className="mb-3">
-                      <span className="mr-3" style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
+                      <span
+                        className="mr-3"
+                        style={{ color: THEME_COLOR.SECONDARY_TEXT }}
+                      >
                         <i
                           className="fas fa-user"
                           style={{ color: "rgb(138, 198, 66)" }}
@@ -219,7 +213,12 @@ function Feeds() {
                       sx={{ color: THEME_COLOR.SECONDARY_TEXT }}
                     >
                       Read More{" "}
-                      <img src={arrow} className="ml-2" alt="arrow-right" style={{ height: '16px' }} />
+                      <img
+                        src={arrow}
+                        className="ml-2"
+                        alt="arrow-right"
+                        style={{ height: "16px", marginLeft: "8px" }}
+                      />
                     </MuiButton>
                   </CardContent>
                 </Card>

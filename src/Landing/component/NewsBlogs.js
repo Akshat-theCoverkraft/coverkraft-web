@@ -24,7 +24,7 @@ const BlogSection = () => {
         const res = await axios.get('http://52.52.154.65:5242/news/getAll?isActive=true');
         const sorted = (res.data?.data || [])
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setPosts(sorted.slice(0, 6));
+        setPosts(sorted);
       } catch (err) {
         console.error('Failed fetching:', err);
       }
@@ -34,9 +34,17 @@ const BlogSection = () => {
 
   if (posts.length === 0) return null;
 
+  // Pick short (left side)
   const short = posts.find(p => p.type === 'short') || posts[0];
-  const newsItems = posts.filter(p => p.type === 'news').slice(0, 3);
-  const blogs = posts.filter(p => p.type === 'blog').slice(0, 3);
+
+  // Filter out short's ID from the rest
+  const rightSideCards = posts
+    .filter(p =>
+      (p.type === 'news' || p.type === 'blog') &&
+      p._id !== short._id
+    )
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 3);
 
   const getUrl = (p) =>
     p.videoUrl
@@ -55,6 +63,7 @@ const BlogSection = () => {
       sx={{ bgcolor: '#2f2f2f', color: '#fff', mb: 1 }}
     />
   );
+
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
     color: '#8AC642',
@@ -79,14 +88,13 @@ const BlogSection = () => {
       <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
         News And Blogs
       </Typography>
-      <Typography variant="h4" sx={{ color: '#FFf', fontWeight: 500, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
-        Latest From The Blogs      
+      <Typography variant="h4" sx={{ color: '#fff', fontWeight: 500, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
+        Latest From The Blogs
       </Typography>
 
       <Grid container spacing={4} alignItems="stretch">
-        {/* LEFT SIDE: Vertical Short Video */}
-        {/* LEFT SIDE: Vertical Short Video */}
-        <Grid item xs={12} md={4}>
+        {/* LEFT SIDE: Short Video */}
+        <Grid item xs={12} md={6} mt={3}>
           <Card
             sx={{
               borderRadius: '40px',
@@ -100,7 +108,6 @@ const BlogSection = () => {
             }}
             onClick={() => navigate(`/feed/${short.type}/${short._id}`)}
           >
-            {/* VIDEO SECTION */}
             <Box sx={{ width: '100%', height: '450px', overflow: 'hidden' }}>
               <video
                 src={getUrl(short)}
@@ -118,26 +125,12 @@ const BlogSection = () => {
               />
             </Box>
 
-            {/* DETAILS BELOW VIDEO */}
             <CardContent sx={{ p: 3 }}>
               {renderCardHeader(short.type)}
-              <Typography
-                variant="h6"
-                color="#fff"
-                gutterBottom
-                sx={{ fontSize: '1.4rem', fontWeight: 'bold' }}
-              >
+              <Typography variant="h6" color="#fff" gutterBottom sx={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                 {short.subtitle}
               </Typography>
-              <Typography
-                variant="body2"
-                color="#DCDCDC"
-                sx={{
-                  fontSize: '1.05rem',
-                  mb: 1.5,
-                  lineHeight: 1.5,
-                }}
-              >
+              <Typography variant="body2" color="#DCDCDC" sx={{ fontSize: '1.05rem', mb: 1.5, lineHeight: 1.5 }}>
                 {short.description}
               </Typography>
               <Typography variant="body2" color="#888">
@@ -146,8 +139,8 @@ const BlogSection = () => {
               <Typography
                 variant="body1"
                 color="#7BC043"
-                sx={{mt: '-15px',  fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' }, paddingLeft: "78%" }}
-                onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
+                sx={{ mt: '-15px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }}
+                onClick={() => navigate(`/feed/${short.type}/${short._id}`)}
               >
                 Read More →
               </Typography>
@@ -155,11 +148,9 @@ const BlogSection = () => {
           </Card>
         </Grid>
 
-
-
-        { /* RIGHT SIDE: News and Blogs */}
-        <Grid item xs={12} md={8} mt={3}>
-          {[...newsItems, ...blogs].map(p => (
+        {/* RIGHT SIDE: 3 Latest News/Blogs excluding left item */}
+        <Grid item xs={12} md={6} mt={3}>
+          {rightSideCards.map(p => (
             <Card
               key={p._id}
               sx={{ mb: 3, display: 'flex', height: 200, borderRadius: 3, bgcolor: '#212121', color: '#fff', cursor: 'pointer' }}
@@ -185,7 +176,7 @@ const BlogSection = () => {
                 <Typography
                   variant="body1"
                   color="#7BC043"
-                  sx={{mt: '-15px', fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' }, paddingLeft: "90%" }}
+                  sx={{ mt: '-15px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }}
                   onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
                 >
                   Read More →
@@ -198,7 +189,7 @@ const BlogSection = () => {
 
       {/* VIEW ALL BUTTON */}
       <Box textAlign="center" mt={6}>
-        <StyledButton onClick={() => navigate('/feed/:type')}>
+        <StyledButton onClick={() => navigate('/feed/blog')}>
           VIEW ALL
         </StyledButton>
       </Box>
