@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
-  CardMedia,
   Box,
   Grid,
   Chip,
@@ -13,7 +12,6 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
-// ...imports remain unchanged
 
 const BlogSection = () => {
   const [posts, setPosts] = useState([]);
@@ -35,7 +33,6 @@ const BlogSection = () => {
 
   if (posts.length === 0) return null;
 
-  // Always pick the latest as left, next 3 as right
   const leftPost = posts[0];
   const rightSideCards = posts.slice(1, 4);
 
@@ -76,34 +73,41 @@ const BlogSection = () => {
     },
   }));
 
-  // Helper to render media (video or image)
   const renderMedia = (p, style = {}) => {
-    if (p.videoUrl) {
+    const url = getUrl(p);
+    const isVideo = url.match(/\.(mp4|mov|avi|mkv|webm)$/i);
+
+    if (isVideo) {
       return (
         <video
-          src={getUrl(p)}
-          autoPlay
           muted
           loop
           playsInline
-          controls={false}
+          preload="auto"
+          controls
           style={{
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            borderRadius: style.borderRadius || 0,
             ...style,
           }}
-        />
+        >
+          <source src={url} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       );
     }
+
     return (
       <img
-        src={getUrl(p)}
+        src={url}
         alt={p.subtitle}
         style={{
           width: '100%',
           height: '100%',
           objectFit: 'cover',
+          borderRadius: style.borderRadius || 0,
           ...style,
         }}
       />
@@ -120,7 +124,7 @@ const BlogSection = () => {
       </Typography>
 
       <Grid container spacing={4} alignItems="stretch">
-        {/* LEFT SIDE: Latest */}
+        {/* LEFT SIDE */}
         <Grid item xs={12} md={6} mt={3}>
           <Card
             sx={{
@@ -135,11 +139,11 @@ const BlogSection = () => {
             }}
             onClick={() => navigate(`/feed/${leftPost.type}/${leftPost._id}`)}
           >
-            <Box sx={{ width: '100%', height: '450px', overflow: 'hidden' }}>
+            <Box sx={{ width: '100%', height: '360%', overflow: 'hidden' }}>
               {renderMedia(leftPost, { borderRadius: '40px 40px 0 0' })}
             </Box>
 
-            <CardContent sx={{ p: 3 }}>
+            <CardContent sx={{ p: 3, height: '100%' }}>
               {renderCardHeader(leftPost.type)}
               <Typography variant="h6" color="#fff" gutterBottom sx={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
                 {leftPost.subtitle}
@@ -162,43 +166,55 @@ const BlogSection = () => {
           </Card>
         </Grid>
 
-        {/* RIGHT SIDE: Next 3 */}
+        {/* RIGHT SIDE */}
         <Grid item xs={12} md={6} mt={3}>
-          {rightSideCards.map(p => (
-            <Card
-              key={p._id}
-              sx={{ mb: 3, display: 'flex', height: 200, borderRadius: 3, bgcolor: '#212121', color: '#fff', cursor: 'pointer' }}
-              onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
-            >
-              <Box sx={{ width: 180, height: 200, overflow: 'hidden', borderRadius: '12px 0 0 12px' }}>
-                {renderMedia(p, { width: '180px', height: '200px', borderRadius: '12px 0 0 12px' })}
-              </Box>
-              <CardContent sx={{ flex: 1 }}>
-                {renderCardHeader(p.type)}
-                <Typography variant="h6" color="#fff" gutterBottom sx={{ fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.5rem' } }}>
-                  {p.subtitle}
-                </Typography>
-                <Typography variant="body1" color="#DCDCDC" sx={{ fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.15rem' } }}>
-                  {p.description}
-                </Typography>
-                <Typography variant="body2" color="#888" mt={1} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}>
-                  {moment(p.createdAt).format('MMM DD, YYYY')}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  color="#7BC043"
-                  sx={{ mt: '-15px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }}
+          <Grid container spacing={3} direction="column">
+            {rightSideCards.map((p) => (
+              <Grid item key={p._id}>
+                <Card
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    borderRadius: 6,
+                    bgcolor: '#212121',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    height: '250px',
+                    overflow: 'hidden',
+                  }}
                   onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
                 >
-                  Read More →
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
+                  <Box sx={{ width: 180, height: '100%', overflow: 'hidden' }}>
+                    {renderMedia(p, { width: '180px', height: '100%', borderRadius: '12px 0 0 12px' })}
+                  </Box>
+                  <CardContent sx={{ flex: 1 }}>
+                    {renderCardHeader(p.type)}
+                    <Typography variant="h6" color="#fff" gutterBottom sx={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+                      {p.subtitle}
+                    </Typography>
+                    <Typography variant="body2" color="#DCDCDC" sx={{ fontSize: '1rem' }}>
+                      {p.description}
+                    </Typography>
+                    <Typography variant="body2" color="#888" mt={1}>
+                      {moment(p.createdAt).format('MMM DD, YYYY')}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="#7BC043"
+                      sx={{ mt: '-10px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }}
+                      onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
+                    >
+                      Read More →
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         </Grid>
       </Grid>
 
-      {/* VIEW ALL BUTTON */}
+      {/* VIEW ALL */}
       <Box textAlign="center" mt={6}>
         <StyledButton onClick={() => navigate('/feed/blog')}>
           VIEW ALL
