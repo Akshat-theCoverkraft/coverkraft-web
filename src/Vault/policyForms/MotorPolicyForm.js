@@ -27,6 +27,7 @@ import DateTimePicker from '../../component/DateTimePicker';
 import { formatDate } from '../../utils/dateUtils';
 import axios from 'axios';
 import { THEME_COLOR } from '../../constants';
+import { WidthFull } from '@mui/icons-material';
 const MotorPolicyForm = () => {
     const location = useLocation();
     const responseData = location.state?.responseData;
@@ -63,11 +64,11 @@ const MotorPolicyForm = () => {
     const [model, setModel] = useState(responseData?.model || policyDetails?.policyDetails?.model || '');
 
     const [loading, setLoading] = useState(false);
-    const userId = localStorage.getItem('userId');
-    const documentId = localStorage.getItem('documentId');
-    const policyId = localStorage.getItem('policyId')
+    const userId = sessionStorage.getItem('userId');
+    const documentId = sessionStorage.getItem('documentId');
+    const policyId = sessionStorage.getItem('policyId')
 
-    const token = localStorage.getItem('token')
+    const token = sessionStorage.getItem('token')
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -92,9 +93,12 @@ const MotorPolicyForm = () => {
     };
 
     const handleStartDateChange = (date) => {
+        console.log('Start date changed:', date); // Add this line
+
         setPolicyStartDate(date);
     };
     const handleEndDateChange = (date) => {
+        console.log('End date changed:', date); // Add this line
         setPolicyEndDate(date);
     };
     useEffect(() => {
@@ -374,7 +378,6 @@ const MotorPolicyForm = () => {
 
                                     <Grid container spacing={3} className='mb-2'>
                                         <Grid item xs={12} md={6}>
-
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Start date <span className='text-danger'>*</span>
                                             </label>
@@ -388,11 +391,11 @@ const MotorPolicyForm = () => {
                                             />
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 End date <span className='text-danger'>*</span>
                                             </label>
                                             <DateTimePicker
+                                                type="date"
                                                 height={50}
                                                 isIcon={false}
                                                 label="DD/MM/YYYY"
@@ -432,7 +435,7 @@ const MotorPolicyForm = () => {
                                         required
                                     />
                                     <CustomInput
-                                        type="number"
+                                        type="text"
                                         label="Registration Year"
                                         value={registrationYear}
                                         onChange={(e) => {
@@ -442,7 +445,7 @@ const MotorPolicyForm = () => {
 
                                     />
                                     <CustomInput
-                                        type="number"
+                                        type="text"
                                         label="IDV"
                                         value={idv}
                                         onChange={(e) => {
@@ -480,7 +483,7 @@ const MotorPolicyForm = () => {
 
 
                                     <CustomInput
-                                        type="number"
+                                        type="text"
                                         label="Net Premium"
                                         value={netPremium}
                                         onChange={(e) => {
@@ -490,7 +493,7 @@ const MotorPolicyForm = () => {
 
                                     />
                                     <CustomInput
-                                        type="number"
+                                        type="text"
                                         label="Total Premium"
                                         value={premiumPaid}
                                         onChange={(e) => {

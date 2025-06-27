@@ -7,7 +7,7 @@
 // //         .then((currentToken) => {
 // //             if (currentToken) {
 // //                 console.log('current token for client: ', currentToken);// Perform any other neccessary action with the token
-// //                 localStorage.setItem('fcmToken', currentToken);
+// //                 sessionStorage.setItem('fcmToken', currentToken);
 // //             } else {// Show permission request UI        
 // //                 console.log('No registration token available. Request permission to generate one.');
 // //             }
@@ -16,7 +16,7 @@
 
 // // // To retrieve the token from local storage later
 // // export const getStoredToken = () => {
-// //     return localStorage.getItem('fcmToken');
+// //     return sessionStorage.getItem('fcmToken');
 // // };
 // // import { getMessaging, getToken } from "firebase/messaging";
 

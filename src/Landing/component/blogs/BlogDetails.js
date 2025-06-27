@@ -75,19 +75,20 @@ console.log(type, id, "<===type")
     <>
     <ToastContainer />
     <div className="overflow-hidden">
-      <Navbar />
+        <Navbar />
+        
       <div
         className="container my-4"
         style={{ marginTop: "100px", width: "80%" }}
       >
         <p
-          className="text-secondary mb-4 d-inline-block"
+          className="text-white mb-4 d-inline-block"
           style={{ cursor: "pointer" }}
           onClick={() => navigate(-1)}
         >
           <i className="fas fa-arrow-left color-white"></i> Back
         </p>
-        <h1 className="text-center mb-4">{capitalizeFirstLetter(type) === "News" ? 'News' : capitalizeFirstLetter(type) + 's'}</h1>
+        <h1 className="text-center mb-5 ml-5">{capitalizeFirstLetter(type) === "News" ? 'News' : capitalizeFirstLetter(type) + 's'}</h1>
         
         <div className="card mb-4" style={{backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.SECONDARY_TEXT}}>
           {renderMediaContent(blog?.newsImg, blog?.subtitle, true)}

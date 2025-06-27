@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 import { THEME_COLOR } from '../constants';
-import moment from 'moment';
 
 const DateTimePicker = (props) => {
     const [selectedDate, setSelectedDate] = useState(
@@ -28,7 +27,7 @@ const DateTimePicker = (props) => {
         }
     };
 
-    // Custom input for react-datepicker using MUI TextField
+    // Custom MUI-styled input for DatePicker
     const CustomInput = forwardRef(({ value, onClick }, ref) => (
         <TextField
             variant="outlined"
@@ -52,7 +51,7 @@ const DateTimePicker = (props) => {
                 '& .MuiOutlinedInput-root': {
                     borderRadius: '28px',
                     background: 'rgb(33 37 41)',
-                    color: THEME_COLOR.COLOR
+                    color: THEME_COLOR.COLOR,
                 },
             }}
         />
@@ -63,10 +62,10 @@ const DateTimePicker = (props) => {
             selected={selectedDate}
             onChange={handleChange}
             dateFormat="dd/MM/yyyy"
-            maxDate={moment().subtract(18, 'years').toDate()}
-            minDate={moment().subtract(120, 'years').toDate()}
             customInput={<CustomInput />}
             popperPlacement="bottom"
+            {...(props.minDate ? { minDate: new Date(props.minDate) } : {})}
+            {...(props.maxDate ? { maxDate: new Date(props.maxDate) } : {})}
         />
     );
 };

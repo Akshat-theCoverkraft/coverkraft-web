@@ -10,14 +10,15 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   const handleVault = () => {
-    const isLoggedIn = !!localStorage.getItem("token"); // Change 'token' to your actual key if different
+  const isLoggedIn = !!sessionStorage.getItem("token"); // ✅ frontend session check
 
-    if (isLoggedIn) {
-      navigate("/vault");
-    } else {
-      navigate("/login"); // Redirect to login if not logged in
-    }
-  };
+  if (isLoggedIn) {
+    navigate("/vault");
+  } else {
+    navigate("/login"); // 🚪 Boot to login if not logged in
+  }
+};
+
 
   return (
     <div style={{ paddingTop: "3rem", paddingBottom: "0rem" }}>

@@ -25,39 +25,23 @@ const Notification = () => {
   const [loading, setLoading] = useState(false);
 
   // Suppress ResizeObserver errors
-  useEffect(() => {
-    const resizeObserverErrDiv = document.getElementById('webpack-dev-server-client-overlay-div');
-    const resizeObserverErr = document.getElementById('webpack-dev-server-client-overlay');
-    
-    if (resizeObserverErr) {
-      resizeObserverErr.setAttribute('style', 'display: none');
+useEffect(() => {
+  const handleResizeObserverError = (e) => {
+    if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
+      e.stopImmediatePropagation();
     }
-    if (resizeObserverErrDiv) {
-      resizeObserverErrDiv.setAttribute('style', 'display: none');
-    }
-    
-    // Handle ResizeObserver errors globally
-    const handleResizeObserverError = (e) => {
-      if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
-    };
-    
-    window.addEventListener('error', handleResizeObserverError);
-    
-    return () => {
-      window.removeEventListener('error', handleResizeObserverError);
-    };
-  }, []);
+  };
+
+  window.addEventListener('error', handleResizeObserverError);
+  return () => window.removeEventListener('error', handleResizeObserverError);
+}, []);
 
   useEffect(() => {
     fetchNotifications();
   }, []);
 
-  const getDeletedIds = () => JSON.parse(localStorage.getItem("deletedNotifications")) || [];
-  const saveDeletedIds = (ids) => localStorage.setItem("deletedNotifications", JSON.stringify(ids));
+  const getDeletedIds = () => JSON.parse(sessionStorage.getItem("deletedNotifications")) || [];
+  const saveDeletedIds = (ids) => sessionStorage.setItem("deletedNotifications", JSON.stringify(ids));
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
@@ -67,12 +51,12 @@ const Notification = () => {
       });
       const allNotifications = response?.data?.data || [];
       const deletedIds = getDeletedIds();
-      
+
       // Filter out deleted notifications on frontend
       const filteredNotifications = allNotifications.filter(
         (notification) => !deletedIds.includes(notification._id)
       );
-      
+
       setNotifications(filteredNotifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -94,8 +78,8 @@ const Notification = () => {
 
   const truncateDescription = (description, wordLimit = 20) => {
     const words = description.split(" ");
-    return words.length <= wordLimit 
-      ? description 
+    return words.length <= wordLimit
+      ? description
       : words.slice(0, wordLimit).join(" ") + "...";
   };
 
@@ -114,7 +98,7 @@ const Notification = () => {
     const deletedIds = getDeletedIds();
     const updatedDeletedIds = [...deletedIds, id];
     saveDeletedIds(updatedDeletedIds);
-    
+
     // Remove from current state
     setNotifications(prev => prev.filter(n => n._id !== id));
   }, []);
@@ -124,7 +108,7 @@ const Notification = () => {
     const existingDeletedIds = getDeletedIds();
     const updatedDeletedIds = [...new Set([...existingDeletedIds, ...allIds])];
     saveDeletedIds(updatedDeletedIds);
-    
+
     // Clear current notifications
     setNotifications([]);
   }, [notifications]);
@@ -133,12 +117,12 @@ const Notification = () => {
 
   if (loading) {
     return (
-      <div style={{ 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "center", 
-        height: "100vh", 
-        backgroundColor: "#121212" 
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        backgroundColor: "#121212"
       }}>
         <CircularProgress style={{ color: "#E0E0E0" }} />
       </div>
@@ -147,17 +131,17 @@ const Notification = () => {
 
   if (notifications.length === 0) {
     return (
-      <div style={{ 
-        backgroundColor: "#121212", 
-        color: "#E0E0E0", 
-        minHeight: "100vh" 
+      <div style={{
+        backgroundColor: "#121212",
+        color: "#E0E0E0",
+        minHeight: "100vh"
       }}>
         <Navbar />
-        <div style={{ 
-          minHeight: "80vh", 
-          display: "flex", 
-          justifyContent: "center", 
-          alignItems: "center" 
+        <div style={{
+          minHeight: "80vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
         }}>
           <Typography variant="h5">
             You have no notifications at the moment.
@@ -172,20 +156,20 @@ const Notification = () => {
     <div style={{ backgroundColor: "#121212", color: "#E0E0E0", minHeight: "100vh" }}>
       <Navbar />
       <div className="m-5 p-5" style={{ minHeight: "60vh" }}>
-        <div style={{ 
-          overflowY: "auto", 
-          width: "80vw", 
-          margin: "auto", 
-          alignItems: "center", 
-          display: "flex", 
-          flexDirection: "column" 
+        <div style={{
+          overflowY: "auto",
+          width: "80vw",
+          margin: "auto",
+          alignItems: "center",
+          display: "flex",
+          flexDirection: "column"
         }}>
-          <div style={{ 
-            width: "100%", 
-            paddingLeft: "1rem", 
-            display: "flex", 
-            justifyContent: "space-between", 
-            alignItems: "center" 
+          <div style={{
+            width: "100%",
+            paddingLeft: "1rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
           }}>
             <Typography sx={{ fontSize: "17px", fontWeight: "500", color: "#E0E0E0", marginBottom: "1rem" }}>
               {sentNotificationsCount} new notification{sentNotificationsCount !== 1 ? "s" : ""}
@@ -220,14 +204,14 @@ const Notification = () => {
                 minHeight: "auto", // Prevent ResizeObserver issues
               }}
             >
-              <Grid 
-                container 
-                spacing={3} 
-                style={{ 
-                  backgroundColor: "#1C1C1C", 
+              <Grid
+                container
+                spacing={3}
+                style={{
+                  backgroundColor: "#1C1C1C",
                   minWidth: "80vw",
                   minHeight: "120px" // Fixed height to prevent resize calculations
-                }} 
+                }}
                 className="px-5 py-3"
               >
                 <Grid item xs={10} className="pt-5">
@@ -246,12 +230,12 @@ const Notification = () => {
                     )}
                   </Typography>
                 </Grid>
-                <Grid item xs={2} style={{ 
-                  display: "flex", 
-                  flexDirection: "column", 
-                  alignItems: "flex-end", 
-                  justifyContent: "space-between", 
-                  paddingTop: "1.5rem" 
+                <Grid item xs={2} style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-end",
+                  justifyContent: "space-between",
+                  paddingTop: "1.5rem"
                 }}>
                   <Typography style={{ color: "white", fontSize: "1.1rem", marginBottom: "0.5rem" }}>
                     {sentNotificationsCount} day{sentNotificationsCount > 1 ? "s" : ""} ago
@@ -269,7 +253,7 @@ const Notification = () => {
         </div>
       </div>
       <Footer />
-      
+
       <Dialog
         open={open}
         onClose={handleClose}
@@ -278,8 +262,8 @@ const Notification = () => {
         <DialogTitle style={{ color: "#E0E0E0" }}>
           {selectedNotification?.title}
         </DialogTitle>
-        <DialogContent>
-          <Typography style={{ color: "#E0E0E0" }}>
+        <DialogContent dividers style={{ maxHeight: "300px", overflowY: "auto" }}>
+          <Typography style={{ whiteSpace: "pre-line", lineHeight: "1.5" }}>
             {selectedNotification?.description}
           </Typography>
         </DialogContent>
