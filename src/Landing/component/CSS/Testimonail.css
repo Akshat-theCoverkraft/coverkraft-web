@@ -2,6 +2,38 @@
   width: 100%;
   margin: 0 auto;
   position: relative;
+
+  .slider-arrow-container {
+    position: relative;
+
+    .testimonial-arrow-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 2;
+
+      img {
+        width: 40px;
+        height: 40px;
+        transition: transform 0.2s ease;
+      }
+
+      &:hover img {
+        transform: scale(1.1);
+      }
+    }
+
+    .left-arrow {
+      left: -30px;
+    }
+
+    .right-arrow {
+      right: -30px;
+    }
+  }
 }
 
 @mixin breakpoint($width) {
@@ -14,6 +46,7 @@ section.testimonials {
   padding-top: 50px;
   padding-bottom: 60px;
   padding-left: 45px;
+  padding-right: 45px;
 
   .container {
     .quotes {
@@ -31,7 +64,6 @@ section.testimonials {
         height: 40px;
         color: transparent;
         border: none;
-        /* background-color: transparent; */
         cursor: pointer;
       }
 
@@ -41,9 +73,9 @@ section.testimonials {
 
       .slick-list {
         .quote-wrapper {
-          flex: 1 1 45%; /* Reduces the width of the card to 45% */
-          max-width: 720px; /* Ensures the card doesn't exceed 450px in width */
-          background-color: #1E1E1E;
+          flex: 1 1 45%;
+          max-width: 720px;
+          background-color: #1e1e1e;
           color: #fff;
           padding: 50px;
           border-radius: 20px;
@@ -52,7 +84,7 @@ section.testimonials {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          margin: 0 15px; /* Adds left and right margin to the testimonial cards */
+          margin: 0 15px;
 
           &::before {
             content: "";
@@ -84,49 +116,51 @@ section.testimonials {
     }
   }
 
-  @include breakpoint(620px) {
-    .container {
-      .quotes {
-        gap: 0;
-
-        .slick-list {
-          .quote-wrapper {
-            flex: 1 1 95%; /* Reduces the width for smaller screens */
-            max-width: 100%; /* Allows full-width on smaller screens */
-            max-height: 270px;
-            min-height: 200px;
-            padding: 20px 30px;
-            margin: 0 10px; /* Adds left and right margin for smaller screens */
-            border-radius: 8px;
-
-            &::before {
-              height: 100%;
-              width: 4px;
-              position: absolute;
-              top: 0;
-              left: 0;
-              border-radius: 20px 0px 0px 20px;
-            }
-
-            .quote {
-              font-size: 16px;
-              line-height: 25px;
-              text-align: left;
-            }
-
-            .author {
-              margin-top: 20px;
-              flex-direction: column;
-              align-items: left;
-              gap: 8px;
-              text-align: left;
-            }
-          }
-        }
-      }
+  @media screen and (max-width: 620px) {
+    section.testimonials .container {
+      /* Flatten nested selectors for plain CSS */
+    }
+    section.testimonials .container .quotes {
+      gap: 0;
+    }
+    section.testimonials .container .quotes .slick-list .quote-wrapper {
+      flex: 1 1 95%;
+      max-width: 100%;
+      max-height: 270px;
+      min-height: 200px;
+      padding: 20px 30px;
+      margin: 0 10px;
+      border-radius: 8px;
+    }
+    section.testimonials .container .quotes .slick-list .quote-wrapper::before {
+      height: 100%;
+      width: 4px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 20px 0px 0px 20px;
+    }
+    section.testimonials .container .quotes .slick-list .quote-wrapper .quote {
+      font-size: 16px;
+      line-height: 25px;
+      text-align: left;
+    }
+    section.testimonials .container .quotes .slick-list .quote-wrapper .author {
+      margin-top: 20px;
+      flex-direction: column;
+      align-items: left;
+      gap: 8px;
+      text-align: left;
+    }
+    section.testimonials .container .slider-arrow-container .left-arrow {
+      left: -10px;
+    }
+    section.testimonials .container .slider-arrow-container .right-arrow {
+      right: -10px;
     }
   }
 }
+
 .quote-wrapper {
   &.has-video {
     flex-direction: row;
@@ -134,6 +168,7 @@ section.testimonials {
 
     .video-section {
       flex: 1;
+
       video {
         width: 100%;
         height: auto;
@@ -144,12 +179,12 @@ section.testimonials {
 
     .text-section {
       flex: 1;
-      /* display: flex; */
       flex-direction: column;
       justify-content: space-between;
     }
   }
 }
+
 @media (max-width: 620px) {
   .quote-wrapper {
     flex-direction: column !important;

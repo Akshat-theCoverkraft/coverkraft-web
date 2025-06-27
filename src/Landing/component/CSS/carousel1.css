@@ -169,10 +169,12 @@ position: relative !important;}
 }
 .custom-arrow-left {
   left: 0px;
+  margin-left: 10px;
 }
 
 .custom-arrow-right {
   right: 0px;
+  margin-right: 10px;
 }
 .custom-pagination {
   display: flex;
