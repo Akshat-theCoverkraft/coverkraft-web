@@ -6,284 +6,230 @@ import MailIcon from "@mui/icons-material/Mail";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "../Landing/component/Footer";
+import { styled } from "@mui/material/styles";
+
 function ContactUs() {
-    const [form, setForm] = useState({
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+    attachments: [],
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setForm((prev) => ({ ...prev, attachments: files }));
+  };
+
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (!isValidEmail(form.email)) {
+      toast.error("❌ Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("message", form.message);
+
+      if (Array.isArray(form.attachments)) {
+        form.attachments.forEach((file) => {
+          formData.append("attachments", file);
+        });
+      }
+
+      const response = await fetch("http://localhost:5242/api/contact", {
+        method: "POST",
+        body: formData,
+      });
+
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error("Server returned non-JSON response.");
+      }
+
+      if (!response.ok) {
+        toast.error(`❌ Failed to send message: ${data?.message || "Unknown error"}`);
+        return;
+      }
+
+      toast.success("✅ Message sent successfully!");
+      setForm({
         name: "",
         email: "",
         message: "",
-    });
+        attachments: [],
+      });
+      document.getElementById("file-upload").value = null;
 
-    const [loading, setLoading] = useState(false);
+    } catch (error) {
+      console.error("💥 Error sending message:", error);
+      toast.error("❌ Something went wrong while sending the message.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+  const StyledSubmitButton = styled("button")(() => ({
+    backgroundColor: "transparent",
+    color: "#8AC642",
+    border: "1.5px solid #8AC642",
+    borderRadius: "20px",
+    padding: "12px 16px",
+    fontSize: "1.4rem",
+    fontWeight: "600",
+    minWidth: "100px",
+    cursor: "pointer",
+    userSelect: "none",
+    transition: "all 0.25s ease",
+    width: "100%",
+    marginTop: "10px",
+    "&:hover": {
+      backgroundColor: "#8AC642",
+      color: "#000",
+    },
+  }));
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+  return (
+    <>
+      <div className="container-fluid text-light py-5">
+        <Navbar />
 
-        try {
-            const response = await fetch("http://localhost:5242/api/contact", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(form),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                toast.success("✅ Message sent successfully!");
-                setForm({ name: "", email: "", message: "" });
-            } else {
-                toast.error(`❌ Failed to send message: ${data.message}`);
-            }
-        } catch (error) {
-            console.error("Error sending message:", error);
-            toast.error("❌ Something went wrong while sending the message.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Email validation function
-    const isValidEmail = (email) => {
-        // Simple regex for email validation
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    };
-
-    return (
-        <>
-        <div className="contact-container">
-            <Navbar />
-            <div className="contact-heading text-center mt-5 mb-5">
-                <h1 className="fs-1 fw-bold ">Contact Us</h1>
-                <h3 className="mt-1 ">
-                    We'd love to hear from you! Please fill out the form below to connect with us.
-                </h3>
-            </div>
-
-            <div className="contact-card">
-                <div className="contact-form-section">
-                    <h2 className="contact-title">Get in touch</h2>
-                    <p className="contact-subtitle fs-3">We are here for you! How can we help?</p>
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            if (!isValidEmail(form.email)) {
-                                toast.error("❌ Please enter a valid email address.");
-                                return;
-                            }
-                            handleSubmit(e);
-                        }}
-                        className="contact-form"
-                    >
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Your Name"
-                            value={form.name}
-                            onChange={handleChange}
-                            required
-                            className="contact-input"
-                        />
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Your Email"
-                            value={form.email}
-                            onChange={handleChange}
-                            required
-                            className="contact-input"
-                        />
-                        <textarea
-                            name="message"
-                            placeholder="Your Message"
-                            value={form.message}
-                            onChange={handleChange}
-                            rows="5"
-                            required
-                            className="contact-textarea"
-                        />
-                        <button type="submit" className="contact-button" disabled={loading}>
-                            {loading ? "Sending..." : "Send Message"}
-                        </button>
-                    </form>
-                </div>
-
-                <div className="contact-info-section">
-                    <img
-                        src={require("../Images/objects.png")}
-                        alt="Decor"
-                        className="contact-image"
-                    />
-                    <div className="contact-info">
-                        <div className="contact-info-item">
-                            <FmdGoodIcon className="contact-icon" />
-                            <p>16 D-1, Danish Nagar, Hoshangabad Road, Bhopal (M.P)</p>
-                        </div>
-                        <div className="contact-info-item">
-                            <CallIcon className="contact-icon" />
-                            <p>+91-xxx-xxxx-xxxx</p>
-                        </div>
-                        <div className="contact-info-item">
-                            <MailIcon className="contact-icon" />
-                            <p>
-                                <a href="mailto:contact@thecoverkraft.com" className="contact-mail">
-                                    contact@thecoverkraft.com
-                                </a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ToastContainer position="bottom-right" autoClose={4000} />
-            <style jsx>{`
-            html, body {
-                margin: 0;
-                padding: 0;
-                overflow-x: hidden;
-            }
-
-            .contact-container {
-                min-height: 100vh;
-                background-color: #121212;
-                color: #f0f0f0;
-                padding: 2rem 1rem;
-                font-family: Inter, sans-serif;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .contact-card {
-                width: 100%;
-                max-width: 1200px;
-                background-color: #212121;
-                border-radius: 2rem;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                overflow: hidden;
-                display: flex;
-                flex-wrap: wrap;
-            }
-
-            .contact-form-section,
-            .contact-info-section {
-                flex: 1 1 50%;
-                padding: 2rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-
-            .contact-title {
-                color: #8bc642;
-                margin-bottom: 1.2rem;
-                font-size: 2.2rem;
-                font-weight: bold;
-            }
-
-            .contact-subtitle {
-                color: #fff;
-                margin-bottom: 2rem;
-                font-size: 1.2rem;
-            }
-
-            .contact-form {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .contact-input,
-            .contact-textarea {
-                padding: 1rem;
-                background-color: #1f1f1f;
-                color: #ffffff;
-                border: 1px solid #4a4a4a;
-                border-radius: 8px;
-                font-size: 1.5rem;
-                outline: none;
-                width: 80%;
-            }
-
-            .contact-button {
-                background-color: #8bc642;
-                color: #121212;
-                padding: 0.9rem;
-                border: none;
-                border-radius: 8px;
-                font-weight: bold;
-                cursor: pointer;
-                font-size: 1.5rem;
-                transition: all 0.3s ease;
-                                width: 80%;
-
-            }
-
-            .contact-info-section {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .contact-image {
-                width: 100%;
-                max-width: 300px;
-                object-fit: contain;
-                margin-bottom: 2rem;
-            }
-
-            .contact-info {
-                width: 100%;
-            }
-
-            .contact-info-item {
-                display: flex;
-                align-items: flex-start;
-                margin-bottom: 1rem;
-                gap: 1rem;
-            }
-
-            .contact-icon {
-                font-size: 1.8rem;
-                color: #8bc642;
-            }
-
-            .contact-mail {
-                text-decoration: underline;
-                color: inherit;
-            }
-
-            @media (max-width: 768px) {
-                .contact-card {
-                    flex-direction: column;
-                }
-
-                .contact-form-section,
-                .contact-info-section {
-                    flex: 1 1 100%;
-                    padding: 1.5rem;
-                }
-
-                .contact-title {
-                    font-size: 1.8rem;
-                }
-
-                .contact-subtitle {
-                    font-size: 1rem;
-                }
-            }
-        `}</style>
-
+        <div className="text-center my-5 p-5" style={{ backgroundColor: '#212121', borderRadius: '20px', marginLeft: '6%', marginRight: '6%' }}>
+          <h1 className="fw-bold" style={{ color: '#8bc642', fontSize: '3rem' }}>Contact Us</h1>
+          <h3 style={{ color: '#ccc', fontWeight: 500, fontSize: '1.5rem' }}>
+            We'd love to hear from you! Please fill out the form below to connect with us.
+          </h3>
         </div>
-            <Footer/>
-</>
-    );
+
+        <div className="container px-4 mb-5" style={{ color: '#8bc642', fontSize: '1.6rem' }} >
+          <div className="bg-secondary bg-opacity-10 rounded-4 shadow-lg p-4" style={{ backgroundColor: '#212121', borderRadius: '25px', marginLeft: '5%', marginRight: '5%' }}>
+            <div className="row g-4" style={{ minHeight: '400px', paddingLeft: '4%' }}>
+              {/* Form Section */}
+              <div className="col-md-6">
+                <h2 className="text fs-bold" style={{
+                  fontSize: '2.5rem', color: '#8bc642', marginBottom: '1rem'
+                }}>Get in touch with us.</h2>
+                <p className="text-white" style={{ fontSize: "2rem" }}>We are here for you! How can we help?</p>
+
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Your Name"
+                      className="form-control bg-dark text-light border-secondary placeholder-light fs-5"
+                      value={form.name}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Your Email"
+                      className="form-control bg-dark text-light border-secondary placeholder-light fs-5"
+                      value={form.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <textarea
+                      name="message"
+                      placeholder="Write your query..."
+                      className="form-control bg-dark text-light border-secondary placeholder-light "
+                      style={{ height: '200px', overflowY: 'auto', resize: 'none', fontSize: '2rem' }}
+                      value={form.message}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label htmlFor="file-upload" className="form-label text-light fw-semibold">
+                      📎 Attachments
+                    </label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      name="attachments"
+                      className="form-control bg-dark text-light border-secondary"
+                      accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                      onChange={handleFileChange}
+                      multiple
+                    />
+                    {Array.isArray(form.attachments) && form.attachments.length > 0 && (
+                      <ul className="text-white mt-1">
+                        {form.attachments.map((file, index) => (
+                          <li key={index}>{file.name}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <StyledSubmitButton type="submit" disabled={loading} style={{ opacity: loading ? 0.7 : 1 }}>
+                    {loading ? "Sending..." : "Send Message"}
+                  </StyledSubmitButton>
+                </form>
+              </div>
+
+              {/* Info Section */}
+              <div className="col-md-6 d-flex flex-column align-items-center justify-content-center text-light text-center">
+                <img
+                  src={require("../Images/objects.png")}
+                  alt="Decor"
+                  className="img-fluid mb-4"
+                  style={{ maxWidth: '300px' }}
+                />
+                <div>
+                  <p><FmdGoodIcon className="me-2 text-success" />16 D-1, Danish Nagar, Hoshangabad Road, Bhopal (M.P)</p>
+                  <p><CallIcon className="me-2 text-success" />+91-xxx-xxxx-xxxx</p>
+                  <p>
+                    <MailIcon className="me-2 text-success" />
+                    <a href="mailto:contact@thecoverkraft.com" className="text-decoration-underline text-light">
+                      contact@thecoverkraft.com
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+<ToastContainer position="top-right" autoClose={4000} />
+      </div>
+      <Footer />
+
+      <style>
+        {`
+        ::placeholder {
+          color: #aaa !important;
+          opacity: 1;
+        }
+      `}
+      </style>
+    </>
+  );
 }
 
 export default ContactUs;

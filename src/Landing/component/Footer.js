@@ -17,7 +17,7 @@ const Footer = () => {
   const handleStaticNav = (route) => () => {
     // Check login status only for 'Policy Vault'
     if (route === "/vault") {
-      const isLoggedIn = localStorage.getItem("isLoggedIn"); // replace with actual key if needed
+      const isLoggedIn = sessionStorage.getItem("isLoggedIn"); // replace with actual key if needed
       if (!isLoggedIn || isLoggedIn === "false") {
         // Redirect to login if not logged in
         navigate("/login");
@@ -28,7 +28,7 @@ const Footer = () => {
   };
 
   const servicesLinks = [
-    { to: "", label: "Home" },
+    { to: "/", label: "Home" },
     // { to: "/about", label: "About Us" },
     { to: "/vault", label: "Policy Vault" },
     { to: "/contactus", label: "Contact Us" },

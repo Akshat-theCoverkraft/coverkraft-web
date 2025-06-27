@@ -63,35 +63,52 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    let logoutTimer;
-    let loginTime;
-    if (loginTime) {
-      const resetTimer = () => {
-        if (logoutTimer) clearTimeout(logoutTimer);
-        const excludedPages = ["", "/login"];
-        if (!excludedPages.includes(window.location.pathname)) {
-          logoutTimer = setTimeout(() => {
+    const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
+    const excludedPages = ["", "/login", "/register"];
+
+    const loginTime = sessionStorage.getItem("loginTime");
+
+    const handleLogout = () => {
+      sessionStorage.clear(); // 💥 Kill session
+      setLogout(true);
+      setIsLoggedIn(false);
+      navigate("/login");
+    };
+
+    if (!excludedPages.includes(window.location.pathname)) {
+      if (loginTime) {
+        const loginTimestamp = parseInt(loginTime, 10);
+        const now = Date.now();
+
+        if (now - loginTimestamp > SESSION_DURATION) {
+          console.log("⚠️ Session expired.");
+          handleLogout();
+        } else {
+          setIsLoggedIn(true);
+
+          const remainingTime = SESSION_DURATION - (now - loginTimestamp);
+
+          const logoutTimer = setTimeout(() => {
+            console.log("⏰ Auto-logout: session expired.");
             handleLogout();
-          }, 30 * 60 * 1000);
+          }, remainingTime);
+
+          return () => clearTimeout(logoutTimer);
         }
-      };
-    } else {
-      handleRefresh();
+      } else {
+        // No login time found → force logout
+        console.log("🚫 No session found.");
+        handleLogout();
+      }
     }
   }, []);
 
-  const handleLogout = () => {
-    setLogout(true);
-    setIsLoggedIn(false);
-    navigate("");
-  };
 
   const handleRefresh = () => {
     const excludedPages = ["", "/login"];
     if (!excludedPages.includes(window.location.pathname)) {
       setLogout(true);
       setIsLoggedIn(false);
-      navigate("");
     }
   };
 
@@ -104,7 +121,7 @@ function App() {
       <UniversalHomeButton />
 
       <Routes>
-        
+
         <Route path="" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

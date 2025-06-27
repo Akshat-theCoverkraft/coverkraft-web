@@ -115,7 +115,7 @@ const BlogSection = () => {
   };
 
   return (
-    <Box sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1, pl: 12, pr: 12 }}>
+    <Box  id='blog' sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1, pl: 12, pr: 12 }}>
       <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
         News And Blogs
       </Typography>
@@ -167,7 +167,7 @@ const BlogSection = () => {
         </Grid>
 
         {/* RIGHT SIDE */}
-        <Grid item xs={12} md={6} mt={3}>
+        <Grid item xs={12} md={6} mt={8}>
           <Grid container spacing={3} direction="column">
             {rightSideCards.map((p) => (
               <Grid item key={p._id}>

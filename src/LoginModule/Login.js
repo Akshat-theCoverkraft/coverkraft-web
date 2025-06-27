@@ -56,26 +56,19 @@ const Login = () => {
       const response = await axios.get(
         `${API_URL}user/verifyPhone?userPhone=${userPhone}`
       );
+
       console.log(response, "response");
 
       if (response.status === 200) {
-        const userId = response.data.user._id;
-        const token = response.data.user.token;
+        const user = response.data.user;
+        const userId = user._id;
+        const token = user.token;
 
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("token", token);
-
-        // Future use: Firebase OTP sending
-        // const verifier = new firebase.auth.RecaptchaVerifier('recaptcha-container',{ size:'invisible' })
-        // firebase.auth().signInWithPhoneNumber('+91'+ phoneNumber,verifier)
-        //     .then(confirmationResult => {
-        //         setVerificationId(confirmationResult.verificationId)
-        //         toast.success('Phone verification done, OTP sent to your phone number.')
-        //         setLoggedIn(true);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error sending OTP:',error)
-        //     })
+        // ✅ Store in sessionStorage instead of sessionStorage
+        sessionStorage.setItem("userId", userId);
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("loginTime", Date.now().toString());
+        sessionStorage.setItem("isLoggedIn", "true");
 
         setLoggedIn(true);
         toast.success(response.message);
@@ -94,18 +87,19 @@ const Login = () => {
     }
   };
 
+
   // OTP verification (final login)
   const handleVerify = () => {
     const formData = new FormData();
     formData.append("userPhone", phoneNumber);
-    const fcmToken = localStorage.getItem("fcmToken");
+    const fcmToken = sessionStorage.getItem("fcmToken");
 
     if (fcmToken) {
       formData.append("userFcmId", fcmToken);
     }
 
     dispatch(verifyUser(API_URL, formData));
-    localStorage.setItem("loggedIn", "true");
+    sessionStorage.setItem("loggedIn", "true");
     toast.success("Phone number authentication done");
     navigate("/");
   };
@@ -225,7 +219,7 @@ const Login = () => {
                   justifyContent: "center",
                 }}
               >
-                
+
                 <div className="d-flex flex-row align-items-center justify-content-center mb-5">
                   <img
                     src={logo}
@@ -251,9 +245,8 @@ const Login = () => {
                         onChange={handlephonechange}
                         onKeyDown={handleKeyPress}
                         placeholder="Enter Your Number"
-                        className={` ${
-                          !valid && phoneNumber.length > 0 ? "is-invalid" : ""
-                        }`}
+                        className={` ${!valid && phoneNumber.length > 0 ? "is-invalid" : ""
+                          }`}
                         required
                         style={{
                           fontSize: "14px",

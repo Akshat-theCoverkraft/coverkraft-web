@@ -72,7 +72,7 @@ export default function Testimonials() {
 
     if (hasVideo) {
       return (
-        <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
+        <div id="testimonials" className="media-section" style={{ flex: '1 1 50%', paddingRight: '5%' }}>
           <video
             controls
             style={{
@@ -112,7 +112,7 @@ export default function Testimonials() {
 
   return (
     <>
-      <div className="position-relative mb-4 px-3" style={{ minHeight: '100px' }}>
+      <div className="position-relative mb-4 px-3" style={{ minHeight: '100px', paddingRight: '20%', paddingLeft: '20%' }}>
         <div className="text-center" style={{ maxWidth: '100%', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
           <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
             Testimonials
@@ -191,7 +191,7 @@ export default function Testimonials() {
                               width={50}
                               className="rounded-circle"
                               alt={`${testimonial.author} profile image`}
-                              onError={(e) => e.target.src = "https://via.placeholder.com/50"}
+                              
                             />
                             <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                               <span className="author-name fw-bold" style={{

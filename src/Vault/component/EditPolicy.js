@@ -248,9 +248,9 @@ const EditPolicy = () => {
 
     //save api for health insurance form 
     const handleHealthInsurance = () => {
-        const userId = localStorage.getItem('userId');
-        const policyId = localStorage.getItem('selectedPolicyId');
-        const documentId = localStorage.getItem('documentId');
+        const userId = sessionStorage.getItem('userId');
+        const policyId = sessionStorage.getItem('selectedPolicyId');
+        const documentId = sessionStorage.getItem('documentId');
         if (
             userId &&
             documentId &&
@@ -298,9 +298,9 @@ const EditPolicy = () => {
 
     //save api for life insurance
     const handleLifeInsurance = () => {
-        const policyId = localStorage.getItem('selectedPolicyId');
-        const userId = localStorage.getItem('userId');
-        const documentId = localStorage.getItem('documentId');
+        const policyId = sessionStorage.getItem('selectedPolicyId');
+        const userId = sessionStorage.getItem('userId');
+        const documentId = sessionStorage.getItem('documentId');
         if (
             userId &&
             documentId &&
@@ -350,9 +350,9 @@ const EditPolicy = () => {
 
     //save api for motor insurance
     const handleMotorInsurance = () => {
-        const policyId = localStorage.getItem('selectedPolicyId');
-        const userId = localStorage.getItem('userId');
-        const documentId = localStorage.getItem('documentId');
+        const policyId = sessionStorage.getItem('selectedPolicyId');
+        const userId = sessionStorage.getItem('userId');
+        const documentId = sessionStorage.getItem('documentId');
         if (
             userId &&
             documentId &&
@@ -672,7 +672,7 @@ const EditPolicy = () => {
                                             size="lg"
                                             block={false}
                                             onClick={handleCancel}
-                                            bgcolor="orange" 
+                                            bgcolor="orange"
                                             color="black"
                                             borderColor="purple"
                                             customStyle={{

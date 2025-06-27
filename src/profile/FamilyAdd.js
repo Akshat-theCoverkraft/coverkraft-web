@@ -48,8 +48,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
 
   async function handleSubmit() {
     const formData = new FormData();
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
 
     formData.append("userId", userId);
     formData.append("fullName", fullName);
