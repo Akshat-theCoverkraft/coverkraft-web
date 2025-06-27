@@ -123,7 +123,7 @@ const Vault = () => {
 
   // OCR data extraction
   const handleConfirm = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const formData = new FormData();
 
     const filesToUpload = files || image;
@@ -151,7 +151,7 @@ const Vault = () => {
         setResponseData(responseData);
 
         const documentId = responseData.documentId;
-        localStorage.setItem("documentId", documentId);
+        sessionStorage.setItem("documentId", documentId);
 
         const ocrTextObject = JSON.parse(responseData.ocrText);
         const policyType = ocrTextObject.policyType.toLowerCase();
@@ -211,7 +211,7 @@ const Vault = () => {
 
   const handleCardClick = (policyId) => {
     setSelectedPolicyId(policyId);
-    localStorage.setItem("selectedPolicyId", policyId);
+    sessionStorage.setItem("selectedPolicyId", policyId);
   };
 
   // Export functions
@@ -222,7 +222,7 @@ const Vault = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const queryParams = selectedPolicies.map(id => `_id=${id}`).join("&");
 
       console.log("Exporting to Excel with IDs:", selectedPolicies);
@@ -266,7 +266,7 @@ const Vault = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const queryParams = selectedPolicies.map(id => `_id=${id}`).join("&");
 
       const response = await axios.get(

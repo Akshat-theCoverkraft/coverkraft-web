@@ -31,7 +31,7 @@ const LifePolicyForm = () => {
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
   const policyDetails = location.state?.policyDetails;
-  
+
   // Now you can use the responseData and mode in your component
   let headingText;
   if (mode === "edit") {
@@ -39,7 +39,7 @@ const LifePolicyForm = () => {
   } else {
     headingText = "Add Policy";
   }
-  
+
   // State variables
   const [policyNumber, setPolicyNumber] = useState(
     responseData?.policyNumber || policyDetails?.policyNumber || ""
@@ -96,11 +96,11 @@ const LifePolicyForm = () => {
   );
 
   const [loading, setLoading] = useState(false);
-  const userId = localStorage.getItem("userId");
-  const documentId = localStorage.getItem("documentId");
-  const policyId = localStorage.getItem("policyId");
+  const userId = sessionStorage.getItem("userId");
+  const documentId = sessionStorage.getItem("documentId");
+  const policyId = sessionStorage.getItem("policyId");
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -113,7 +113,7 @@ const LifePolicyForm = () => {
     insuredCompany,
     policyName,
   ];
-  
+
   const calculateProgress = () => {
     const filledFields = inputFields.filter((field) => field !== "").length;
     const totalFields = inputFields.length;
@@ -267,7 +267,7 @@ const LifePolicyForm = () => {
     <Box sx={{ backgroundColor: "#000", minHeight: "100vh" }}>
       <Navbar />
       <ToastContainer />
-      
+
       <Box sx={{ padding: { xs: 2, sm: 3, md: 4 } }}>
         <Grid container justifyContent="center">
           <Grid item xs={12} lg={10} xl={8}>
@@ -281,10 +281,10 @@ const LifePolicyForm = () => {
               }}
             >
               {/* Header Section */}
-              <Box 
-                sx={{ 
-                  display: "flex", 
-                  justifyContent: "space-between", 
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
                   alignItems: "center",
                   marginBottom: 4,
                   flexWrap: "wrap",
@@ -515,7 +515,7 @@ const LifePolicyForm = () => {
 
                     <Box>
                       <CustomInput
-                        type="number"
+                        type="text"
                         label="Accidental Disability Coverage"
                         value={accidentalDisability}
                         onChange={(e) => setAccidentalDisability(e.target.value)}
@@ -541,7 +541,7 @@ const LifePolicyForm = () => {
                     {/* Premium Details */}
                     <Box>
                       <CustomInput
-                        type="number"
+                        type="text"
                         label="Net Premium"
                         value={netPremium}
                         onChange={(e) => setNetPremium(e.target.value)}
@@ -550,7 +550,7 @@ const LifePolicyForm = () => {
 
                     <Box>
                       <CustomInput
-                        type="number"
+                        type="text"
                         label="Total Premium"
                         value={premiumPaid}
                         onChange={(e) => setPremiumPaid(e.target.value)}
@@ -571,7 +571,7 @@ const LifePolicyForm = () => {
                     {/* Additional Coverage */}
                     <Box>
                       <CustomInput
-                        type="number"
+                        type="text"
                         label="Personal Accident Coverage"
                         value={pa}
                         onChange={(e) => setPa(e.target.value)}
@@ -580,7 +580,7 @@ const LifePolicyForm = () => {
 
                     <Box>
                       <CustomInput
-                        type="number"
+                        type="text"
                         label="Terminal Illness Coverage"
                         value={terminalIllness}
                         onChange={(e) => setTerminalIllness(e.target.value)}
@@ -608,14 +608,14 @@ const LifePolicyForm = () => {
                     </Box>
 
                     {/* Action Buttons - Right Column */}
-                    <Box sx={{ marginTop: 9}}>
+                    <Box sx={{ marginTop: 9 }}>
                       <Button
                         text="Cancel"
                         size="lg"
                         block={true}
                         onClick={handleCancel}
-                        style={{ 
-                          backgroundColor: "transparent", 
+                        style={{
+                          backgroundColor: "transparent",
                           border: "2px solid #666",
                           color: "#fff"
                         }}

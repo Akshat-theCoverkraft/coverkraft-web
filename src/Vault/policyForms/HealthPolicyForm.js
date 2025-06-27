@@ -56,10 +56,10 @@ const HealthPolicyForm = () => {
   // const [idv, setIdv] = useState(responseData.idv || "");
 
   const [loading, setLoading] = useState(false);
-  const userId = localStorage.getItem('userId');
-  const documentId = localStorage.getItem('documentId');
-  const policyId = localStorage.getItem('policyId')
-  const token = localStorage.getItem('token')
+  const userId = sessionStorage.getItem('userId');
+  const documentId = sessionStorage.getItem('documentId');
+  const policyId = sessionStorage.getItem('policyId')
+  const token = sessionStorage.getItem('token')
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const inputFields = [
@@ -320,7 +320,7 @@ const HealthPolicyForm = () => {
                     required
                   />
                   <CustomInput
-                    type="number"
+                    type="text"
                     label="Sum Insured"
                     value={sumAssured}
                     onChange={(e) => {
@@ -340,13 +340,13 @@ const HealthPolicyForm = () => {
                   <div className='mt-5'></div>
                   <div className='mt-5'></div>
                   <Button
-                  text='Cancel'
-                  size="sm"
-                  block={true}
+                    text='Cancel'
+                    size="sm"
+                    block={true}
                     onClick={handleCancel}
                     className='mt-5 mb-2'
 
-                />
+                  />
                 </Grid>
               </Grid>
             </div>

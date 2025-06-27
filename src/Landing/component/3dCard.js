@@ -49,7 +49,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         {number < 10 ? `0${number}` : number}
       </Typography>
 
-      <Box className="policy-container" sx={{ height: '100%' }}>
+      <Box id='card' className="policy-container" sx={{ height: '100%' }}>
         <Card
           className="text-white"
           sx={{
