@@ -95,8 +95,9 @@ const Carousel1 = () => {
         {items.length > slidesPerPage && (
           <div className="custom-pagination">
             {Array.from({ length: totalPages }, (_, index) => (
-              <span
+              <button
                 key={index}
+                type="button"
                 className={`dot ${getCurrentPage() === index ? "active" : ""}`}
                 onClick={() => handleDotClick(index)}
                 aria-label={`Go to page ${index + 1}`}
