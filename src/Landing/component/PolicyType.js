@@ -107,8 +107,8 @@ const PolicyType = () => {
                 <Card
                   className="hover-effect"
                   sx={{
-                    backgroundColor: '#121212',
-                    borderRadius: '25px',
+                    backgroundColor: '#121212 !important',
+                    borderRadius: '25px !important',
                     border: '1px solid #FF9906',
                     transition: 'transform 0.3s ease, box-shadow 0.3s ease'
                   }}

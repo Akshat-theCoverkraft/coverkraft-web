@@ -52,6 +52,17 @@ const Carousel1 = () => {
   };
  
   return (
+    
+<>
+  {/* Left Arrow - Outside carousel wrap */}
+  <button
+    className={`custom-arrow custom-arrow-left ${currentSlide === 0 ? "disabled" : ""}`}
+    onClick={goToPrev}
+    aria-label="Previous"
+    disabled={currentSlide === 0}
+  >
+    <FaChevronLeft />
+  </button>
     <div className="carousel__wrap">
       <div className="carousel__inner">
         <Carousel
@@ -68,26 +79,7 @@ const Carousel1 = () => {
           selectedItem={Math.min(currentSlide, items.length - 1)}
           onChange={handleSlideChange}
           showIndicators={false}
-          renderArrowPrev={() => (
-            <button
-              className={`custom-arrow custom-arrow-left ${currentSlide === 0 ? "disabled" : ""}`}
-              onClick={goToPrev}
-              aria-label="Previous"
-              disabled={currentSlide === 0}
-            >
-              <FaChevronLeft />
-            </button>
-          )}
-          renderArrowNext={() => (
-            <button
-              className={`custom-arrow custom-arrow-right ${currentSlide + slidesPerPage >= items.length ? "disabled" : ""}`}
-              onClick={goToNext}
-              aria-label="Next"
-              disabled={currentSlide + slidesPerPage >= items.length}
-            >
-              <FaChevronRight />
-            </button>
-          )}
+          showArrows={false}
         >
           {items.map((item, idx) => (
             <div className="carousel__slide-item" key={idx}>
@@ -114,6 +106,15 @@ const Carousel1 = () => {
         )}
       </div>
     </div>
+    <button
+    className={`custom-arrow custom-arrow-right ${currentSlide + slidesPerPage >= items.length ? "disabled" : ""}`}
+    onClick={goToNext}
+    aria-label="Next"
+    disabled={currentSlide + slidesPerPage >= items.length}
+  >
+    <FaChevronRight />
+  </button>
+</>
   );
 };
  

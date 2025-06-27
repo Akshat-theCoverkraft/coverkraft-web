@@ -121,23 +121,6 @@ export default function Testimonials() {
             Hear From our Clients
           </Typography>
         </div>
-
-        <div className="d-flex gap-2 position-absolute top-0 end-0 mt-2 me-5">
-          <button
-            onClick={() => sliderRef.current?.slickPrev()}
-            className="testimonial-arrow-btn"
-            aria-label="Previous"
-          >
-            <img src={TLeft} alt="Previous" style={{ width: 40, height: 40}} />
-          </button>
-          <button
-            onClick={() => sliderRef.current?.slickNext()}
-            className="testimonial-arrow-btn"
-            aria-label="Next"
-          >
-            <img src={TRight} alt="Next" style={{ width: 40, height: 40 }} />
-          </button>
-        </div>
       </div>
 
       <div className="testimonials-container px-3">
@@ -148,73 +131,87 @@ export default function Testimonials() {
                 No testimonials available right now.
               </div>
             ) : (
-              <Slider ref={sliderRef} key={carouselKey} {...settings} className="quotes">
-                {testimonials.map((testimonial, index) => {
-                  const hasMedia = testimonial.media && (testimonial.media.type === 'video' || testimonial.media.type === 'image');
-                  
-                  return (
-                    <div key={`testimonial-${testimonial.id || index}`} className="p-2">
-                      <div
-                        className={`quote-wrapper card d-flex ${hasMedia ? 'flex-row has-media' : 'flex-column'}`}
-                        style={{
-                          backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-                          color: THEME_COLOR.COLOR,
-                          padding: '20px',
-                          borderRadius: '12px',
-                          height: '250px',
-                          minHeight: '250px',
-                          overflow: 'hidden',
-                          position: 'relative'
-                        }}
-                      >
-                        <div style={{
-                          position: 'absolute',
-                          left: 0,
-                          top: 0,
-                          width: '4px',
-                          height: '100%',
-                          backgroundColor: '#226089',
-                          zIndex: 1
-                        }}></div>
+              <div className="slider-arrow-container">
+                <button
+                  className="testimonial-arrow-btn left-arrow"
+                  onClick={() => sliderRef.current?.slickPrev()}
+                >
+                  <img src={TLeft} alt="Left" />
+                </button>
+                <Slider ref={sliderRef} key={carouselKey} {...settings} className="quotes">
+                  {testimonials.map((testimonial, index) => {
+                    const hasMedia = testimonial.media && (testimonial.media.type === 'video' || testimonial.media.type === 'image');
 
-                        {hasMedia && renderMediaSection(testimonial)}
+                    return (
+                      <div key={`testimonial-${testimonial.id || index}`} className="p-2">
+                        <div
+                          className={`quote-wrapper card d-flex ${hasMedia ? 'flex-row has-media' : 'flex-column'}`}
+                          style={{
+                            backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+                            color: THEME_COLOR.COLOR,
+                            padding: '20px',
+                            borderRadius: '12px',
+                            height: '250px',
+                            minHeight: '250px',
+                            overflow: 'hidden',
+                            position: 'relative'
+                          }}
+                        >
+                          <div style={{
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            width: '4px',
+                            height: '100%',
+                            backgroundColor: '#226089',
+                            zIndex: 1
+                          }}></div>
 
-                        <div className="text-section" style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%' }}>
-                          <img src={quote} alt="quote" className="mb-3" style={{ width: '30px' }} />
-                          <div className="quote mb-3" style={{ lineHeight: '1.6', textAlign: 'left' }}>
-                            {testimonial.quote}
-                          </div>
-                          <div className="author d-flex align-items-center mt-2" style={{ gap: '10px' }}>
-                            <img
-                              src={testimonial.pfp}
-                              height={50}
-                              width={50}
-                              className="rounded-circle"
-                              alt={`${testimonial.author} profile image`}
-                              onError={(e) => e.target.src = "https://via.placeholder.com/50"}
-                            />
-                            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                              <span className="author-name fw-bold" style={{
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                              }}>
-                                {testimonial.author}
-                              </span>
-                              <span className="author-role" style={{
-                                fontSize: '0.85rem',
-                                color: '#ccc'
-                              }}>
-                                {testimonial.role || "Client"}
-                              </span>
+                          {hasMedia && renderMediaSection(testimonial)}
+
+                          <div className="text-section" style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%' }}>
+                            <img src={quote} alt="quote" className="mb-3" style={{ width: '30px' }} />
+                            <div className="quote mb-3" style={{ lineHeight: '1.6', textAlign: 'left' }}>
+                              {testimonial.quote}
+                            </div>
+                            <div className="author d-flex align-items-center mt-2" style={{ gap: '10px' }}>
+                              <img
+                                src={testimonial.pfp}
+                                height={50}
+                                width={50}
+                                className="rounded-circle"
+                                alt={`${testimonial.author} profile image`}
+                                onError={(e) => e.target.src = "https://via.placeholder.com/50"}
+                              />
+                              <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                                <span className="author-name fw-bold" style={{
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}>
+                                  {testimonial.author}
+                                </span>
+                                <span className="author-role" style={{
+                                  fontSize: '0.85rem',
+                                  color: '#ccc'
+                                }}>
+                                  {testimonial.role || "Client"}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </Slider>
+                    );
+                  })}
+                </Slider>
+                <button
+                  className="testimonial-arrow-btn right-arrow"
+                  onClick={() => sliderRef.current?.slickNext()}
+                >
+                  <img src={TRight} alt="Right" />
+                </button>
+              </div>
             )}
           </div>
         </section>
