@@ -115,7 +115,7 @@ const BlogSection = () => {
   };
 
   return (
-    <Box id='blog' sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1, pl: 12, pr: 12 }}>
+    <Box  id='blog' sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, mt: 1, pl: 12, pr: 12 }}>
       <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
         News And Blogs
       </Typography>
@@ -168,53 +168,49 @@ const BlogSection = () => {
 
         {/* RIGHT SIDE */}
 
-        <Grid item xs={12} md={6} mt={8}>
-
-          <Grid item xs={12} md={6} mt={3}>
-
-            <Grid container spacing={3} direction="column">
-              {rightSideCards.map((p) => (
-                <Grid item key={p._id}>
-                  <Card
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      borderRadius: 6,
-                      bgcolor: '#212121',
-                      color: '#fff',
-                      cursor: 'pointer',
-                      height: '250px',
-                      overflow: 'hidden',
-                    }}
-                    onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
-                  >
-                    <Box sx={{ width: 180, height: '100%', overflow: 'hidden' }}>
-                      {renderMedia(p, { width: '180px', height: '100%', borderRadius: '12px 0 0 12px' })}
-                    </Box>
-                    <CardContent sx={{ flex: 1 }}>
-                      {renderCardHeader(p.type)}
-                      <Typography variant="h6" color="#fff" gutterBottom sx={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
-                        {p.subtitle}
-                      </Typography>
-                      <Typography variant="body2" color="#DCDCDC" sx={{ fontSize: '1rem' }}>
-                        {p.description}
-                      </Typography>
-                      <Typography variant="body2" color="#888" mt={1}>
-                        {moment(p.createdAt).format('MMM DD, YYYY')}
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        color="#7BC043"
-                        sx={{ mt: '-10px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }}
-                        onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
-                      >
-                        Read More →
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+        <Grid item xs={12} md={6} mt={3}>
+          <Grid container spacing={3} direction="column">
+            {rightSideCards.map((p) => (
+              <Grid item key={p._id}>
+                <Card
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    borderRadius: 6,
+                    bgcolor: '#212121',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    height: '200px',
+                    overflow: 'hidden',
+                  }}
+                  onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
+                >
+                  <Box sx={{ width: 180, height: '100%', overflow: 'hidden' }}>
+                    {renderMedia(p, { width: '180px', height: '100%', borderRadius: '12px 0 0 12px' })}
+                  </Box>
+                  <CardContent sx={{ flex: 1 }}>
+                    {renderCardHeader(p.type)}
+                    <Typography variant="h6" color="#fff" gutterBottom sx={{ fontSize: '1.2rem', fontWeight: 'bold' }}>
+                      {p.subtitle}
+                    </Typography>
+                    <Typography variant="body2" color="#DCDCDC" sx={{ fontSize: '1rem' }}>
+                      {p.description}
+                    </Typography>
+                    <Typography variant="body2" color="#888" mt={1}>
+                      {moment(p.createdAt).format('MMM DD, YYYY')}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="#7BC043"
+                      sx={{ mt: '-10px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }}
+                      onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
+                    >
+                      Read More →
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Grid>
       </Grid>

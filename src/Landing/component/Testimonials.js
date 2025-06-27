@@ -179,7 +179,6 @@ export default function Testimonials() {
                                 width={50}
                                 className="rounded-circle"
                                 alt={`${testimonial.author} profile image`}
-                                onError={(e) => e.target.src = "https://via.placeholder.com/50"}
                               />
                               <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                                 <span className="author-name fw-bold" style={{

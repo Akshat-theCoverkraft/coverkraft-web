@@ -9,9 +9,10 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import backArrow from "../Images/ic_back_button.png";
-import sms from "../Images/ic-sms.png";
-import call from "../Images/ic-call.png";
-import wtsp from "../Images/ic-wtsp.png";
+import sms from "../Images/ic-chat.png";
+import call from "../Images/ic-Phone.png";
+import wtsp from "../Images/ic-Whatsapp.png";
+import eml from "../Images/ic-mail.png";
 import { alpha, styled, useTheme } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import Radio from "@mui/material/Radio";
@@ -157,7 +158,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
             Policy Updates: Important updates for your purchased policies — payment, issuance, renewal, and reminders.
           </p>
 
-          {[{ icon: sms, label: "SMS", key: "userSms" }, { icon: call, label: "Call", key: "userCall" }, { icon: wtsp, label: "Whatsapp", key: "userWhatsapp" }].map((item) => (
+          {[{icon: eml, label: "Email", key: "userEmail"},{ icon: sms, label: "SMS", key: "userSms" }, { icon: call, label: "Call", key: "userCall" }, { icon: wtsp, label: "Whatsapp", key: "userWhatsapp" }].map((item) => (
             <Grid
               container
               key={item.key}
