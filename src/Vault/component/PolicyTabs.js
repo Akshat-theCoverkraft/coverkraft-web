@@ -140,7 +140,14 @@ const PolicyCard = ({ policy, index, shareAllPolicy, selectedPolicies, handleChe
             <img
               src={config.image}
               alt="Policy"
-              style={{ width: "170%", maxWidth: "110px", height: "auto" }}
+              style={{
+                width: "100%",
+                maxWidth: "90px",
+                height: "auto",
+                objectFit: "contain",
+                display: "block",
+                margin: "0 auto"
+              }}
               className="img-fluid"
             />
           </Grid>
@@ -277,40 +284,40 @@ export default function PolicyTabs({
   }, []);
 
   // Auto-select first policy when data loads and no policy is selected
-useEffect(() => {
-  const currentList = value === 2 ? archieveList : policyList;
+  useEffect(() => {
+    const currentList = value === 2 ? archieveList : policyList;
 
-  // Don't proceed if list isn't ready yet
-  if (!currentList || currentList.length === 0) return;
+    // Don't proceed if list isn't ready yet
+    if (!currentList || currentList.length === 0) return;
 
-  // Get from session or default to first policy
-  const storedId = sessionStorage.getItem("selectedPolicyId");
+    // Get from session or default to first policy
+    const storedId = sessionStorage.getItem("selectedPolicyId");
 
-  const policyExists = currentList.some(p => p._id === storedId);
+    const policyExists = currentList.some(p => p._id === storedId);
 
-  if (policyExists) {
-    // Sync to session-stored policy only if it's in the current tab's list
-    setSelectedPolicyId(storedId);
-    handleCardClick(storedId);
-  } else {
-    // Fall back to first policy of the current tab
-    const firstId = currentList[0]._id;
-    setSelectedPolicyId(firstId);
-    sessionStorage.setItem("selectedPolicyId", firstId);
-    handleCardClick(firstId);
-  }
-}, [value, policyList, archieveList]);
-  
-useEffect(() => {
-  sessionStorage.removeItem("selectedPolicyId");
-}, [value]);
+    if (policyExists) {
+      // Sync to session-stored policy only if it's in the current tab's list
+      setSelectedPolicyId(storedId);
+      handleCardClick(storedId);
+    } else {
+      // Fall back to first policy of the current tab
+      const firstId = currentList[0]._id;
+      setSelectedPolicyId(firstId);
+      sessionStorage.setItem("selectedPolicyId", firstId);
+      handleCardClick(firstId);
+    }
+  }, [value, policyList, archieveList]);
+
+  useEffect(() => {
+    sessionStorage.removeItem("selectedPolicyId");
+  }, [value]);
 
 
- const handleCardClickWithState = (id) => {
-  setSelectedPolicyId(id);
-  sessionStorage.setItem("selectedPolicyId", id);
-  handleCardClick(id);
-};
+  const handleCardClickWithState = (id) => {
+    setSelectedPolicyId(id);
+    sessionStorage.setItem("selectedPolicyId", id);
+    handleCardClick(id);
+  };
 
 
   const handlePageChange = (tabType) => (event, newPage) => setPages(prev => ({ ...prev, [tabType]: newPage }));
