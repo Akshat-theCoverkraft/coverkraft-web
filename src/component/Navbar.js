@@ -27,20 +27,14 @@ const NAV_ITEMS = [
 ];
 
 const MORE_MENU_ITEMS = [
-  { key: "Card", label: "Why prefer CoverKraft", id: "card" },
-  { key: "blog", label: "Blog", id: "blog" },
+  { key: "Card", label: "Tips And Tricks", id: "card" },
+  { key: "blog", label: "Blogs And News", id: "blog" },
   { key: "testimonials", label: "Testimonials", id: "testimonials" },
-  { key: "faq", label: "FAQ", id: "faq" },
+  { key: "faq", label: "FAQs", id: "faq" },
 ];
 
-const LOCAL_STORAGE_KEYS = [
-  "loggedIn",
-  "verificationId",
-  "userId",
-  "policyId",
-  "selectedPolicyId",
-  "token",
-];
+const SESSION_KEYS = ["userId", "token", "loginTime", "isLoggedIn"];
+
 
 const StyledButton = styled("button")(() => ({
   backgroundColor: "transparent",
@@ -84,7 +78,7 @@ function Navbar({ scrollToContactBottom }) {
   const [moreAnchor, setMoreAnchor] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const loggedIn = useMemo(() => localStorage.getItem("loggedIn") === "true", []);
+const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", []);
   const isHomePage = useMemo(() => location.pathname === "/", [location.pathname]);
 
   const visibleNavItems = useMemo(() => {
@@ -109,7 +103,7 @@ function Navbar({ scrollToContactBottom }) {
   };
 
   const handleLogout = () => {
-    LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+sessionStorage.clear(); // 🔥 Burn it all down, session-style
     setProfileAnchor(null);
     navigate("/");
     setTimeout(() => window.location.reload(), 100);
@@ -117,8 +111,7 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleVault = () => {
     navigate(
-      localStorage.getItem("token") ? "/vault" : "/login"
-    );
+      (sessionStorage.getItem("token") ? "/vault" : "/login"));
   };
 
   return (
@@ -166,6 +159,7 @@ function Navbar({ scrollToContactBottom }) {
                       handleNavigation(item);
                       setMobileAnchor(null);
                     }}
+                    sx={{ fontSize: "1.3rem" }} // Increased font size
                   >
                     {item.label}
                   </MenuItem>
@@ -178,10 +172,11 @@ function Navbar({ scrollToContactBottom }) {
                         navigate("/notification");
                         setMobileAnchor(null);
                       }}
+                      sx={{ fontSize: "1.3rem" }} // Increased font size
                     >
                       Notification
                     </MenuItem>,
-                    <MenuItem key="logout" onClick={handleLogout}>
+                    <MenuItem key="logout" onClick={handleLogout} sx={{ fontSize: "1.3rem" }}>
                       Logout
                     </MenuItem>,
                   ]
@@ -191,6 +186,7 @@ function Navbar({ scrollToContactBottom }) {
                       navigate("/login");
                       setMobileAnchor(null);
                     }}
+                    sx={{ fontSize: "1.3rem" }} // Increased font size
                   >
                     Login
                   </MenuItem>
@@ -206,7 +202,7 @@ function Navbar({ scrollToContactBottom }) {
                     cursor: "pointer",
                     color: location.pathname === item.path ? "#8AC642" : "white",
                     fontWeight: location.pathname === item.path ? "600" : "400",
-                    fontSize: "1.5rem",
+                    fontSize: "1.7rem", // Increased font size
                     padding: "4px 10px",
                   }}
                   onClick={() => handleNavigation(item)}
@@ -219,51 +215,51 @@ function Navbar({ scrollToContactBottom }) {
                   <img
                     src={notificationIcon}
                     alt="notification"
-                    style={{ height: 24, width: 24, cursor: "pointer" }}
+                    style={{ height: 28, width: 28, cursor: "pointer" }} // Slightly larger for consistency
                     onClick={() => navigate("/notification")}
                   />
                   <img
                     src={profileIcon}
                     alt="profile"
-                    style={{ height: 24, width: 24, cursor: "pointer" }}
+                    style={{ height: 28, width: 28, cursor: "pointer" }} // Slightly larger for consistency
                     onClick={(e) => setProfileAnchor(e.currentTarget)}
                   />
                   <DarkMenu
-  anchorEl={profileAnchor}
-  open={Boolean(profileAnchor)}
-  onClose={() => setProfileAnchor(null)}
-  anchorOrigin={{
-    vertical: 'bottom',
-    horizontal: 'right',
-  }}
-  transformOrigin={{
-    vertical: 'top',
-    horizontal: 'right',
-  }}
-  PaperProps={{
-    sx: {
-      mt: 1.2, // <-- THIS is what actually pushes it down
-    },
-  }}
->
-
+                    anchorEl={profileAnchor}
+                    open={Boolean(profileAnchor)}
+                    onClose={() => setProfileAnchor(null)}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    PaperProps={{
+                      sx: {
+                        mt: 1.2,
+                      },
+                    }}
+                  >
                     <MenuItem
                       onClick={() => {
                         setDrawerOpen(true);
                         setProfileAnchor(null);
                       }}
+                      sx={{ fontSize: "1.3rem" }} // Increased font size
                     >
                       <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
                     </MenuItem>
-                    <MenuItem onClick={handleLogout}>
+                    <MenuItem onClick={handleLogout} sx={{ fontSize: "1.3rem" }}>
                       <LogoutIcon sx={{ mr: 1 }} /> Logout
                     </MenuItem>
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton onClick={() => navigate("/login")}>Login</StyledButton>
+                <StyledButton style={{ fontSize: "1.7rem" }} onClick={() => navigate("/login")}>Login</StyledButton>
               )}
-              <StyledButton onClick={handleVault}>Policy Vault</StyledButton>
+              <StyledButton style={{ fontSize: "1.3rem" }} onClick={handleVault}>Policy Vault</StyledButton>
               {isHomePage && (
                 <IconButton
                   onClick={(e) => setMoreAnchor(e?.currentTarget)}
@@ -272,29 +268,29 @@ function Navbar({ scrollToContactBottom }) {
                   <MoreVertIcon />
                 </IconButton>
               )}
-             <DarkMenu
-  anchorEl={moreAnchor}
-  open={Boolean(moreAnchor)}
-  onClose={() => setMoreAnchor(null)}
-  anchorOrigin={{
-    vertical: 'bottom',
-    horizontal: 'right',
-  }}
-  transformOrigin={{
-    vertical: 'top',
-    horizontal: 'right',
-  }}
-  PaperProps={{
-    sx: {
-      mt: 1.2, // Adjust this value to your taste (e.g., 1.5, 2)
-    },
-  }}
->
- 
+              <DarkMenu
+                anchorEl={moreAnchor}
+                open={Boolean(moreAnchor)}
+                onClose={() => setMoreAnchor(null)}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                PaperProps={{
+                  sx: {
+                    mt: 1.2,
+                  },
+                }}
+              >
                 {MORE_MENU_ITEMS.map((item) => (
                   <MenuItem
                     key={item?.key}
                     onClick={() => handleMoreItemClick(item?.id)}
+                    sx={{ fontSize: "1.3rem" }} // Increased font size
                   >
                     {item?.label}
                   </MenuItem>

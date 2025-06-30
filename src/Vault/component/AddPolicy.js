@@ -312,8 +312,8 @@ const AddPolicy = () => {
 
     //save api for health insurance form 
     const handleHealthInsurance = () => {
-        const userId = localStorage.getItem('userId');
-        const documentId = localStorage.getItem('documentId');
+        const userId = sessionStorage.getItem('userId');
+        const documentId = sessionStorage.getItem('documentId');
         // if (
         //     userId &&
         //     documentId &&
@@ -322,30 +322,30 @@ const AddPolicy = () => {
         //     policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
         //     type && idv && netPremium && totalPremium && premiumPaid && registration && consumables && coPayment
         // ) {
-            const formData = new FormData();
+        const formData = new FormData();
 
-            formData.append('userId', userId);
-            formData.append('documentId', documentId);
-            formData.append('policyType', PolicyType);
-            formData.append('dob', dob);
-            formData.append('policyNumber', policyNumber);
-            formData.append('policyName', policyName);
-            formData.append('policyStartDate', startDate);
-            formData.append('policyEndDate', endDate);
-            formData.append('insuredName', insuredName);
-            formData.append('sumInsured', sumInsured);
-            formData.append('insuranceCompany', insuranceCompany);
-            formData.append('totalSumInsured', totalSumInsured);
-            formData.append('type', type);
-            formData.append('idv', idv);
-            formData.append('netPremium', netPremium);
-            formData.append('totalPremium', totalPremium);
-            formData.append('premiumPaid', premiumPaid);
-            formData.append('registration', registration);
-            formData.append('consumables', consumables);
-            formData.append('coPayment', coPayment);
-            dispatch(saveDocument(API_URL, formData));
-            navigate('/vault')
+        formData.append('userId', userId);
+        formData.append('documentId', documentId);
+        formData.append('policyType', PolicyType);
+        formData.append('dob', dob);
+        formData.append('policyNumber', policyNumber);
+        formData.append('policyName', policyName);
+        formData.append('policyStartDate', startDate);
+        formData.append('policyEndDate', endDate);
+        formData.append('insuredName', insuredName);
+        formData.append('sumInsured', sumInsured);
+        formData.append('insuranceCompany', insuranceCompany);
+        formData.append('totalSumInsured', totalSumInsured);
+        formData.append('type', type);
+        formData.append('idv', idv);
+        formData.append('netPremium', netPremium);
+        formData.append('totalPremium', totalPremium);
+        formData.append('premiumPaid', premiumPaid);
+        formData.append('registration', registration);
+        formData.append('consumables', consumables);
+        formData.append('coPayment', coPayment);
+        dispatch(saveDocument(API_URL, formData));
+        navigate('/vault')
         // }
         // else {
         //     toast.error("Please fill all required fields", {
@@ -361,8 +361,8 @@ const AddPolicy = () => {
 
     //save api for life insurance
     const handleLifeInsurance = () => {
-        const userId = localStorage.getItem('userId');
-        const documentId = localStorage.getItem('documentId');
+        const userId = sessionStorage.getItem('userId');
+        const documentId = sessionStorage.getItem('documentId');
         // if (
         //     userId &&
         //     documentId &&
@@ -412,8 +412,8 @@ const AddPolicy = () => {
 
     //save api for motor insurance
     const handleMotorInsurance = () => {
-        const userId = localStorage.getItem('userId');
-        const documentId = localStorage.getItem('documentId');
+        const userId = sessionStorage.getItem('userId');
+        const documentId = sessionStorage.getItem('documentId');
         // if (
         //     userId &&
         //     documentId &&
@@ -423,31 +423,31 @@ const AddPolicy = () => {
         //     assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
         //     vehicleType
         // ) {
-            const formData = new FormData();
+        const formData = new FormData();
 
-            formData.append('userId', userId);
-            formData.append('documentId', documentId);
-            formData.append('policyType', PolicyType);
-            formData.append('policyNumber', policyNumber);
-            formData.append('policyStartDate', startDate);
-            formData.append('policyEndDate', endDate);
-            formData.append('insuredName', insuredName);
-            formData.append('netPremium', netPremium);
-            formData.append('ncpPercentage', ncb);
-            formData.append('tpPremium', tpPremium);
-            formData.append('odPremium', odPremium);
-            formData.append('totalPremium', totalPremium);
-            formData.append('insuranceCompany', insuranceCompany);
-            formData.append('assetType', assetType);
-            formData.append('make_Model', model);
-            formData.append('registrationYear', registrationYear);
-            formData.append('registrationNumber', registrationNumber);
-            formData.append('vechileEngineNumber', engineCC);
-            formData.append('idv', idv);
-            formData.append('vehicleType', vehicleType);
+        formData.append('userId', userId);
+        formData.append('documentId', documentId);
+        formData.append('policyType', PolicyType);
+        formData.append('policyNumber', policyNumber);
+        formData.append('policyStartDate', startDate);
+        formData.append('policyEndDate', endDate);
+        formData.append('insuredName', insuredName);
+        formData.append('netPremium', netPremium);
+        formData.append('ncpPercentage', ncb);
+        formData.append('tpPremium', tpPremium);
+        formData.append('odPremium', odPremium);
+        formData.append('totalPremium', totalPremium);
+        formData.append('insuranceCompany', insuranceCompany);
+        formData.append('assetType', assetType);
+        formData.append('make_Model', model);
+        formData.append('registrationYear', registrationYear);
+        formData.append('registrationNumber', registrationNumber);
+        formData.append('vechileEngineNumber', engineCC);
+        formData.append('idv', idv);
+        formData.append('vehicleType', vehicleType);
 
-            dispatch(saveDocument(API_URL, formData))
-            navigate('/vault')
+        dispatch(saveDocument(API_URL, formData))
+        navigate('/vault')
         // } else {
 
         //     toast.error("Please fill all required fields", {

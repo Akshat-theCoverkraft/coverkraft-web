@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Drawer, Box, Typography, TextField } from "@mui/material";
 import Button from "../component/Button";
@@ -26,6 +27,7 @@ import GlobalDatePicker from "./GlobalDatePicker";
 import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 import ContactUs from "../profile/ContactUs";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
@@ -33,7 +35,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const [communicationDrawerOpen, setCommunicationDrawerOpen] = useState(false);
   const [aboutDrawerOpen, setAboutDrawerOpen] = useState(false);
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
-  const userEmail = localStorage.getItem("userEmail");
+  const userEmail = sessionStorage.getItem("userEmail");
   const [profileImage, setProfileImage] = useState(icDefaultProfile);
   // console.log("profileImage", profileImage);
   const [showImageInput, setShowImageInput] = useState(false);
@@ -59,7 +61,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const [isValidPinCode, setIsValidPinCode] = useState(true);
   const [valid, setValid] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
-
+  const location = useLocation();
+  const [returnPath, setReturnPath] = useState("/");
   const handleCitySelect = (cityId) => {
     setSelectedCityId(cityId);
   };
@@ -91,10 +94,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   }, [states]);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
+    const userId = sessionStorage.getItem("userId");
     dispatch(getBYIDUsers(API_URL, userId));
   }, [dispatch]);
 
+  useEffect(() => {
+    // Save the path only when the drawer opens
+    if (open) {
+      setReturnPath(location.pathname);
+    }
+  }, [open, location.pathname]);
   // useEffect(() => {
   //   if (userbyId.getUserById && userbyId.getUserById.data) {
   //     const data = userbyId.getUserById.data;
@@ -171,7 +180,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const formData = new FormData();
     // console.log("FormData values before appending:", formData);
 
-    formData.append("_id", localStorage.getItem("userId"));
+    formData.append("_id", sessionStorage.getItem("userId"));
     formData.append("userName", username);
     formData.append("userEmail", useremail);
     formData.append("userPhone", userPhone);
@@ -230,7 +239,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       toast.success("Updated successfully");
       setTimeout(() => {
         onClose();
-      }, 3000);
+      }, 1000);
       // onClose();
     } else {
       toast.error("Please fill all required fields!");
@@ -286,7 +295,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     navigate("/contactus");
   };
   const handleLogout = () => {
-    LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+    LOCAL_STORAGE_KEYS.forEach((key) => sessionStorage.removeItem(key));
     navigate("/");
     setTimeout(() => window.location.reload(), 100);
   };
@@ -338,36 +347,44 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       anchor="right"
       open={open}
       onClose={onClose}
-      className=""
       sx={{
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+          width: "35vw", // ✅ Consistent width across the drawer
+          maxWidth: "400px", // Optional: limit max width for responsiveness
         },
       }}
     >
       <ToastContainer />
       <Box
         sx={{
-          width: "40vw",
+          width: "100%",
           padding: 0,
           overflowX: "hidden",
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
         }}
         role="presentation"
-        className=""
       >
+        <div className="flex items-center px-4 py-2">
+          <ArrowBackIcon
+            style={{ cursor: "pointer", color: "#fff", fontSize: "2rem" }}
+            onClick={() => {
+              onClose(); // Close the drawer first
+              setTimeout(() => {
+                navigate(returnPath); // Go back to the stored path
+              }, 100); // Slight delay to let the drawer close smoothly
+            }}
+          />
+        </div>
         <div className="main-container">
+          {/* Profile Header Section */}
           <div
             className="background-image-container1"
-            style={{ height: "35vh", padding: " 0px 200px" }}
+            style={{ height: "30vh", padding: "0 2rem" }}
           >
             <div className="profile-details">
               <div className="profile-image-container bg-red-600">
-                <img
-                  src={profileImage}
-                  alt="Profile"
-                  className="profile-image"
-                />
+                <img src={profileImage} alt="Profile" className="profile-image" />
                 {update && (
                   <label htmlFor="profile-image-upload">
                     <img
@@ -389,31 +406,31 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 )}
               </div>
 
-              <div className="spacer" />
-              <h2 className="text-header text-light" style={{ headerStyle }}>
+              <h2 className="text-header text-light mt-2 text-center">
                 {username}
               </h2>
-              <div className="spacer-small" />
-              <p className="register-text">{useremail}</p>
-              <div class="text-center text-lg-start ">
-                {!update && (
+              <p className="register-text text-center">{useremail}</p>
+
+              {!update && (
+                <div className="flex justify-center mt-3">
                   <Button
                     text={"Edit Profile"}
-                    size="sm"
-                    block={true}
+                    size="lg"
                     onClick={handleEdit}
                     customStyle={{
-                      width: "20vw",
-                      height: "6vh",
+                      width: "100%",
+                      height: "5vh",
                       borderRadius: "3rem",
-                      fontSize: "1.2rem",
+                      fontSize: "1rem",
                     }}
                   />
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Profile Options */}
         {!update ? (
           <Card
             className="main-container m-3 p-4 my-4"
@@ -422,145 +439,92 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               color: THEME_COLOR.COLOR,
             }}
           >
-            <Grid
-              container
-              xs={12}
-              spacing={4}
-              className="mb-4"
-              alignItems="center"
-              onClick={handleFamilyOpen}
-              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
-            >
-              <Grid item xs={1}>
-                <img src={family} style={{ maxHeight: "2.5rem" }} />
+            {/* REUSABLE LIST ITEM COMPONENT RECOMMENDED HERE */}
+            {[
+              {
+                label: "Family Member",
+                icon: family,
+                onClick: handleFamilyOpen,
+              },
+              {
+                label: "Communication Preferences",
+                icon: communication,
+                onClick: handleCommunicationOpen,
+              },
+              {
+                label: "Contact Us",
+                icon: help,
+                onClick: handleHelpOpen,
+              },
+              {
+                label: "About",
+                icon: about,
+                onClick: handleAboutOpen,
+              },
+              {
+                label: "Logout",
+                icon: logout,
+                onClick: handleLogout,
+              },
+            ].map((item, idx) => (
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                key={idx}
+                onClick={item.onClick}
+                style={{
+                  cursor: "pointer",
+                  borderBottom: "0.5px solid #fff",
+                  marginBottom: "1rem",
+                }}
+              >
+                <Grid item xs={2}>
+                  <img src={item.icon} style={{ maxHeight: "2.5rem" }} />
+                </Grid>
+                <Grid item xs={8}>
+                  <span>{item.label}</span>
+                </Grid>
+                <Grid item xs={2}>
+                  <img src={rightArrow} style={{ maxHeight: "2rem" }} />
+                </Grid>
               </Grid>
-              <Grid item xs={9}>
-                Family member
-              </Grid>
-              <Grid item xs={2}>
-                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              xs={12}
-              spacing={4}
-              className="mb-4"
-              alignItems="center"
-              onClick={handleCommunicationOpen}
-              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
-            >
-              <Grid item xs={1}>
-                <img src={communication} style={{ maxHeight: "2.5rem" }} />
-              </Grid>
-              <Grid item xs={9}>
-                Communication preferances{" "}
-              </Grid>
-              <Grid item xs={2}>
-                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              xs={12}
-              spacing={4}
-              className="mb-4"
-              alignItems="center"
-              onClick={handleHelpOpen}
-              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
-            >
-              <Grid item xs={1}>
-                <img src={help} style={{ maxHeight: "2.5rem" }} />
-              </Grid>
-              <Grid item xs={9}>
-                Contact Us
-              </Grid>
-              <Grid item xs={2}>
-                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              xs={12}
-              spacing={4}
-              className="mb-4"
-              alignItems="center"
-              onClick={handleAboutOpen}
-              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
-            >
-              <Grid item xs={1}>
-                <img src={about} style={{ maxHeight: "2.5rem" }} />
-              </Grid>
-              <Grid item xs={9}>
-                About
-              </Grid>
-              <Grid item xs={2}>
-                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              xs={12}
-              spacing={4}
-              className="mb-4"
-              alignItems="center"
-              onClick={handleLogout}
-              style={{ cursor: "pointer", borderBottom: "0.5px solid #fff" }}
-            >
-              <Grid item xs={1}>
-                <img src={logout} style={{ maxHeight: "2.5rem" }} />
-              </Grid>
-              <Grid item xs={9}>
-                Logout
-              </Grid>
-              <Grid item xs={2}>
-                <img style={{ maxHeight: "2rem" }} src={rightArrow} />
-              </Grid>
-            </Grid>
+            ))}
           </Card>
         ) : (
+          // --------------------------
+          // Edit Mode
+          // --------------------------
           <div className="main-container mt-3 p-4">
-            <Grid container spacing={4} xs={12}>
-              <Grid item xs={6}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
                 <CustomInput
                   label="Name"
-                  placeholder="Enter your Name"
+                  placeholder="Enter your name"
                   value={username}
                   onChange={(e) => setuserName(e.target.value)}
                   required
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <CustomInput
                   type="email"
                   label="Email Address"
                   value={useremail}
                   onChange={handleEmailChange}
-                  placeholder="Enter your email address "
+                  placeholder="Enter your email"
                   className={!isValidEmail ? "is-invalid" : ""}
                   validationMessage={
                     !isValidEmail
                       ? "Please enter a valid email address containing @."
                       : ""
                   }
-                  style={{ width: "48%" }}
                   required
                 />
               </Grid>
-            </Grid>
-
-            {/* <Grid item xs={6}>
-                                <CustomInput
-                                    label="UserDOB"
-                                    placeholder="Enter your UserDOB"
-                                    value={userDob}
-                                    onChange={(e) => setuserDob(e.target.value)}
-                                />
-                            </Grid> */}
-            <Grid container spacing={4} xs={12}>
-              <Grid item xs={6} style={{ overflow: "hidden" }}>
+              <Grid item xs={12}>
                 <CustomInput
-                  type="number"
+                  type="text"
                   label="Mobile Number"
                   value={userPhone}
                   onChange={handlephonechange}
@@ -568,100 +532,30 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   className={!valid ? "is-invalid" : ""}
                   validationMessage={
                     !valid
-                      ? " Please enter a valid 10-digit mobile number."
-                      : ""
-                  }
-                  required
-                  style={{ width: "88%" }}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <GlobalDatePicker
-                  label="DOB"
-                  selectedDate={userDob}
-                  handleDateChange={handleDobChange}
-                  className="custom-picker form-control rounded-5 "
-                  placeholder="select Date"
-                  width="100%"
-                />
-              </Grid>
-            </Grid>
-            <div className="col-12 ">
-              <CustomInput
-                label="Address"
-                placeholder="Enter your Address"
-                value={userAddress}
-                onChange={(e) => setuserAddress(e.target.value)}
-                required
-              />
-            </div>
-
-            {/* {states.getAllState && states.getAllState.data && (
-                                    <GlobalDropdown
-                                        label="State"
-                                        value={state}
-                                        onChange={(e) => setstate(e.target.value)}
-                                        options={states.getAllState.data.map(state => ({ value: state._id, label: state.stateNameEnglish }))}
-
-                                    />
-                                )} */}
-            <Grid container spacing={2} className="px-3">
-              <Grid item xs={12} md={6}>
-                <GlobalDropdown
-                  onStateSelect={handleStateSelect}
-                  initialValue={state}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <CityDropdown
-                  selectedStateId={selectedStateId}
-                  onCitySelect={handleCitySelect}
-                  initialValue={city}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container xs={12} spacing={4}>
-              <Grid item xs={6}>
-                <CustomInput
-                  label="Pincode"
-                  placeholder="Enter your PinCode"
-                  value={pinCode}
-                  onChange={handlePinCodeChange}
-                  className={!isValidPinCode ? "is-invalid" : ""}
-                  validationMessage={
-                    !isValidPinCode
-                      ? "Please enter a valid pin code (5 or 6 digits)."
+                      ? "Please enter a valid 10-digit mobile number."
                       : ""
                   }
                   required
                 />
               </Grid>
-              <Grid item xs={6}>
-                {/* <CustomInput
-                                    label="Gender"
-                                    placeholder="Enter your gender"
-                                    value={gender}
-                                    onChange={(e) => setgender(e.target.value)}
-                                    required
 
-                                /> */}
+              {/* Gender dropdown (optional) */}
+              <Grid item xs={12}>
                 <label
                   className="form-label fw-bold text-light"
-                  htmlFor="inputField"
+                  htmlFor="gender"
                 >
-                  Gender<span className="text-danger">*</span>
+                  Gender
                 </label>
                 <select
-                  id="stateDropdown"
-                  className="dropdown-select rounded-5 bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300"
+                  id="gender"
+                  className="dropdown-select w-full bg-dark text-light border rounded-lg py-2 px-4"
                   value={gender}
-                  onChange={(e) => {
-                    setgender(e.target.value);
-                    console.log(e.target.value);
-                  }}
+                  onChange={(e) => setgender(e.target.value)}
                 >
-                  <option disabled>Select Your Gender</option>
+                  <option disabled value="">
+                    Select Your Gender
+                  </option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
@@ -669,43 +563,46 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               </Grid>
             </Grid>
 
-            <div style={{ display: "flex", gap: "3vw", margin: "10px 0px" }}>
+            {/* Action Buttons */}
+            <div className="flex gap-3 mt-5 justify-center">
               <Button
-                size="md"
+                size="lg"
                 text="Update"
                 onClick={handleUpateProfile}
                 disabled={!isValidEmail}
                 bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
                 customStyle={{
-                  width: "50%",
+                  width: "100%",
                   height: "6vh",
                   borderRadius: "3rem",
-                  fontSize: "1.5rem",
+                  fontSize: "1rem",
                 }}
               />
               <Button
-                size="md"
+                size="lg"
                 text="Cancel"
                 onClick={handleEdit}
                 customStyle={{
-                  width: "50%",
+                  width: "100%",
                   height: "6vh",
                   borderRadius: "3rem",
-                  fontSize: "1.5rem",
+                  fontSize: "1rem",
                 }}
               />
             </div>
           </div>
         )}
       </Box>
+
+      {/* DRAWER MODALS */}
       <Family family={drawerOpen} onfamilyclose={handleFamilyClose} />
       <Communication
         communication={communicationDrawerOpen}
         onCommunicationClose={handleCommunicationclose}
       />
       <ContactUs help={helpDrawerOpen} onHelpClose={handleHelpclose} />
-      {/* <About about={aboutDrawerOpen} onAboutclose={handleAboutClose} /> */}
     </Drawer>
+
   );
 };
 

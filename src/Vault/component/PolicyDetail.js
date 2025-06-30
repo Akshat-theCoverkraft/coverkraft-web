@@ -44,7 +44,7 @@ const PolicyDetail = ({ policyId }) => {
   useEffect(() => {
     const fetchPolicyDetails = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const response = await axios.get(
           `${API_URL}policy/fetchFullData?_id=${policyId}`,
           {
@@ -60,7 +60,7 @@ const PolicyDetail = ({ policyId }) => {
         ) {
           setPolicyDetails(response.data.data);
           console.log("policydetails", policyDetails);
-          localStorage.setItem("policyId", policyId);
+          sessionStorage.setItem("policyId", policyId);
         } else {
           console.error("Expected an array but got:", response.data);
           setPolicyDetails([]);
@@ -166,7 +166,7 @@ const PolicyDetail = ({ policyId }) => {
     }
   };
 
-  const userId = localStorage.getItem("userId");
+  const userId = sessionStorage.getItem("userId");
   const handleArchieve = () => {
     const archieve = "archive";
     const formData = new FormData();
@@ -186,7 +186,7 @@ const PolicyDetail = ({ policyId }) => {
     <>
       {policyDetails.length === 0 ? (
         <Card
-          className="rounded-4 border"
+          className="rounded-5 border"
           style={{
             display: "flex",
             justifyContent: "center",
@@ -247,7 +247,7 @@ const PolicyDetail = ({ policyId }) => {
 
           return (
             <Card
-              className="p-5 rounded-4"
+              className="p-5 rounded-5"
               style={{
                 justifyContent: "center",
                 boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
@@ -256,7 +256,7 @@ const PolicyDetail = ({ policyId }) => {
                 marginBottom: "5vh",
                 backgroundColor: THEME_COLOR.BACKGROUND,
                 color: THEME_COLOR.COLOR,
-                border: "0.5px solid grey",
+                border: "0.5px solid white",
               }}
             >
               <div className="d-flex justify-content-between mb-5">
@@ -373,21 +373,21 @@ const PolicyDetail = ({ policyId }) => {
                   }}
                 >
                   <div className="d-flex justify-content-end m-4">
-                    <OverlayTrigger placement="top" overlay={<Tooltip>View Policy</Tooltip>}>
+                    <OverlayTrigger placement="top" overlay={<Tooltip style={{ fontSize: '1.8rem', padding: '8px 12px' }}>View Policy</Tooltip>}>
                       <img
                         src={view}
                         onClick={() => handleViewDocument(documentPath)}
                         className="mr-2 cursor-pointer"
                       />
                     </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={<Tooltip>DownLoad Policy</Tooltip>}>
+                    <OverlayTrigger placement="top" overlay={<Tooltip style={{ fontSize: '1.8rem', padding: '8px 12px' }}>DownLoad Policy</Tooltip>}>
                       <img
                         src={download}
                         onClick={() => handleDownloadDocument(documentPath)}
                         className="mr-2 cursor-pointer"
                       />
                     </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={<Tooltip>Share Policy</Tooltip>}>
+                    <OverlayTrigger placement="top" overlay={<Tooltip style={{ fontSize: '1.8rem', padding: '8px 12px' }}>Share Policy</Tooltip>}>
                       <img
                         src={share}
                         onClick={() => sharePolicyDocument(documentPath)}
@@ -510,17 +510,29 @@ const PolicyDetail = ({ policyId }) => {
                       style={{ padding: "0 40px" }}
                     >
                       <button
-                        className="btn btn-lg rounded-5"
+                        className="btn btn-sm rounded-6 mr-5 ml-5"
+                        style={{
+                          borderColor: "#8AC642",
+                          color: "#8AC642",
+                          padding: "20px 70px",
+                          width: "40%",
+                        }}
+                        onClick={handleArchieve}
+                      >
+                        Renew Policy</button>
+                      <button
+                        className="btn btn-sm rounded-7 mr-5 ml-5"
                         style={{
                           borderColor: "#8AC642",
                           color: "#8AC642",
                           padding: "10px 70px",
-                          width: "100%",
+                          width: "40%",
                         }}
                         onClick={handleArchieve}
                       >
-                        Archive
+                        Archive Policy
                       </button>
+                      
                     </Grid>
                   ) : (
                     <p></p>

@@ -94,11 +94,20 @@ function Feeds() {
 
       {/* Tabs */}
       <Tabs
-        sx={{ pt: 3 }}
+        sx={{
+          pt: 3,
+          backgroundColor: "#121212",
+          borderRadius: "40px",
+          padding: "6px",
+          width: "28%",
+          mx: "auto",
+          boxShadow: "0 0 10px rgba(139, 198, 66, 0.15)",
+          minHeight: "unset",
+        }}
         value={selectedTab}
         onChange={handleTabChange}
+        TabIndicatorProps={{ style: { display: "none" } }} // hide default underline
         centered
-        indicatorColor="secondary"
       >
         {Object.entries(tabLabels).map(([value, label]) => (
           <Tab
@@ -106,15 +115,25 @@ function Feeds() {
             label={label}
             value={value}
             sx={{
+              textTransform: "uppercase",
               fontSize: "14px",
-              color: THEME_COLOR.COLOR,
-              "&.Mui-selected": {
-                color: THEME_COLOR.GREEN,
+              fontWeight: 500,
+              color: selectedTab === value ? "#121212" : "#E0E0E0",
+              backgroundColor: selectedTab === value ? "#8BC642" : "transparent",
+              borderRadius: "30px",
+              minHeight: "unset",
+              padding: "8px 24px",
+              transition: "all 0.3s ease",
+              border: "2px solid #8BC642",
+              marginX: "4px",
+              "&:hover": {
+                backgroundColor: selectedTab === value ? "#8BC642" : "#2a2a2a",
               },
             }}
           />
         ))}
       </Tabs>
+
 
       {/* Content */}
       <Box sx={{ p: 2, pt: 5, width: "80%" }} className="container">

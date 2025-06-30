@@ -18,11 +18,11 @@ const Family = ({ family, onfamilyclose }) => {
   const [familyData, setFamilyData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId");
+  const userId = sessionStorage.getItem("userId");
 
   const fetchFamilyDetails = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const response = await axios.get(
         `${API_URL}family/getById?userId=${userId}`,
         {
@@ -74,12 +74,13 @@ const Family = ({ family, onfamilyclose }) => {
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
           color: THEME_COLOR.COLOR,
+          width: "25vw",
         },
       }}
     >
       <ToastContainer />
       <Box
-        sx={{ width: "40vw", padding: 0 }}
+        sx={{ width: "25vw", padding: 0 }}
         role="presentation"
         style={{ overflowX: "hidden" }}
       >

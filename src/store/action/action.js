@@ -155,7 +155,7 @@ export const verifyUser = (API_URL, data) => {
 export const extractData = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: OCR_DATA_REQUEST });
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         axios
             .post(
                 API_URL + 'document/ocrExtractData',
@@ -179,7 +179,7 @@ export const extractData = (API_URL, data) => {
 // export const saveDocument = (API_URL, data) => {
 //     return (dispatch) => {
 //         dispatch({ type: SAVE_DATA_REQUEST });
-//         const token = localStorage.getItem('token');
+//         const token = sessionStorage.getItem('token');
 //         return axios
 //             .post(API_URL + `policy/create`,
 //             data,{
@@ -199,7 +199,7 @@ export const extractData = (API_URL, data) => {
 export const saveDocument = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: SAVE_DATA_REQUEST });
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         return axios
             .post(`${API_URL}policy/create`, data, {
                 headers: {
@@ -221,7 +221,7 @@ export const saveDocument = (API_URL, data) => {
 export const updateDocument = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: UPDATEDOCUMENT_DATA_REQUEST });
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         return axios
             .post(API_URL + `policy/update`, data, {
                 headers: {
@@ -277,7 +277,7 @@ export const getBYIDUsers = (API_URL, userId) => {
 export const updateUser = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: UPDATEUSER_DATA_REQUEST });
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         return axios
             .post(API_URL + `user/updateUser`, data)
             .then((response) => {
