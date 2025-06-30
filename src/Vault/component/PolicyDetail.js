@@ -28,7 +28,7 @@ import { formatDate } from "../../utils/dateUtils";
 import { updateDocument } from "../../store/action/action";
 import { useDispatch } from "react-redux";
 import GradientButton from "../../component/GradientButton";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../../constants";
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
@@ -184,6 +184,11 @@ const PolicyDetail = ({ policyId }) => {
 
   return (
     <>
+      <ToastContainer
+  position="top-center"
+  style={{ zIndex: 99999 }}
+/>
+
       {policyDetails.length === 0 ? (
         <Card
           className="rounded-5 border"

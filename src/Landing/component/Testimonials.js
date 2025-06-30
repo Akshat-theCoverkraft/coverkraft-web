@@ -5,16 +5,17 @@ import "slick-carousel/slick/slick-theme.css";
 import './CSS/Testimonail.css';
 import quote from '../../Images/quote-testimonial.png';
 import { THEME_COLOR } from "../../constants";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { Typography } from "@mui/material";
-import TRight from "../../Images/TRight.png"
-import TLeft from "../../Images/TLeft.png"
+import { Typography, Modal, Box } from "@mui/material";
+import TRight from "../../Images/TRight.png";
+import TLeft from "../../Images/TLeft.png";
 import API_URL from "../../ServiceModule/Service";
 
 export default function Testimonials() {
   const [slidesToShow, setSlidesToShow] = useState(window.innerWidth <= 620 ? 1 : 2);
   const [carouselKey, setCarouselKey] = useState(Date.now());
   const [testimonials, setTestimonials] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTestimonial, setSelectedTestimonial] = useState(null);
   const sliderRef = useRef();
 
   useEffect(() => {
@@ -22,9 +23,6 @@ export default function Testimonials() {
       try {
         const res = await fetch(`${API_URL}testimonials`);
         const json = await res.json();
-
-        console.log("Backend Response:", json);
-
         if (Array.isArray(json.data)) {
           const activeTestimonials = json.data.filter(t => t.status === 'active');
           setTestimonials(activeTestimonials);
@@ -35,7 +33,6 @@ export default function Testimonials() {
         console.error("Fetch error:", err);
       }
     };
-
     fetchTestimonials();
   }, []);
 
@@ -48,12 +45,21 @@ export default function Testimonials() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const openModal = (testimonial) => {
+    setSelectedTestimonial(testimonial);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedTestimonial(null);
+  };
+
   const settings = {
     infinite: testimonials.length > 1,
     slidesToShow,
     slidesToScroll: 1,
     autoplay: false,
-    autoplaySpeed: 3500,
     arrows: false,
     dots: true,
     responsive: [
@@ -70,18 +76,18 @@ export default function Testimonials() {
     const hasVideo = testimonial.media && testimonial.media.type === 'video';
     const hasImage = testimonial.media && testimonial.media.type === 'image';
 
+    const mediaStyle = {
+      width: '100%',
+      height: '100%',
+      maxHeight: '200px',
+      objectFit: 'cover',
+      borderRadius: '10px'
+    };
+
     if (hasVideo) {
       return (
-        <div id="testimonials" className="media-section" style={{ flex: '1 1 50%', paddingRight: '5%' }}>
-          <video
-            controls
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              borderRadius: '10px'
-            }}
-          >
+        <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
+          <video controls style={mediaStyle}>
             <source src={testimonial.media.url} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -95,12 +101,7 @@ export default function Testimonials() {
           <img
             src={testimonial.media.url}
             alt="Testimonial media"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              borderRadius: '10px'
-            }}
+            style={mediaStyle}
             onError={(e) => e.target.style.display = 'none'}
           />
         </div>
@@ -132,10 +133,7 @@ export default function Testimonials() {
               </div>
             ) : (
               <div className="slider-arrow-container">
-                <button
-                  className="testimonial-arrow-btn left-arrow"
-                  onClick={() => sliderRef.current?.slickPrev()}
-                >
+                <button className="testimonial-arrow-btn left-arrow" onClick={() => sliderRef.current?.slickPrev()}>
                   <img src={TLeft} alt="Left" />
                 </button>
                 <Slider ref={sliderRef} key={carouselKey} {...settings} className="quotes">
@@ -152,7 +150,6 @@ export default function Testimonials() {
                             padding: '20px',
                             borderRadius: '12px',
                             height: '250px',
-                            minHeight: '250px',
                             overflow: 'hidden',
                             position: 'relative'
                           }}
@@ -169,10 +166,37 @@ export default function Testimonials() {
 
                           <div className="text-section" style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%' }}>
                             <img src={quote} alt="quote" className="mb-3" style={{ width: '30px' }} />
-                            <div className="quote mb-3" style={{ lineHeight: '1.6', textAlign: 'left' }}>
+                            <div
+                              className="quote mb-2"
+                              style={{
+                                lineHeight: '1.6',
+                                textAlign: 'left',
+                                overflow: 'hidden',
+                                display: '-webkit-box',
+                                WebkitBoxOrient: 'vertical',
+                                WebkitLineClamp: 3
+                              }}
+                            >
                               {testimonial.quote}
                             </div>
-                            <div className="author d-flex align-items-center mt-2" style={{ gap: '10px' }}>
+                            {
+                              testimonial.quote.length > 180 && (
+                                <span
+                                  onClick={() => openModal(testimonial)}
+                                  style={{
+                                    color: "#7BC043",
+                                    fontWeight: 700,
+                                    fontSize: '1.2rem',
+                                    cursor: 'pointer',
+                                    paddingLeft: "70%",
+                                    fontFamily: 'DM Sans, sans-serif',
+                                  }}
+                                >
+                                  Read More →
+                                </span>
+                              )
+                            }
+                            <div className="author d-flex align-items-center mt-3" style={{ gap: '10px' }}>
                               <img
                                 src={testimonial.pfp}
                                 height={50}
@@ -203,10 +227,7 @@ export default function Testimonials() {
                     );
                   })}
                 </Slider>
-                <button
-                  className="testimonial-arrow-btn right-arrow"
-                  onClick={() => sliderRef.current?.slickNext()}
-                >
+                <button className="testimonial-arrow-btn right-arrow" onClick={() => sliderRef.current?.slickNext()}>
                   <img src={TRight} alt="Right" />
                 </button>
               </div>
@@ -215,6 +236,77 @@ export default function Testimonials() {
         </section>
       </div>
 
+      {/* 💬 Modal */}
+      <Modal
+        open={modalOpen}
+        onClose={closeModal}
+        aria-labelledby="testimonial-modal-title"
+        aria-describedby="testimonial-modal-description"
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '90%',
+            maxWidth: '600px',
+            bgcolor: '#121212',
+            color: '#fff',
+            border: '2px solid #7BC043',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 3,
+            position: 'relative'
+          }}
+        >
+          {/* ❌ Close Button */}
+          <span
+            onClick={closeModal}
+            style={{
+              position: 'absolute',
+              top: '12px',
+              right: '16px',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              color: '#ccc',
+              fontWeight: 'bold',
+              zIndex: 10
+            }}
+            onMouseEnter={(e) => (e.target.style.color = '#7BC043')}
+            onMouseLeave={(e) => (e.target.style.color = '#ccc')}
+          >
+            &times;
+          </span>
+
+          <Typography
+            id="testimonial-modal-title"
+            sx={{ mb: 2, color: '#7BC043', fontWeight: 700, fontSize: '1.5rem', paddingBottom: '30px' }}
+          >
+            {selectedTestimonial?.author}
+          </Typography>
+          <Typography
+            id="testimonial-modal-description"
+            sx={{ lineHeight: '1.6', fontSize: '1.6rem', color: '#ccc' }}
+          >
+            {selectedTestimonial?.quote}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 2,
+              fontStyle: 'italic',
+              color: '#ccc',
+              fontSize: '1.2rem',
+              fontWeight: 700
+            }}
+          >
+            {selectedTestimonial?.role}
+          </Typography>
+        </Box>
+      </Modal>
+
+
       <style jsx>{`
         .testimonial-arrow-btn {
           width: 40px;
@@ -222,15 +314,12 @@ export default function Testimonials() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 0;
           background: transparent;
           border: none;
           outline: none;
           transition: box-shadow 0.2s, background 0.2s, filter 0.2s, transform 0.2s;
-          box-shadow: none;
         }
         .testimonial-arrow-btn:hover {
-          background: transparent;
           box-shadow: 0 4px 16px 0 #212121;
           filter: brightness(1.1) contrast(1.1);
           transform: scale(1.13);
@@ -255,10 +344,6 @@ export default function Testimonials() {
             padding-right: 0 !important;
             margin-bottom: 15px;
             height: 200px;
-          }
-          .quote-wrapper {
-            height: auto !important;
-            min-height: 450px !important;
           }
         }
       `}</style>

@@ -90,7 +90,7 @@ const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", 
 
   const handleNavigation = useCallback(
     (item) => {
-      if (item.auth && !loggedIn) return navigate("//login");
+      if (item.auth && !loggedIn) return navigate("/login");
       navigate(item.path);
     },
     [loggedIn, navigate]
@@ -257,7 +257,7 @@ sessionStorage.clear(); // 🔥 Burn it all down, session-style
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton style={{ fontSize: "1.7rem" }} onClick={() => navigate("/login")}>Login</StyledButton>
+                <StyledButton style={{ fontSize: "1.3rem",  }} onClick={() => navigate("/login")}>Login</StyledButton>
               )}
               <StyledButton style={{ fontSize: "1.3rem" }} onClick={handleVault}>Policy Vault</StyledButton>
               {isHomePage && (

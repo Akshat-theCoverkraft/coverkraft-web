@@ -55,7 +55,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           position: 'absolute',
           top: '20px',
           left: '-15px',
-          fontFamily: 'Bungee, sans-serif',
+          fontFamily: 'DM Sans, sans-serif',
           fontSize: '36px',
           color: 'transparent',
           WebkitTextStroke: '2px white',

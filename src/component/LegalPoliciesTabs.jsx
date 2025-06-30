@@ -17,7 +17,7 @@ const policies = [
                 lineHeight: '1.8',
                 fontSize: '1.7rem',
                 borderRadius: '10px',
-                fontFamily: 'Arial, sans-serif'
+                fontFamily: 'DM Sans, sans-serif'
             }}>
                 <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
                     Privacy Policy for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642', textDecoration: 'underline' }}>www.TheCoverKraft.com</a> and “CoverKraft” App
@@ -122,7 +122,7 @@ const policies = [
                     lineHeight: '1.8',
                     fontSize: '1.7rem',
                     borderRadius: '10px',
-                    fontFamily: 'Arial, sans-serif'
+                    fontFamily: 'DM Sans, sans-serif'
                 }}
                 id="GrievanceRedressPolicy">
                 <h2 style={{ color: '#8BC642' }}>Grievance Redressal Mechanism</h2>
@@ -190,7 +190,7 @@ const policies = [
                     lineHeight: '1.8',
                     fontSize: '1.7rem',
                     borderRadius: '10px',
-                    fontFamily: 'Arial, sans-serif'
+                    fontFamily: 'DM Sans, sans-serif'
                 }}
             >
                 <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
@@ -331,7 +331,7 @@ const policies = [
                 lineHeight: '1.8',
                 fontSize: '1.7rem',
                 borderRadius: '10px',
-                fontFamily: 'Arial, sans-serif'
+                fontFamily: 'DM Sans, sans-serif'
             }}>
                 <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
                     Terms & Conditions for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642', textDecoration: 'underline' }}>www.TheCoverKraft.com</a> and “CoverKraft” App
@@ -441,7 +441,7 @@ const policies = [
                     lineHeight: '1.8',
                     fontSize: '1.7rem',
                     borderRadius: '10px',
-                    fontFamily: 'Arial, sans-serif',
+                    fontFamily: 'DM Sans, sans-serif',
                 }}
             >
                 <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
@@ -478,7 +478,7 @@ const policies = [
                     lineHeight: '1.8',
                     fontSize: '1.7rem',
                     borderRadius: '10px',
-                    fontFamily: 'Arial, sans-serif',
+                    fontFamily: 'DM Sans, sans-serif',
                 }}
             >
                 <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
@@ -666,7 +666,7 @@ const policies = [
                 lineHeight: '1.8',
                 fontSize: '1.7rem',
                 borderRadius: '10px',
-                fontFamily: 'Arial, sans-serif'
+                fontFamily: 'DM Sans, sans-serif'
             }}>
                 <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
                     Disclaimer for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642', textDecoration: 'underline' }}>www.TheCoverKraft.com</a> and “CoverKraft” App
@@ -768,7 +768,7 @@ const LegalPoliciesTabs = () => {
             backgroundColor: "#121212",
             color: "#E0E0E0",
             padding: "3rem 1.5rem",
-            fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+            fontFamily: "DM Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
             minHeight: "100vh",
             minWidth: "70vw",
             width: "100%",

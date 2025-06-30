@@ -125,7 +125,7 @@ const Register = () => {
                         zIndex: 5,
                         padding: '20px',
                         maxWidth: '400px',
-                        fontFamily: 'Poppins, sans-serif',
+                        fontFamily: 'DM Sans, sans-serif',
                     }}
                 >
                     <h1
