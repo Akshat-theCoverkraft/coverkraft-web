@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Gmail from "../Images/Group 1000001305.png"
 // Components
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
@@ -44,9 +44,10 @@ import "./vault.css";
 import "react-toastify/dist/ReactToastify.css";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
-  borderRadius: "300px",
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
+    backgroundColor: "#212121",
+    color: "#fff"
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
@@ -315,7 +316,14 @@ const Vault = () => {
 
   // Render file upload card
   const renderFileUploadCard = (type, files, icon, text, inputRef, onChange) => (
-    <Card className="border mx-1 mb-1" style={{ boxShadow: "rgba(27, 186, 54, 0.1) 0px 0px 16px" }}>
+    <Card
+      className="border mx-1 mb-1"
+      style={{
+        backgroundColor: "#2a2a2a", // Slightly lighter than dialog for separation
+        color: "#fff",
+        boxShadow: "rgba(27, 186, 54, 0.1) 0px 0px 16px",
+      }}
+    >
       {!files ? (
         <>
           <input
@@ -330,10 +338,12 @@ const Vault = () => {
             className="p-3 cursor-pointer d-flex justify-content-center align-items-center"
             onClick={() => inputRef.current.click()}
             style={{
-              backgroundColor: "white",
+              backgroundColor: "#333", // darker than base
               fontSize: "18px",
+              color: "#fff",
               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-              minHeight: "60px"
+              minHeight: "60px",
+              cursor: "pointer",
             }}
           >
             <img src={icon} alt="" height={28} className="mr-3" />
@@ -345,10 +355,14 @@ const Vault = () => {
           <Card
             key={idx}
             className="d-flex justify-content-between align-items-center p-3"
-            style={{ backgroundColor: "white", fontSize: "18px" }}
+            style={{
+              backgroundColor: "#333",
+              color: "#fff",
+              fontSize: "18px",
+            }}
           >
             <span>{file.name}</span>
-            <IconButton onClick={() => resetFiles(type)}>
+            <IconButton onClick={() => resetFiles(type)} sx={{ color: "#fff" }}>
               <CloseIcon />
             </IconButton>
           </Card>
@@ -356,6 +370,7 @@ const Vault = () => {
       )}
     </Card>
   );
+
 
   return (
     <div
@@ -525,10 +540,10 @@ const Vault = () => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle className="text-center fw-bold pt-4 fs-2">
+        <DialogTitle className="text-center fw-bold pt-4 fs-2" style={{ backgroundColor: "#212121", color: "#fff" }}>
           Add Policies
         </DialogTitle>
-        <Typography className="text-center px-4 pb-2" style={{ color: "#616060", fontSize: "18px" }}>
+        <Typography className="text-center px-4 pb-2" style={{ backgroundColor: "#212121", color: "#fff", fontSize: "18px" }}>
           Effortlessly upload documents, fill forms with ease.
         </Typography>
         <IconButton
@@ -555,6 +570,63 @@ const Vault = () => {
             imageRef,
             (e) => handleFileUpload(e, 'image')
           )}
+          {/* Gmail Sync Card */}
+          <Card
+            className="mt-3 p-3"
+            style={{
+              // background: "linear-gradient(135deg, #0d241a, #122f1e)",
+              background: "#121212",
+              borderRadius: "20px",
+              marginTop: "20px",
+              color: "#fff",
+            }}
+          >
+            <div className="d-flex flex-column flex-md-row align-items-center">
+              <div className="mb-3 mb-md-0 me-md-4 text-start" style={{ flex: 1 }}>
+                <h5 style={{ fontWeight: 700, marginBottom: "6px" }}>Sync from Gmail</h5>
+                <p style={{ fontSize: "14px", color: "#cccccc" }}>
+                  Save time by auto-fetching your insurance policies.
+                </p>
+                <button
+                  onClick={() => navigate("/gmail-sync")}
+                  style={{
+                    backgroundColor: "#fff",
+                    color: "#000",
+                    border: "none",
+                    borderRadius: "30px",
+                    padding: "6px 16px",
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    marginTop: "8px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Fetch policy
+                </button>
+              </div>
+              <div style={{ flexShrink: 0 }}>
+                <img
+                  src={Gmail}
+                  alt="gmail-sync"
+                  style={{ maxWidth: "140px", height: "auto" }}
+                />
+              </div>
+            </div>
+
+            <div
+              className="text-center mt-3"
+              style={{
+                backgroundColor: "#21a362",
+                padding: "6px",
+                borderRadius: "0 0 20px 20px",
+                fontSize: "12px",
+                fontWeight: 600,
+                color: "#fff",
+              }}
+            >
+              ✅ Approved by Google
+            </div>
+          </Card>
         </DialogContent>
       </StyledDialog>
 
