@@ -17,7 +17,7 @@ const policies = [
                 lineHeight: '1.8',
                 fontSize: '1.7rem',
                 borderRadius: '10px',
-                fontFamily: 'DM Sans, sans-serif'
+                fontFamily: 'DM Sans',
             }}>
                 <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
                     Privacy Policy for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642', textDecoration: 'underline' }}>www.TheCoverKraft.com</a> and “CoverKraft” App

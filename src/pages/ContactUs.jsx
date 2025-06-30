@@ -7,168 +7,118 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "../Landing/component/Footer";
 import { styled } from "@mui/material/styles";
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Logo from "../Images/CKbig.png";
+
+const StyledSubmitButton = styled("button")(() => ({
+  backgroundColor: "transparent",
+  color: "#8AC642",
+  border: "1.5px solid #8AC642",
+  borderRadius: "20px",
+  padding: "12px 16px",
+  fontSize: "1.4rem",
+  fontWeight: "600",
+  width: "100%",
+  marginTop: "10px",
+  cursor: "pointer",
+  transition: "all 0.25s ease",
+  "&:hover": { backgroundColor: "#8AC642", color: "#000" },
+}));
+
+const Input = ({ type = "text", name, value, onChange, placeholder, ...props }) => (
+  <input
+    type={type}
+    name={name}
+    value={value}
+    onChange={onChange}
+    placeholder={placeholder}
+    className="form-control bg-dark text-light border-secondary placeholder-light fs-5"
+    required
+    {...props}
+  />
+);
 
 function ContactUs() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-    attachments: [],
-  });
-
+  const [form, setForm] = useState({ name: "", email: "", message: "", attachments: [] });
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setForm((prev) => ({ ...prev, attachments: files }));
-  };
+  const handleFileChange = e => setForm(prev => ({ ...prev, attachments: Array.from(e.target.files) }));
 
-  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isValidEmail(form.email)) return toast.error("❌ Invalid email address.");
     setLoading(true);
-
-    if (!isValidEmail(form.email)) {
-      toast.error("❌ Please enter a valid email address.");
-      setLoading(false);
-      return;
-    }
 
     try {
       const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("email", form.email);
-      formData.append("message", form.message);
+      ["name", "email", "message"].forEach(key => formData.append(key, form[key]));
+      form.attachments.forEach(file => formData.append("attachments", file));
 
-      if (Array.isArray(form.attachments)) {
-        form.attachments.forEach((file) => {
-          formData.append("attachments", file);
-        });
-      }
+      const res = await fetch("http://localhost:5242/api/contact", { method: "POST", body: formData });
+      const text = await res.text();
+      const data = JSON.parse(text);
 
-      const response = await fetch("http://localhost:5242/api/contact", {
-        method: "POST",
-        body: formData,
-      });
-
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch {
-        throw new Error("Server returned non-JSON response.");
-      }
-
-      if (!response.ok) {
-        toast.error(`❌ Failed to send message: ${data?.message || "Unknown error"}`);
-        return;
-      }
+      if (!res.ok) return toast.error(`❌ Failed: ${data?.message || "Unknown error"}`);
 
       toast.success("✅ Message sent successfully!");
-      setForm({
-        name: "",
-        email: "",
-        message: "",
-        attachments: [],
-      });
+      setForm({ name: "", email: "", message: "", attachments: [] });
       document.getElementById("file-upload").value = null;
-
-    } catch (error) {
-      console.error("💥 Error sending message:", error);
-      toast.error("❌ Something went wrong while sending the message.");
+      setModalOpen(true);
+    } catch (err) {
+      console.error("Error:", err);
+      toast.error("❌ Something went wrong.");
     } finally {
       setLoading(false);
     }
   };
-
-  const StyledSubmitButton = styled("button")(() => ({
-    backgroundColor: "transparent",
-    color: "#8AC642",
-    border: "1.5px solid #8AC642",
-    borderRadius: "20px",
-    padding: "12px 16px",
-    fontSize: "1.4rem",
-    fontWeight: "600",
-    minWidth: "100px",
-    cursor: "pointer",
-    userSelect: "none",
-    transition: "all 0.25s ease",
-    width: "100%",
-    marginTop: "10px",
-    "&:hover": {
-      backgroundColor: "#8AC642",
-      color: "#000",
-    },
-  }));
 
   return (
     <>
       <div className="container-fluid text-light py-5">
         <Navbar />
 
-        <div className="text-center my-5 p-5" style={{ backgroundColor: '#212121', borderRadius: '20px', marginLeft: '6%', marginRight: '6%' }}>
+        <div className="text-center my-5 p-5" style={{ backgroundColor: '#212121', borderRadius: '20px', margin: '0 6%' }}>
           <h1 className="fw-bold" style={{ color: '#8bc642', fontSize: '3rem' }}>Contact Us</h1>
           <h3 style={{ color: '#ccc', fontWeight: 500, fontSize: '1.5rem' }}>
-            We'd love to hear from you! Please fill out the form below to connect with us.
+            We'd love to hear from you! Fill the form below.
           </h3>
         </div>
 
-        <div className="container px-4 mb-5" style={{ color: '#8bc642', fontSize: '1.6rem' }} >
-          <div className="bg-secondary bg-opacity-10 rounded-4 shadow-lg p-4" style={{ backgroundColor: '#212121', borderRadius: '25px', marginLeft: '5%', marginRight: '5%' }}>
+        <div className="container px-4 mb-5" style={{ fontSize: '1.6rem', color: '#8bc642' }}>
+          <div className="bg-secondary bg-opacity-10 rounded-4 shadow-lg p-4" style={{ backgroundColor: '#212121', borderRadius: '25px', margin: '0 5%' }}>
             <div className="row g-4" style={{ minHeight: '400px', paddingLeft: '4%' }}>
-              {/* Form Section */}
+
               <div className="col-md-6">
-                <h2 className="text fs-bold" style={{
-                  fontSize: '2.5rem', color: '#8bc642', marginBottom: '1rem'
-                }}>Get in touch with us.</h2>
+                <h2 style={{ fontSize: '2.5rem', color: '#8bc642', marginBottom: '1rem' }}>Get in touch with us.</h2>
                 <p className="text-white" style={{ fontSize: "2rem" }}>We are here for you! How can we help?</p>
 
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="mb-3">
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Your Name"
-                      className="form-control bg-dark text-light border-secondary placeholder-light fs-5"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                    />
+                    <Input name="name" value={form.name} onChange={handleChange} placeholder="Your Name" />
                   </div>
-
                   <div className="mb-3">
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Your Email"
-                      className="form-control bg-dark text-light border-secondary placeholder-light fs-5"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                    />
+                    <Input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Your Email" />
                   </div>
-
                   <div className="mb-3">
                     <textarea
                       name="message"
                       placeholder="Write your query..."
-                      className="form-control bg-dark text-light border-secondary placeholder-light "
-                      style={{ height: '200px', overflowY: 'auto', resize: 'none', fontSize: '2rem' }}
+                      className="form-control bg-dark text-light border-secondary placeholder-light"
+                      style={{ height: '200px', resize: 'none', fontSize: '2rem' }}
                       value={form.message}
                       onChange={handleChange}
                       required
                     />
                   </div>
-
                   <div className="mb-3">
-                    <label htmlFor="file-upload" className="form-label text-light fw-semibold">
-                      📎 Attachments
-                    </label>
+                    <label htmlFor="file-upload" className="form-label text-light fw-semibold">📎 Attachments</label>
                     <input
                       id="file-upload"
                       type="file"
@@ -178,56 +128,70 @@ function ContactUs() {
                       onChange={handleFileChange}
                       multiple
                     />
-                    {Array.isArray(form.attachments) && form.attachments.length > 0 && (
+                    {form.attachments.length > 0 && (
                       <ul className="text-white mt-1">
-                        {form.attachments.map((file, index) => (
-                          <li key={index}>{file.name}</li>
-                        ))}
+                        {form.attachments.map((file, idx) => <li key={idx}>{file.name}</li>)}
                       </ul>
                     )}
                   </div>
-
                   <StyledSubmitButton type="submit" disabled={loading} style={{ opacity: loading ? 0.7 : 1 }}>
                     {loading ? "Sending..." : "Send Message"}
                   </StyledSubmitButton>
                 </form>
               </div>
 
-              {/* Info Section */}
               <div className="col-md-6 d-flex flex-column align-items-center justify-content-center text-light text-center">
-                <img
-                  src={require("../Images/objects.png")}
-                  alt="Decor"
-                  className="img-fluid mb-4"
-                  style={{ maxWidth: '300px' }}
-                />
+                <img src={require("../Images/objects.png")} alt="Decor" className="img-fluid mb-4" style={{ maxWidth: '300px' }} />
                 <div>
                   <p><FmdGoodIcon className="me-2 text-success" />16 D-1, Danish Nagar, Hoshangabad Road, Bhopal (M.P)</p>
                   <p><CallIcon className="me-2 text-success" />+91-xxx-xxxx-xxxx</p>
-                  <p>
-                    <MailIcon className="me-2 text-success" />
+                  <p><MailIcon className="me-2 text-success" />
                     <a href="mailto:contact@thecoverkraft.com" className="text-decoration-underline text-light">
                       contact@thecoverkraft.com
                     </a>
                   </p>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
 
-<ToastContainer position="top-right" autoClose={4000} />
+        <ToastContainer position="top-right" autoClose={4000} />
       </div>
+
       <Footer />
 
-      <style>
-        {`
-        ::placeholder {
-          color: #aaa !important;
-          opacity: 1;
-        }
-      `}
-      </style>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '90%',
+          maxWidth: '500px',
+          bgcolor: '#121212',
+          border: '2px solid #8bc642',
+          boxShadow: 24,
+          borderRadius: 3,
+          p: 4,
+          textAlign: 'center',
+          color: '#ccc'
+        }}>
+          <Typography variant="h5" sx={{ mb: 2, color: '#8bc642', fontWeight: 700 }}>
+            Thank You for letting us know your requirement
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            We will get back to you with a resolution soon.
+          </Typography>
+          <Typography variant="body2" sx={{ fontStyle: 'italic', mb: 3 }}>
+            Regards, <br /> Team CoverKraft
+          </Typography>
+          <img src={Logo} alt="CoverKraft Logo" style={{ width: '100px', margin: 'auto' }} />
+        </Box>
+      </Modal>
+
+      <style>{`::placeholder { color: #aaa !important; opacity: 1; }`}</style>
     </>
   );
 }

@@ -267,7 +267,7 @@ export default function Testimonials() {
               position: 'absolute',
               top: '12px',
               right: '16px',
-              fontSize: '1.5rem',
+              fontSize: '1.9rem',
               cursor: 'pointer',
               color: '#ccc',
               fontWeight: 'bold',
