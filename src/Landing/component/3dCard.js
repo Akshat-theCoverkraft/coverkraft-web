@@ -21,7 +21,9 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
   const isTruncated = description.length > 120;
 
   return (
+
     <Box
+      
       sx={{
         position: 'relative',
         width: '100%',
@@ -75,7 +77,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           WebkitBackdropFilter: 'blur(10px)',
           borderRadius: '20px',
           padding: '20px',
-          width: '100%',
+          width: '120%',
           height: CARD_HEIGHT,
           boxShadow: '0 8px 20px rgba(0,0,0,0.3)',
           border: '1px solid rgba(255,255,255,0.2)',
@@ -95,7 +97,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
 
         <Typography
           variant="body2"
-          sx={{ color: '#ccc', mt: 1, lineHeight: 1.4, textAlign: 'left', pl: '10px' }}
+          sx={{ color: '#fff', mt: 1, lineHeight: 1.4, textAlign: 'left', pl: '10px', fontSize: '14px' }}
         >
           {truncateText(description, 80)}
         </Typography>
@@ -111,9 +113,10 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
               fontSize: '13px',
               textAlign: 'left',
               pl: '10px',
+              paddingLeft: '70%',
             }}
           >
-            See More...
+            Read More...
           </Typography>
         )}
       </Box>
@@ -171,7 +174,8 @@ const WhyCoverKraft = () => {
   const groupedData = groupCards();
 
   return (
-    <Box sx={{ backgroundColor: '#121212', px: 2, py: 6 }}>
+    <Box
+    id="card"  sx={{ backgroundColor: '#121212', px: 2, py: 6 }}>
       {/* Header */}
       <Box textAlign="center" mb={4}>
         <Typography variant="subtitle1" sx={{ color: '#f39c12', fontSize: '2.2rem', fontWeight: 600 }}>
