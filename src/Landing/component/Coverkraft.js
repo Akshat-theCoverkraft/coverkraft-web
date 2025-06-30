@@ -57,20 +57,30 @@ const Coverkraft = () => {
         </Box>
 
         <Box my={4}>
-          {features.map((item, index) => (
-            <Box key={index} display="flex" alignItems="flex-start" mb={2}>
-              <Box
-                component="img"
-                src={checkicon}
-                alt="Check Icon"
-                sx={{ height: 26, mt: "4px" }}
-              />
-              <Typography variant="body1" sx={{ ml: 2, fontSize: "1.1rem" }}>
-                {item}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
+  {features.map((item, index) => (
+    <Box key={index} display="flex" alignItems="center" mb={2}>
+      <Box
+        component="img"
+        src={checkicon}
+        alt="Check Icon"
+        sx={{ height: 28, mt: "1px", flexShrink: 0 }}
+      />
+      <Typography
+        variant="body1"
+        sx={{
+          ml: 2,
+          fontSize: "1.7rem",
+          lineHeight: 1.5,
+          fontWeight: 500,
+          fontFamily: "DM Sans, sans-serif",
+        }}
+      >
+        {item}
+      </Typography>
+    </Box>
+  ))}
+</Box>
+
 
         <Box
           display="flex"
