@@ -412,6 +412,11 @@ const EditPolicy = () => {
 
     return (
         <div>
+            <ToastContainer
+                position="top-center"
+                style={{ zIndex: 99999 }}
+            />
+
             <Navbar />
             <Grid container justifyContent="center" alignItems='center' sx={{ backgroundColor: '#F9F9F9' }}>
                 <Grid item xs={12} sm={10} md={8}>

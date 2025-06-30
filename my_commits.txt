@@ -1,0 +1,35 @@
+60b751a | 2025-06-27 | Added Yaml to git ignore
+3b77ba3 | 2025-06-27 | merge solve
+214f88a | 2025-06-27 | Added mail option to the communications
+188b06f | 2025-06-27 | merge resolve
+6756551 | 2025-06-27 | Merge branch 'develop' of https://github.com/TechExprt-Consulting/coverKraft_Web into Fixes-SY
+729e587 | 2025-06-27 | Contact us / help and vualt changes and other stuff
+4ccbbad | 2025-06-25 | Update NewsBlogs.js
+3e44fd1 | 2025-06-25 | Update 3dCard.js
+48540ca | 2025-06-24 | video issue
+4f29de3 | 2025-06-24 | Merge pull request #45 from TechExprt-Consulting/Fixes-SY
+7b3dd10 | 2025-06-24 | All the major issues handeled in this commit and improved the performance little bit
+91893dc | 2025-06-24 | Merge pull request #43 from TechExprt-Consulting/Fixes-SY
+08f3115 | 2025-06-24 | the routing checks in the coverkraft
+80d89a2 | 2025-06-24 | navbar Fixes
+c4c19e7 | 2025-06-24 | Merge branch 'develop' of https://github.com/TechExprt-Consulting/coverKraft_Web into Fixes-SY mmit.
+ba20f0a | 2025-06-24 | minor chnages in the ui
+13313c8 | 2025-06-23 | Update index.html
+c15a0f9 | 2025-06-23 | Merge pull request #41 from TechExprt-Consulting/Routes-Fixes
+51c0668 | 2025-06-23 | Routes fixes
+2878b92 | 2025-06-23 | Update package.json
+7a05006 | 2025-06-23 | Update package.json
+224fc4b | 2025-06-23 | Modifed the buttons on the vault
+0de8085 | 2025-06-23 | erge branch 'develop' of https://github.com/TechExprt-Consulting/coverKraft_Web into Fixes-SY :wq :qw
+7785415 | 2025-06-23 | Worked on the tips and tricks section, Legal policy page added disclaimer, in vault on hover text and minor ui improvements
+273d030 | 2025-06-20 | resolved the build issue
+eb7ad18 | 2025-06-20 | Merge branch 'develop' into Fixes-SY
+65626bc | 2025-06-20 | policy tab fix
+9c908b1 | 2025-06-20 | resolved merge conflict
+2021b85 | 2025-06-20 | Legal policy tab, navbar, excel share, selectall, alginment api calling, faqs color correction and image fixing ,footer order
+35592bc | 2025-06-19 | new ui changes in the web
+ee12a8f | 2025-06-18 | in this commit i have integrated faqs,testimonal and fixed minor bugs of the ui
+cbf2775 | 2025-06-18 | Merge pull request #29 from TechExprt-Consulting/Fixes-SY
+9e559e2 | 2025-06-18 | Routes fixes
+7a75386 | 2025-06-17 | updated code
+7365ea5 | 2025-06-17 | todays changes

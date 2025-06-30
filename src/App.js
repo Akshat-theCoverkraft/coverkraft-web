@@ -113,9 +113,8 @@ function App() {
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer position="top-center" />
       <Toaster position="top-right" reverseOrder={false} />
-      {/* This stuff can go wherever appropriate in layout */}
       <BackToTop />
       <UniversalHomeButton />
 
