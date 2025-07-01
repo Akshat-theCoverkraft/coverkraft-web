@@ -365,28 +365,43 @@ const GmailSyncPage = () => {
         }
     };
 
-    const createGmailUploadFormData = (files, userId, gmailAddress, emailId = null, fileType = 'application/pdf') => {
+   // Helper function to convert base64 to Blob
+const base64ToBlob = (base64Data, mimeType = 'application/pdf') => {
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mimeType });
+};
+
+// Solution 1: Send as JSON string (Recommended for web)
+const createGmailUploadFormData = (files, userId, gmailAddress, emailId = null, fileType = 'application/pdf') => {
     const formData = new FormData();
     
     formData.append('userId', userId);
     formData.append('gmailAddress', gmailAddress);
-    formData.append('emailId', emailId);
+    if (emailId) {
+        formData.append('emailId', emailId);
+    }
     formData.append('fileType', fileType);
     
-    files.forEach(({ base64Data, fileName }) => {
-        // Create data URL as file path (similar to file:// pattern in reference)
-        const dataUrl = `data:${fileType};base64,${base64Data}`;
-        console.log("dataUrl", `data:${fileType};base64,${base64Data}`)
-        formData.append('attachments', {
-            uri: dataUrl,
-            name: fileName,
-            type: fileType,
-        });
-    });
+    // Create attachments array with data URLs as URI
+    const attachments = files.map(({ base64Data, fileName }) => ({
+        uri: `data:${fileType};base64,${base64Data}`,
+        name: fileName,
+        type: fileType,
+    }));
     
+    // Send as JSON string
+    formData.append('attachments', JSON.stringify(attachments));
+    
+    console.log(`Added ${files.length} attachments as JSON`);
     return formData;
 };
-
 
  const handleUploadDocFromGmail = async (files, userEmail, userId) => {
     return new Promise(async (resolve, reject) => {
