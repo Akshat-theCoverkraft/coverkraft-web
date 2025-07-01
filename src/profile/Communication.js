@@ -130,7 +130,8 @@ const Communication = ({ communication, onCommunicationClose }) => {
         },
       }}
     >
-      <ToastContainer />
+      <ToastContainer position="top-center"
+  style={{ zIndex: 99999 }} />
       <Box
         sx={{
           height: "100vh",

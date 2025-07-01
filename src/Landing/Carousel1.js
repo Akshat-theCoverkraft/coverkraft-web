@@ -72,7 +72,7 @@ const Carousel1 = () => {
           centerMode
           centerSlidePercentage={100 / slidesPerPage}
           autoPlay={true}
-          interval={2000}
+          interval={4000}
           transitionTime={600}
           swipeable
           emulateTouch

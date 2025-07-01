@@ -81,10 +81,9 @@ const Footer = () => {
               />
               <p
                 className="text-color lh-base mb-0"
-                style={{ fontSize: "1.4rem" }}
+                style={{ fontSize: "1.4rem", fontFamily: "DM Sans" }}
               >
-                Coverkraft offers powerful tools for filling out forms, scanning
-                documents, and uploading them with ease.
+                 CoverKraft empowers its clients with the required insurance knowledge for making propoer insurance choice. Our clients can save all thier policies in the Policy Vault and get timely reminder for renewal
               </p>
             </div>
           </div>

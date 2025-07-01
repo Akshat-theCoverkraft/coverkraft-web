@@ -18,20 +18,30 @@ const NewsBlog = () => {
   
 console.log(type, id, "<===type")
   const fetchBlogDetails = async () => {
-    try {
-      const { data } = await axios.get(`${API_URL}news/get-blog-details?blogId=${id}`);
-      if (data?.success) {
-        setBlog(data?.blog);
-        // Only set moreBlogs with status 'active' and exclude current blog
-        const activeBlogs = (data?.moreBlogs || []).filter(blog => blog.status === 'active' && blog._id !== id);
-        setMoreBlogs(activeBlogs);
-      } else {
-        toast.error("Error fetching blog data:", data?.message);
-      }
-    } catch (error) {
-      toast.error("Error fetching blog data:", error);
+  try {
+    const { data } = await axios.get(`${API_URL}news/get-blog-details?blogId=${id}`);
+    
+    if (data?.success) {
+      setBlog(data?.blog);
+
+      // Only set moreBlogs with status 'active' and exclude current blog
+      const activeBlogs = (data?.moreBlogs || []).filter(blog => blog.status === 'active' && blog._id !== id);
+      setMoreBlogs(activeBlogs);
+    } else {
+      toast.error(data?.message || "Failed to load blog details.");
     }
+  } catch (error) {
+    // Optional: log detailed error for debugging
+    console.error("Fetch error:", error);
+
+    toast.error(
+      error?.response?.data?.message || // from backend
+      error?.message ||                 // fallback message
+      "Something went wrong while loading the blog."
+    );
   }
+}
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -86,7 +96,7 @@ console.log(type, id, "<===type")
           style={{ cursor: "pointer" }}
           onClick={() => navigate(-1)}
         >
-          <i className="fas fa-arrow-left color-white"></i> Back
+          <i className="fas color-white"></i> Back
         </p>
         <h1 className="text-center mb-5 ml-5">{capitalizeFirstLetter(type) === "News" ? 'News' : capitalizeFirstLetter(type) + 's'}</h1>
         
