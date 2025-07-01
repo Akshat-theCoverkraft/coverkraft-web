@@ -319,7 +319,6 @@ const policies = [
         ),
 
     },
-    
     {
         label: "Terms & Conditions",
         id: "TermsAndConditions",
@@ -740,7 +739,7 @@ const policies = [
         )
 
     },
-    
+
 ];
 
 const LegalPoliciesTabs = () => {
@@ -772,21 +771,20 @@ const LegalPoliciesTabs = () => {
             minHeight: "100vh",
             minWidth: "70vw",
             width: "100%",
-
         }}>
             {/* Centered Heading */}
             <h1 style={{
                 color: "#8BC642",
-                fontSize: "2.2rem",
+                fontSize: "2.7rem",
                 marginBottom: "4rem",
-                borderBottom: "2px solidrgb(219, 241, 191)",
+                borderBottom: "2px solid rgb(141, 227, 27)",
                 paddingBottom: "0.5rem",
-                fontWeight: "600",
+                fontWeight: "700",
                 textAlign: "center",
+                // textDecoration: "underline"
             }}>
                 Legal and Admin Policies
             </h1>
-
             {/* Tab Container - pill background */}
             <div style={{
                 display: "flex",
@@ -827,8 +825,6 @@ const LegalPoliciesTabs = () => {
                     })}
                 </div>
             </div>
-
-
             {/* Scrollable Policy Content */}
             <div style={{
                 backgroundColor: "#121212",
@@ -841,8 +837,8 @@ const LegalPoliciesTabs = () => {
                 maxHeight: "75vh",
                 overflowY: "scroll",
                 border: "1px solid #2E2E2E",
-                scrollbarWidth: "none", // Firefox
-                msOverflowStyle: "none"  // IE & Edges
+                scrollbarWidth: "none",
+                msOverflowStyle: "none"
             }}>
                 <style>{`
                 div::-webkit-scrollbar {
@@ -865,5 +861,4 @@ const LegalPoliciesTabs = () => {
         </div>
     );
 };
-
 export default LegalPoliciesTabs;

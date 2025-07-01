@@ -538,6 +538,53 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   required
                 />
               </Grid>
+              <Grid item xs={6}>
+                <GlobalDatePicker
+                  label="DOB"
+                  selectedDate={userDob}
+                  handleDateChange={handleDobChange}
+                  className="custom-picker form-control rounded-5 "
+                  placeholder="select Date"
+                  width="100%"
+                />
+              </Grid>
+              <div className="col-12">
+                <CustomInput
+                  label="Address"
+                  placeholder="Enter your Address"
+                  value={userAddress}
+                  onChange={(e) => setuserAddress(e.target.value)}
+                  required
+                />
+              </div>
+              <Grid item xs={12} md={6}>
+                <GlobalDropdown
+                  onStateSelect={handleStateSelect}
+                  initialValue={state}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <CityDropdown
+                  selectedStateId={selectedStateId}
+                  onCitySelect={handleCitySelect}
+                  initialValue={city}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <CustomInput
+                  label="Pincode"
+                  placeholder="Enter your PinCode"
+                  value={pinCode}
+                  onChange={handlePinCodeChange}
+                  className={!isValidPinCode ? "is-invalid" : ""}
+                  validationMessage={
+                    !isValidPinCode
+                      ? "Please enter a valid pin code (5 or 6 digits)."
+                      : ""
+                  }
+                  required
+                />
+              </Grid>
 
               {/* Gender dropdown (optional) */}
               <Grid item xs={12}>
