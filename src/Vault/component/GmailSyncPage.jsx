@@ -381,24 +381,20 @@ const base64ToBlob = (base64Data, mimeType = 'application/pdf') => {
 // Solution 1: Send as JSON string (Recommended for web)
 const createGmailUploadFormData = (files, userId, gmailAddress, emailId = null, fileType = 'application/pdf') => {
     const formData = new FormData();
-    
     formData.append('userId', userId);
     formData.append('gmailAddress', gmailAddress);
     if (emailId) {
         formData.append('emailId', emailId);
     }
     formData.append('fileType', fileType);
-    
     // Create attachments array with data URLs as URI
     const attachments = files.map(({ base64Data, fileName }) => ({
         uri: `data:${fileType};base64,${base64Data}`,
         name: fileName,
         type: fileType,
     }));
-    
     // Send as JSON string
     formData.append('attachments', JSON.stringify(attachments));
-    
     console.log(`Added ${files.length} attachments as JSON`);
     return formData;
 };

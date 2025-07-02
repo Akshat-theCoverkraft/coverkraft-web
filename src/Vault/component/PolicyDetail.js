@@ -77,39 +77,44 @@ const PolicyDetail = ({ policyId }) => {
   }, [policyId]);
 
   //function to view the pdf document
-  const handleViewDocument = (documentPath) => {
-    setPdfUrl(`${IMAGE_PATH}${documentPath}`);
-    window.open(`${IMAGE_PATH}${documentPath}`, "_blank");
-  };
+ const handleViewDocument = (documentPath) => {
+  // Check if documentPath is already a full URL
+  const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
+  const finalUrl = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
+
+  setPdfUrl(finalUrl);
+  window.open(finalUrl, "_blank");
+};
+
 
   //function to download the pdf document
   const handleDownloadDocument = (documentPath) => {
-    const url = `${API_URL}${documentPath}`;
+  // Detect if it's already a full URL
+  const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
+  const url = isFullUrl ? documentPath : `${API_URL}${documentPath}`;
 
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          // If direct download fails, open the PDF in a new tab
-          window.open(url, "_blank");
-        } else {
-          // If direct download is successful, initiate download
-          response.blob().then((blob) => {
-            const url = window.URL.createObjectURL(new Blob([blob]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", "policy_document.pdf");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error downloading document:", error);
-        // If download fails, open the PDF in a new tab
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        console.warn("File not downloadable directly, opening in new tab.");
         window.open(url, "_blank");
-      });
-  };
+      } else {
+        response.blob().then((blob) => {
+          const fileUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = fileUrl;
+          link.setAttribute("download", "policy_document.pdf");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error downloading document:", error);
+      window.open(url, "_blank");
+    });
+};
 
   //function for share dialog
   const toggleShareDialog = () => {
@@ -143,28 +148,53 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   //function for share policy document
-  const sharePolicyDocument = async (documentPath) => {
-    const url = `${IMAGE_PATH}${documentPath}`;
-    const filename = documentPath.split("/").pop();
+ const sharePolicyDocument = async (documentPath) => {
+  const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
+  const url = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
+  const filename = documentPath.split("/").pop() || "policy_document.pdf";
 
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const file = new File([blob], filename, { type: "application/pdf" });
+  console.log("Trying to share/download document from:", url);
 
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: "Policy Document",
-          text: "Here is the document you requested.",
-          files: [file],
-        });
-      } else {
-        alert("Your device/browser does not support file sharing.");
-      }
-    } catch (err) {
-      console.error("Error sharing file:", err);
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error("Fetch failed. Status:", response.status);
+      throw new Error("Failed to fetch file");
     }
-  };
+
+    const contentType = response.headers.get("content-type");
+    console.log("Fetched file content-type:", contentType);
+
+    const blob = await response.blob();
+    const file = new File([blob], filename, { type: "application/pdf" });
+
+    // Web Share API
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: "Policy Document",
+        text: "Here is your policy document.",
+        files: [file],
+      });
+      console.log("Shared via Web Share API");
+    } else {
+      // Fallback download
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      console.log("Downloaded using fallback link");
+    }
+  } catch (error) {
+    console.error("Error sharing/downloading file:", error);
+    alert("Unable to share or download the document. Try again later.");
+  }
+};
+
+
+
 
   const userId = sessionStorage.getItem("userId");
   const handleArchieve = () => {
@@ -251,10 +281,10 @@ const PolicyDetail = ({ policyId }) => {
               style={{
                 justifyContent: "center",
                 boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                height: "85vh",
-                minHeight: "85.6vh",
+                height: "80%",
+                minHeight: "100%",
                 marginBottom: "5vh",
-                backgroundColor: THEME_COLOR.BACKGROUND,
+                backgroundColor: "#121212",
                 color: THEME_COLOR.COLOR,
                 border: "0.5px solid white",
               }}
@@ -363,12 +393,14 @@ const PolicyDetail = ({ policyId }) => {
                   </>
                 )}
                 <Card
-                  className="rounded-4"
+                  className="rounded-5"
                   style={{
                     marginTop: "48px",
                     paddingTop: "50px",
+                    width: "100%",
+                    height: "50%",
                     boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                    backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+                    backgroundColor: "#212121",
                     color: THEME_COLOR.COLOR,
                   }}
                 >
