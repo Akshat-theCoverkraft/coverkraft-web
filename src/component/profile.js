@@ -27,8 +27,7 @@ import GlobalDatePicker from "./GlobalDatePicker";
 import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 import ContactUs from "../profile/ContactUs";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
+import CloseIcon from '@mui/icons-material/Close';
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -366,7 +365,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         role="presentation"
       >
         <div className="flex items-center px-4 py-2">
-          <ArrowBackIcon
+          <CloseIcon
             style={{ cursor: "pointer", color: "#fff", fontSize: "2rem" }}
             onClick={() => {
               onClose(); // Close the drawer first

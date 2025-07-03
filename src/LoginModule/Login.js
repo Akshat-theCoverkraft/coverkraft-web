@@ -81,7 +81,6 @@ const Login = () => {
     if (error.response) {
       const status = error.response.status;
 
-      // 🎯 More precise, human messages
       if (status === 404) {
         toast.error("❌ This phone number is not registered.");
       } else if (status === 401) {

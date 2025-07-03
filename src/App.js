@@ -26,12 +26,14 @@ import NotificationPage from "./Notification/Notification";
 import BlogDetails from "./Landing/component/blogs/BlogDetails";
 import Feeds from "./Landing/component/blogs/Feeds";
 import PrivacyPolicy from "./PrivacyPolicy";
-import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx"; 
+import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import PolicyType from './Landing/component/PolicyType';
 import PolicyDetails from './pages/PolicyDetails';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
-import BackToTop from "./component/BackToTop.js";
+import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
+
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
@@ -101,9 +103,7 @@ function App() {
       <ToastContainer position="top-center" />
       <Toaster position="top-right" reverseOrder={false} />
       <UniversalHomeButton />
-      <BackToTop />
-      <ScrollToTop /> 
-
+      <ScrollToTop />
       <Routes>
         <Route path="" element={<Landing />} />
         <Route path="/register" element={<Register />} />
@@ -126,6 +126,9 @@ function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/policy-type" element={<PolicyType />} />
         <Route path="/policy-details/:id" element={<PolicyDetails />} />
+        <Route path="/gmail-sync" element={<GmailSyncPage />} />
+
+        {/* Add more routes as needed */}
       </Routes>
     </>
   );

@@ -62,7 +62,7 @@ const Family = ({ family, onfamilyclose }) => {
   const handleFamilyAddSuccess = () => {
     // Refresh the family details when a new member is added
     fetchFamilyDetails();
-    setDrawerOpen(false); // Close the add family drawer
+    setDrawerOpen(false); 
   };
 
   return (
