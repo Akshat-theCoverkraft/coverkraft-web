@@ -102,7 +102,6 @@ function App() {
       <Toaster position="top-right" reverseOrder={false} />
       <UniversalHomeButton />
       <ScrollToTop /> 
-
       <Routes>
         <Route path="" element={<Landing />} />
         <Route path="/register" element={<Register />} />
