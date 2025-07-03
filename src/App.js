@@ -101,7 +101,6 @@ function App() {
       <ToastContainer position="top-center" />
       <Toaster position="top-right" reverseOrder={false} />
       <UniversalHomeButton />
-      <BackToTop />
       <ScrollToTop /> 
 
       <Routes>
