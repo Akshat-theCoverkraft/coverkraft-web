@@ -27,6 +27,19 @@ const StyledSubmitButton = styled("button")(() => ({
   transition: "all 0.25s ease",
   "&:hover": { backgroundColor: "#8AC642", color: "#000" },
 }));
+const Spinner = styled("div")({
+  border: "3px solid #8AC642",
+  borderTop: "3px solid transparent",
+  borderRadius: "50%",
+  width: "20px",
+  height: "20px",
+  animation: "spin 1s linear infinite",
+  margin: "0 auto",
+  "@keyframes spin": {
+    "0%": { transform: "rotate(0deg)" },
+    "100%": { transform: "rotate(360deg)" },
+  },
+});
 
 const Input = ({ type = "text", name, value, onChange, placeholder, ...props }) => (
   <input
@@ -71,7 +84,7 @@ function ContactUs() {
 
       if (!res.ok) return toast.error(`❌ Failed: ${data?.message || "Unknown error"}`);
 
-      toast.success("✅ Message sent successfully!");
+      // toast.success("✅ Message sent successfully!");
       setForm({ name: "", email: "", message: "", attachments: [] });
       document.getElementById("file-upload").value = null;
       setModalOpen(true);
@@ -139,7 +152,7 @@ function ContactUs() {
                     )}
                   </div>
                   <StyledSubmitButton type="submit" disabled={loading} style={{ opacity: loading ? 0.7 : 1 }}>
-                    {loading ? "Sending..." : "Send Message"}
+                    {loading ? <Spinner /> : "Send Message"}
                   </StyledSubmitButton>
                 </form>
               </div>

@@ -157,32 +157,38 @@ const Vault = () => {
   };
 
   // Export functions
-  const exportToExcel = async () => {
-    if (selectedPolicies.length === 0) return toast.error("Please select at least one policy to export");
+const exportToExcel = async () => {
+  if (selectedPolicies.length === 0) {
+    return toast.error("Please select at least one policy to export");
+  }
 
-    try {
-      const token = sessionStorage.getItem("token");
-      const queryParams = selectedPolicies.map(id => `_id=${id}`).join("&");
-      const response = await axios.get(`${API_URL}policy/excelTable?${queryParams}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: 'blob'
-      });
+  try {
+    const token = sessionStorage.getItem("token");
+    const queryParams = selectedPolicies.map(id => `_id=${id}`).join("&");
 
-      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `policies_${new Date().toISOString().split('T')[0]}.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      toast.success("Excel file downloaded successfully!");
-    } catch (error) {
-      console.error("Error exporting to Excel:", error);
-      toast.error("Failed to export to Excel");
-    }
-  };
+    const response = await axios.get(`${API_URL}policy/excelTable?${queryParams}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const fileUrl = response?.data?.fileUrl;
+    if (!fileUrl) throw new Error("File URL missing from backend");
+
+    // Direct download from S3
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.setAttribute("download", `policies_${new Date().toISOString().split("T")[0]}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success("Excel file downloaded from S3 successfully!");
+  } catch (error) {
+    console.error("Excel export failed:", error);
+    toast.error("Failed to export Excel. Please try again.");
+  }
+};
+
+
 
   const exportToPDF = async () => {
     if (selectedPolicies.length === 0) return toast.error("Please select at least one policy to export");

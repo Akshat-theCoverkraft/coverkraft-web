@@ -29,7 +29,7 @@ const About = () => {
                 maxWidth: "800px",
               }}
             >
-              CoverKraft Innsurance Broking  Pvt Ltd is on a mission to
+              CoverKraft Insurance Broking  Pvt Ltd is on a mission to
               revolutionize the industry. <br />
               Led by a team of experts and tech enthusiasts, we have
               developed a user-friendly tech platform to make insurance easily
