@@ -18,7 +18,6 @@ import profileIcon from "../Images/ic-profile.png";
 import notificationIcon from "../Images/ic-notification.png";
 import ProfileDrawer from "../component/profile";
 import { THEME_COLOR } from "../constants";
-import { Margin, MarginOutlined } from "@mui/icons-material";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/" },
@@ -34,7 +33,6 @@ const MORE_MENU_ITEMS = [
 ];
 
 const SESSION_KEYS = ["userId", "token", "loginTime", "isLoggedIn"];
-
 
 const StyledButton = styled("button")(() => ({
   backgroundColor: "transparent",
@@ -62,7 +60,6 @@ const DarkMenu = styled(Menu)(({ theme }) => ({
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
     minWidth: 150,
   },
-  
   "& .MuiModal-root": {
     zIndex: 1,
   },
@@ -78,7 +75,7 @@ function Navbar({ scrollToContactBottom }) {
   const [moreAnchor, setMoreAnchor] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", []);
+  const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", []);
   const isHomePage = useMemo(() => location.pathname === "/", [location.pathname]);
 
   const visibleNavItems = useMemo(() => {
@@ -104,14 +101,14 @@ const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", 
 
   const handleLogout = () => {
 sessionStorage.clear(); 
+
     setProfileAnchor(null);
     navigate("/");
     setTimeout(() => window.location.reload(), 100);
   };
 
   const handleVault = () => {
-    navigate(
-      (sessionStorage.getItem("token") ? "/vault" : "/login"));
+    navigate(sessionStorage.getItem("token") ? "/vault" : "/login");
   };
 
   return (
@@ -137,7 +134,6 @@ sessionStorage.clear();
             style={{ cursor: "pointer" }}
             onClick={() => navigate("/")}
           />
-
           {isMobile ? (
             <>
               <IconButton onClick={(e) => setMobileAnchor(e.currentTarget)}>
@@ -159,7 +155,8 @@ sessionStorage.clear();
                       handleNavigation(item);
                       setMobileAnchor(null);
                     }}
-                    sx={{ fontSize: "1.3rem" }} 
+                    sx={{ fontSize: "1.3rem" }}
+
                   >
                     {item.label}
                   </MenuItem>
@@ -186,7 +183,7 @@ sessionStorage.clear();
                       navigate("/login");
                       setMobileAnchor(null);
                     }}
-                    sx={{ fontSize: "1.3rem" }} 
+                    sx={{ fontSize: "1.3rem" }}
                   >
                     Login
                   </MenuItem>
@@ -202,7 +199,7 @@ sessionStorage.clear();
                     cursor: "pointer",
                     color: location.pathname === item.path ? "#8AC642" : "white",
                     fontWeight: location.pathname === item.path ? "600" : "400",
-                    fontSize: "1.7rem", 
+                    fontSize: "1.7rem",
                     padding: "4px 10px",
                   }}
                   onClick={() => handleNavigation(item)}
@@ -221,7 +218,11 @@ sessionStorage.clear();
                   <img
                     src={profileIcon}
                     alt="profile"
-                    style={{ height: 28, width: 28, cursor: "pointer" }} 
+                    style={{
+                      height: 28,
+                      width: 28,
+                      cursor: "pointer",
+                    }}
                     onClick={(e) => setProfileAnchor(e.currentTarget)}
                   />
                   <DarkMenu
@@ -247,7 +248,7 @@ sessionStorage.clear();
                         setDrawerOpen(true);
                         setProfileAnchor(null);
                       }}
-                      sx={{ fontSize: "1.3rem" }} 
+                      sx={{ fontSize: "1.3rem" }}
                     >
                       <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
                     </MenuItem>
@@ -257,9 +258,13 @@ sessionStorage.clear();
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton style={{ fontSize: "1.3rem",  }} onClick={() => navigate("/login")}>Login</StyledButton>
+                <StyledButton style={{ fontSize: "1.3rem" }} onClick={() => navigate("/login")}>
+                  Login
+                </StyledButton>
               )}
-              <StyledButton style={{ fontSize: "1.3rem" }} onClick={handleVault}>Policy Vault</StyledButton>
+              <StyledButton style={{ fontSize: "1.3rem" }} onClick={handleVault}>
+                Policy Vault
+              </StyledButton>
               {isHomePage && (
                 <IconButton
                   onClick={(e) => setMoreAnchor(e?.currentTarget)}
@@ -290,7 +295,7 @@ sessionStorage.clear();
                   <MenuItem
                     key={item?.key}
                     onClick={() => handleMoreItemClick(item?.id)}
-                    sx={{ fontSize: "1.3rem" }} // Increased font size
+                    sx={{ fontSize: "1.3rem" }}
                   >
                     {item?.label}
                   </MenuItem>
@@ -300,7 +305,6 @@ sessionStorage.clear();
           )}
         </div>
       </div>
-
       <div style={{ height: "95px" }} />
       <ProfileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </>

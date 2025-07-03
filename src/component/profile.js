@@ -537,6 +537,53 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   required
                 />
               </Grid>
+              <Grid item xs={6}>
+                <GlobalDatePicker
+                  label="DOB"
+                  selectedDate={userDob}
+                  handleDateChange={handleDobChange}
+                  className="custom-picker form-control rounded-5 "
+                  placeholder="select Date"
+                  width="100%"
+                />
+              </Grid>
+              <div className="col-12">
+                <CustomInput
+                  label="Address"
+                  placeholder="Enter your Address"
+                  value={userAddress}
+                  onChange={(e) => setuserAddress(e.target.value)}
+                  required
+                />
+              </div>
+              <Grid item xs={12} md={6}>
+                <GlobalDropdown
+                  onStateSelect={handleStateSelect}
+                  initialValue={state}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <CityDropdown
+                  selectedStateId={selectedStateId}
+                  onCitySelect={handleCitySelect}
+                  initialValue={city}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <CustomInput
+                  label="Pincode"
+                  placeholder="Enter your PinCode"
+                  value={pinCode}
+                  onChange={handlePinCodeChange}
+                  className={!isValidPinCode ? "is-invalid" : ""}
+                  validationMessage={
+                    !isValidPinCode
+                      ? "Please enter a valid pin code (5 or 6 digits)."
+                      : ""
+                  }
+                  required
+                />
+              </Grid>
 
               {/* Gender dropdown (optional) */}
               <Grid item xs={12}>
@@ -563,32 +610,51 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             </Grid>
 
             {/* Action Buttons */}
-            <div className="flex gap-3 mt-5 justify-center">
-              <Button
-                size="lg"
-                text="Update"
-                onClick={handleUpateProfile}
-                disabled={!isValidEmail}
-                bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
-                customStyle={{
-                  width: "100%",
-                  height: "6vh",
-                  borderRadius: "3rem",
-                  fontSize: "1rem",
-                }}
-              />
-              <Button
-                size="lg"
-                text="Cancel"
-                onClick={handleEdit}
-                customStyle={{
-                  width: "100%",
-                  height: "6vh",
-                  borderRadius: "3rem",
-                  fontSize: "1rem",
-                }}
-              />
+            <div className="flex flex-col items-center mt-5 gap-3 w-full">
+              {/* Top Row: Update & Delete */}
+              <div className="flex justify-between w-full gap-3">
+                <Button
+                  size="sm"
+                  text="Update"
+                  onClick={handleUpateProfile}
+                  disabled={!isValidEmail}
+                  bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
+                  customStyle={{
+                    width: "100%",
+                    height: "6vh",
+                    borderRadius: "3rem",
+                    fontSize: "1rem",
+                  }}
+                />
+                <Button
+                  size="sm"
+                  text="Delete Profile"
+                  customStyle={{
+                    width: "100%",
+                    height: "6vh",
+                    borderRadius: "3rem",
+                    fontSize: "1rem",
+                  }}
+                />
+              </div>
+
+              {/* Bottom Row: Centered Cancel */}
+              <div className="w-1/2">
+                <Button
+                  size="sm"
+                  text="Cancel"
+                  onClick={handleEdit}
+                  customStyle={{
+                    width: "100%",
+                    height: "6vh",
+                    borderRadius: "3rem",
+                    fontSize: "1rem",
+                  }}
+                />
+              </div>
             </div>
+
+
           </div>
         )}
       </Box>
