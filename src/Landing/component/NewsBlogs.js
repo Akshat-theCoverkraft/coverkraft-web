@@ -123,23 +123,24 @@ const BlogSection = () => {
         Latest From The Blogs
       </Typography>
 
-      <Grid container spacing={4} alignItems="stretch">
+      <Grid container spacing={4} alignItems="stretch" sx={{ minHeight: 750 }}>
         {/* LEFT SIDE */}
-        <Grid item xs={12} md={6} mt={3}>
+        <Grid item xs={12} md={6} mt={3} sx={{ display: 'flex' }}>
           <Card
             sx={{
               borderRadius: '40px',
               bgcolor: '#212121',
               overflow: 'hidden',
               cursor: 'pointer',
-              height: '100%',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              height: '100%',
+              width: '100%',
             }}
             onClick={() => navigate(`/feed/${leftPost.type}/${leftPost._id}`)}
           >
-            <Box sx={{ width: '100%', height: '360%', overflow: 'hidden' }}>
+            <Box sx={{ width: '100%', height: 600, overflow: '' }}>
               {renderMedia(leftPost, { borderRadius: '40px 40px 0 0' })}
             </Box>
 
@@ -167,100 +168,94 @@ const BlogSection = () => {
         </Grid>
 
         {/* RIGHT SIDE */}
-        <Grid item xs={12} md={6} mt={3}>
-          <Grid container spacing={3} direction="column">
-            {rightSideCards.map((p) => (
-              <Grid item key={p._id}>
-                <Card
+        <Grid item xs={12} md={6} mt={3} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {rightSideCards.map((p) => (
+            <Card
+              key={p._id}
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                borderRadius: 6,
+                bgcolor: '#212121',
+                color: '#fff',
+                cursor: 'pointer',
+                overflow: 'hidden',
+                height: { xs: 'auto', sm: 250 },
+                boxShadow: '0px 0px 10px rgba(0,0,0,0.3)',
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.01)',
+                },
+              }}
+              onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
+            >
+              <Box
+                sx={{
+                  width: { xs: '100%', sm: 180 },
+                  height: { xs: 200, sm: '100%' },
+                  overflow: 'hidden',
+                  flexShrink: 0,
+                }}
+              >
+                {renderMedia(p, {
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: { xs: '12px 12px 0 0', sm: '12px 0 0 12px' },
+                })}
+              </Box>
+              <CardContent sx={{ flex: 1 }}>
+                {renderCardHeader(p.type)}
+
+                <Typography
+                  variant="h6"
                   sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    borderRadius: 6,
-                    bgcolor: '#212121',
-                    color: '#fff',
-                    cursor: 'pointer',
+                    fontSize: '1.4rem',
+                    fontWeight: 800,
+                    color: '#F4F4F4',
+                    mb: 1,
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {p.subtitle}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#CFCFCF',
+                    fontSize: '1.05rem',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
-                    height: { xs: 'auto', sm: 250 },
-                    boxShadow: '0px 0px 10px rgba(0,0,0,0.3)',
-                    transition: 'transform 0.3s ease',
-                    '&:hover': {
-                      transform: 'scale(1.01)',
-                    },
+                    textOverflow: 'ellipsis',
+                    lineHeight: 1.5,
+                    mb: 1,
+                  }}
+                >
+                  {p.description}
+                </Typography>
+
+                <Typography variant="body2" sx={{ color: '#888', mt: 1 }}>
+                  {moment(p.createdAt).format('MMM DD, YYYY')}
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  sx={{
+                    mt: 1,
+                    fontWeight: 'bold',
+                    color: '#8AC642',
+                    cursor: 'pointer',
+                    textAlign: 'right',
                   }}
                   onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
                 >
-                  <Box
-                    sx={{
-                      width: { xs: '100%', sm: 180 },
-                      height: { xs: 200, sm: '100%' },
-                      overflow: 'hidden',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {renderMedia(p, {
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: { xs: '12px 12px 0 0', sm: '12px 0 0 12px' },
-                    })}
-                  </Box>
-                  <CardContent sx={{ flex: 1 }}>
-                    {renderCardHeader(p.type)}
-
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontSize: '1.4rem',
-                        fontWeight: 800,
-                        color: '#F4F4F4',
-                        mb: 1,
-                        lineHeight: 1.3,
-                                WebkitLineClamp: 3,
-
-                      }}
-                    >
-                      {p.subtitle}
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: '#CFCFCF',
-                        fontSize: '1.05rem',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        lineHeight: 1.5,
-                        mb: 1,
-                      }}
-                    >
-                      {p.description}
-                    </Typography>
-
-                    <Typography variant="body2" sx={{ color: '#888', mt: 1 }}>
-                      {moment(p.createdAt).format('MMM DD, YYYY')}
-                    </Typography>
-
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        mt: 1,
-                        fontWeight: 'bold',
-                        color: '#8AC642',
-                        cursor: 'pointer',
-                        textAlign: 'right',
-                      }}
-                      onClick={() => navigate(`/feed/${p.type}/${p._id}`)}
-                    >
-                      Read More →
-                    </Typography>
-                  </CardContent>
-                </Card>
-
-              </Grid>
-            ))}
-          </Grid>
+                  Read More →
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
         </Grid>
       </Grid>
 

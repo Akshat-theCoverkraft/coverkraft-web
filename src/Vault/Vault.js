@@ -444,8 +444,9 @@ const Vault = () => {
         </DialogActions>
       </StyledDialog>
     </div>
-    </>
-  );
+  ); 
+  
+  
 };
 
 export default Vault;

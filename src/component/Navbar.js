@@ -62,7 +62,7 @@ const DarkMenu = styled(Menu)(({ theme }) => ({
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
     minWidth: 150,
   },
-  // Fix z-index to appear above navbar
+  
   "& .MuiModal-root": {
     zIndex: 1,
   },
@@ -103,7 +103,7 @@ const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", 
   };
 
   const handleLogout = () => {
-sessionStorage.clear(); // 🔥 Burn it all down, session-style
+sessionStorage.clear(); 
     setProfileAnchor(null);
     navigate("/");
     setTimeout(() => window.location.reload(), 100);
@@ -159,7 +159,7 @@ sessionStorage.clear(); // 🔥 Burn it all down, session-style
                       handleNavigation(item);
                       setMobileAnchor(null);
                     }}
-                    sx={{ fontSize: "1.3rem" }} // Increased font size
+                    sx={{ fontSize: "1.3rem" }} 
                   >
                     {item.label}
                   </MenuItem>
@@ -172,7 +172,7 @@ sessionStorage.clear(); // 🔥 Burn it all down, session-style
                         navigate("/notification");
                         setMobileAnchor(null);
                       }}
-                      sx={{ fontSize: "1.3rem" }} // Increased font size
+                      sx={{ fontSize: "1.3rem" }} 
                     >
                       Notification
                     </MenuItem>,
@@ -186,7 +186,7 @@ sessionStorage.clear(); // 🔥 Burn it all down, session-style
                       navigate("/login");
                       setMobileAnchor(null);
                     }}
-                    sx={{ fontSize: "1.3rem" }} // Increased font size
+                    sx={{ fontSize: "1.3rem" }} 
                   >
                     Login
                   </MenuItem>
@@ -202,7 +202,7 @@ sessionStorage.clear(); // 🔥 Burn it all down, session-style
                     cursor: "pointer",
                     color: location.pathname === item.path ? "#8AC642" : "white",
                     fontWeight: location.pathname === item.path ? "600" : "400",
-                    fontSize: "1.7rem", // Increased font size
+                    fontSize: "1.7rem", 
                     padding: "4px 10px",
                   }}
                   onClick={() => handleNavigation(item)}
@@ -215,13 +215,13 @@ sessionStorage.clear(); // 🔥 Burn it all down, session-style
                   <img
                     src={notificationIcon}
                     alt="notification"
-                    style={{ height: 28, width: 28, cursor: "pointer" }} // Slightly larger for consistency
+                    style={{ height: 28, width: 28, cursor: "pointer" }} 
                     onClick={() => navigate("/notification")}
                   />
                   <img
                     src={profileIcon}
                     alt="profile"
-                    style={{ height: 28, width: 28, cursor: "pointer" }} // Slightly larger for consistency
+                    style={{ height: 28, width: 28, cursor: "pointer" }} 
                     onClick={(e) => setProfileAnchor(e.currentTarget)}
                   />
                   <DarkMenu
@@ -247,7 +247,7 @@ sessionStorage.clear(); // 🔥 Burn it all down, session-style
                         setDrawerOpen(true);
                         setProfileAnchor(null);
                       }}
-                      sx={{ fontSize: "1.3rem" }} // Increased font size
+                      sx={{ fontSize: "1.3rem" }} 
                     >
                       <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
                     </MenuItem>

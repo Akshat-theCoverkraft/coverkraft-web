@@ -28,7 +28,7 @@ import { formatDate } from "../../utils/dateUtils";
 import { updateDocument } from "../../store/action/action";
 import { useDispatch } from "react-redux";
 import GradientButton from "../../component/GradientButton";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../../constants";
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
@@ -49,7 +49,7 @@ const PolicyDetail = ({ policyId }) => {
           `${API_URL}policy/fetchFullData?_id=${policyId}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Include token in the headers
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -82,39 +82,39 @@ const PolicyDetail = ({ policyId }) => {
   const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
   const finalUrl = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
 
-  setPdfUrl(finalUrl);
-  window.open(finalUrl, "_blank");
-};
+    setPdfUrl(finalUrl);
+    window.open(finalUrl, "_blank");
+  };
 
 
   //function to download the pdf document
   const handleDownloadDocument = (documentPath) => {
-  // Detect if it's already a full URL
-  const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
-  const url = isFullUrl ? documentPath : `${API_URL}${documentPath}`;
+    // Detect if it's already a full URL
+    const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
+    const url = isFullUrl ? documentPath : `${API_URL}${documentPath}`;
 
-  fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        console.warn("File not downloadable directly, opening in new tab.");
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          console.warn("File not downloadable directly, opening in new tab.");
+          window.open(url, "_blank");
+        } else {
+          response.blob().then((blob) => {
+            const fileUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = fileUrl;
+            link.setAttribute("download", "policy_document.pdf");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error downloading document:", error);
         window.open(url, "_blank");
-      } else {
-        response.blob().then((blob) => {
-          const fileUrl = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = fileUrl;
-          link.setAttribute("download", "policy_document.pdf");
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        });
-      }
-    })
-    .catch((error) => {
-      console.error("Error downloading document:", error);
-      window.open(url, "_blank");
-    });
-};
+      });
+  };
 
   //function for share dialog
   const toggleShareDialog = () => {
@@ -148,50 +148,50 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   //function for share policy document
- const sharePolicyDocument = async (documentPath) => {
-  const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
-  const url = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
-  const filename = documentPath.split("/").pop() || "policy_document.pdf";
+  const sharePolicyDocument = async (documentPath) => {
+    const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
+    const url = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
+    const filename = documentPath.split("/").pop() || "policy_document.pdf";
 
-  console.log("Trying to share/download document from:", url);
+    console.log("Trying to share/download document from:", url);
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      console.error("Fetch failed. Status:", response.status);
-      throw new Error("Failed to fetch file");
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error("Fetch failed. Status:", response.status);
+        throw new Error("Failed to fetch file");
+      }
+
+      const contentType = response.headers.get("content-type");
+      console.log("Fetched file content-type:", contentType);
+
+      const blob = await response.blob();
+      const file = new File([blob], filename, { type: "application/pdf" });
+
+      // Web Share API
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: "Policy Document",
+          text: "Here is your policy document.",
+          files: [file],
+        });
+        console.log("Shared via Web Share API");
+      } else {
+        // Fallback download
+        const blobUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        console.log("Downloaded using fallback link");
+      }
+    } catch (error) {
+      console.error("Error sharing/downloading file:", error);
+      alert("Unable to share or download the document. Try again later.");
     }
-
-    const contentType = response.headers.get("content-type");
-    console.log("Fetched file content-type:", contentType);
-
-    const blob = await response.blob();
-    const file = new File([blob], filename, { type: "application/pdf" });
-
-    // Web Share API
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        title: "Policy Document",
-        text: "Here is your policy document.",
-        files: [file],
-      });
-      console.log("Shared via Web Share API");
-    } else {
-      // Fallback download
-      const blobUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      console.log("Downloaded using fallback link");
-    }
-  } catch (error) {
-    console.error("Error sharing/downloading file:", error);
-    alert("Unable to share or download the document. Try again later.");
-  }
-};
+  };
 
 
 
@@ -214,6 +214,11 @@ const PolicyDetail = ({ policyId }) => {
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        style={{ zIndex: 99999 }}
+      />
+
       {policyDetails.length === 0 ? (
         <Card
           className="rounded-5 border"

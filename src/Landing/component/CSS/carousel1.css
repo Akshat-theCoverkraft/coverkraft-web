@@ -22,7 +22,7 @@ html {
 body {
   font-size: 1.5rem;
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: DM Sans;
   background-color: var(--background-dark);
   color: #fff;
 }

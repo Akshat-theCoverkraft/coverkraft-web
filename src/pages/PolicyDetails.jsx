@@ -87,7 +87,7 @@ const styles = {
     padding: "2em",
     maxWidth: "900px",
     margin: "0 auto",
-    fontFamily: "'Segoe UI', sans-serif",
+    fontFamily: "'DM Sans', sans-serif",
     background: "linear-gradient(135deg, #1e1e1e, #2c2c2c)",
     color: "#ccc",
     borderRadius: "12px",

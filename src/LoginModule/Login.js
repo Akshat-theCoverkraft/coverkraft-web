@@ -51,41 +51,51 @@ const Login = () => {
 
   // Login handler - verifies phone and simulates Firebase OTP send
   const handleLogin = async () => {
-    try {
-      const userPhone = phoneNumber;
-      const response = await axios.get(
-        `${API_URL}user/verifyPhone?userPhone=${userPhone}`
-      );
+  try {
+    const userPhone = phoneNumber;
+    const response = await axios.get(
+      `${API_URL}user/verifyPhone?userPhone=${userPhone}`
+    );
 
-      console.log(response, "response");
+    console.log(response, "response");
 
-      if (response.status === 200) {
-        const user = response.data.user;
-        const userId = user._id;
-        const token = user.token;
+    if (response.status === 200) {
+      const user = response.data.user;
+      const userId = user._id;
+      const token = user.token;
 
-        // ✅ Store in sessionStorage instead of sessionStorage
-        sessionStorage.setItem("userId", userId);
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("loginTime", Date.now().toString());
-        sessionStorage.setItem("isLoggedIn", "true");
+      // ✅ Store session info
+      sessionStorage.setItem("userId", userId);
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("loginTime", Date.now().toString());
+      sessionStorage.setItem("isLoggedIn", "true");
 
-        setLoggedIn(true);
-        toast.success(response.message);
-      } else {
-        toast.error("Phone number verification failed");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      if (error.response) {
-        toast.error(
-          error.response.data.message || "An unexpected error occurred"
-        );
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      setLoggedIn(true);
+      toast.success("✅ Login successful! Welcome back.");
+    } else {
+      toast.error("⚠️ Couldn't verify phone number. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("Error:", error);
+
+    if (error.response) {
+      const status = error.response.status;
+
+      if (status === 404) {
+        toast.error("❌ This phone number is not registered.");
+      } else if (status === 401) {
+        toast.error("🔒 Unauthorized. Please check your credentials.");
+      } else if (status === 500) {
+        toast.error("💥 Server error. Please try again later.");
+      } else {
+        toast.error(error.response.data.message || "Something went wrong.");
+      }
+    } else {
+      toast.error("⚡ Network error. Please check your internet connection.");
+    }
+  }
+};
+
 
 
   // OTP verification (final login)
@@ -150,7 +160,7 @@ const Login = () => {
             zIndex: 5,
             padding: "20px",
             maxWidth: "400px",
-            fontFamily: "Poppins, sans-serif",
+            fontFamily: "DM Sans, sans-serif",
           }}
         >
           <h1
