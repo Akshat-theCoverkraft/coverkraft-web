@@ -106,7 +106,7 @@ function Feeds() {
         }}
         value={selectedTab}
         onChange={handleTabChange}
-        TabIndicatorProps={{ style: { display: "none" } }} // hide default underline
+        TabIndicatorProps={{ style: { display: "none" } }}
         centered
       >
         {Object.entries(tabLabels).map(([value, label]) => (
@@ -133,7 +133,6 @@ function Feeds() {
           />
         ))}
       </Tabs>
-
 
       {/* Content */}
       <Box sx={{ p: 2, pt: 5, width: "80%" }} className="container">
@@ -162,6 +161,9 @@ function Feeds() {
                     },
                     overflow: "hidden",
                     backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+                    height: "450px", 
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
                   {item?.type === "short" || item?.type === "video" ? (
@@ -187,7 +189,14 @@ function Feeds() {
                       }}
                     />
                   )}
-                  <CardContent sx={{ padding: "16px" }}>
+                  <CardContent
+                    sx={{
+                      padding: "16px",
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
                     <Typography
                       variant="h6"
                       sx={{
@@ -198,38 +207,38 @@ function Feeds() {
                     >
                       {truncateString(item?.subtitle, 50)}
                     </Typography>
-                    <Typography className="mb-3">
-                      <span
-                        className="mr-3"
-                        style={{ color: THEME_COLOR.SECONDARY_TEXT }}
-                      >
-                        <i
-                          className="fas fa-user"
-                          style={{ color: "rgb(138, 198, 66)" }}
-                        ></i>{" "}
-                        {item?.createdBy || "Super Admin"}
-                      </span>
-                      <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
-                        <i
-                          className="fas fa-calendar-alt"
-                          style={{ color: "rgb(138, 198, 66)" }}
-                        ></i>{" "}
-                        {moment(item?.createdAt).format("MMM DD, YYYY")}
-                      </span>
+
+                    <Typography sx={{ mb: 1, color: THEME_COLOR.SECONDARY_TEXT }}>
+                      <i className="fas fa-user" style={{ color: "rgb(138, 198, 66)" }} />{" "}
+                      {item?.createdBy || "Super Admin"} &nbsp;&nbsp;
+                      <i
+                        className="fas fa-calendar-alt"
+                        style={{ color: "rgb(138, 198, 66)" }}
+                      />{" "}
+                      {moment(item?.createdAt).format("MMM DD, YYYY")}
                     </Typography>
+
                     <Typography
-                      variant="body1"
+                      variant="body2"
                       color="textSecondary"
-                      sx={{ mb: 2, color: THEME_COLOR.SECONDARY_TEXT }}
+                      sx={{
+                        flexGrow: 1,
+                        mb: 2,
+                        color: THEME_COLOR.SECONDARY_TEXT,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3, 
+                        WebkitBoxOrient: "vertical",
+                      }}
                     >
-                      {truncateString(item.description)}
+                      {item?.description}
                     </Typography>
+
                     <MuiButton
-                      onClick={() =>
-                        navigate(`/feed/${selectedTab}/${item?._id}`)
-                      }
+                      onClick={() => navigate(`/feed/${selectedTab}/${item?._id}`)}
                       variant="text"
-                      sx={{ color: THEME_COLOR.SECONDARY_TEXT }}
+                      sx={{ color: THEME_COLOR.SECONDARY_TEXT, alignSelf: "flex-start" }}
                     >
                       Read More{" "}
                       <img
@@ -244,6 +253,7 @@ function Feeds() {
               </Grid>
             ))}
           </Grid>
+
         )}
 
         {/* Pagination */}
@@ -262,6 +272,7 @@ function Feeds() {
       </Box>
     </Box>
   );
+
 }
 
 export default Feeds;

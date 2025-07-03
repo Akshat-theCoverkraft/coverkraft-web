@@ -100,7 +100,8 @@ function Navbar({ scrollToContactBottom }) {
   };
 
   const handleLogout = () => {
-    sessionStorage.clear(); // 🔥 Burn it all down, session-style
+sessionStorage.clear(); 
+
     setProfileAnchor(null);
     navigate("/");
     setTimeout(() => window.location.reload(), 100);
@@ -155,6 +156,7 @@ function Navbar({ scrollToContactBottom }) {
                       setMobileAnchor(null);
                     }}
                     sx={{ fontSize: "1.3rem" }}
+
                   >
                     {item.label}
                   </MenuItem>
@@ -167,7 +169,7 @@ function Navbar({ scrollToContactBottom }) {
                         navigate("/notification");
                         setMobileAnchor(null);
                       }}
-                      sx={{ fontSize: "1.3rem" }}
+                      sx={{ fontSize: "1.3rem" }} 
                     >
                       Notification
                     </MenuItem>,
@@ -210,11 +212,7 @@ function Navbar({ scrollToContactBottom }) {
                   <img
                     src={notificationIcon}
                     alt="notification"
-                    style={{
-                      height: 28,
-                      width: 28,
-                      cursor: "pointer",
-                    }}
+                    style={{ height: 28, width: 28, cursor: "pointer" }} 
                     onClick={() => navigate("/notification")}
                   />
                   <img

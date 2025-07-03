@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box, Tabs, Tab, Card, Grid, CardContent, Checkbox, Typography, Pagination, CircularProgress
+  Box, Tabs, Tab, Card, Grid, CardContent, Checkbox, Typography, Pagination, CircularProgress,
+  TextField, InputAdornment, Chip, Button, IconButton
 } from "@mui/material";
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 // Import images
 import scooty from "../../Images/Scooty.png";
@@ -24,23 +28,55 @@ import { THEME_COLOR } from "../../constants";
 const useStyles = makeStyles(() => ({
   loaderContainer: { display: "flex", justifyContent: "center", alignItems: "center", height: "300px" },
   loader: { color: "#8AC642" },
+  searchContainer: {
+    backgroundColor: "#1a1a1a",
+    borderRadius: "15px",
+    padding: "20px",
+    marginBottom: "20px",
+    border: "1px solid #333"
+  },
+  searchField: {
+    "& .MuiOutlinedInput-root": {
+      backgroundColor: "#2a2a2a",
+      borderRadius: "10px",
+      "& fieldset": { borderColor: "#555" },
+      "&:hover fieldset": { borderColor: "#8AC642" },
+      "&.Mui-focused fieldset": { borderColor: "#8AC642" }
+    },
+    "& .MuiInputBase-input": { color: "#fff", fontSize: "1.4rem" },
+    "& .MuiInputLabel-root": { color: "#aaa", fontSize: "1.4rem" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#8AC642" }
+  },
+  filterChip: {
+    margin: "4px",
+    fontSize: "1.2rem",
+    height: "36px",
+    "& .MuiChip-label": { padding: "0 12px" }
+  }
 }));
 
 // Configuration objects
 const POLICY_CONFIGS = {
-  car_policy: { label: "Car Insurance", image: car },
-  bike_policy: { label: "Two Wheeler Insurance", image: scooty },
-  other_vehicle: { label: "Other Vehicle Insurance", image: scooty },
-  life: { label: "Life Insurance", image: Life },
-  accident: { label: "Accident Insurance", image: Health },
-  health: { label: "Health Insurance", image: Health },
-  other_health: { label: "Other Health Insurance", image: HealthInsurance },
+  car_policy: { label: "Car Insurance", image: car, category: "motor" },
+  bike_policy: { label: "Two Wheeler Insurance", image: scooty, category: "motor" },
+  other_vehicle: { label: "Other Vehicle Insurance", image: scooty, category: "motor" },
+  life: { label: "Life Insurance", image: Life, category: "life" },
+  accident: { label: "Accident Insurance", image: Health, category: "health" },
+  health: { label: "Health Insurance", image: Health, category: "health" },
+  other_health: { label: "Other Health Insurance", image: HealthInsurance, category: "health" },
 };
 
 const TAB_CONFIGS = [
   { label: "Active", value: 0, key: "active" },
   { label: "Expired", value: 1, key: "expired" },
   { label: "Archive", value: 2, key: "archive" },
+];
+
+const POLICY_TYPE_FILTERS = [
+  { key: "all", label: "All Policies", color: "#fff" },
+  { key: "motor", label: "Motor", color: "#ff6b6b" },
+  { key: "life", label: "Life", color: "#4ecdc4" },
+  { key: "health", label: "Health", color: "#45b7d1" },
 ];
 
 // Utility function to calculate policy status
@@ -70,16 +106,126 @@ const countExpiredPolicies = (policies) => {
   return policies.filter(policy => calculatePolicyStatus(policy.policyEndDate) === "Expired").length;
 };
 
+// Filter policies based on search and type
+const filterPolicies = (policies, searchTerm = "", selectedTypeFilter = "all") => {
+  if (!Array.isArray(policies)) return [];
+ 
+  const searchLower = searchTerm.trim().toLowerCase();
+ 
+  return policies.filter(policy => {
+    const config = POLICY_CONFIGS[policy.policyType] || { label: "", category: "" };
+ 
+    const matchesTypeFilter =
+      selectedTypeFilter === "all" || config.category === selectedTypeFilter;
+ 
+    const matchesSearchTerm =
+      !searchLower ||
+      (policy.insuredName?.toLowerCase().includes(searchLower) ?? false) ||
+      (policy.policyNumber?.toLowerCase().includes(searchLower) ?? false) ||
+      config.label.toLowerCase().includes(searchLower);
+ 
+    return matchesTypeFilter && matchesSearchTerm;
+  });
+};
+
 // Empty state component
-const EmptyState = () => (
+const EmptyState = ({ hasFilters, onClearFilters }) => (
   <Box sx={{
     display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column",
     height: "400px", color: THEME_COLOR.COLOR
   }}>
     <img src={emptyImage} alt="No Data" style={{ width: '40%', height: 'auto', maxWidth: '200px' }} />
-    <Typography className="mt-5 fs-bold">No Records Found</Typography>
+    <Typography className="mt-5 fs-bold" sx={{ fontSize: "1.6rem", mb: 2 }}>
+      {hasFilters ? "No policies match your search" : "No Records Found"}
+    </Typography>
+    {hasFilters && (
+      <Button
+        variant="outlined"
+        onClick={onClearFilters}
+        sx={{
+          color: "#8AC642",
+          borderColor: "#8AC642",
+          "&:hover": { backgroundColor: "rgba(138, 198, 66, 0.1)" }
+        }}
+      >
+        Clear Filters
+      </Button>
+    )}
   </Box>
 );
+
+// Search and Filter component
+const SearchAndFilter = ({ searchTerm, onSearchChange, selectedTypeFilter, onTypeFilterChange, onClearAll, classes }) => {
+  return (
+    <Box className={classes.searchContainer}>
+      <Grid container spacing={3} alignItems="center">
+        <Grid item xs={12} md={6}>
+          <TextField
+            fullWidth
+            label="Search policies..."
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className={classes.searchField}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: "#8AC642" }} />
+                </InputAdornment>
+              ),
+              endAdornment: searchTerm && (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => onSearchChange("")} sx={{ color: "#fff" }}>
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            placeholder="Search by name, policy number, or policy type..."
+          />
+        </Grid>
+        
+        <Grid item xs={12} md={6}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+            <FilterListIcon sx={{ color: "#8AC642", mr: 1 }} />
+            {POLICY_TYPE_FILTERS.map((filter) => (
+              <Chip
+                key={filter.key}
+                label={filter.label}
+                variant={selectedTypeFilter === filter.key ? "filled" : "outlined"}
+                onClick={() => onTypeFilterChange(filter.key)}
+                className={classes.filterChip}
+                sx={{
+                  backgroundColor: selectedTypeFilter === filter.key ? filter.color : "transparent",
+                  color: selectedTypeFilter === filter.key ? "#000" : filter.color,
+                  borderColor: filter.color,
+                  "&:hover": {
+                    backgroundColor: selectedTypeFilter === filter.key ? filter.color : `${filter.color}20`
+                  }
+                }}
+              />
+            ))}
+            {(searchTerm || selectedTypeFilter !== "all") && (
+              <Button
+                size="small"
+                onClick={onClearAll}
+                sx={{
+                  color: "#ff6b6b",
+                  fontSize: "1.1rem",
+                  textTransform: "none",
+                  minWidth: "auto",
+                  ml: 1
+                }}
+              >
+                Clear All
+              </Button>
+            )}
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
 
 // Policy card component
 const PolicyCard = ({ policy, index, shareAllPolicy, selectedPolicies, handleCheckboxChange, handleCardClick, showStatus = false, isExpired = false, isSelected = false }) => {
@@ -93,7 +239,7 @@ const PolicyCard = ({ policy, index, shareAllPolicy, selectedPolicies, handleChe
       onClick={() => handleCardClick(policy._id)}
       sx={{
         boxShadow: isSelected ? "0 0 20px rgba(138, 198, 66, 0.5)" : "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-        backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+        backgroundColor: "#212121",
         color: THEME_COLOR.COLOR,
         width: "100%",
         height: { xs: "100%", sm: "100%" },
@@ -220,7 +366,6 @@ const PolicyCard = ({ policy, index, shareAllPolicy, selectedPolicies, handleChe
               />
             </OverlayTrigger>
           </Grid>
-
         </Grid>
       </CardContent>
     </Card>
@@ -262,6 +407,11 @@ export default function PolicyTabs({
   const [activeTab, setActiveTab] = useState("active");
   const [loading, setLoading] = useState(false);
   const [selectedPolicyId, setSelectedPolicyId] = useState(null);
+  
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState("all");
+  
   const classes = useStyles();
   const itemsPerPage = 3;
 
@@ -286,32 +436,31 @@ export default function PolicyTabs({
   // Auto-select first policy when data loads and no policy is selected
   useEffect(() => {
     const currentList = value === 2 ? archieveList : policyList;
+    const filteredList = filterPolicies(currentList, searchTerm, selectedTypeFilter);
 
     // Don't proceed if list isn't ready yet
-    if (!currentList || currentList.length === 0) return;
+    if (!filteredList || filteredList.length === 0) return;
 
     // Get from session or default to first policy
     const storedId = sessionStorage.getItem("selectedPolicyId");
-
-    const policyExists = currentList.some(p => p._id === storedId);
+    const policyExists = filteredList.some(p => p._id === storedId);
 
     if (policyExists) {
-      // Sync to session-stored policy only if it's in the current tab's list
+      // Sync to session-stored policy only if it's in the current tab's filtered list
       setSelectedPolicyId(storedId);
       handleCardClick(storedId);
     } else {
-      // Fall back to first policy of the current tab
-      const firstId = currentList[0]._id;
+      // Fall back to first policy of the current filtered list
+      const firstId = filteredList[0]._id;
       setSelectedPolicyId(firstId);
       sessionStorage.setItem("selectedPolicyId", firstId);
       handleCardClick(firstId);
     }
-  }, [value, policyList, archieveList]);
+  }, [value, policyList, archieveList, searchTerm, selectedTypeFilter]);
 
   useEffect(() => {
     sessionStorage.removeItem("selectedPolicyId");
   }, [value]);
-
 
   const handleCardClickWithState = (id) => {
     setSelectedPolicyId(id);
@@ -319,9 +468,16 @@ export default function PolicyTabs({
     handleCardClick(id);
   };
 
-
   const handlePageChange = (tabType) => (event, newPage) => setPages(prev => ({ ...prev, [tabType]: newPage }));
   const getPaginatedData = (list, page) => list.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+  // Clear all filters and search
+  const handleClearAll = () => {
+    setSearchTerm("");
+    setSelectedTypeFilter("all");
+    // Reset pages to 1 for all tabs
+    setPages({ active: 1, expired: 1, archive: 1 });
+  };
 
   // Unified fetch function
   const fetchData = async (endpoint, params, isArchive = false) => {
@@ -385,15 +541,17 @@ export default function PolicyTabs({
 
   // Render tab content
   const renderTabContent = (tabValue, dataList, pageKey, showStatus = false, isExpired = false) => {
+    const filteredList = filterPolicies(dataList, searchTerm, selectedTypeFilter);
     const currentPage = pages[pageKey];
-    const paginatedData = getPaginatedData(dataList, currentPage);
-    const totalPages = Math.ceil(dataList.length / itemsPerPage);
+    const paginatedData = getPaginatedData(filteredList, currentPage);
+    const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+    const hasFilters = searchTerm.trim() || selectedTypeFilter !== "all";
 
     return (
       <TabPanel value={tabValue} sx={{ p: { xs: 1, sm: 2 } }}>
         <Box sx={{ minHeight: "400px" }}>
-          {dataList.length === 0 ? (
-            <EmptyState />
+          {filteredList.length === 0 ? (
+            <EmptyState hasFilters={hasFilters} onClearFilters={handleClearAll} />
           ) : (
             <>
               <Box sx={{ mb: 2 }}>
@@ -414,7 +572,7 @@ export default function PolicyTabs({
               </Box>
               {totalPages > 1 && (
                 <CustomPagination
-                  totalItems={dataList.length}
+                  totalItems={filteredList.length}
                   currentPage={currentPage}
                   onPageChange={handlePageChange(pageKey)}
                   itemsPerPage={itemsPerPage}
@@ -431,11 +589,22 @@ export default function PolicyTabs({
     <Box sx={{ px: { xs: 2, sm: 5 } }}>
       <Card sx={{
         borderRadius: 5, boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-        backgroundColor: THEME_COLOR.BACKGROUND, border: "1px solid white",
-        py: 2.5, minHeight: "85vh"
+        backgroundColor: "#121212", border: "1px solid white",
+        py: 2.5, minHeight: "87vh"
       }}>
         <TabContext value={value}>
           <Box sx={{ width: "95%", mx: "auto", mb: 2 }}>
+            {/* Search and Filter Section */}
+            <SearchAndFilter
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              selectedTypeFilter={selectedTypeFilter}
+              onTypeFilterChange={setSelectedTypeFilter}
+              onClearAll={handleClearAll}
+              classes={classes}
+            />
+
+            {/* Tab Navigation */}
             <Box sx={{
               maxWidth: { xs: "100%", sm: 530 }, width: { xs: "100%", sm: "50%" },
               bgcolor: THEME_COLOR.FADE_BACKGROUND, mx: "auto", borderRadius: "35px",
