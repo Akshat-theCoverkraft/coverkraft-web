@@ -219,7 +219,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     ) {
       if (!isOldEnough(userDob)) {
         toast.error("You must be at least 18 years old to register.", {
-          position: "top-center",
+          position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,

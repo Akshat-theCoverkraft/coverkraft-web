@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -444,6 +444,7 @@ const Vault = () => {
         </DialogActions>
       </StyledDialog>
     </div>
+    </>
   );
 };
 

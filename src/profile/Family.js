@@ -62,7 +62,7 @@ const Family = ({ family, onfamilyclose }) => {
   const handleFamilyAddSuccess = () => {
     // Refresh the family details when a new member is added
     fetchFamilyDetails();
-    setDrawerOpen(false); // Close the add family drawer
+    setDrawerOpen(false); 
   };
 
   return (
@@ -78,7 +78,8 @@ const Family = ({ family, onfamilyclose }) => {
         },
       }}
     >
-      <ToastContainer />
+      <ToastContainer position="top-center"
+  style={{ zIndex: 99999 }} />
       <Box
         sx={{ width: "25vw", padding: 0 }}
         role="presentation"

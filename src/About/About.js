@@ -29,11 +29,11 @@ const About = () => {
                 maxWidth: "800px",
               }}
             >
-              CoverKraft Pvt Ltd is on a mission to revolutionize the industry.
-              <br />
-              Led by a team of experts and tech enthusiasts, we have developed a
-              user-friendly tech platform to make insurance easily understandable
-              and accessible for all.
+              CoverKraft Innsurance Broking  Pvt Ltd is on a mission to
+              revolutionize the industry. <br />
+              Led by a team of experts and tech enthusiasts, we have
+              developed a user-friendly tech platform to make insurance easily
+              understandable and accessible for all.
             </p>
           </div>
 
@@ -62,10 +62,10 @@ const About = () => {
                   className="text px-4 pb-4"
                   style={{ color: THEME_COLOR.SECONDARY_TEXT, textAlign: "center" }}
                 >
-                  To educate customers about various risks of fake products,
-                  equip them with tools for accessing and sharing their policies,
-                  and empower them with technology to purchase the most suitable
-                  products.
+                  To educate customers about various risks and insurance
+                  products, equip them with tools for accessing and sharing
+                  their policies, and empower them with technology to purchase
+                  the most suitable products.
                 </p>
               </div>
             </Grid>

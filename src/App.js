@@ -26,8 +26,7 @@ import NotificationPage from "./Notification/Notification";
 import BlogDetails from "./Landing/component/blogs/BlogDetails";
 import Feeds from "./Landing/component/blogs/Feeds";
 import PrivacyPolicy from "./PrivacyPolicy";
-import BackToTop from "./component/BackToTop";
-import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx"; // adjust path
+import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx"; 
 import ContactUs from "./pages/ContactUs.jsx";
 import PolicyType from './Landing/component/PolicyType';
 import PolicyDetails from './pages/PolicyDetails';
@@ -37,30 +36,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
-  // Removed top-level await; handled in useEffect below
-
-
-  // useEffect(() => {
-  //   setupOnMessageListener();
-  // }, []);
-
-  // useEffect(() => {
-  //   const setupFCM = async () => {
-  //     try {
-  //       const registration = await registerFirebaseSW();
-  //       const token = await requestFCMPermission(registration);
-
-  //       if (!token) {
-  //         console.warn("❌ No FCM token received.");
-  //       }
-  //       // TODO: send token to your backend if needed
-  //     } catch (err) {
-  //       console.error("💥 FCM Init Error:", err);
-  //     }
-  //   };
-
-  //   setupFCM();
-  // }, []);
 
   useEffect(() => {
     const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
@@ -96,13 +71,11 @@ function App() {
           return () => clearTimeout(logoutTimer);
         }
       } else {
-        // No login time found → force logout
         console.log("🚫 No session found.");
         handleLogout();
       }
     }
   }, []);
-
 
   const handleRefresh = () => {
     const excludedPages = ["", "/login"];
@@ -112,13 +85,24 @@ function App() {
     }
   };
 
+  // 👇 Inserted scroll-to-top behavior
+  const ScrollToTop = () => {
+    const { pathname } = window.location;
+
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
+  };
+
   return (
     <>
-      <ToastContainer />
+      <ToastContainer position="top-center" />
       <Toaster position="top-right" reverseOrder={false} />
-      {/* This stuff can go wherever appropriate in layout */}
-      <BackToTop />
       <UniversalHomeButton />
+      <BackToTop />
+      <ScrollToTop /> 
 
       <Routes>
         <Route path="" element={<Landing />} />
@@ -126,10 +110,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/vault" element={<Vault />} />
         <Route path="/motor-policy" element={<MotorPolicyForm />} />
-        <Route
-          path="/health-policy"
-          element={<HealthPolicyForm />}
-        />
+        <Route path="/health-policy" element={<HealthPolicyForm />} />
         <Route path="/life-policy" element={<LifePolicyForm />} />
         <Route path="/add-policy" element={<AddPolicy />} />
         <Route path="/edit-policy" element={<EditPolicy />} />
