@@ -25,7 +25,7 @@ import dayjs from "dayjs";
 import ProgressBarCircle from "../../component/ProgressBarCircle";
 import DateTimePicker from "../../component/DateTimePicker";
 import { formatDate } from "../../utils/dateUtils";
-
+import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";
 const LifePolicyForm = () => {
   const location = useLocation();
   const responseData = location.state?.responseData;
