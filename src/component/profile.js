@@ -65,6 +65,47 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const handleCitySelect = (cityId) => {
     setSelectedCityId(cityId);
   };
+  const calculateProfileCompletion = (data) => {
+  const requiredFields = [
+    "userName",
+    "userEmail",
+    "userPhone",
+    "userDob",
+    "userAddress",
+    "state",
+    "city",
+    "pinCode",
+    "gender",
+    "userImg"
+  ];
+
+  const totalFields = requiredFields.length;
+  let completedFields = 0;
+
+  requiredFields.forEach((field) => {
+    const value = data?.[field];
+    if (value !== undefined && value !== null && value !== "") {
+      completedFields++;
+    }
+  });
+
+  return Math.floor((completedFields / totalFields) * 100);
+};
+
+  const [profileCompletion, setProfileCompletion] = useState(0);
+
+useEffect(() => {
+  if (userbyId.getUserById && userbyId.getUserById.data) {
+    const data = userbyId.getUserById.data;
+
+    // Set values...
+    // ...
+
+    const percentage = calculateProfileCompletion(data);
+    setProfileCompletion(percentage);
+  }
+}, [userbyId]);
+
   //useeffect
   useEffect(() => {
     dispatch(getAllState(API_URL));

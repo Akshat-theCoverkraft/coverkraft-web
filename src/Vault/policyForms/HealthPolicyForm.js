@@ -26,6 +26,7 @@ import ProgressBarCircle from '../../component/ProgressBarCircle';
 import { dateformat, formatDate } from '../../utils/dateUtils';
 import DateTimePicker from '../../component/DateTimePicker';
 import { THEME_COLOR } from '../../constants';
+import InsuranceDropdown from '../../component/InsurannceCompanyDropDown';
 const HealthPolicyForm = () => {
   const location = useLocation();
   const responseData = location.state?.responseData;
@@ -272,22 +273,25 @@ const HealthPolicyForm = () => {
                     }}
                     required
                   />
-                  <CustomInput
-                    type="text"
-                    label="Insurance Company"
-                    value={insuredCompany}
-                    onChange={(e) => {
-                      setInsuredCompany(e.target.value);
-                    }}
-                    required
-                  />
-                  <Button
-                    text={mode === 'edit' ? 'Update' : 'Save'}
-                    size="lg"
-                    block={true}
-                    onClick={handleSubmit}
+                  {insuredCompany ? (
+                    // If company is already provided from backend, show as read-only input
+                    <CustomInput
+                      type="text"
+                      label="Insurance Company"
+                      value={insuredCompany}
+                      onChange={() => { }} // Prevent editing
+                      readOnly
+                      disabled
+                      required
+                    />
+                  ) : (
+                    // Else show the dropdown to select one
+                    <InsuranceDropdown
+                      onCompanySelect={(companyId) => setInsuredCompany(companyId)}
+                      initialValue={insuredCompany}
+                    />
+                  )}
 
-                  />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   {/* <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}>Vehicle Details</p> */}
@@ -336,17 +340,22 @@ const HealthPolicyForm = () => {
                       setTotalSumAssured(e.target.value);
                     }}
                   />
-                  <div className='mt-5'></div>
-                  <div className='mt-5'></div>
-                  <div className='mt-5'></div>
-                  <Button
-                    text='Cancel'
-                    size="sm"
-                    block={true}
-                    onClick={handleCancel}
-                    className='mt-5 mb-2'
+                  <Box display="flex" gap={2} mt={5}>
+                    <Button
+                      text={mode === 'edit' ? 'Update' : 'Save'}
+                      size="lg"
+                      onClick={handleSubmit}
+                      className="flex-1"
+                    />
+                    <Button
+                      text="Cancel"
+                      size="sm"
+                      onClick={handleCancel}
+                      className="flex-1"
+                    />
+                  </Box>
 
-                  />
+
                 </Grid>
               </Grid>
             </div>

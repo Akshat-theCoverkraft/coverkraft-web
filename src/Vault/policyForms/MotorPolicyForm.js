@@ -28,6 +28,7 @@ import { formatDate } from '../../utils/dateUtils';
 import axios from 'axios';
 import { THEME_COLOR } from '../../constants';
 import { WidthFull } from '@mui/icons-material';
+import InsuranceDropdown from '../../component/InsurannceCompanyDropDown';
 const MotorPolicyForm = () => {
     const location = useLocation();
     const responseData = location.state?.responseData;
@@ -414,16 +415,24 @@ const MotorPolicyForm = () => {
                                         }}
                                         required
                                     />
-                                    <CustomInput
-                                        type="text"
-                                        label="Insurance Company"
-                                        value={insuredCompany}
-                                        onChange={(e) => {
-                                            setInsuredCompany(e.target.value);
-
-                                        }}
-                                        required
-                                    />
+                                    {insuredCompany ? (
+                                        // If company is already provided from backend, show as read-only input
+                                        <CustomInput
+                                            type="text"
+                                            label="Insurance Company"
+                                            value={insuredCompany}
+                                            onChange={() => { }} // Prevent editing
+                                            readOnly
+                                            disabled
+                                            required
+                                        />
+                                    ) : (
+                                        // Else show the dropdown to select one
+                                        <InsuranceDropdown
+                                            onCompanySelect={(companyId) => setInsuredCompany(companyId)}
+                                            initialValue={insuredCompany}
+                                        />
+                                    )}
                                     <CustomInput
                                         type="text"
                                         label="Registration Number"
@@ -465,13 +474,7 @@ const MotorPolicyForm = () => {
                                         }}
 
                                     />
-                                    <Button
-                                        text={mode === 'edit' ? 'Update' : 'Save'}
-                                        size="lg"
-                                        block={true}
-                                        onClick={handleSubmit}
 
-                                    />
 
 
                                 </Grid>
@@ -559,13 +562,18 @@ const MotorPolicyForm = () => {
                                         }}
 
                                     />
-                                    <Button
-                                        text='Cancel'
-                                        size="sm"
-                                        block={true}
-                                        onClick={handleCancel}
-
-                                    />
+                                    <Box display="flex" justifyContent="flex-end" gap={2} mt={4}>
+                                        <Button
+                                            text='Cancel'
+                                            size="sm"
+                                            onClick={handleCancel}
+                                        />
+                                        <Button
+                                            text={mode === 'edit' ? 'Update' : 'Save'}
+                                            size="lg"
+                                            onClick={handleSubmit}
+                                        />
+                                    </Box>
                                 </Grid>
                             </Grid>
 
