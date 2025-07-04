@@ -77,14 +77,18 @@ const PolicyDetail = ({ policyId }) => {
   }, [policyId]);
 
   //function to view the pdf document
- const handleViewDocument = (documentPath) => {
-  // Check if documentPath is already a full URL
-  const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
-  const finalUrl = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
+  const handleViewDocument = (documentPath) => {
+    // Determine if it's a full URL or relative path
+    const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
+    const finalUrl = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
 
-    setPdfUrl(finalUrl);
-    window.open(finalUrl, "_blank");
+    // Encode the document path into Google Docs Viewer URL
+    const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(finalUrl)}`;
+
+    setPdfUrl(finalUrl); // optional: keep this if you're showing it somewhere else
+    window.open(googleViewerUrl, "_blank");
   };
+
 
 
   //function to download the pdf document
@@ -569,7 +573,7 @@ const PolicyDetail = ({ policyId }) => {
                       >
                         Archive Policy
                       </button>
-                      
+
                     </Grid>
                   ) : (
                     <p></p>
