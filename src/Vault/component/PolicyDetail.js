@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
-import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
+
 import Button from "../../component/Button";
+import GradientButton from "../../component/GradientButton";
+import { updateDocument } from "../../store/action/action";
+import { formatDate } from "../../utils/dateUtils";
+import { THEME_COLOR } from "../../constants";
+import API_URL from "../../ServiceModule/Service";
+import IMAGE_PATH from "../../ServiceModule/imagePath";
+
+// Import images
 import EditIcon from "../../Images/edit.png";
 import scooty from "../../Images/detail-scooty.png";
-import HealthInsurance from "../../Images/FamilyHealthInsurance.png";
 import family from "../../Images/Family.png";
 import car from "../../Images/Car.png";
 import Health from "../../Images/ic_health.png";
-import Life from "../../Images/ic_life.png";
-import Grid from "@mui/material/Grid";
 import premium from "../../Images/premium.png";
 import value from "../../Images/value.png";
 import startDate from "../../Images/startDate.png";
@@ -18,212 +29,237 @@ import redBg from "../../Images/red-img.png";
 import share from "../../Images/share.png";
 import download from "../../Images/ic-download1.png";
 import view from "../../Images/ic-view.png";
-import { useNavigate } from "react-router-dom";
-import API_URL from "../../ServiceModule/Service";
-import axios from "axios";
 import emptyImage from "../../Images/NoData.png";
-import IMAGE_PATH from "../../ServiceModule/imagePath";
-import moment from "moment";
-import { formatDate } from "../../utils/dateUtils";
-import { updateDocument } from "../../store/action/action";
-import { useDispatch } from "react-redux";
-import GradientButton from "../../component/GradientButton";
-import { toast, ToastContainer } from "react-toastify";
-import { THEME_COLOR } from "../../constants";
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-
 
 const PolicyDetail = ({ policyId }) => {
-  console.log("policydetail ma gye", policyId);
-  const [showShareDialog, setShowShareDialog] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null);
   const [policyDetails, setPolicyDetails] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  //useeffect
+
   useEffect(() => {
     const fetchPolicyDetails = async () => {
+      if (!policyId) return;
+      
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
           `${API_URL}policy/fetchFullData?_id=${policyId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (
-          response.data &&
-          response.data.data &&
-          Array.isArray(response.data.data)
-        ) {
-          setPolicyDetails(response.data.data);
-          console.log("policydetails", policyDetails);
-          sessionStorage.setItem("policyId", policyId);
-        } else {
-          console.error("Expected an array but got:", response.data);
-          setPolicyDetails([]);
-        }
+        
+        const data = response.data?.data;
+        setPolicyDetails(Array.isArray(data) ? data : []);
+        sessionStorage.setItem("policyId", policyId);
       } catch (error) {
         console.error("Error fetching policy list:", error);
         setPolicyDetails([]);
       }
     };
 
-    if (policyId) {
-      fetchPolicyDetails();
-    }
+    fetchPolicyDetails();
   }, [policyId]);
 
-  //function to view the pdf document
-  const handleViewDocument = (documentPath) => {
-    // Determine if it's a full URL or relative path
-    const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
-    const finalUrl = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
-
-    // Encode the document path into Google Docs Viewer URL
-    const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(finalUrl)}`;
-
-    setPdfUrl(finalUrl); // optional: keep this if you're showing it somewhere else
-    window.open(googleViewerUrl, "_blank");
+  const getPolicyImage = (policyType) => {
+    const imageMap = {
+      car_policy: car,
+      bike_policy: scooty,
+      other_vehicle: scooty,
+      life: family,
+      accident: family,
+      health: Health,
+      other_health: Health
+    };
+    return imageMap[policyType] || emptyImage;
   };
 
-
-
-  //function to download the pdf document
-  const handleDownloadDocument = (documentPath) => {
-    // Detect if it's already a full URL
-    const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
-    const url = isFullUrl ? documentPath : `${API_URL}${documentPath}`;
-
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          console.warn("File not downloadable directly, opening in new tab.");
-          window.open(url, "_blank");
-        } else {
-          response.blob().then((blob) => {
-            const fileUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = fileUrl;
-            link.setAttribute("download", "policy_document.pdf");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error downloading document:", error);
-        window.open(url, "_blank");
-      });
+  const getExpiryStatus = (policyEndDate) => {
+    try {
+      if (!policyEndDate) return null;
+      
+      const datePart = policyEndDate.split(" ")[0];
+      const [day, month, year] = datePart.split("/");
+      const endDate = new Date(year, month - 1, day);
+      
+      if (isNaN(endDate)) return null;
+      
+      const now = new Date();
+      const diffInMs = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()).getTime() - 
+                      new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+      
+      if (diffInDays <= 0) return "Expired";
+      if (diffInDays <= 60) return `${diffInDays} days left`;
+      return null;
+    } catch (error) {
+      console.error("Error parsing policy end date:", error);
+      return null;
+    }
   };
 
-  //function for share dialog
-  const toggleShareDialog = () => {
-    setShowShareDialog(!showShareDialog);
-  };
-
-  //function for edit button
   const handleEdit = () => {
     const responseData = policyDetails[0];
-    const PolicyType = policyDetails[0].policyType;
-
-    console.log("polcyytype", responseData);
-    if (
-      PolicyType === "car_policy" ||
-      PolicyType === "bike_policy" ||
-      PolicyType === "other_vehicle"
-    ) {
-      navigate("/motor-policy", {
-        state: { policyDetails: responseData, mode: "edit" },
-      });
-    } else if (PolicyType === "health" || PolicyType === "other_health") {
-      navigate("/health-policy", {
-        state: { policyDetails: responseData, mode: "edit" },
-      });
-    } else if (PolicyType === "life" || PolicyType === "accident") {
-      navigate("/life-policy", {
-        state: { policyDetails: responseData, mode: "edit" },
-      });
+    const policyType = responseData.policyType;
+    
+    const routeMap = {
+      car_policy: "/motor-policy",
+      bike_policy: "/motor-policy", 
+      other_vehicle: "/motor-policy",
+      health: "/health-policy",
+      other_health: "/health-policy",
+      life: "/life-policy",
+      accident: "/life-policy"
+    };
+    
+    const route = routeMap[policyType];
+    if (route) {
+      navigate(route, { state: { policyDetails: responseData, mode: "edit" } });
     }
-    // navigate('/edit-policy', { state: { policyDetails: policyDetails } });
   };
 
-  //function for share policy document
-  const sharePolicyDocument = async (documentPath) => {
+  const handleDocument = async (documentPath, action) => {
     const isFullUrl = documentPath.startsWith("http://") || documentPath.startsWith("https://");
-    const url = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
-    const filename = documentPath.split("/").pop() || "policy_document.pdf";
-
-    console.log("Trying to share/download document from:", url);
-
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.error("Fetch failed. Status:", response.status);
-        throw new Error("Failed to fetch file");
-      }
-
-      const contentType = response.headers.get("content-type");
-      console.log("Fetched file content-type:", contentType);
-
-      const blob = await response.blob();
-      const file = new File([blob], filename, { type: "application/pdf" });
-
-      // Web Share API
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: "Policy Document",
-          text: "Here is your policy document.",
-          files: [file],
-        });
-        console.log("Shared via Web Share API");
-      } else {
-        // Fallback download
-        const blobUrl = window.URL.createObjectURL(blob);
+    const finalUrl = isFullUrl ? documentPath : `${IMAGE_PATH}${documentPath}`;
+    
+    if (action === "view") {
+      const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(finalUrl)}`;
+      window.open(googleViewerUrl, "_blank");
+      return;
+    }
+    
+    if (action === "download") {
+      const downloadUrl = isFullUrl ? documentPath : `${API_URL}${documentPath}`;
+      try {
+        const response = await fetch(downloadUrl);
+        if (!response.ok) throw new Error("Download failed");
+        
+        const blob = await response.blob();
+        const fileUrl = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.href = blobUrl;
-        link.setAttribute("download", filename);
+        link.href = fileUrl;
+        link.download = "policy_document.pdf";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        console.log("Downloaded using fallback link");
+      } catch (error) {
+        console.error("Error downloading document:", error);
+        window.open(downloadUrl, "_blank");
       }
-    } catch (error) {
-      console.error("Error sharing/downloading file:", error);
-      alert("Unable to share or download the document. Try again later.");
+      return;
+    }
+    
+    if (action === "share") {
+      try {
+        const response = await fetch(finalUrl);
+        if (!response.ok) throw new Error("Failed to fetch file");
+        
+        const blob = await response.blob();
+        const filename = documentPath.split("/").pop() || "policy_document.pdf";
+        const file = new File([blob], filename, { type: "application/pdf" });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: "Policy Document",
+            text: "Here is your policy document.",
+            files: [file],
+          });
+        } else {
+          // Fallback download
+          const blobUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      } catch (error) {
+        console.error("Error sharing/downloading file:", error);
+        alert("Unable to share or download the document. Try again later.");
+      }
     }
   };
 
-
-
-
-  const userId = sessionStorage.getItem("userId");
-  const handleArchieve = () => {
-    const archieve = "archive";
+  const handlePolicyAction = (action) => {
+    const userId = sessionStorage.getItem("userId");
     const formData = new FormData();
     formData.append("_id", policyId);
     formData.append("userId", userId);
-    formData.append("status", archieve);
+    formData.append("status", action);
+    
     dispatch(updateDocument(API_URL, formData))
       .then(() => {
-        toast.success("Policy Updated successfully");
+        const message = action === "archive" ? "Policy archived successfully" : 
+                       action === "unarchive" ? "Policy removed from archive successfully" : 
+                       "Policy renewed successfully";
+        toast.success(message);
       })
-      .catch((error) => {
-        toast.error("Some Error occur");
+      .catch(() => {
+        toast.error("Some error occurred");
       });
   };
 
-  return (
-    <>
-      <ToastContainer
-        position="top-center"
-        style={{ zIndex: 99999 }}
-      />
+  const renderPolicyActions = (policy) => {
+    const isArchived = policy?.status === "archive";
+    
+    if (isArchived) {
+      return (
+        <Grid item className="m-4" xs={12} md={12} style={{ paddingLeft: "30%" }}>
+          <button
+            className="btn btn-sm rounded-6"
+            style={{
+              borderColor: "#8AC642",
+              color: "#8AC642",
+              paddingLeft: "20px",
+              width: "50%",
+            }}
+            onClick={() => handlePolicyAction("unarchive")}
+          >
+            Remove from Archive
+          </button>
+        </Grid>
+      );
+    }
+    
+    return (
+      <Grid item className="m-4" xs={12} md={12} style={{ padding: "0 40px" }}>
+        <button
+          className="btn btn-sm rounded-6 mr-5 ml-5"
+          style={{
+            borderColor: "#8AC642",
+            color: "#8AC642",
+            padding: "20px 70px",
+            width: "40%",
+          }}
+          onClick={() => handlePolicyAction("renew")}
+        >
+          Renew Policy
+        </button>
+        <button
+          className="btn btn-sm rounded-7 mr-5 ml-5"
+          style={{
+            borderColor: "#8AC642",
+            color: "#8AC642",
+            padding: "10px 70px",
+            width: "40%",
+          }}
+          onClick={() => handlePolicyAction("archive")}
+        >
+          Archive Policy
+        </button>
+      </Grid>
+    );
+  };
 
-      {policyDetails.length === 0 ? (
+  const renderTooltip = (text) => (
+    <Tooltip style={{ fontSize: '1.8rem', padding: '8px 12px' }}>
+      {text}
+    </Tooltip>
+  );
+
+  if (policyDetails.length === 0) {
+    return (
+      <>
+        <ToastContainer position="top-center" style={{ zIndex: 99999 }} />
         <Card
           className="rounded-5 border"
           style={{
@@ -237,354 +273,196 @@ const PolicyDetail = ({ policyId }) => {
             color: THEME_COLOR.COLOR,
           }}
         >
-          <img src={emptyImage} alt="No Data" style={{ width: '40%', height: 'auto', marginTop: '10%', }} />
-          <p className="mt-5 fs-bold ">Add your new policy effortlessly to your account</p>
+          <img src={emptyImage} alt="No Data" style={{ width: '40%', height: 'auto', marginTop: '10%' }} />
+          <p className="mt-5 fs-bold">Add your new policy effortlessly to your account</p>
         </Card>
-      ) : (
-        policyDetails.map((policy, index) => {
-          let endDate, diffInDays, status;
+      </>
+    );
+  }
 
-          try {
-            if (policy?.policyEndDate) {
-              // Try to parse the date part of the policy end date
-              const datePart = policy?.policyEndDate?.split(" ")[0];
-              const [day, month, year] = datePart?.split("/");
+  return (
+    <>
+      <ToastContainer position="top-center" style={{ zIndex: 99999 }} />
+      {policyDetails.map((policy, index) => {
+        const status = getExpiryStatus(policy?.policyEndDate);
+        const documentPath = policy?.documentDetails?.documentPath;
 
-              // Create a new Date object with the date components
-              endDate = new Date(year, month - 1, day);
+        return (
+          <Card
+            key={index}
+            className="p-5 rounded-5"
+            style={{
+              justifyContent: "center",
+              boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+              height: "80%",
+              minHeight: "100%",
+              marginBottom: "5vh",
+              backgroundColor: "#121212",
+              color: THEME_COLOR.COLOR,
+              border: "0.5px solid white",
+            }}
+          >
+            <div className="d-flex justify-content-between mb-5">
+              <p style={{ fontSize: "24px", fontWeight: "700" }} className="fw-bold pl-4">
+                Details
+              </p>
+              <GradientButton
+                text="Edit"
+                size="sm"
+                className="fw-bold"
+                startIcon={EditIcon}
+                onClick={handleEdit}
+              />
+            </div>
 
-              if (isNaN(endDate)) throw new Error("Invalid date");
-
-              const now = new Date();
-
-              const endDateWithoutTime = new Date(
-                endDate.getFullYear(),
-                endDate.getMonth(),
-                endDate.getDate()
-              );
-              const nowWithoutTime = new Date(
-                now.getFullYear(),
-                now.getMonth(),
-                now.getDate()
-              );
-
-              const diffInMs =
-                endDateWithoutTime.getTime() - nowWithoutTime.getTime();
-              diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-              if (diffInDays <= 0) {
-                status = "Expired";
-              } else if (diffInDays <= 60) {
-                status = `${diffInDays} days left`;
-              }
-            }
-          } catch (error) {
-            console.error("Error parsing policy end date:", error);
-          }
-
-          const documentPath = policy?.documentDetails?.documentPath;
-
-          return (
-            <Card
-              className="p-5 rounded-5"
-              style={{
-                justifyContent: "center",
-                boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                height: "80%",
-                minHeight: "100%",
-                marginBottom: "5vh",
-                backgroundColor: "#121212",
-                color: THEME_COLOR.COLOR,
-                border: "0.5px solid white",
-              }}
-            >
-              <div className="d-flex justify-content-between mb-5">
-                <p
-                  style={{ fontSize: "24px", fontWeight: "700" }}
-                  className="fw-bold pl-4"
-                >
-                  Details
+            <div className="d-flex justify-content-between">
+              <div>
+                <p style={{ fontSize: "20px", fontWeight: "700" }} className="fw-bold pl-4">
+                  {policy?.policyDetails?.make_Model || policy?.insuredName}
                 </p>
-                <GradientButton
-                  text="Edit"
-                  size="sm"
-                  className="fw-bold"
-                  startIcon={EditIcon}
-                  onClick={handleEdit}
-                />
+                <p style={{ color: "#fff", fontSize: "16px", fontWeight: "500" }} className="pl-4">
+                  {policy?.policyDetails?.registrationNumber || policy?.policyNumber}
+                </p>
+                <p style={{ color: "#fff", fontSize: "16px", fontWeight: "500" }} className="pl-4">
+                  Expires on {formatDate(policy?.policyEndDate)}
+                </p>
               </div>
+              <div>
+                <img src={getPolicyImage(policy?.policyType)} alt="Policy Type" />
+              </div>
+            </div>
 
-              <div className="d-flex justify-content-between">
-                <div>
-                  <p
-                    style={{ fontSize: "20px", fontWeight: "700" }}
-                    gutterBottom
-                    className="fw-bold pl-4"
-                  >
-                    {policy?.policyDetails?.make_Model || policy?.insuredName}
-                  </p>
-                  <p
+            <div style={{ position: "relative" }}>
+              {status && (
+                <>
+                  <div
                     style={{
-                      color: "#fff",
-                      fontSize: "16px",
-                      fontWeight: "500",
+                      position: "absolute",
+                      top: -89,
+                      right: 0,
+                      width: "200px",
+                      height: "50px",
+                      backgroundImage: `url(${redBg})`,
+                      backgroundSize: "cover",
+                      opacity: 1,
+                      marginTop: "50px",
                     }}
-                    className="pl-4"
-                  >
-                    {policy?.policyDetails?.registrationNumber ||
-                      policy?.policyNumber}
-                  </p>
-                  <p
-                    style={{
-                      color: "#fff",
-                      fontSize: "16px",
-                      fontWeight: "500",
-                    }}
-                    className="pl-4"
-                  >
-                    Expires on {formatDate(policy?.policyEndDate)}
-                  </p>
-                </div>
-                <div>
-                  <img
-                    src={
-                      policy?.policyType === "car_policy"
-                        ? car
-                        : policy?.policyType === "bike_policy"
-                          ? scooty
-                          : policy?.policyType === "other_vehicle"
-                            ? scooty
-                            : policy?.policyType === "life"
-                              ? family
-                              : policy?.policyType === "accident"
-                                ? family
-                                : policy?.policyType === "health"
-                                  ? Health
-                                  : policy?.policyType === "other_health"
-                                    ? Health
-                                    : emptyImage
-                    }
-                    alt="Policy Type"
                   />
-                </div>
-              </div>
-
-              <div style={{ position: "relative" }}>
-                {status && (
-                  <>
-                    <div
-                      className=""
-                      style={{
-                        position: "absolute",
-                        top: -89,
-                        right: 0,
-                        width: "200px",
-                        height: "50px",
-                        backgroundImage: `url(${redBg})`,
-                        backgroundSize: "cover",
-                        opacity: 1,
-                        marginTop: "50px",
-                      }}
-                    ></div>
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: -33,
-                        right: 25,
-                        color: "#ffffff",
-                        fontSize: "24px",
-                        fontWeight: "bold",
-                        zIndex: 1,
-                      }}
-                    >
-                      {status}
-                    </div>
-                  </>
-                )}
-                <Card
-                  className="rounded-5"
-                  style={{
-                    marginTop: "48px",
-                    paddingTop: "50px",
-                    width: "100%",
-                    height: "50%",
-                    boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-                    backgroundColor: "#212121",
-                    color: THEME_COLOR.COLOR,
-                  }}
-                >
-                  <div className="d-flex justify-content-end m-4">
-                    <OverlayTrigger placement="top" overlay={<Tooltip style={{ fontSize: '1.8rem', padding: '8px 12px' }}>View Policy</Tooltip>}>
-                      <img
-                        src={view}
-                        onClick={() => handleViewDocument(documentPath)}
-                        className="mr-2 cursor-pointer"
-                      />
-                    </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={<Tooltip style={{ fontSize: '1.8rem', padding: '8px 12px' }}>DownLoad Policy</Tooltip>}>
-                      <img
-                        src={download}
-                        onClick={() => handleDownloadDocument(documentPath)}
-                        className="mr-2 cursor-pointer"
-                      />
-                    </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={<Tooltip style={{ fontSize: '1.8rem', padding: '8px 12px' }}>Share Policy</Tooltip>}>
-                      <img
-                        src={share}
-                        onClick={() => sharePolicyDocument(documentPath)}
-                        className="cursor-pointer"
-                      />
-                    </OverlayTrigger>
-                  </div>
-                  <Grid
-                    container
-                    rowSpacing={1}
-                    columnSpacing={{ xs: 1, sm: 1, md: 1 }}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: -33,
+                      right: 25,
+                      color: "#ffffff",
+                      fontSize: "24px",
+                      fontWeight: "bold",
+                      zIndex: 1,
+                    }}
                   >
-                    <Grid
-                      item
-                      xs={6}
-                      md={6}
-                      className="d-flex"
-                      style={{ padding: "30px 40px" }}
-                    >
-                      <div className="mr-2">
-                        <img src={premium} height={50} alt="premium" />
-                      </div>
-                      <div>
-                        <p
-                          style={{
-                            color: "#fff",
-                            fontSize: "1.2rem",
-                            fontWeight: "600",
-                          }}
-                        >
-                          Premium Paid
-                        </p>
-                        <p
-                          style={{ fontSize: "16px", fontWeight: "700" }}
-                          className="fw-bolder"
-                        >
-                          {policy?.premiumPaid}
-                        </p>
-                      </div>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={6}
-                      md={6}
-                      className="d-flex"
-                      style={{ padding: "30px 40px" }}
-                    >
-                      <div className="mr-2">
-                        <img src={value} height={50} alt="value" />
-                      </div>
-                      <div>
-                        <p
-                          style={{
-                            color: "#fff",
-                            fontSize: "1.2rem",
-                            fontWeight: "600",
-                          }}
-                        >
-                          Value (IDV)
-                        </p>
-                        <p className="fw-bolder">
-                          {policy?.policyDetails.idv ||
-                            policy?.policyDetails?.sumInsured}
-                        </p>
-                      </div>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={6}
-                      md={6}
-                      className="d-flex"
-                      style={{ padding: "30px 40px" }}
-                    >
-                      <div className="mr-2">
-                        <img src={startDate} height={50} alt="start date" />
-                      </div>
-                      <div>
-                        <p
-                          style={{
-                            color: "#fff",
-                            fontSize: "1.2rem",
-                            fontWeight: "600",
-                          }}
-                        >
-                          Policy Start Date
-                        </p>
-                        <p className="fw-bolder">{policy?.policyStartDate}</p>
-                      </div>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={6}
-                      md={6}
-                      className="d-flex"
-                      style={{ padding: "30px 40px" }}
-                    >
-                      <div className="mr-2">
-                        <img src={dateEnd} height={50} alt="end date" />
-                      </div>
-                      <div>
-                        <p
-                          style={{
-                            color: "#fff",
-                            fontSize: "1.2rem",
-                            fontWeight: "600",
-                          }}
-                        >
-                          Policy End Date
-                        </p>
-                        <p className="fw-bolder">{policy?.policyEndDate}</p>
-                      </div>
-                    </Grid>
-                  </Grid>
-                  {!policy?.status ? (
-                    <Grid
-                      item
-                      className="m-4"
-                      xs={12}
-                      md={12}
-                      style={{ padding: "0 40px" }}
-                    >
-                      <button
-                        className="btn btn-sm rounded-6 mr-5 ml-5"
-                        style={{
-                          borderColor: "#8AC642",
-                          color: "#8AC642",
-                          padding: "20px 70px",
-                          width: "40%",
-                        }}
-                        onClick={handleArchieve}
-                      >
-                        Renew Policy</button>
-                      <button
-                        className="btn btn-sm rounded-7 mr-5 ml-5"
-                        style={{
-                          borderColor: "#8AC642",
-                          color: "#8AC642",
-                          padding: "10px 70px",
-                          width: "40%",
-                        }}
-                        onClick={handleArchieve}
-                      >
-                        Archive Policy
-                      </button>
+                    {status}
+                  </div>
+                </>
+              )}
+              
+              <Card
+                className="rounded-5"
+                style={{
+                  marginTop: "48px",
+                  paddingTop: "50px",
+                  width: "100%",
+                  height: "50%",
+                  boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+                  backgroundColor: "#212121",
+                  color: THEME_COLOR.COLOR,
+                }}
+              >
+                <div className="d-flex justify-content-end m-4">
+                  <OverlayTrigger placement="top" overlay={renderTooltip("View Policy")}>
+                    <img
+                      src={view}
+                      onClick={() => handleDocument(documentPath, "view")}
+                      className="mr-2 cursor-pointer"
+                      alt="View"
+                    />
+                  </OverlayTrigger>
+                  <OverlayTrigger placement="top" overlay={renderTooltip("Download Policy")}>
+                    <img
+                      src={download}
+                      onClick={() => handleDocument(documentPath, "download")}
+                      className="mr-2 cursor-pointer"
+                      alt="Download"
+                    />
+                  </OverlayTrigger>
+                  <OverlayTrigger placement="top" overlay={renderTooltip("Share Policy")}>
+                    <img
+                      src={share}
+                      onClick={() => handleDocument(documentPath, "share")}
+                      className="cursor-pointer"
+                      alt="Share"
+                    />
+                  </OverlayTrigger>
+                </div>
 
-                    </Grid>
-                  ) : (
-                    <p></p>
-                  )}
-                </Card>
-                {/*  */}
-              </div>
-            </Card>
-          );
-        })
-      )}
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
+                  <Grid item xs={6} md={6} className="d-flex" style={{ padding: "30px 40px" }}>
+                    <div className="mr-2">
+                      <img src={premium} height={50} alt="premium" />
+                    </div>
+                    <div>
+                      <p style={{ color: "#fff", fontSize: "1.2rem", fontWeight: "600" }}>
+                        Premium Paid
+                      </p>
+                      <p style={{ fontSize: "16px", fontWeight: "700" }} className="fw-bolder">
+                        {policy?.premiumPaid}
+                      </p>
+                    </div>
+                  </Grid>
+                  
+                  <Grid item xs={6} md={6} className="d-flex" style={{ padding: "30px 40px" }}>
+                    <div className="mr-2">
+                      <img src={value} height={50} alt="value" />
+                    </div>
+                    <div>
+                      <p style={{ color: "#fff", fontSize: "1.2rem", fontWeight: "600" }}>
+                        Value (IDV)
+                      </p>
+                      <p className="fw-bolder">
+                        {policy?.policyDetails?.idv || policy?.policyDetails?.sumInsured}
+                      </p>
+                    </div>
+                  </Grid>
+                  
+                  <Grid item xs={6} md={6} className="d-flex" style={{ padding: "30px 40px" }}>
+                    <div className="mr-2">
+                      <img src={startDate} height={50} alt="start date" />
+                    </div>
+                    <div>
+                      <p style={{ color: "#fff", fontSize: "1.2rem", fontWeight: "600" }}>
+                        Policy Start Date
+                      </p>
+                      <p className="fw-bolder">{policy?.policyStartDate}</p>
+                    </div>
+                  </Grid>
+                  
+                  <Grid item xs={6} md={6} className="d-flex" style={{ padding: "30px 40px" }}>
+                    <div className="mr-2">
+                      <img src={dateEnd} height={50} alt="end date" />
+                    </div>
+                    <div>
+                      <p style={{ color: "#fff", fontSize: "1.2rem", fontWeight: "600" }}>
+                        Policy End Date
+                      </p>
+                      <p className="fw-bolder">{policy?.policyEndDate}</p>
+                    </div>
+                  </Grid>
+                </Grid>
+                
+                {renderPolicyActions(policy)}
+              </Card>
+            </div>
+          </Card>
+        );
+      })}
     </>
   );
 };

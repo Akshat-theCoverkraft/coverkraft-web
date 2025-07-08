@@ -12,6 +12,7 @@ import backArrow from "../Images/ic_back_button.png";
 import sms from "../Images/ic-sms.png";
 import call from "../Images/ic-call.png";
 import wtsp from "../Images/ic-wtsp.png";
+import email from "../Images/ic-mail.png";
 import { alpha, styled, useTheme } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import Radio from "@mui/material/Radio";
@@ -154,11 +155,11 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
         <Card className="p-3 rounded-5 shadow mb-5 pr-5">
           <h3>Policy Updates</h3>
-          <p style={{ color: "#7A7878" }}>
+          <p style={{ color: "#fff" }}>
             Policy Updates: Important updates for your purchased policies — payment, issuance, renewal, and reminders.
           </p>
 
-          {[{ icon: sms, label: "SMS", key: "userSms" }, { icon: call, label: "Call", key: "userCall" }, { icon: wtsp, label: "Whatsapp", key: "userWhatsapp" }].map((item) => (
+          {[{ icon: sms, label: "SMS", key: "userSms" }, { icon: call, label: "Call", key: "userCall" }, { icon: wtsp, label: "Whatsapp", key: "userWhatsapp" }, {icon: email, label:"Email", key: "userEmail"}].map((item) => (
             <Grid
               container
               key={item.key}
@@ -183,7 +184,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
         <Card className="p-3 rounded-5 shadow" sx={{ p: "20%" }}>
           <h3>Frequent Communication</h3>
-          <p style={{ color: "#7A7878", paddingRight: "20%" }}>
+          <p style={{ color: "#fff", paddingRight: "20%" }}>
             Manage your communication preferences easily and stay informed your way.
           </p>
           {[{ value: "1", label: "Monthly" }, { value: "2", label: "Yearly" }, { value: "3", label: "Never" }].map((option) => (

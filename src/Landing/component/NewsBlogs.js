@@ -17,24 +17,34 @@ const BlogSection = () => {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const res = await axios.get('http://52.52.154.65:5242/news/getAll?isActive=true');
-        const sorted = (res.data?.data || [])
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setPosts(sorted);
-      } catch (err) {
-        console.error('Failed fetching:', err);
-      }
-    };
-    fetchNews();
-  }, []);
+useEffect(() => {
+  const fetchNews = async () => {
+    try {
+      const res = await axios.get('http://52.52.154.65:5242/news/getAll?isActive=true');
+      const newsData = res.data?.data || [];
+
+      const activeNews = newsData.filter(item => item.status === 'active');
+      const sorted = activeNews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      setPosts(sorted);
+    } catch (err) {
+      console.error('Failed fetching:', err);
+    }
+  };
+  fetchNews();
+}, []);
+
 
   if (posts.length === 0) return null;
 
-  const leftPost = posts[0];
-  const rightSideCards = posts.slice(1, 4);
+   const leftPost = posts.find(
+    (p) => p.type === 'shorts' || p.type === 'video'
+  );
+
+  const rightSideCards = posts
+    .filter((p) => p._id !== leftPost?._id)
+    .slice(0, 3); // only take top 3 excluding the leftPost
+
 
   const getUrl = (p) =>
     p.videoUrl
@@ -140,7 +150,7 @@ const BlogSection = () => {
             }}
             onClick={() => navigate(`/feed/${leftPost.type}/${leftPost._id}`)}
           >
-            <Box sx={{ width: '100%', height: 600, overflow: '' }}>
+            <Box sx={{ width: '140%', height: 600, overflow: '' }}>
               {renderMedia(leftPost, { borderRadius: '40px 40px 0 0' })}
             </Box>
 
