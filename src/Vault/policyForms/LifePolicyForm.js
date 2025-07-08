@@ -494,13 +494,21 @@ const LifePolicyForm = () => {
                     </Box>
 
                     <Box>
-                      <CustomInput
-                        type="text"
-                        label="Insurance Company"
-                        value={insuredCompany}
-                        onChange={(e) => setInsuredCompany(e.target.value)}
-                        required
-                      />
+                      {(policyDetails?.insuredCompany || responseData?.insuranceCompany) ? (
+                        <CustomInput
+                          type="text"
+                          label="Insurance Company"
+                          value={insuredCompany}
+                          readOnly
+                          disabled
+                          required
+                        />
+                      ) : (
+                        <InsuranceDropdown
+                          onCompanySelect={(companyId) => setInsuredCompany(companyId)}
+                          initialValue={insuredCompany}
+                        />
+                      )}
                     </Box>
 
                     {/* Coverage Details */}

@@ -366,14 +366,14 @@ const exportToExcel = async () => {
       <Footer />
 
       {/* Add Policy Dialog */}
-      <StyledDialog open={dialogs.addPolicy} onClose={() => toggleDialog('addPolicy', false)} fullWidth maxWidth="sm">
+      <StyledDialog open={dialogs.addPolicy} onClose={() => toggleDialog('addPolicy', false)} fullWidth maxWidth="sm" sx={{ "& .MuiPaper-root": { borderRadius: "4%", backgroundColor: "#212121", color: "#fff" } }}>
         <DialogTitle className="text-center fw-bold pt-4 fs-2" style={{ backgroundColor: "#212121", color: "#fff" }}>
           Add Policies
         </DialogTitle>
         <Typography className="text-center px-4 pb-2" style={{ backgroundColor: "#212121", color: "#fff", fontSize: "18px" }}>
           Effortlessly upload documents, fill forms with ease.
         </Typography>
-        <IconButton onClick={() => toggleDialog('addPolicy', false)} sx={{ position: "absolute", right: 8, top: 8 }}>
+        <IconButton onClick={() => toggleDialog('addPolicy', false)} sx={{ position: "absolute", right: 8, top: 8 ,color: "#fff" }}>
           <CloseIcon />
         </IconButton>
 
@@ -416,19 +416,19 @@ const exportToExcel = async () => {
         onClose={() => toggleDialog('confirm', false)}
         fullWidth
         maxWidth="sm"
-        PaperProps={{ style: { borderRadius: '16px', padding: '24px', backgroundColor: '#ffffff', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)' } }}
+        PaperProps={{ style: { borderRadius: '16px', padding: '24px', backgroundColor: '#212121', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)' } }}
       >
         <DialogContent style={{ position: 'relative', minHeight: '120px' }}>
           {loading && (
             <div style={{
               position: 'absolute', top: 0, left: 0, height: '100%', width: '100%',
-              backgroundColor: 'rgba(255,255,255,0.8)', display: 'flex', justifyContent: 'center',
+              backgroundColor: '#212121', display: 'flex', justifyContent: 'center',
               alignItems: 'center', borderRadius: '16px', zIndex: 10
             }}>
               <Spinner style={{ width: '3rem', height: '3rem', color: '#8AC642' }} animation="border" />
             </div>
           )}
-          <Typography variant="h6" align="center" style={{ fontWeight: 600, fontSize: '20px', color: '#333', paddingTop: '20px' }}>
+          <Typography variant="h6" align="center" style={{ fontWeight: 600, fontSize: '20px', color: '#fff', paddingTop: '20px' }}>
             Are you sure you want to proceed?
           </Typography>
         </DialogContent>

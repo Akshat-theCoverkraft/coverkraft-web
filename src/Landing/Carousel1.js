@@ -10,20 +10,26 @@ const Carousel1 = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const slidesPerPage = 3;
  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${API_URL}featureVideo/getAll?status=active`);
-        const result = await response.json();
-        if (result.status) {
-          setItems(result.data);
-        }
-      } catch (error) {
-        console.error("Error fetching carousel data:", error);
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${API_URL}featureVideo/getAll`);
+      const result = await response.json();
+
+      if (Array.isArray(result.data)) {
+        const activeItems = result.data.filter(item => item.status === 'active');
+        setItems(activeItems);
+      } else {
+        console.error("Invalid data format from backend");
       }
-    };
-    fetchData();
-  }, []);
+    } catch (error) {
+      console.error("Error fetching carousel data:", error);
+    }
+  };
+
+  fetchData();
+}, []);
+
  
   const totalPages = Math.ceil(items.length / slidesPerPage);
  

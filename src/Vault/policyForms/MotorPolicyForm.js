@@ -415,19 +415,37 @@ const MotorPolicyForm = () => {
                                         }}
                                         required
                                     />
-                                    {insuredCompany ? (
-                                        // If company is already provided from backend, show as read-only input
+                                    {policyDetails?.insuredCompany || responseData?.insuranceCompany ? (
+                                        // If backend has provided it, show read-only field
                                         <CustomInput
                                             type="text"
                                             label="Insurance Company"
                                             value={insuredCompany}
-                                            onChange={() => { }} // Prevent editing
+                                            onChange={() => { }}
                                             readOnly
                                             disabled
                                             required
                                         />
                                     ) : (
-                                        // Else show the dropdown to select one
+                                        // Else show dropdown to let user select
+                                        <InsuranceDropdown
+                                            onCompanySelect={(companyId) => setInsuredCompany(companyId)}
+                                            initialValue={insuredCompany}
+                                        />
+                                    )}
+                                    {policyDetails?.insuredCompany || responseData?.insuranceCompany ? (
+                                        // If backend has provided it, show read-only field
+                                        <CustomInput
+                                            type="text"
+                                            label="Insurance Company"
+                                            value={insuredCompany}
+                                            onChange={() => { }}
+                                            readOnly
+                                            disabled
+                                            required
+                                        />
+                                    ) : (
+                                        // Else show dropdown to let user select
                                         <InsuranceDropdown
                                             onCompanySelect={(companyId) => setInsuredCompany(companyId)}
                                             initialValue={insuredCompany}
@@ -562,18 +580,20 @@ const MotorPolicyForm = () => {
                                         }}
 
                                     />
-                                    <Box display="flex" justifyContent="flex-end" gap={2} mt={4}>
-                                        <Button
-                                            text='Cancel'
-                                            size="sm"
-                                            onClick={handleCancel}
-                                        />
+                                    <Box display="flex" justifyContent="center" gap={4} mt={5} width="100%">
                                         <Button
                                             text={mode === 'edit' ? 'Update' : 'Save'}
                                             size="lg"
                                             onClick={handleSubmit}
                                         />
+                                        <Button
+                                            text="Cancel"
+                                            size="sm"
+                                            onClick={handleCancel}
+                                            variant="outlined"
+                                        />
                                     </Box>
+
                                 </Grid>
                             </Grid>
 

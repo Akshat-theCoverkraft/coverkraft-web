@@ -273,24 +273,25 @@ const HealthPolicyForm = () => {
                     }}
                     required
                   />
-                  {insuredCompany ? (
-                    // If company is already provided from backend, show as read-only input
+                  {policyDetails?.insuredCompany || responseData?.insuranceCompany ? (
+                    // If backend has provided it, show read-only field
                     <CustomInput
                       type="text"
                       label="Insurance Company"
                       value={insuredCompany}
-                      onChange={() => { }} // Prevent editing
+                      onChange={() => { }}
                       readOnly
                       disabled
                       required
                     />
                   ) : (
-                    // Else show the dropdown to select one
+                    // Else show dropdown to let user select
                     <InsuranceDropdown
                       onCompanySelect={(companyId) => setInsuredCompany(companyId)}
                       initialValue={insuredCompany}
                     />
                   )}
+
 
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -340,20 +341,20 @@ const HealthPolicyForm = () => {
                       setTotalSumAssured(e.target.value);
                     }}
                   />
-                  <Box display="flex" gap={2} mt={5}>
+                  <Box display="flex" justifyContent="center" gap={4} mt={5} width="100%">
                     <Button
                       text={mode === 'edit' ? 'Update' : 'Save'}
                       size="lg"
                       onClick={handleSubmit}
-                      className="flex-1"
                     />
                     <Button
                       text="Cancel"
                       size="sm"
                       onClick={handleCancel}
-                      className="flex-1"
+                      variant="outlined"
                     />
                   </Box>
+
 
 
                 </Grid>

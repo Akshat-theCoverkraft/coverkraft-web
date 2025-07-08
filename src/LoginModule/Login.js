@@ -71,7 +71,6 @@ const Login = () => {
       sessionStorage.setItem("isLoggedIn", "true");
 
       setLoggedIn(true);
-      toast.success("✅ Login successful! Welcome back.");
     } else {
       toast.error("⚠️ Couldn't verify phone number. Please try again.");
     }
@@ -99,19 +98,15 @@ const Login = () => {
 
 
   // OTP verification (final login)
-  const handleVerify = () => {
-    const formData = new FormData();
-    formData.append("userPhone", phoneNumber);
-    const fcmToken = sessionStorage.getItem("fcmToken");
-
-    if (fcmToken) {
-      formData.append("userFcmId", fcmToken);
+  // Temporary OTP verification: just allow any 6-digit input for now
+  const handleVerify = async () => {
+    if (otp.length === 6) {
+      sessionStorage.setItem("loggedIn", "true");
+      toast.success("Phone number authentication done (mocked)");
+      navigate("/");
+    } else {
+      toast.error("Please enter a 6-digit OTP.");
     }
-
-    dispatch(verifyUser(API_URL, formData));
-    sessionStorage.setItem("loggedIn", "true");
-    toast.success("Phone number authentication done");
-    navigate("/");
   };
   // Trigger login on Enter key
   const handleKeyPress = (e) => {
