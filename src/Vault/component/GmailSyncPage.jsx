@@ -97,7 +97,7 @@ const GmailSyncPage = () => {
             }
 
             console.log("Authenticated user:", userEmail);
-            await fetchGmailMessages(token, userEmail, userId);
+            await fetchGmailMessages(token, userEmail, userIds);
         } catch (error) {
             console.error("Google Sign-in error:", error);
             showToast({
@@ -280,6 +280,7 @@ const GmailSyncPage = () => {
                 
                 // Collect successful results
                 results.forEach(result => {
+                    console.log('each result : ', result)
                     if (result.status === 'fulfilled' && result.value) {
                         collectedFiles.push(result.value);
                     }
@@ -379,27 +380,53 @@ const base64ToBlob = (base64Data, mimeType = 'application/pdf') => {
 };
 
 // Solution 1: Send as JSON string (Recommended for web)
+// const createGmailUploadFormData = (files, userId, gmailAddress, emailId = null, fileType = 'application/pdf') => {
+//     const formData = new FormData();
+//     formData.append('userId', userId);
+//     formData.append('gmailAddress', gmailAddress);
+//     formData.append('emailId', emailId);
+//     formData.append('fileType', fileType);
+//     console.log('this is files : ', files)
+//     const attachments = files.map(({ base64Data, fileName }) => ({
+//         uri: `data:${fileType};base64,${base64Data}`,
+//         name: fileName,
+//         type: fileType,
+//     }));
+//     // Send as JSON string
+//     formData.append('attachments', JSON.stringify(attachments));
+//     console.log(`Added ${files.length} attachments as JSON`);
+//     return formData;
+// };
+///updated code 
+
 const createGmailUploadFormData = (files, userId, gmailAddress, emailId = null, fileType = 'application/pdf') => {
     const formData = new FormData();
     formData.append('userId', userId);
     formData.append('gmailAddress', gmailAddress);
-    if (emailId) {
-        formData.append('emailId', emailId);
-    }
+    if (emailId) formData.append('emailId', emailId);
     formData.append('fileType', fileType);
-    // Create attachments array with data URLs as URI
-    const attachments = files.map(({ base64Data, fileName }) => ({
-        uri: `data:${fileType};base64,${base64Data}`,
-        name: fileName,
-        type: fileType,
-    }));
-    // Send as JSON string
-    formData.append('attachments', JSON.stringify(attachments));
-    console.log(`Added ${files.length} attachments as JSON`);
+
+    console.log('Preparing to append files to FormData:', files.length);
+
+    files.forEach(({ base64Data, fileName }, index) => {
+        const byteString = atob(base64Data);
+        const byteArray = new Uint8Array(byteString.length);
+        for (let i = 0; i < byteString.length; i++) {
+            byteArray[i] = byteString.charCodeAt(i);
+        }
+
+        const blob = new Blob([byteArray], { type: fileType });
+
+        formData.append('attachments', blob, fileName);
+    });
+
     return formData;
 };
 
+
+
  const handleUploadDocFromGmail = async (files, userEmail, userId) => {
+    console.log('userData from doc : ', files, userEmail, userId)
     return new Promise(async (resolve, reject) => {
         try {
             if (!files?.length) return reject('No files to upload');
@@ -409,7 +436,7 @@ const createGmailUploadFormData = (files, userId, gmailAddress, emailId = null, 
             // Create FormData using the helper function that matches documentUploadFormDataGmail pattern
             const formData = createGmailUploadFormData(files, userId, userEmail);
 
-            console.log('Uploading form data...');
+            console.log('Uploading form data...', formData);
 
             const response = await fetch(`${API_URL}gmail-sync/sync`, {
                 method: 'POST',
