@@ -448,7 +448,7 @@ const createGmailUploadFormData = (files, userId, gmailAddress, emailId = null, 
 
             if (result?.success) {
                 showToast({
-                    message: result.message,
+                    message: 'Sync completed successfully.',
                     type: 'success',
                 });
                 resolve(true);

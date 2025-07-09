@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 // import { requestForToken } from '../helper';
 import LOGING from "../Images/LOGING.png";
+import { getToken } from "firebase/messaging";
 const Login = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [otp, setOtp] = useState([]);
@@ -22,6 +23,7 @@ const Login = () => {
   const [valid, setValid] = useState(false);
   const [verificationId, setVerificationId] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  const [fcmId, setFcmId] = useState("");
   const recaptchRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,6 +36,17 @@ const Login = () => {
       setValid(false);
     }
   }, [!valid]);
+
+
+  useEffect(() => {
+  // Example mock FCM ID (replace with real logic)
+  const getFcmId = async () => {
+    // const token = await requestForToken(); // If using Firebase
+    const token = getToken() // TEMP
+    setFcmId(token);
+  };
+  getFcmId();
+}, []);
 
   // Handle phone input (10-digit number)
   const handlephonechange = (e) => {
@@ -61,6 +74,8 @@ const Login = () => {
 
     if (response.status === 200) {
       const user = response.data.user;
+
+      console.log('this is user : ', user)
       const userId = user._id;
       const token = user.token;
 
@@ -101,6 +116,12 @@ const Login = () => {
   // Temporary OTP verification: just allow any 6-digit input for now
   const handleVerify = async () => {
     if (otp.length === 6) {
+     await dispatch(
+        verifyUser(API_URL, {
+          userPhone: phoneNumber,
+          userFcmId: 'Test123',
+        })
+      );
       sessionStorage.setItem("loggedIn", "true");
       toast.success("Phone number authentication done (mocked)");
       navigate("/");
