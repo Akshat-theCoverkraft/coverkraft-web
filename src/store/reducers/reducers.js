@@ -1,4 +1,4 @@
-import { deleteAllNotificationsByUser, deleteNotification, getAllState, updateDocument } from "../action/action";
+import { deleteAllNotificationsByUser, deleteNotification, getAllState, updateDocument, deleteAccount } from "../action/action";
 
 const initialState = {
   getAllNotification: [],
@@ -15,6 +15,7 @@ const initialState = {
   loading: false,
   error: null,
   deleteNotification: null,
+  deleteAccount: null,
   deleteAllNotificationsByUser: null,
   getAllFAQs: [],
 
@@ -301,6 +302,27 @@ const userReducer = (state = initialState, action) => {
         loading: false,
         error: action.payload,
       };
+      //delete account
+    case "DELETE_ACCOUNT_REQUEST":
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case "DELETE_ACCOUNT_SUCCESS":
+      return {
+        ...state,
+        deleteAccount: action.payload,
+        loading: false,
+        error: null,
+      };
+    case "DELETE_ACCOUNT_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    //delete account end
     default:
       return state;
   }

@@ -70,6 +70,35 @@ export const GETALLFAQ_DATA_REQUEST = "GETALLFAQ_DATA_REQUEST";
 export const GETALLFAQ_DATA_SUCCESS = "GETALLFAQ_DATA_SUCCESS";
 export const GETALLFAQ_DATA_FAILURE = "GETALLFAQ_DATA_FAILURE";
 
+// Delete account
+export const DELETE_ACCOUNT_REQUEST = "DELETE_ACCOUNT_REQUEST";
+export const DELETE_ACCOUNT_SUCCESS = "DELETE_ACCOUNT_SUCCESS";
+export const DELETE_ACCOUNT_FAILURE = "DELETE_ACCOUNT_FAILURE";
+
+// delete account api
+export const deleteAccount = (API_URL, userId) => {
+    return (dispatch) => {
+        dispatch({ type: DELETE_ACCOUNT_REQUEST });
+        const token = sessionStorage.getItem('token');
+        axios
+            .post(API_URL + `user/deleteUser`, { _id: userId }, {
+                headers: {
+                    Authorization: `Bearer ${token}` 
+                }
+            })
+            .then((response) => {
+                dispatch({ type: DELETE_ACCOUNT_SUCCESS, payload: response.data });
+                // Optionally, you can clear the session storage or redirect the user
+                sessionStorage.clear();
+            })
+            .catch((error) => {
+                const errorMessage = error.response?.data?.message || "Error deleting account";
+                dispatch({ type: DELETE_ACCOUNT_FAILURE, payload: errorMessage });
+                toast.error(errorMessage);
+            });
+    };
+}
+
 
 // get all NOTIFICATION data 
 export const getAllNotification = (API_URL, data) => {
