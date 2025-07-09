@@ -10,7 +10,7 @@ import editIcon from "../Images/edit-icon.png";
 import { getBYIDUsers, updateUser } from "../store/action/action";
 import API_URL from "../ServiceModule/Service";
 import IMAGE_PATH from "../ServiceModule/imagePath";
-import { getAllState, deleteAccount } from "../store/action/action";
+import { getAllState } from "../store/action/action";
 import GlobalDropdown from "./StateDropdown";
 import { Card, Grid } from "@material-ui/core";
 import family from "../Images/ic_family_member.png";
@@ -28,7 +28,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 import ContactUs from "../profile/ContactUs";
 import CloseIcon from '@mui/icons-material/Close';
-
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -37,17 +36,21 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
   const userEmail = sessionStorage.getItem("userEmail");
   const [profileImage, setProfileImage] = useState(icDefaultProfile);
+  // console.log("profileImage", profileImage);
   const [showImageInput, setShowImageInput] = useState(false);
   const [username, setuserName] = useState();
   const [useremail, setuserEmail] = useState();
   const [userDob, setuserDob] = useState();
   const [userAddress, setuserAddress] = useState();
   const [state, setstate] = useState("");
+  // console.log("state", state);
   const [city, setCity] = useState("");
+  // console.log("city", city);
   const [userPhone, setuserPhone] = useState();
   const [pinCode, setpinCode] = useState();
   const [gender, setgender] = useState();
   const [userImgFile, setuserImgFile] = useState(null);
+  // console.log("userImgFile", userImgFile);
   const userbyId = useSelector((state) => state.user);
   const states = useSelector((state) => state.user);
   const [update, setUpdate] = useState(false);
@@ -59,48 +62,51 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const [isValidEmail, setIsValidEmail] = useState(true);
   const location = useLocation();
   const [returnPath, setReturnPath] = useState("/");
-
-  // Reset edit mode when drawer closes
-  useEffect(() => {
-    if (!open) {
-      setUpdate(false);
-    }
-  }, [open]);
-
   const handleCitySelect = (cityId) => {
     setSelectedCityId(cityId);
   };
-
   const calculateProfileCompletion = (data) => {
-    const requiredFields = [
-      "userName",
-      "userEmail",
-      "userPhone",
-    ];
+  const requiredFields = [
+    "userName",
+    "userEmail",
+    "userPhone",
+    "userDob",
+    "userAddress",
+    "state",
+    "city",
+    "pinCode",
+    "gender",
+    "userImg"
+  ];
 
-    const totalFields = requiredFields.length;
-    let completedFields = 0;
+  const totalFields = requiredFields.length;
+  let completedFields = 0;
 
-    requiredFields.forEach((field) => {
-      const value = data?.[field];
-      if (value !== undefined && value !== null && value !== "") {
-        completedFields++;
-      }
-    });
+  requiredFields.forEach((field) => {
+    const value = data?.[field];
+    if (value !== undefined && value !== null && value !== "") {
+      completedFields++;
+    }
+  });
 
-    return Math.floor((completedFields / totalFields) * 100);
-  };
+  return Math.floor((completedFields / totalFields) * 100);
+};
 
   const [profileCompletion, setProfileCompletion] = useState(0);
 
-  useEffect(() => {
-    if (userbyId.getUserById && userbyId.getUserById.data) {
-      const data = userbyId.getUserById.data;
-      const percentage = calculateProfileCompletion(data);
-      setProfileCompletion(percentage);
-    }
-  }, [userbyId]);
+useEffect(() => {
+  if (userbyId.getUserById && userbyId.getUserById.data) {
+    const data = userbyId.getUserById.data;
 
+    // Set values...
+    // ...
+
+    const percentage = calculateProfileCompletion(data);
+    setProfileCompletion(percentage);
+  }
+}, [userbyId]);
+
+  //useeffect
   useEffect(() => {
     dispatch(getAllState(API_URL));
   }, [dispatch]);
@@ -133,50 +139,40 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   }, [dispatch]);
 
   useEffect(() => {
+    // Save the path only when the drawer opens
     if (open) {
       setReturnPath(location.pathname);
     }
   }, [open, location.pathname]);
-
-  // Helper function to parse date safely
-  const parseDate = (dateString) => {
-    if (!dateString) return null;
-    
-    try {
-      // If it's already a valid date string, try to parse it directly
-      let parsedDate = new Date(dateString);
-      
-      // If that fails, try parsing DD/MM/YYYY format
-      if (isNaN(parsedDate.getTime()) && typeof dateString === 'string') {
-        const parts = dateString.split('/');
-        if (parts.length === 3) {
-          // Assuming DD/MM/YYYY format, convert to MM/DD/YYYY for proper parsing
-          const [day, month, year] = parts;
-          parsedDate = new Date(`${month}/${day}/${year}`);
-        }
-      }
-      
-      // Return the date only if it's valid
-      return !isNaN(parsedDate.getTime()) ? parsedDate : null;
-    } catch (error) {
-      console.error('Error parsing date:', error);
-      return null;
-    }
-  };
+  // useEffect(() => {
+  //   if (userbyId.getUserById && userbyId.getUserById.data) {
+  //     const data = userbyId.getUserById.data;
+  //     console.log("data", data);
+  //     setuserName(data.userName);
+  //     setuserEmail(data.userEmail);
+  //     setuserPhone(data.userPhone);
+  //     setuserDob(new Date(data?.userDob?.split("/")?.reverse()?.join("-")));
+  //     setuserAddress(data.userAddress);
+  //     setstate(data.state === null ? null : data.state._id);
+  //     setCity(data.city === null ? null : data.city._id);
+  //     setpinCode(data.pinCode);
+  //     setgender(data.gender);
+  //     setProfileImage(
+  //       data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
+  //     );
+  //   }
+  // }, [userbyId]);
+  // console.log("userimg kya h", profileImage);
 
   useEffect(() => {
     if (userbyId.getUserById && userbyId.getUserById.data) {
       const data = userbyId.getUserById.data;
 
-      setuserName(data.userName || "");
-      setuserEmail(data.userEmail || "");
-      setuserPhone(data.userPhone || "");
-      
-      // Safe date parsing
-      const parsedDob = parseDate(data.userDob);
-      setuserDob(parsedDob);
-      
-      setuserAddress(data.userAddress || "");
+      setuserName(data.userName);
+      setuserEmail(data.userEmail);
+      setuserPhone(data.userPhone);
+      setuserDob(new Date(data?.userDob?.split("/")?.reverse()?.join("-")));
+      setuserAddress(data.userAddress);
 
       const stateId = data?.state?._id || "";
       const cityId = data?.city?._id || "";
@@ -187,8 +183,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       setCity(cityId);
       setSelectedCityId(cityId);
 
-      setpinCode(data.pinCode || "");
-      setgender(data.gender || "");
+      setpinCode(data.pinCode);
+      setgender(data.gender);
 
       setProfileImage(
         data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
@@ -199,18 +195,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const handleStateSelect = (stateId) => {
     setSelectedStateId(stateId);
   };
-
+  //function to check user is above 18 or not
   const isOldEnough = (dob) => {
-    // Check if date is valid
-    if (!dob || isNaN(dob.getTime())) {
-      return false;
-    }
-    
-    const today = new Date();
-    const birthDate = new Date(dob);
-    let age = today.getFullYear() - birthDate.getFullYear();
+    const today = new Date(); // Get today's date
+    const birthDate = new Date(dob); // Convert dob to a Date object
+    let age = today.getFullYear() - birthDate.getFullYear(); // Calculate age
+
+    // Calculate the month difference
     const monthDifference = today.getMonth() - birthDate.getMonth();
 
+    // If the birth month hasn't occurred yet this year, or it's the birth month but the birth day hasn't occurred yet, subtract one year from age
     if (
       monthDifference < 0 ||
       (monthDifference === 0 && today.getDate() < birthDate.getDate())
@@ -218,47 +212,51 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       age--;
     }
 
+    // Return true if age is 18 or older
     return age >= 18;
   };
 
   function handleUpateProfile() {
     const formData = new FormData();
-
-    // Format date for submission
-    const formatDateForSubmission = (date) => {
-      if (!date || isNaN(date.getTime())) return "";
-      
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = date.getFullYear();
-      
-      return `${day}/${month}/${year}`;
-    };
+    // console.log("FormData values before appending:", formData);
 
     formData.append("_id", sessionStorage.getItem("userId"));
-    formData.append("userName", username || "");
-    formData.append("userEmail", useremail || "");
-    formData.append("userPhone", userPhone || "");
-    formData.append("userDob", formatDateForSubmission(userDob));
-    formData.append("userAddress", userAddress || "");
-    formData.append("state", selectedStateId || "");
-    formData.append("city", selectedCityId || "");
-    formData.append("pinCode", pinCode || "");
-    formData.append("gender", gender || "");
+    formData.append("userName", username);
+    formData.append("userEmail", useremail);
+    formData.append("userPhone", userPhone);
+    formData.append("userDob", userDob);
+    formData.append("userAddress", userAddress);
+    formData.append("state", selectedStateId);
+    formData.append("city", selectedCityId);
+    formData.append("pinCode", pinCode);
+    formData.append("gender", gender);
     if (userImgFile) {
       formData.append("userImg", userImgFile);
     }
 
+    console.log(
+      username,
+      useremail,
+      userPhone,
+      userDob,
+      userAddress,
+      selectedStateId,
+      selectedCityId,
+      pinCode,
+      gender,
+      userImgFile
+    );
     if (
-      username &&
-      useremail &&
-      userPhone &&
-      userDob &&
-      userAddress &&
-      selectedStateId &&
-      selectedCityId &&
-      pinCode &&
-      gender
+      (username &&
+        useremail &&
+        userPhone &&
+        userDob &&
+        userAddress &&
+        selectedStateId &&
+        selectedCityId &&
+        pinCode &&
+        gender) ||
+      userImgFile
     ) {
       if (!isOldEnough(userDob)) {
         toast.error("You must be at least 18 years old to register.", {
@@ -273,28 +271,22 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       }
 
       dispatch(updateUser(API_URL, formData));
+      // .then(() => {
+      //     toast.success('Updated successfully')
+      // }).catch((error) => {
+      //     toast.error('Error in updating')
+      // })
       toast.success("Updated successfully");
       setTimeout(() => {
-        setUpdate(false);
         onClose();
       }, 1000);
+      // onClose();
     } else {
       toast.error("Please fill all required fields!");
+      // console.log("No fields are being updated");
     }
   }
 
-  const handleDeleteAccount  = () => {
-    const userId = sessionStorage.getItem("userId");
-    if (userId) {
-      dispatch(deleteAccount(API_URL, userId))
-          toast.success("Account deleted successfully");
-          sessionStorage.clear();
-          navigate("/login")
-      
-    } else {
-      toast.error("User ID not found");
-    }
-  }
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -334,10 +326,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     setCommunicationDrawerOpen(true);
   };
   const handleAboutOpen = () => {
+    // setAboutDrawerOpen(true);
     onClose();
     navigate("/about");
   };
   const handleHelpOpen = () => {
+    // alert("Coming soon !");
     navigate("/contactus");
   };
   const handleLogout = () => {
@@ -347,16 +341,19 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   };
 
   const handlePinCodeChange = (e) => {
-    let pin = e.target.value.replace(/\D/g, "");
-    pin = pin.slice(0, 6);
+    let pin = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
+    pin = pin.slice(0, 6); // Limit to 6 digits
     setpinCode(pin);
-    const isValidPin = /^\d{5,6}$/.test(pin);
+    const isValidPin = /^\d{5,6}$/.test(pin); // Check if it's 5 or 6 digits
     setIsValidPinCode(isValidPin);
   };
-
+  //function to handle email input field start
   const handleEmailChange = (e) => {
     const emailId = e.target.value;
+
+    // Regular expression to validate the email
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // Regex to check for exactly one @ symbol and at least two dots after @
     const validEmail =
       emailRegex.test(emailId) &&
       emailId.split("@").length === 2 &&
@@ -364,7 +361,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     setuserEmail(emailId);
     setIsValidEmail(validEmail);
   };
-
+  //function to handle email input field start
+  //function to handle phone number input field start
   const handlephonechange = (e) => {
     let number = e.target.value.replace(/\D/g, "");
     number = number.slice(0, 10);
@@ -372,17 +370,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const isValid = /^\d{10}$/.test(number.replace("+91", ""));
     setValid(isValid);
   };
-
+  //function to handle phone number input field end
   const handleDobChange = (date) => {
     setuserDob(date);
   };
 
-  const handleCloseDrawer = () => {
-    setUpdate(false); // Reset edit mode when closing
-    onClose();
-    setTimeout(() => {
-      navigate(returnPath);
-    }, 100);
+  const headerStyle = {
+    wordWrap: "break-word", // Ensures long words break onto the next line
+    overflowWrap: "break-word", // Alternative property to ensure wrapping
+    maxWidth: "25%", // Ensures the element respects the container's width
+    whiteSpace: "normal", // Ensures that text can wrap and does not stay in a single line
   };
 
   return (
@@ -393,8 +390,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       sx={{
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-          width: "35vw",
-          maxWidth: "400px",
+          width: "35vw", // ✅ Consistent width across the drawer
+          maxWidth: "400px", // Optional: limit max width for responsiveness
         },
       }}
     >
@@ -411,7 +408,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         <div className="flex items-center px-4 py-2">
           <CloseIcon
             style={{ cursor: "pointer", color: "#fff", fontSize: "2rem" }}
-            onClick={handleCloseDrawer}
+            onClick={() => {
+              onClose(); // Close the drawer first
+              setTimeout(() => {
+                navigate(returnPath); // Go back to the stored path
+              }, 100); // Slight delay to let the drawer close smoothly
+            }}
           />
         </div>
         <div className="main-container">
@@ -468,8 +470,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           </div>
         </div>
 
-        
-
         {/* Profile Options */}
         {!update ? (
           <Card
@@ -479,6 +479,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               color: THEME_COLOR.COLOR,
             }}
           >
+            {/* REUSABLE LIST ITEM COMPONENT RECOMMENDED HERE */}
             {[
               {
                 label: "Family Member",
@@ -504,11 +505,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 label: "Logout",
                 icon: logout,
                 onClick: handleLogout,
-              },
-              {
-                label: "Delete Account",
-                icon: logout,
-                onClick: handleDeleteAccount,
               },
             ].map((item, idx) => (
               <Grid
@@ -536,7 +532,9 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             ))}
           </Card>
         ) : (
+          // --------------------------
           // Edit Mode
+          // --------------------------
           <div className="main-container mt-3 p-4">
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -548,7 +546,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   required
                 />
               </Grid>
-              
               <Grid item xs={12}>
                 <CustomInput
                   type="email"
@@ -565,7 +562,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   required
                 />
               </Grid>
-
               <Grid item xs={12}>
                 <CustomInput
                   type="text"
@@ -582,43 +578,38 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   required
                 />
               </Grid>
-
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <GlobalDatePicker
                   label="DOB"
                   selectedDate={userDob}
                   handleDateChange={handleDobChange}
-                  className="custom-picker form-control rounded-5 p-5"
-                  placeholder="Select Date"
-                  style={{ width: "100%", height: "50px", marginTop: "5px" }}
-                  maxDate={new Date()} 
+                  className="custom-picker form-control rounded-5 "
+                  placeholder="select Date"
+                  width="100%"
                 />
               </Grid>
-
-              <Grid item xs={12}>
+              <div className="col-12">
                 <CustomInput
                   label="Address"
                   placeholder="Enter your Address"
                   value={userAddress}
                   onChange={(e) => setuserAddress(e.target.value)}
+                  required
                 />
-              </Grid>
-
-              <Grid item xs={6}>
+              </div>
+              <Grid item xs={12} md={6}>
                 <GlobalDropdown
                   onStateSelect={handleStateSelect}
                   initialValue={state}
                 />
               </Grid>
-
-              <Grid item xs={6}>
+              <Grid item xs={12} md={6}>
                 <CityDropdown
                   selectedStateId={selectedStateId}
                   onCitySelect={handleCitySelect}
                   initialValue={city}
                 />
               </Grid>
-
               <Grid item xs={6}>
                 <CustomInput
                   label="Pincode"
@@ -631,10 +622,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                       ? "Please enter a valid pin code (5 or 6 digits)."
                       : ""
                   }
+                  required
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              {/* Gender dropdown (optional) */}
+              <Grid item xs={12}>
                 <label
                   className="form-label fw-bold text-light"
                   htmlFor="gender"
@@ -646,11 +639,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   className="dropdown-select w-full bg-dark text-light border rounded-lg py-2 px-4"
                   value={gender}
                   onChange={(e) => setgender(e.target.value)}
-                  style={{
-                    width: "100%",
-                    height: "45px",
-                    marginTop: "5px"
-                  }}
                 >
                   <option disabled value="">
                     Select Your Gender
@@ -662,40 +650,52 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               </Grid>
             </Grid>
 
-            {/* Action Buttons - Side by Side */}
-            <div className="w-full mt-6">
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Button
-                    size="sm"
-                    text="Update"
-                    onClick={handleUpateProfile}
-                    disabled={!isValidEmail}
-                    bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
-                    customStyle={{
-                      width: "100%",
-                      height: "45px",
-                      borderRadius: "2rem",
-                      fontSize: "0.9rem",
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <Button
-                    size="sm"
-                    text="Cancel"
-                    onClick={handleEdit}
-                    customStyle={{
-                      width: "100%",
-                      height: "45px",
-                      borderRadius: "2rem",
-                      fontSize: "0.9rem",
-                      backgroundColor: "#6c757d",
-                    }}
-                  />
-                </Grid>
-              </Grid>
+            {/* Action Buttons */}
+            <div className="flex flex-col items-center mt-5 gap-3 w-full">
+              {/* Top Row: Update & Delete */}
+              <div className="flex justify-between w-full gap-3">
+                <Button
+                  size="sm"
+                  text="Update"
+                  onClick={handleUpateProfile}
+                  disabled={!isValidEmail}
+                  bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
+                  customStyle={{
+                    width: "100%",
+                    height: "6vh",
+                    borderRadius: "3rem",
+                    fontSize: "1rem",
+                  }}
+                />
+                <Button
+                  size="sm"
+                  text="Delete Profile"
+                  customStyle={{
+                    width: "100%",
+                    height: "6vh",
+                    borderRadius: "3rem",
+                    fontSize: "1rem",
+                  }}
+                />
+              </div>
+
+              {/* Bottom Row: Centered Cancel */}
+              <div className="w-1/2">
+                <Button
+                  size="sm"
+                  text="Cancel"
+                  onClick={handleEdit}
+                  customStyle={{
+                    width: "100%",
+                    height: "6vh",
+                    borderRadius: "3rem",
+                    fontSize: "1rem",
+                  }}
+                />
+              </div>
             </div>
+
+
           </div>
         )}
       </Box>
@@ -708,6 +708,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       />
       <ContactUs help={helpDrawerOpen} onHelpClose={handleHelpclose} />
     </Drawer>
+
   );
 };
 
