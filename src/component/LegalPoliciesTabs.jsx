@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 const td = {
     border: '1px solid #444',
     padding: '1rem',
@@ -658,7 +660,8 @@ const policies = [
         label: "Disclaimer",
         id: "disclaimer",
         content: (
-            <div style={{
+            <div
+            id="disclamier"    style={{
                 maxWidth: '1500px',
                 margin: '2rem auto',
                 color: '#E0E0E0',
@@ -756,6 +759,25 @@ const LegalPoliciesTabs = () => {
             }
         }
     }, []);
+
+useEffect(() => {
+  const hash = location.hash.replace("#", "");
+  if (!hash) return;
+
+  // Activate the correct tab
+  const matchedPolicy = policies.find((p) => p.id === hash);
+  if (matchedPolicy) {
+    setActiveTab(matchedPolicy.label);
+  }
+
+  // Scroll to the matching section after render
+  setTimeout(() => {
+    const el = document.getElementById(hash);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  }, 200); // slight delay to ensure DOM is ready
+}, [location.hash]);
 
     const activePolicy = policies.find((p) => p.label === activeTab);
     useEffect(() => {

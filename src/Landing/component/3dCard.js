@@ -4,7 +4,8 @@ import {
   Typography,
   Modal,
   IconButton,
-  useMediaQuery
+  useMediaQuery,
+  Skeleton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Carousel } from 'react-responsive-carousel';
@@ -21,9 +22,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
   const isTruncated = description.length > 120;
 
   return (
-
     <Box
-      
       sx={{
         position: 'relative',
         width: '100%',
@@ -37,7 +36,6 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         flex: '1 1 auto',
       }}
     >
-      {/* Green Circle Behind */}
       <Box
         sx={{
           position: 'absolute',
@@ -51,7 +49,6 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         }}
       />
 
-      {/* Serial Number */}
       <Typography
         sx={{
           position: 'absolute',
@@ -68,30 +65,26 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         {number < 10 ? `0${number}` : number}
       </Typography>
 
-      {/* Card Container */}
       <Box
         sx={{
           position: 'relative',
-          background: 'linear-gradient(to bottom right, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.8) 100%)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
+          background: 'linear-gradient(to bottom right, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.5) 100%)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
           borderRadius: '20px',
           padding: '20px',
           width: '120%',
           height: CARD_HEIGHT,
-          boxShadow: '0 8px 20px rgba(0,0,0,0.3)',
-          border: '1px solid rgba(255,255,255,0.2)',
+          boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
+          border: '1px solid rgba(255,255,255,0.15)',
           zIndex: 2,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
         }}
       >
-        <Typography
-          variant="h5"
-          pl="15px"
-          sx={{ color: 'white', fontWeight: 600, textAlign: 'left' }}
-        >
+
+        <Typography variant="h5" pl="15px" sx={{ color: 'white', fontWeight: 600, textAlign: 'left' }}>
           {title}
         </Typography>
 
@@ -124,11 +117,33 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
   );
 };
 
+const SkeletonCard = () => (
+  <Box
+    sx={{
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT + 15,
+      mx: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 1,
+      backgroundColor: '#1e1e1e',
+      borderRadius: '20px',
+      p: 2,
+    }}
+  >
+    <Skeleton variant="text" height={40} width="60%" sx={{ bgcolor: '#333' }} />
+    <Skeleton variant="text" height={20} width="90%" sx={{ bgcolor: '#333' }} />
+    <Skeleton variant="text" height={20} width="80%" sx={{ bgcolor: '#333' }} />
+    <Skeleton variant="text" height={20} width="70%" sx={{ bgcolor: '#333' }} />
+  </Box>
+);
+
 const WhyCoverKraft = () => {
   const [cardData, setCardData] = useState([]);
   const [popupContent, setPopupContent] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const isSmall = useMediaQuery('(max-width:600px)');
   const isMedium = useMediaQuery('(max-width:1024px)');
@@ -144,6 +159,8 @@ const WhyCoverKraft = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -174,67 +191,80 @@ const WhyCoverKraft = () => {
   const groupedData = groupCards();
 
   return (
-    <Box
-    id="card"  sx={{ backgroundColor: '#121212', px: 2, py: 6 }}>
-      {/* Header */}
+    <Box id="card" sx={{ backgroundColor: '#121212', px: 2, py: 6 }}>
       <Box textAlign="center" mb={4}>
         <Typography variant="subtitle1" sx={{ color: '#f39c12', fontSize: '2.2rem', fontWeight: 600 }}>
           Tips & Tricks
         </Typography>
       </Box>
 
-      {/* Carousel */}
-      <Carousel
-        selectedItem={currentSlide}
-        onChange={(index) => setCurrentSlide(index)}
-        showThumbs={false}
-        showStatus={false}
-        infiniteLoop
-        autoPlay={false}
-        // interval={3000}
-        showArrows={false}
-        swipeable
-      >
-        {groupedData.map((group, i) => (
-          <Box
-            key={i}
-            display="flex"
-            justifyContent="center"
-            flexWrap="nowrap"
-            gap={3}
-            sx={{ py: 2 }}
+      {/* Loading State or No Data */}
+      {loading ? (
+        <Box display="flex" justifyContent="center" gap={3} flexWrap="wrap">
+          {[...Array(isSmall ? 1 : isMedium ? 2 : 3)].map((_, idx) => (
+            <SkeletonCard key={idx} />
+          ))}
+        </Box>
+      ) : cardData.length === 0 ? (
+        <Box textAlign="center" color="#aaa" mt={4}>
+          <Typography variant="h6" color="white">
+            No tips & tricks available right now.
+          </Typography>
+        </Box>
+      ) : (
+        <>
+          <Carousel
+            selectedItem={currentSlide}
+            onChange={(index) => setCurrentSlide(index)}
+            showThumbs={false}
+            showStatus={false}
+            infiniteLoop
+            autoPlay={false}
+            showArrows={false}
+            swipeable
           >
-            {group.map((card, j) => (
-              <PolicyCard
-                key={`${i}-${j}`}
-                number={i * (isSmall ? 1 : isMedium ? 2 : 3) + j + 1}
-                title={card.subtitle}
-                description={card.description}
-                onSeeMore={() => openPopup(card)}
+            {groupedData.map((group, i) => (
+              <Box
+                key={i}
+                display="flex"
+                justifyContent="center"
+                flexWrap="nowrap"
+                gap={3}
+                sx={{ py: 2 }}
+              >
+                {group.map((card, j) => (
+                  <PolicyCard
+                    key={`${i}-${j}`}
+                    number={i * (isSmall ? 1 : isMedium ? 2 : 3) + j + 1}
+                    title={card.subtitle}
+                    description={card.description}
+                    onSeeMore={() => openPopup(card)}
+                  />
+                ))}
+              </Box>
+            ))}
+          </Carousel>
+
+          {/* Pagination Dots */}
+          <Box display="flex" justifyContent="center" mt={3}>
+            {groupedData.map((_, index) => (
+              <Box
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                sx={{
+                  width: 12,
+                  height: 12,
+                  borderRadius: '50%',
+                  mx: 1,
+                  cursor: 'pointer',
+                  backgroundColor: currentSlide === index ? '#f39c12' : '#888',
+                  transition: 'all 0.3s ease',
+                }}
               />
             ))}
           </Box>
-        ))}
-      </Carousel>
-
-      {/* Pagination Dots */}
-      <Box display="flex" justifyContent="center" mt={3}>
-        {groupedData.map((_, index) => (
-          <Box
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            sx={{
-              width: 12,
-              height: 12,
-              borderRadius: '50%',
-              mx: 1,
-              cursor: 'pointer',
-              backgroundColor: currentSlide === index ? '#f39c12' : '#888',
-              transition: 'all 0.3s ease',
-            }}
-          />
-        ))}
-      </Box>
+        </>
+      )}
 
       {/* Popup Modal */}
       <Modal open={showPopup} onClose={closePopup}>

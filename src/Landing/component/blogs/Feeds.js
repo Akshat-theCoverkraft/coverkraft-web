@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Tabs,
   Tab,
@@ -11,6 +11,7 @@ import {
   Button as MuiButton,
   Pagination,
   CircularProgress,
+  Skeleton,
 } from "@mui/material";
 import Navbar from "../../../component/Navbar";
 import moment from "moment-timezone";
@@ -41,8 +42,9 @@ function Feeds() {
     limit: 10,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const videoRefs = useRef({});
 
-  // Redirect to /feed/blog if no type in URL
   useEffect(() => {
     if (!type) {
       navigate("/feed/blog", { replace: true });
@@ -70,6 +72,7 @@ function Feeds() {
         totalCount: pageInfo.totalCount,
         limit: pageInfo.limit,
       });
+      setHasLoadedOnce(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -88,18 +91,41 @@ function Feeds() {
     fetchData(selectedTab, newPage);
   };
 
+  const handleVideoClick = (index) => {
+    Object.entries(videoRefs.current).forEach(([key, video]) => {
+      if (parseInt(key) !== index && video) {
+        video.pause();
+      }
+    });
+  };
+
+  const renderSkeletonCards = () => {
+    return Array.from({ length: 6 }).map((_, idx) => (
+      <Grid item xs={12} sm={6} md={4} key={idx}>
+        <Card sx={{ height: "450px", borderRadius: "16px", backgroundColor: THEME_COLOR.FADE_BACKGROUND }}>
+          <Skeleton variant="rectangular" height={200} />
+          <Box sx={{ p: 2 }}>
+            <Skeleton height={30} width="80%" />
+            <Skeleton height={20} width="60%" sx={{ mt: 1 }} />
+            <Skeleton height={60} width="100%" sx={{ mt: 1 }} />
+          </Box>
+        </Card>
+      </Grid>
+    ));
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Navbar />
 
-      {/* Tabs */}
       <Tabs
         sx={{
           pt: 3,
           backgroundColor: "#121212",
           borderRadius: "40px",
           padding: "6px",
-          width: "28%",
+          width: "100%",
+          maxWidth: "600px",
           mx: "auto",
           boxShadow: "0 0 10px rgba(139, 198, 66, 0.15)",
           minHeight: "unset",
@@ -134,21 +160,21 @@ function Feeds() {
         ))}
       </Tabs>
 
-      {/* Content */}
       <Box sx={{ p: 2, pt: 5, width: "80%" }} className="container">
-        {isLoading ? (
-          <Box sx={{ textAlign: "center", mt: 4, minHeight: "40vh" }}>
-            <CircularProgress size={50} sx={{ color: THEME_COLOR.GREEN }} />
-          </Box>
-        ) : contentData?.length === 0 ? (
-          <Box sx={{ textAlign: "center", mt: 4 }}>
-            <Typography variant="h6" color={THEME_COLOR.COLOR}>
-              No Data Found
-            </Typography>
-          </Box>
-        ) : (
-          <Grid container spacing={4} className="d-flex justify-content-center">
-            {contentData.map((item, index) => (
+        <Grid container spacing={4} justifyContent="center">
+          {isLoading && renderSkeletonCards()}
+
+          {!isLoading && contentData.length === 0 && hasLoadedOnce && (
+            <Box sx={{ width: "100%", textAlign: "center", mt: 4 }}>
+              <Typography variant="h6" sx={{ color: "#fff" }}>
+                No Data Found
+              </Typography>
+            </Box>
+          )}
+
+          {!isLoading && contentData.map((item, index) => {
+            const showReadMore = item?.description?.length > 100;
+            return (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card
                   sx={{
@@ -161,17 +187,20 @@ function Feeds() {
                     },
                     overflow: "hidden",
                     backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-                    height: "450px", 
+                    height: "450px",
                     display: "flex",
                     flexDirection: "column",
                   }}
                 >
                   {item?.type === "short" || item?.type === "video" ? (
                     <CardMedia
-                      component="iframe"
+                      component="video"
                       src={item?.newsImg}
                       title={item?.subtitle}
                       height="200"
+                      controls
+                      onPlay={() => handleVideoClick(index)}
+                      ref={(el) => (videoRefs.current[index] = el)}
                       sx={{
                         objectFit: "cover",
                         borderBottom: "1px solid #ddd",
@@ -209,55 +238,43 @@ function Feeds() {
                     </Typography>
 
                     <Typography sx={{ mb: 1, color: THEME_COLOR.SECONDARY_TEXT }}>
-                      <i className="fas fa-user" style={{ color: "rgb(138, 198, 66)" }} />{" "}
-                      {item?.createdBy || "Super Admin"} &nbsp;&nbsp;
-                      <i
-                        className="fas fa-calendar-alt"
-                        style={{ color: "rgb(138, 198, 66)" }}
-                      />{" "}
-                      {moment(item?.createdAt).format("MMM DD, YYYY")}
+                      <i className="fas fa-user" style={{ color: "rgb(138, 198, 66)" }} /> {item?.createdBy || "Super Admin"} &nbsp;&nbsp;
+                      <i className="fas fa-calendar-alt" style={{ color: "rgb(138, 198, 66)" }} /> {moment(item?.createdAt).format("MMM DD, YYYY")}
                     </Typography>
 
                     <Typography
                       variant="body2"
-                      color="textSecondary"
                       sx={{
                         flexGrow: 1,
-                        mb: 2,
+                        mb: showReadMore ? 1 : 0,
                         color: THEME_COLOR.SECONDARY_TEXT,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         display: "-webkit-box",
-                        WebkitLineClamp: 3, 
+                        WebkitLineClamp: 3,
                         WebkitBoxOrient: "vertical",
                       }}
                     >
                       {item?.description}
                     </Typography>
 
-                    <MuiButton
-                      onClick={() => navigate(`/feed/${selectedTab}/${item?._id}`)}
-                      variant="text"
-                      sx={{ color: THEME_COLOR.SECONDARY_TEXT, alignSelf: "flex-start" }}
-                    >
-                      Read More{" "}
-                      <img
-                        src={arrow}
-                        className="ml-2"
-                        alt="arrow-right"
-                        style={{ height: "16px", marginLeft: "8px" }}
-                      />
-                    </MuiButton>
+                    {showReadMore && (
+                      <MuiButton
+                        onClick={() => navigate(`/feed/${selectedTab}/${item?._id}`)}
+                        variant="text"
+                        sx={{ color: THEME_COLOR.SECONDARY_TEXT, alignSelf: "flex-start" }}
+                      >
+                        Read More <img src={arrow} className="ml-2" alt="arrow-right" style={{ height: "16px", marginLeft: "8px" }} />
+                      </MuiButton>
+                    )}
                   </CardContent>
                 </Card>
               </Grid>
-            ))}
-          </Grid>
+            );
+          })}
+        </Grid>
 
-        )}
-
-        {/* Pagination */}
-        {pagination?.totalPages > 0 && (
+        {!isLoading && pagination?.totalPages > 0 && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <Pagination
               count={pagination?.totalPages}
@@ -272,7 +289,6 @@ function Feeds() {
       </Box>
     </Box>
   );
-
 }
 
 export default Feeds;

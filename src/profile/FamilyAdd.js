@@ -94,7 +94,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
   style={{ zIndex: 99999 }} />
       <Box
         sx={{
-          width: "40vw",
+          width: "25vw",
           padding: "50px",
           display: "flex",
           flexDirection: "column",
@@ -115,6 +115,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
         <Box sx={{ marginTop: 3, width: "100%" }}>
           <Dropdown
             label="Family Member"
+            
             options={familyOption}
             value={familyMember}
             onChange={(e) => setFamilyMember(e.target.value)}
@@ -150,8 +151,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
         </Box>
         <Box sx={{ marginTop: "1.5rem", width: "100%" }}>
           <CustomInput
-            label="UserEmail"
-            placeholder="Enter your UserEmail"
+            label="Family Email"
+            placeholder="Enter your Family Email"
             value={useremail}
             onChange={handleEmailChange}
             className={!isValidEmail ? "is-invalid" : ""}

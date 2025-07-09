@@ -14,18 +14,29 @@ import moment from "moment";
 const Footer = () => {
   const navigate = useNavigate();
 
-  const handleStaticNav = (route) => () => {
-    // Check login status only for 'Policy Vault'
-    if (route === "/vault") {
-      const isLoggedIn = sessionStorage.getItem("isLoggedIn"); // replace with actual key if needed
-      if (!isLoggedIn || isLoggedIn === "false") {
-        // Redirect to login if not logged in
-        navigate("/login");
-        return;
-      }
+const handleStaticNav = (route) => () => {
+  const [pathname, hash] = route.split("#");
+
+  if (pathname === "/vault") {
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    if (!isLoggedIn || isLoggedIn === "false") {
+      navigate("/login");
+      return;
     }
+  }
+
+  if (window.location.pathname === pathname) {
+    // Even if already on page, update the hash to trigger useEffect in the component
+    if (hash) {
+      window.location.hash = `#${hash}`;
+    }
+  } else {
+    // Navigate normally
     navigate(route);
-  };
+  }
+};
+
+
 
   const servicesLinks = [
     { to: "/", label: "Home" },

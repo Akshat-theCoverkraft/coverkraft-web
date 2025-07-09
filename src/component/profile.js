@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Box, Typography, TextField } from "@mui/material";
+import { Drawer, Box, Typography } from "@mui/material";
 import Button from "../component/Button";
 import CustomInput from "../component/CustomInput";
-import icProfileBg from "../Images/ic_profile_bg.png";
 import icDefaultProfile from "../Images/ic_default_profile.png";
 import editIcon from "../Images/edit-icon.png";
 import { getBYIDUsers, updateUser } from "../store/action/action";
@@ -28,88 +27,37 @@ import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 import ContactUs from "../profile/ContactUs";
 import CloseIcon from '@mui/icons-material/Close';
+
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [communicationDrawerOpen, setCommunicationDrawerOpen] = useState(false);
-  const [aboutDrawerOpen, setAboutDrawerOpen] = useState(false);
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
-  const userEmail = sessionStorage.getItem("userEmail");
   const [profileImage, setProfileImage] = useState(icDefaultProfile);
-  // console.log("profileImage", profileImage);
   const [showImageInput, setShowImageInput] = useState(false);
-  const [username, setuserName] = useState();
-  const [useremail, setuserEmail] = useState();
-  const [userDob, setuserDob] = useState();
-  const [userAddress, setuserAddress] = useState();
+  const [username, setuserName] = useState("");
+  const [useremail, setuserEmail] = useState("");
+  const [userDob, setuserDob] = useState(null);
+  const [userAddress, setuserAddress] = useState("");
   const [state, setstate] = useState("");
-  // console.log("state", state);
   const [city, setCity] = useState("");
-  // console.log("city", city);
-  const [userPhone, setuserPhone] = useState();
-  const [pinCode, setpinCode] = useState();
-  const [gender, setgender] = useState();
+  const [userPhone, setuserPhone] = useState("");
+  const [pinCode, setpinCode] = useState("");
+  const [gender, setgender] = useState("");
   const [userImgFile, setuserImgFile] = useState(null);
-  // console.log("userImgFile", userImgFile);
-  const userbyId = useSelector((state) => state.user);
-  const states = useSelector((state) => state.user);
   const [update, setUpdate] = useState(false);
-  const navigate = useNavigate();
   const [selectedStateId, setSelectedStateId] = useState("");
   const [selectedCityId, setSelectedCityId] = useState("");
   const [isValidPinCode, setIsValidPinCode] = useState(true);
   const [valid, setValid] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [profileCompletion, setProfileCompletion] = useState(0);
+  const userbyId = useSelector((state) => state.user);
+  const states = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const location = useLocation();
   const [returnPath, setReturnPath] = useState("/");
-  const handleCitySelect = (cityId) => {
-    setSelectedCityId(cityId);
-  };
-  const calculateProfileCompletion = (data) => {
-  const requiredFields = [
-    "userName",
-    "userEmail",
-    "userPhone",
-    "userDob",
-    "userAddress",
-    "state",
-    "city",
-    "pinCode",
-    "gender",
-    "userImg"
-  ];
-
-  const totalFields = requiredFields.length;
-  let completedFields = 0;
-
-  requiredFields.forEach((field) => {
-    const value = data?.[field];
-    if (value !== undefined && value !== null && value !== "") {
-      completedFields++;
-    }
-  });
-
-  return Math.floor((completedFields / totalFields) * 100);
-};
-
-  const [profileCompletion, setProfileCompletion] = useState(0);
-
-useEffect(() => {
-  if (userbyId.getUserById && userbyId.getUserById.data) {
-    const data = userbyId.getUserById.data;
-
-    // Set values...
-    // ...
-
-    const percentage = calculateProfileCompletion(data);
-    setProfileCompletion(percentage);
-  }
-}, [userbyId]);
-
-  //useeffect
-  useEffect(() => {
-    dispatch(getAllState(API_URL));
-  }, [dispatch]);
 
   const LOCAL_STORAGE_KEYS = [
     "loggedIn",
@@ -120,71 +68,79 @@ useEffect(() => {
     "token",
   ];
 
-  useEffect(() => {
-    if (states !== null && states !== undefined) {
-      if (states.getAllState !== null && states.getAllState !== undefined) {
-        if (
-          states.getAllState.data !== null &&
-          states.getAllState.data !== undefined
-        ) {
-          setstate(states.getAllState.data);
-        }
+  const calculateProfileCompletion = (data) => {
+    const requiredFields = [
+      "userName",
+      "userEmail",
+      "userPhone",
+      "userImg"
+    ];
+
+    const totalFields = requiredFields.length;
+    let completedFields = 0;
+
+    requiredFields.forEach((field) => {
+      const value = data?.[field];
+      if (value !== undefined && value !== null && value !== "") {
+        completedFields++;
       }
+    });
+
+    return Math.floor((completedFields / totalFields) * 100);
+  };
+  useEffect(() => {
+    setUpdate(false);
+  }, []);
+
+  useEffect(() => {
+    dispatch(getAllState(API_URL));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (states?.getAllState?.data) {
+      setstate(states.getAllState.data);
     }
   }, [states]);
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
-    dispatch(getBYIDUsers(API_URL, userId));
+    if (userId) {
+      dispatch(getBYIDUsers(API_URL, userId));
+    }
   }, [dispatch]);
 
   useEffect(() => {
-    // Save the path only when the drawer opens
     if (open) {
       setReturnPath(location.pathname);
     }
   }, [open, location.pathname]);
-  // useEffect(() => {
-  //   if (userbyId.getUserById && userbyId.getUserById.data) {
-  //     const data = userbyId.getUserById.data;
-  //     console.log("data", data);
-  //     setuserName(data.userName);
-  //     setuserEmail(data.userEmail);
-  //     setuserPhone(data.userPhone);
-  //     setuserDob(new Date(data?.userDob?.split("/")?.reverse()?.join("-")));
-  //     setuserAddress(data.userAddress);
-  //     setstate(data.state === null ? null : data.state._id);
-  //     setCity(data.city === null ? null : data.city._id);
-  //     setpinCode(data.pinCode);
-  //     setgender(data.gender);
-  //     setProfileImage(
-  //       data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
-  //     );
-  //   }
-  // }, [userbyId]);
-  // console.log("userimg kya h", profileImage);
 
   useEffect(() => {
-    if (userbyId.getUserById && userbyId.getUserById.data) {
+    if (userbyId.getUserById?.data) {
       const data = userbyId.getUserById.data;
+      const percentage = calculateProfileCompletion(data);
+      setProfileCompletion(percentage);
 
-      setuserName(data.userName);
-      setuserEmail(data.userEmail);
-      setuserPhone(data.userPhone);
-      setuserDob(new Date(data?.userDob?.split("/")?.reverse()?.join("-")));
-      setuserAddress(data.userAddress);
+      setuserName(data.userName || "");
+      setuserEmail(data.userEmail || "");
+      setuserPhone(data.userPhone || "");
+
+      if (data.userDob) {
+        setuserDob(new Date(data.userDob.split("/").reverse().join("-")));
+      }
+
+      setuserAddress(data.userAddress || "");
 
       const stateId = data?.state?._id || "";
       const cityId = data?.city?._id || "";
 
       setstate(stateId);
       setSelectedStateId(stateId);
-
       setCity(cityId);
       setSelectedCityId(cityId);
 
-      setpinCode(data.pinCode);
-      setgender(data.gender);
+      setpinCode(data.pinCode || "");
+      setgender(data.gender || "");
 
       setProfileImage(
         data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
@@ -195,110 +151,86 @@ useEffect(() => {
   const handleStateSelect = (stateId) => {
     setSelectedStateId(stateId);
   };
-  //function to check user is above 18 or not
-  const isOldEnough = (dob) => {
-    const today = new Date(); // Get today's date
-    const birthDate = new Date(dob); // Convert dob to a Date object
-    let age = today.getFullYear() - birthDate.getFullYear(); // Calculate age
 
-    // Calculate the month difference
+  const handleCitySelect = (cityId) => {
+    setSelectedCityId(cityId);
+  };
+
+  const isOldEnough = (dob) => {
+    if (!dob) return false;
+
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
     const monthDifference = today.getMonth() - birthDate.getMonth();
 
-    // If the birth month hasn't occurred yet this year, or it's the birth month but the birth day hasn't occurred yet, subtract one year from age
-    if (
-      monthDifference < 0 ||
-      (monthDifference === 0 && today.getDate() < birthDate.getDate())
-    ) {
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
 
-    // Return true if age is 18 or older
     return age >= 18;
   };
 
-  function handleUpateProfile() {
-    const formData = new FormData();
-    // console.log("FormData values before appending:", formData);
+  const handleUpateProfile = () => {
+    if (!isValidEmail || !valid || !isValidPinCode) {
+      toast.error("Please correct the validation errors");
+      return;
+    }
 
+    const formData = new FormData();
     formData.append("_id", sessionStorage.getItem("userId"));
     formData.append("userName", username);
     formData.append("userEmail", useremail);
     formData.append("userPhone", userPhone);
-    formData.append("userDob", userDob);
+
+    if (userDob) {
+      const formattedDob = userDob.toLocaleDateString('en-GB').split('/').reverse().join('-');
+      formData.append("userDob", formattedDob);
+    }
+
     formData.append("userAddress", userAddress);
     formData.append("state", selectedStateId);
     formData.append("city", selectedCityId);
     formData.append("pinCode", pinCode);
     formData.append("gender", gender);
+
     if (userImgFile) {
       formData.append("userImg", userImgFile);
     }
 
-    console.log(
-      username,
-      useremail,
-      userPhone,
-      userDob,
-      userAddress,
-      selectedStateId,
-      selectedCityId,
-      pinCode,
-      gender,
-      userImgFile
-    );
-    if (
-      (username &&
-        useremail &&
-        userPhone &&
-        userDob &&
-        userAddress &&
-        selectedStateId &&
-        selectedCityId &&
-        pinCode &&
-        gender) ||
-      userImgFile
-    ) {
-      if (!isOldEnough(userDob)) {
-        toast.error("You must be at least 18 years old to register.", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        return;
-      }
-
-      dispatch(updateUser(API_URL, formData));
-      // .then(() => {
-      //     toast.success('Updated successfully')
-      // }).catch((error) => {
-      //     toast.error('Error in updating')
-      // })
-      toast.success("Updated successfully");
-      setTimeout(() => {
-        onClose();
-      }, 1000);
-      // onClose();
-    } else {
-      toast.error("Please fill all required fields!");
-      // console.log("No fields are being updated");
+    if (!isOldEnough(userDob)) {
+      toast.error("You must be at least 18 years old to register.");
+      return;
     }
-  }
 
-  const handleDeleteAccount  = () => {
+    dispatch(updateUser(API_URL, formData))
+      .then(() => {
+        toast.success("Profile updated successfully");
+        setTimeout(() => {
+          onClose();
+          setUpdate(false);
+        }, 1000);
+      })
+      .catch(() => {
+        toast.error("Error updating profile");
+      });
+  };
+
+  const handleDeleteAccount = () => {
     const userId = sessionStorage.getItem("userId");
     if (userId) {
       dispatch(deleteAccount(API_URL, userId))
+        .then(() => {
           toast.success("Account deleted successfully");
           sessionStorage.clear();
-          navigate("/login")
-      
-    } else {
-      toast.error("User ID not found");
+          navigate("/login");
+        })
+        .catch(() => {
+          toast.error("Error deleting account");
+        });
     }
-  }
+  };
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -311,87 +243,46 @@ useEffect(() => {
     }
   };
 
-  const toggleImageInput = () => {
-    setShowImageInput(!showImageInput);
-  };
-
-  const handleEdit = () => {
-    setUpdate(!update);
-  };
-
-  const handleFamilyClose = () => {
-    setDrawerOpen(false);
-  };
-  const handleCommunicationclose = () => {
-    setCommunicationDrawerOpen(false);
-  };
-  const handleHelpclose = () => {
-    setHelpDrawerOpen(false);
-  };
-  const handleAboutClose = () => {
-    setAboutDrawerOpen(false);
-  };
-  const handleFamilyOpen = () => {
-    setDrawerOpen(true);
-  };
-  const handleCommunicationOpen = () => {
-    setCommunicationDrawerOpen(true);
-  };
-  const handleAboutOpen = () => {
-    // setAboutDrawerOpen(true);
-    onClose();
-    navigate("/about");
-  };
-  const handleHelpOpen = () => {
-    // alert("Coming soon !");
-    navigate("/contactus");
-  };
-  const handleLogout = () => {
-    LOCAL_STORAGE_KEYS.forEach((key) => sessionStorage.removeItem(key));
-    navigate("/");
-    setTimeout(() => window.location.reload(), 100);
-  };
-
   const handlePinCodeChange = (e) => {
-    let pin = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
-    pin = pin.slice(0, 6); // Limit to 6 digits
+    const pin = e.target.value.replace(/\D/g, "").slice(0, 6);
     setpinCode(pin);
-    const isValidPin = /^\d{5,6}$/.test(pin); // Check if it's 5 or 6 digits
-    setIsValidPinCode(isValidPin);
+    setIsValidPinCode(/^\d{5,6}$/.test(pin));
   };
-  //function to handle email input field start
+
   const handleEmailChange = (e) => {
     const emailId = e.target.value;
-
-    // Regular expression to validate the email
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    // Regex to check for exactly one @ symbol and at least two dots after @
-    const validEmail =
-      emailRegex.test(emailId) &&
+    const validEmail = emailRegex.test(emailId) &&
       emailId.split("@").length === 2 &&
       emailId.split("@")[1].split(".").length <= 3;
     setuserEmail(emailId);
     setIsValidEmail(validEmail);
   };
-  //function to handle email input field start
-  //function to handle phone number input field start
+
   const handlephonechange = (e) => {
-    let number = e.target.value.replace(/\D/g, "");
-    number = number.slice(0, 10);
+    const number = e.target.value.replace(/\D/g, "").slice(0, 10);
     setuserPhone(number);
-    const isValid = /^\d{10}$/.test(number.replace("+91", ""));
-    setValid(isValid);
+    setValid(/^\d{10}$/.test(number.replace("+91", "")));
   };
-  //function to handle phone number input field end
+
   const handleDobChange = (date) => {
     setuserDob(date);
   };
 
-  const headerStyle = {
-    wordWrap: "break-word", // Ensures long words break onto the next line
-    overflowWrap: "break-word", // Alternative property to ensure wrapping
-    maxWidth: "25%", // Ensures the element respects the container's width
-    whiteSpace: "normal", // Ensures that text can wrap and does not stay in a single line
+  const handleFamilyOpen = () => setDrawerOpen(true);
+  const handleFamilyClose = () => setDrawerOpen(false);
+  const handleCommunicationOpen = () => setCommunicationDrawerOpen(true);
+  const handleCommunicationclose = () => setCommunicationDrawerOpen(false);
+  const handleHelpOpen = () => navigate("/contactus");
+  const handleHelpclose = () => setHelpDrawerOpen(false);
+  const handleAboutOpen = () => {
+    onClose();
+    navigate("/about");
+  };
+  const handleLogout = () => {
+    LOCAL_STORAGE_KEYS.forEach((key) => sessionStorage.removeItem(key));
+    navigate("/");
+    setTimeout(() => window.location.reload(), 100);
   };
 
   return (
@@ -402,8 +293,8 @@ useEffect(() => {
       sx={{
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-          width: "35vw", // ✅ Consistent width across the drawer
-          maxWidth: "400px", // Optional: limit max width for responsiveness
+          width: "35vw",
+          maxWidth: "400px",
         },
       }}
     >
@@ -417,25 +308,36 @@ useEffect(() => {
         }}
         role="presentation"
       >
-        <div className="flex items-center px-4 py-2">
+        <div className="flex items-center justify-end px-4 py-2">
           <CloseIcon
-            style={{ cursor: "pointer", color: "#fff", fontSize: "2rem" }}
+
             onClick={() => {
-              onClose(); // Close the drawer first
-              setTimeout(() => {
-                navigate(returnPath); // Go back to the stored path
-              }, 100); // Slight delay to let the drawer close smoothly
+              onClose();
+              setUpdate(false);
+              setTimeout(() => navigate(returnPath), 150);
+            }}
+            style={{
+              cursor: "pointer",
+              color: "#fff",
+              fontSize: "2rem",
+              transition: "transform 0.2s ease, color 0.2s ease"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "scale(1.2)";
+              e.target.style.color = "#8AC642";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "scale(1)";
+              e.target.style.color = "#fff";
             }}
           />
         </div>
+
+
         <div className="main-container">
-          {/* Profile Header Section */}
-          <div
-            className="background-image-container1"
-            style={{ height: "30vh", padding: "0 2rem" }}
-          >
+          <div className="background-image-container1" style={{ height: "30vh", padding: "0 2rem" }}>
             <div className="profile-details">
-              <div className="profile-image-container bg-red-600">
+              <div className="profile-image-container">
                 <img src={profileImage} alt="Profile" className="profile-image" />
                 {update && (
                   <label htmlFor="profile-image-upload">
@@ -443,19 +345,17 @@ useEffect(() => {
                       src={editIcon}
                       alt="Edit"
                       className="edit-icon"
-                      onClick={toggleImageInput}
+                      onClick={() => setShowImageInput(true)}
                     />
                   </label>
                 )}
-                {showImageInput && (
-                  <input
-                    id="profile-image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    style={{ display: "none" }}
-                  />
-                )}
+                <input
+                  id="profile-image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ display: "none" }}
+                />
               </div>
 
               <h2 className="text-header text-light mt-2 text-center">
@@ -468,7 +368,7 @@ useEffect(() => {
                   <Button
                     text={"Edit Profile"}
                     size="lg"
-                    onClick={handleEdit}
+                    onClick={() => setUpdate(true)}
                     customStyle={{
                       width: "100%",
                       height: "5vh",
@@ -482,9 +382,6 @@ useEffect(() => {
           </div>
         </div>
 
-        
-
-        {/* Profile Options */}
         {!update ? (
           <Card
             className="main-container m-3 p-4 my-4"
@@ -493,38 +390,13 @@ useEffect(() => {
               color: THEME_COLOR.COLOR,
             }}
           >
-            {/* REUSABLE LIST ITEM COMPONENT RECOMMENDED HERE */}
             {[
-              {
-                label: "Family Member",
-                icon: family,
-                onClick: handleFamilyOpen,
-              },
-              {
-                label: "Communication Preferences",
-                icon: communication,
-                onClick: handleCommunicationOpen,
-              },
-              {
-                label: "Contact Us",
-                icon: help,
-                onClick: handleHelpOpen,
-              },
-              {
-                label: "About",
-                icon: about,
-                onClick: handleAboutOpen,
-              },
-              {
-                label: "Logout",
-                icon: logout,
-                onClick: handleLogout,
-              },
-              {
-                label: "Delete Account",
-                icon: logout,
-                onClick: handleDeleteAccount,
-              },
+              { label: "Family Member", icon: family, onClick: handleFamilyOpen },
+              { label: "Communication Preferences", icon: communication, onClick: handleCommunicationOpen },
+              { label: "Contact Us", icon: help, onClick: handleHelpOpen },
+              { label: "About", icon: about, onClick: handleAboutOpen },
+              { label: "Logout", icon: logout, onClick: handleLogout },
+              { label: "Delete Account", icon: logout, onClick: () => setShowDeleteModal(true) },
             ].map((item, idx) => (
               <Grid
                 container
@@ -539,24 +411,22 @@ useEffect(() => {
                 }}
               >
                 <Grid item xs={2}>
-                  <img src={item.icon} style={{ maxHeight: "2.5rem" }} />
+                  <img src={item.icon} style={{ maxHeight: "2.5rem" }} alt={item.label} />
                 </Grid>
                 <Grid item xs={8}>
                   <span>{item.label}</span>
                 </Grid>
                 <Grid item xs={2}>
-                  <img src={rightArrow} style={{ maxHeight: "2rem" }} />
+                  <img src={rightArrow} style={{ maxHeight: "2rem" }} alt="arrow" />
                 </Grid>
               </Grid>
             ))}
           </Card>
         ) : (
-          // --------------------------
-          // Edit Mode
-          // --------------------------
           <div className="main-container mt-3 p-4">
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              {/* Name */}
+              <Grid item xs={12} md={6}>
                 <CustomInput
                   label="Name"
                   placeholder="Enter your name"
@@ -565,90 +435,94 @@ useEffect(() => {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+
+              {/* Email */}
+              <Grid item xs={12} md={6}>
                 <CustomInput
                   type="email"
                   label="Email Address"
                   value={useremail}
                   onChange={handleEmailChange}
                   placeholder="Enter your email"
-                  className={!isValidEmail ? "is-invalid" : ""}
-                  validationMessage={
-                    !isValidEmail
-                      ? "Please enter a valid email address containing @."
-                      : ""
-                  }
+                  error={!isValidEmail}
+                  helperText={!isValidEmail ? "Please enter a valid email address" : ""}
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+
+              {/* Mobile Number */}
+              <Grid item xs={12} md={6}>
                 <CustomInput
-                  type="text"
+                  type="tel"
                   label="Mobile Number"
                   value={userPhone}
                   onChange={handlephonechange}
                   placeholder="Enter your mobile number"
-                  className={!valid ? "is-invalid" : ""}
-                  validationMessage={
-                    !valid
-                      ? "Please enter a valid 10-digit mobile number."
-                      : ""
-                  }
+                  error={!valid}
+                  helperText={!valid ? "Please enter a valid 10-digit mobile number" : ""}
                   required
                 />
               </Grid>
-              <Grid item xs={6}>
-                <GlobalDatePicker
-                  label="DOB"
-                  selectedDate={userDob}
-                  handleDateChange={handleDobChange}
-                  className="custom-picker form-control rounded-5 "
-                  placeholder="select Date"
-                  width="100%"
-                />
+
+              {/* DOB */}
+              <Grid item xs={12} md={6}>
+                <div style={{ height: "48px" }}>
+                  <GlobalDatePicker
+                    label="DOB"
+                    selectedDate={userDob}
+                    handleDateChange={handleDobChange}
+                    className="custom-picker form-control rounded-5"
+                    placeholder="Select Date"
+                    width="100%"
+                  />
+                </div>
               </Grid>
-              <div className="col-12">
+
+              {/* Address */}
+              <Grid item xs={12}>
                 <CustomInput
                   label="Address"
                   placeholder="Enter your Address"
                   value={userAddress}
                   onChange={(e) => setuserAddress(e.target.value)}
-                  required
                 />
-              </div>
+              </Grid>
+
+              {/* State Dropdown */}
               <Grid item xs={12} md={6}>
                 <GlobalDropdown
                   onStateSelect={handleStateSelect}
-                  initialValue={state}
+                  initialValue={selectedStateId}
                 />
               </Grid>
+
+              {/* City Dropdown */}
               <Grid item xs={12} md={6}>
                 <CityDropdown
                   selectedStateId={selectedStateId}
                   onCitySelect={handleCitySelect}
-                  initialValue={city}
+                  initialValue={selectedCityId}
                 />
               </Grid>
-              <Grid item xs={6}>
+
+              {/* Pincode */}
+              <Grid item xs={12} md={6}>
                 <CustomInput
                   label="Pincode"
                   placeholder="Enter your PinCode"
                   value={pinCode}
                   onChange={handlePinCodeChange}
-                  className={!isValidPinCode ? "is-invalid" : ""}
-                  validationMessage={
-                    !isValidPinCode
-                      ? "Please enter a valid pin code (5 or 6 digits)."
-                      : ""
+                  error={!isValidPinCode}
+                  helperText={
+                    !isValidPinCode ? "Please enter a valid pin code (5 or 6 digits)" : ""
                   }
-                  required
                 />
               </Grid>
 
-              {/* Gender dropdown (optional) */}
-              <Grid item xs={12}>
+              {/* Gender */}
+              <Grid item xs={12} md={6}>
                 <label
-                  className="form-label fw-bold text-light"
+                  className="form-label fw-bold text-light mb-2 block"
                   htmlFor="gender"
                 >
                   Gender
@@ -659,67 +533,99 @@ useEffect(() => {
                   value={gender}
                   onChange={(e) => setgender(e.target.value)}
                 >
-                  <option disabled value="">
-                    Select Your Gender
-                  </option>
+                  <option disabled value="">Select Your Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
               </Grid>
+
+              {/* Buttons - Side by Side on Desktop, Stacked on Mobile */}
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <Button
+                      size="sm"
+                      text="Update"
+                      onClick={handleUpateProfile}
+                      disabled={!isValidEmail || !valid || !isValidPinCode}
+                      bgcolor={(!isValidEmail || !valid || !isValidPinCode) ? "#d3d3d3" : "#8AC642"}
+                      customStyle={{
+                        width: "100%",
+                        height: "6vh",
+                        borderRadius: "3rem",
+                        fontSize: "1rem",
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Button
+                      size="sm"
+                      text="Cancel"
+                      onClick={() => setUpdate(false)}
+                      customStyle={{
+                        width: "100%",
+                        height: "6vh",
+                        borderRadius: "3rem",
+                        fontSize: "1rem",
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
             </Grid>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col items-center mt-5 gap-3 w-full">
-              {/* Top Row: Update & Delete */}
-              <div className="flex justify-between w-full gap-3">
+
+        )}
+
+        {showDeleteModal && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(0,0,0,0.5)",
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                background: "#212121",
+                borderRadius: "1rem",
+                padding: "2rem",
+                minWidth: "300px",
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="h6" style={{ marginBottom: "1rem", color: "#fff" }}>
+                Are you sure you want to delete your account?
+              </Typography>
+              <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
                 <Button
-                  size="sm"
-                  text="Update"
-                  onClick={handleUpateProfile}
-                  disabled={!isValidEmail}
-                  bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
-                  customStyle={{
-                    width: "100%",
-                    height: "6vh",
-                    borderRadius: "3rem",
-                    fontSize: "1rem",
+                  text="Yes, Delete"
+                  bgcolor="#e53935"
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    handleDeleteAccount();
                   }}
                 />
                 <Button
-                  size="sm"
-                  text="Delete Profile"
-                  customStyle={{
-                    width: "100%",
-                    height: "6vh",
-                    borderRadius: "3rem",
-                    fontSize: "1rem",
-                  }}
-                />
-              </div>
-
-              {/* Bottom Row: Centered Cancel */}
-              <div className="w-1/2">
-                <Button
-                  size="sm"
                   text="Cancel"
-                  onClick={handleEdit}
-                  customStyle={{
-                    width: "100%",
-                    height: "6vh",
-                    borderRadius: "3rem",
-                    fontSize: "1rem",
-                  }}
+                  bgcolor="#8AC642"
+                  onClick={() => setShowDeleteModal(false)}
                 />
               </div>
             </div>
-
-
           </div>
         )}
       </Box>
-
-      {/* DRAWER MODALS */}
       <Family family={drawerOpen} onfamilyclose={handleFamilyClose} />
       <Communication
         communication={communicationDrawerOpen}
@@ -727,7 +633,6 @@ useEffect(() => {
       />
       <ContactUs help={helpDrawerOpen} onHelpClose={handleHelpclose} />
     </Drawer>
-
   );
 };
 
