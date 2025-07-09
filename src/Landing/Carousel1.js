@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./component/CSS/carousel1.css";
@@ -10,6 +10,7 @@ const Carousel1 = () => {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const slidesPerPage = 3;
+  const videoRefs = useRef([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,12 +35,13 @@ const Carousel1 = () => {
   }, []);
 
   const totalPages = Math.ceil(items.length / slidesPerPage);
+  const getCurrentPage = () => Math.floor(currentSlide / slidesPerPage);
+
   const handleDotClick = (pageIndex) => {
     const slideIndex = pageIndex * slidesPerPage;
     setCurrentSlide(slideIndex);
   };
 
-  const getCurrentPage = () => Math.floor(currentSlide / slidesPerPage);
   const goToPrev = () => setCurrentSlide(Math.max(currentSlide - slidesPerPage, 0));
   const goToNext = () => {
     const maxIndex = Math.max(items.length - slidesPerPage, 0);
@@ -49,6 +51,15 @@ const Carousel1 = () => {
   const handleSlideChange = (index) => {
     const pageStart = Math.floor(index / slidesPerPage) * slidesPerPage;
     setCurrentSlide(pageStart);
+  };
+
+  const handleVideoPlay = (playingIndex) => {
+    videoRefs.current.forEach((video, idx) => {
+      if (video && idx !== playingIndex) {
+        video.pause();
+        video.currentTime = 0; // optional: reset to beginning
+      }
+    });
   };
 
   return (
@@ -76,11 +87,10 @@ const Carousel1 = () => {
             <Carousel
               showThumbs={false}
               showStatus={false}
-              infiniteLoop={true}
+              infiniteLoop={false}
               centerMode
               centerSlidePercentage={100 / slidesPerPage}
-              autoPlay={true}
-              interval={4000}
+              autoPlay={false}
               transitionTime={600}
               swipeable
               emulateTouch
@@ -92,9 +102,19 @@ const Carousel1 = () => {
               {items.map((item, idx) => (
                 <div className="carousel__slide-item" key={idx}>
                   {item.video.endsWith(".mp4") ? (
-                    <video src={item.video} controls className="carousel__slide-item-media" />
+                    <video
+                      ref={(el) => (videoRefs.current[idx] = el)}
+                      src={item.video}
+                      controls
+                      className="carousel__slide-item-media"
+                      onPlay={() => handleVideoPlay(idx)}
+                    />
                   ) : (
-                    <img src={item.video} alt={item.subtitle} className="carousel__slide-item-media" />
+                    <img
+                      src={item.video}
+                      alt={item.subtitle}
+                      className="carousel__slide-item-media"
+                    />
                   )}
                 </div>
               ))}
