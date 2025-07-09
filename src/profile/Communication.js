@@ -193,7 +193,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
                 <Typography fontWeight={500}>{option.label}</Typography>
               </Grid>
               <Grid item>
-                <Radio
+                <PinkSwitch
                   {...controlProps(option.value)}
                   sx={{
                     color: "#8AC642",
