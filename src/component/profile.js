@@ -10,7 +10,7 @@ import editIcon from "../Images/edit-icon.png";
 import { getBYIDUsers, updateUser } from "../store/action/action";
 import API_URL from "../ServiceModule/Service";
 import IMAGE_PATH from "../ServiceModule/imagePath";
-import { getAllState } from "../store/action/action";
+import { getAllState, deleteAccount } from "../store/action/action";
 import GlobalDropdown from "./StateDropdown";
 import { Card, Grid } from "@material-ui/core";
 import family from "../Images/ic_family_member.png";
@@ -283,6 +283,18 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   }
 
+  const handleDeleteAccount  = () => {
+    const userId = sessionStorage.getItem("userId");
+    if (userId) {
+      dispatch(deleteAccount(API_URL, userId))
+          toast.success("Account deleted successfully");
+          sessionStorage.clear();
+          navigate("/login")
+      
+    } else {
+      toast.error("User ID not found");
+    }
+  }
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -456,6 +468,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           </div>
         </div>
 
+        
+
         {/* Profile Options */}
         {!update ? (
           <Card
@@ -490,6 +504,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 label: "Logout",
                 icon: logout,
                 onClick: handleLogout,
+              },
+              {
+                label: "Delete Account",
+                icon: logout,
+                onClick: handleDeleteAccount,
               },
             ].map((item, idx) => (
               <Grid
