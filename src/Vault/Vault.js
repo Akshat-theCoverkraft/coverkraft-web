@@ -378,7 +378,7 @@ const exportToExcel = async () => {
         </IconButton>
 
         <DialogContent className="p-4">
-          <FileUploadCard type='pdf' files={files} icon={uploadPdf} text='Upload Document' inputRef={inputRef} onChange={(e) => handleFileUpload(e, 'pdf')} />
+          <FileUploadCard className='' type='pdf' files={files} icon={uploadPdf} text='Upload Document' inputRef={inputRef} onChange={(e) => handleFileUpload(e, 'pdf')} />
           <FileUploadCard type='image' files={image} icon={uploadImg} text='Upload Image' inputRef={imageRef} onChange={(e) => handleFileUpload(e, 'image')} />
 
           <Card className="mt-3 p-3" style={{ background: "#121212", borderRadius: "20px", marginTop: "20px", color: "#fff" }}>

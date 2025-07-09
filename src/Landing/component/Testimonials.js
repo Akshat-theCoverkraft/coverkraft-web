@@ -5,15 +5,16 @@ import "slick-carousel/slick/slick-theme.css";
 import './CSS/Testimonail.css';
 import quote from '../../Images/quote-testimonial.png';
 import { THEME_COLOR } from "../../constants";
-import { Typography, Modal, Box } from "@mui/material";
+import { Typography, Modal, Box, Skeleton, Grid } from "@mui/material";
 import TRight from "../../Images/TRight.png";
 import TLeft from "../../Images/TLeft.png";
 import API_URL from "../../ServiceModule/Service";
 
 export default function Testimonials() {
-  const [slidesToShow, setSlidesToShow] = useState(window.innerWidth <= 620 ? 1 : 2);
+const [slidesToShow, setSlidesToShow] = useState(1);
   const [carouselKey, setCarouselKey] = useState(Date.now());
   const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
   const sliderRef = useRef();
@@ -31,6 +32,8 @@ export default function Testimonials() {
         }
       } catch (err) {
         console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchTestimonials();
@@ -38,7 +41,7 @@ export default function Testimonials() {
 
   useEffect(() => {
     const handleResize = () => {
-      setSlidesToShow(window.innerWidth <= 620 ? 1 : 2);
+setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
       setCarouselKey(Date.now());
     };
     window.addEventListener("resize", handleResize);
@@ -55,6 +58,13 @@ export default function Testimonials() {
     setSelectedTestimonial(null);
   };
 
+  const pauseAllVideos = () => {
+    const videos = document.querySelectorAll("video");
+    videos.forEach(video => {
+      if (!video.paused) video.pause();
+    });
+  };
+
   const settings = {
     infinite: testimonials.length > 1,
     slidesToShow,
@@ -62,6 +72,7 @@ export default function Testimonials() {
     autoplay: false,
     arrows: false,
     dots: true,
+    afterChange: pauseAllVideos,
     responsive: [
       {
         breakpoint: 768,
@@ -127,9 +138,36 @@ export default function Testimonials() {
       <div className="testimonials-container px-3">
         <section className="testimonials">
           <div className="container">
-            {testimonials.length === 0 ? (
-              <div style={{ textAlign: "center", color: "#aaa", padding: "2rem" }}>
-                No testimonials available right now.
+            {loading ? (
+              <Grid container spacing={2}>
+                {[1, 2].map((_, idx) => (
+                  <Grid item xs={12} sm={6} key={idx}>
+                    <Skeleton variant="rectangular" width="100%" height={250} animation="wave" sx={{ borderRadius: 2 }} />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : testimonials.length === 0 ? (
+              <div style={{ padding: '2rem', display: 'flex', justifyContent: 'center' }}>
+                <Box
+                  sx={{
+                    width: '100%',
+                    maxWidth: 600,
+                    height: 250,
+                    bgcolor: '#1c1c1c',
+                    borderRadius: 2,
+                    border: '1px dashed #444',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#888',
+                    fontSize: '1.4rem',
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    px: 3,
+                  }}
+                >
+                  💤 No testimonials found. Stay tuned for updates!
+                </Box>
               </div>
             ) : (
               <div className="slider-arrow-container">
@@ -236,7 +274,6 @@ export default function Testimonials() {
         </section>
       </div>
 
-      {/* 💬 Modal */}
       <Modal
         open={modalOpen}
         onClose={closeModal}
@@ -260,7 +297,6 @@ export default function Testimonials() {
             position: 'relative'
           }}
         >
-          {/* ❌ Close Button */}
           <span
             onClick={closeModal}
             style={{
@@ -278,34 +314,17 @@ export default function Testimonials() {
           >
             &times;
           </span>
-
-          <Typography
-            id="testimonial-modal-title"
-            sx={{ mb: 2, color: '#7BC043', fontWeight: 700, fontSize: '1.5rem', paddingBottom: '30px' }}
-          >
+          <Typography id="testimonial-modal-title" sx={{ mb: 2, color: '#7BC043', fontWeight: 700, fontSize: '1.5rem', paddingBottom: '30px' }}>
             {selectedTestimonial?.author}
           </Typography>
-          <Typography
-            id="testimonial-modal-description"
-            sx={{ lineHeight: '1.6', fontSize: '1.6rem', color: '#ccc' }}
-          >
+          <Typography id="testimonial-modal-description" sx={{ lineHeight: '1.6', fontSize: '1.6rem', color: '#ccc' }}>
             {selectedTestimonial?.quote}
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              mt: 2,
-              fontStyle: 'italic',
-              color: '#ccc',
-              fontSize: '1.2rem',
-              fontWeight: 700
-            }}
-          >
+          <Typography variant="body2" sx={{ mt: 2, fontStyle: 'italic', color: '#ccc', fontSize: '1.2rem', fontWeight: 700 }}>
             {selectedTestimonial?.role}
           </Typography>
         </Box>
       </Modal>
-
 
       <style jsx>{`
         .testimonial-arrow-btn {

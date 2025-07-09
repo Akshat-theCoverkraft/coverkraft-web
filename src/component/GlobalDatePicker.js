@@ -8,7 +8,7 @@ import './GlobalDatePicker.css'; // Assuming you have this CSS file
 const GlobalDatePicker = ({ selectedDate, handleDateChange, label, className, placeholder, width }) => {
   return (
     <div className="global-date-picker">
-      <label className='form-label fw-bold text-light' style={{fontSize:'15px'}} >{label}<span className='text-danger'>*</span></label><br/>
+      <label className='form-label fw-bold text-light' style={{fontSize:'15px', height: "40px"}} >{label}<span className='text-danger'>*</span></label><br/>
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}
@@ -17,7 +17,7 @@ const GlobalDatePicker = ({ selectedDate, handleDateChange, label, className, pl
         placeholder={placeholder}
         popperClassName="custom-datepicker" // Custom class for additional styling
         renderInput={(params) => (
-          <TextField {...params} sx={{ width: '118%' }} className="custom-datepicker-textfield"/>
+          <TextField {...params} sx={{ width: '118%', height: "40%" }} className="custom-datepicker-textfield"/>
         )}
       />
     </div>
