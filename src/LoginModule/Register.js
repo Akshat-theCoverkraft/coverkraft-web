@@ -38,7 +38,7 @@ const Register = () => {
     };
 
     const handleRegister = async () => {
-        const roleID = 3;
+        const roleID = '3';
 
         if (!fullName || !mobileNumber || !email) {
             toast.error("Please fill all required fields");
@@ -62,6 +62,7 @@ const Register = () => {
         formData.append('userPhone', mobileNumber);
         formData.append('userEmail', email);
         formData.append('roleId', roleID);
+        
 
         try {
             await dispatch(registrationCustomer(API_URL, formData));
