@@ -1,18 +1,19 @@
 import { useEffect, useState, useRef } from 'react';
 import {
   Card,
-  CardContent,
   Box,
   Grid,
   Chip,
   Typography,
   Skeleton,
+  Button,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import bgImage from '../../Images/bg.png';
 
 const BlogSection = () => {
   const [latestPosts, setLatestPosts] = useState({});
@@ -32,20 +33,16 @@ const BlogSection = () => {
     const fetchNews = async () => {
       try {
         const res = await axios.get('http://52.52.154.65:5242/news/getAll?isActive=true');
-        const newsData = res.data?.data || [];
+        const sorted = (res.data?.data || [])
+          .filter(item => item.status === 'active')
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-        const activeNews = newsData.filter(item => item.status === 'active');
-        const sorted = activeNews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-        const typesToShow = ['short', 'video', 'news', 'blog'];
-        const latestByType = {};
-
-        for (const post of sorted) {
-          const type = post.type;
-          if (typesToShow.includes(type) && !latestByType[type]) {
-            latestByType[type] = post;
-          }
-        }
+        const latestByType = {
+          videos: sorted.filter(p => p.type === 'video').slice(0, 2),
+        };
+        ['short', 'news', 'blog'].forEach(type => {
+          latestByType[type] = sorted.find(p => p.type === type);
+        });
 
         setLatestPosts(latestByType);
       } catch (err) {
@@ -59,37 +56,17 @@ const BlogSection = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      videoRefs.current.forEach((video) => {
-        if (!video.paused) {
-          video.pause();
-        }
-      });
+    const pauseAll = () => {
+      videoRefs.current.forEach((video) => !video.paused && video.pause());
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    window.addEventListener('scroll', pauseAll);
+    return () => window.removeEventListener('scroll', pauseAll);
   }, []);
 
   const getUrl = (p) =>
     p.videoUrl
-      ? p.videoUrl.startsWith('http')
-        ? p.videoUrl
-        : `http://52.52.154.65:5242/${p.videoUrl}`
-      : p.newsImg.startsWith('http')
-        ? p.newsImg
-        : `http://52.52.154.65:5242/${p.newsImg}`;
-
-  const renderCardHeader = (type) => (
-    <Chip
-      icon={<TravelExploreIcon />}
-      label={type.charAt(0).toUpperCase() + type.slice(1)}
-      size="small"
-      sx={{ bgcolor: '#2f2f2f', color: '#fff', mb: 1 }}
-    />
-  );
+      ? p.videoUrl.startsWith('http') ? p.videoUrl : `http://52.52.154.65:5242/${p.videoUrl}`
+      : p.newsImg.startsWith('http') ? p.newsImg : `http://52.52.154.65:5242/${p.newsImg}`;
 
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
@@ -110,198 +87,180 @@ const BlogSection = () => {
     },
   }));
 
-  const renderMedia = (p) => {
-    const url = getUrl(p);
-    const isVideo = url.match(/\.(mp4|mov|avi|mkv|webm)$/i);
-
-    if (isVideo) {
-      return (
-        <video
-          ref={registerVideo}
-          controls
-          preload="metadata"
-          style={{
-            width: '100%',
-            height: 200,
-            objectFit: 'cover',
-            borderRadius: '20px 20px 0 0',
-          }}
-          onPlay={(e) => {
-            videoRefs.current.forEach((v) => {
-              if (v !== e.target && !v.paused) v.pause();
-            });
-          }}
-        >
-          <source src={url} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      );
-    }
-
-    return (
-      <img
-        src={url}
-        alt={p.subtitle}
-        style={{
-          width: '100%',
-          height: 200,
-          objectFit: 'cover',
-          borderRadius: '20px 20px 0 0',
-        }}
-      />
+  const renderCard = (post, type, isLarge = false) => {
+    if (loading) return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: '20px' }} />;
+    if (!post) return (
+      <Card sx={{ bgcolor: '#212121', borderRadius: '20px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
+        <Typography>No {type} available.</Typography>
+      </Card>
     );
-  };
 
-  const renderPostCard = (type) => {
-    const post = latestPosts[type];
-    const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
-
-    const pluralMap = {
-      blog: 'Blogs',
-      news: 'News',
-      video: 'Videos',
-      short: 'Short',
+    const url = getUrl(post);
+    const isVideo = /\.(mp4|mov|avi|mkv|webm)$/i.test(url);
+    const mediaStyle = {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      borderRadius: '20px',
     };
-    const viewMoreLabel = `View more ${pluralMap[type] || typeLabel + 's'}`;
-
-    if (loading) {
-      return (
-        <Card sx={{ bgcolor: '#212121', borderRadius: '20px', height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <Skeleton variant="rectangular" height={200} sx={{ borderRadius: '10px' }} />
-          <CardContent sx={{ flex: 1 }}>
-            <Skeleton height={30} width="60%" sx={{ mt: 2 }} />
-            <Skeleton height={20} width="90%" />
-            <Skeleton height={20} width="40%" />
-          </CardContent>
-        </Card>
-      );
-    }
-
-    if (!post) {
-      return (
-        <Card sx={{ bgcolor: '#212121', borderRadius: '20px', p: 2, height: '80%', textAlign: 'center', color: '#888' }}>
-          <Typography>No {typeLabel} available.</Typography>
-        </Card>
-      );
-    }
 
     return (
       <Card
         onClick={() => navigate(`/feed/${post.type}/${post._id}`)}
         sx={{
-          bgcolor: '#212121',
+          position: 'relative',
+          height: '100%',
           borderRadius: '20px',
           overflow: 'hidden',
           cursor: 'pointer',
           transition: 'transform 0.3s ease',
-          '&:hover': { transform: 'scale(1.01)' },
-          height: '80%',
-          display: 'flex',
-          flexDirection: 'column',
+          '&:hover': { transform: 'scale(1.02)' },
         }}
       >
-        <Box sx={{ flexShrink: 0 }}>
-          {renderMedia(post)}
+        <Box sx={{ position: 'relative', height: '100%' }}>
+          <Chip
+            icon={<TravelExploreIcon />}
+            label={post.type.toUpperCase()}
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: 10,
+              left: 10,
+              zIndex: 2,
+              bgcolor: '#8AC642',
+              color: '#000',
+              fontWeight: 600
+            }}
+          />
+          {isVideo ? (
+            <video
+              ref={registerVideo}
+              controls
+              preload="metadata"
+              style={{ ...mediaStyle, objectFit: 'contain', backgroundColor: '#000' }}
+              onPlay={(e) => {
+                videoRefs.current.forEach((v) => {
+                  if (v !== e.target && !v.paused) v.pause();
+                });
+              }}
+            >
+              <source src={url} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <img src={url} alt={post.subtitle} style={mediaStyle} />
+          )}
+
+          {(type === 'blog' || type === 'news') && (
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                p: 2,
+                background: 'rgba(0, 0, 0, 0.65)',
+                color: '#fff',
+              }}
+            >
+              <Typography variant={isLarge ? 'h5' : 'h6'} fontWeight={600}>
+                {post.subtitle}
+              </Typography>
+              <Typography variant="caption" display="block" sx={{ mb: 1 }}>
+                {moment(post.createdAt).format('MMM DD, YYYY')}
+              </Typography>
+              <Button
+                size="small"
+                variant="text"
+                sx={{
+                  color: '#8AC642',
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  padding: 0,
+                  fontSize: '1.4rem',
+                  minWidth: 'auto',
+                  '&:hover': {
+                    backgroundColor: 'transparent',
+                    textDecoration: 'underline',
+                  },
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/feed/${post.type}/${post._id}`);
+                }}
+              >
+                Read More →
+              </Button>
+            </Box>
+          )}
         </Box>
-
-        <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <Box>
-            {renderCardHeader(post.type)}
-            <Typography variant="h6" sx={{ color: '#fff', fontWeight: 600, mb: 1 }}>
-              {post.subtitle}
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: '#ccc',
-                mb: 1,
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {post.description}
-            </Typography>
-          </Box>
-
-          <Box>
-            <Typography variant="caption" sx={{ color: '#888' }}>
-              {moment(post.createdAt).format('MMM DD, YYYY')}
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                mt: 1,
-                fontWeight: 'bold',
-                color: '#8AC642',
-                textAlign: 'right',
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/feed/${type}`);
-              }}
-            >
-              {viewMoreLabel} →
-            </Typography>
-          </Box>
-        </CardContent>
       </Card>
     );
   };
 
   return (
-  <Box id="blog" sx={{ backgroundColor: '#111', color: '#fff', px: 4, py: 6, pl: 12, pr: 12 }}>
-    <Typography
-      variant="h3"
-      sx={{ color: '#FF9906', fontWeight: 700, mb: 4, textAlign: 'center' }}
+    <Box
+      id="blog"
+      sx={{
+        backgroundColor: '#111',
+        color: '#fff',
+        px: 4,
+        py: 6,
+        pl: 12,
+        pr: 12,
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        scrollMarginTop: '100px'
+      }}
     >
-      Blogs and News
-    </Typography>
+      <Typography
+        variant="h3"
+        sx={{
+          color: '#FF9906',
+          fontWeight: 700,
+          mb: 4,
+          textAlign: 'center'
+        }}
+      >
+        Blogs And News
+      </Typography>
 
-    <Grid container spacing={4}>
-      {/* LEFT COLUMN */}
-      <Grid item xs={12} md={6}>
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ color: '#FF9906', mb: 1, fontWeight: 600 }}>
-            Shorts
-          </Typography>
-          <Box sx={{ height: 500 }}>{renderPostCard('short')}</Box>
-        </Box>
-        <Box>
-          <Typography variant="h6" sx={{ color: '#FF9906', mb: 1, fontWeight: 600 }}>
-            Videos
-          </Typography>
-          <Box sx={{ height: 500 }}>{renderPostCard('video')}</Box>
-        </Box>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={5}>
+          <Box sx={{ height: '500px' }}>
+            {renderCard(latestPosts.short, 'short', true)}
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Box sx={{ height: '500px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ height: '240px' }}>
+              {renderCard(latestPosts.news, 'news')}
+            </Box>
+            <Box sx={{ height: '240px' }}>
+              {renderCard(latestPosts.blog, 'blog')}
+            </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Box sx={{ height: '500px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ height: '240px' }}>
+              {renderCard(latestPosts.videos?.[0], 'video')}
+            </Box>
+            <Box sx={{ height: '240px' }}>
+              {renderCard(latestPosts.videos?.[1], 'video')}
+            </Box>
+          </Box>
+        </Grid>
       </Grid>
 
-      {/* RIGHT COLUMN */}
-      <Grid item xs={12} md={6}>
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ color: '#FF9906', mb: 1, fontWeight: 600 }}>
-            News
-          </Typography>
-          <Box sx={{ height: 500 }}>{renderPostCard('news')}</Box>
-        </Box>
-        <Box>
-          <Typography variant="h6" sx={{ color: '#FF9906', mb: 1, fontWeight: 600 }}>
-            Blogs
-          </Typography>
-          <Box sx={{ height: 500 }}>{renderPostCard('blog')}</Box>
-        </Box>
-      </Grid>
-    </Grid>
-
-    <Box textAlign="center" mt={6}>
-      <StyledButton onClick={() => navigate('/feed/blog')}>
-        VIEW ALL
-      </StyledButton>
+      <Box textAlign="center" mt={4}>
+        <StyledButton onClick={() => navigate('/feed/blog')}>
+          VIEW ALL
+        </StyledButton>
+      </Box>
     </Box>
-  </Box>
-);
-
+  );
 };
 
 export default BlogSection;

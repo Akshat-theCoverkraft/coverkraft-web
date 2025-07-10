@@ -12,7 +12,7 @@ import { Carousel } from 'react-responsive-carousel';
 import API_URL from '../../ServiceModule/Service';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
-const CARD_WIDTH = 320;
+const CARD_WIDTH = 420;
 const CARD_HEIGHT = 180;
 
 const truncateText = (text, maxLength = 100) =>
@@ -44,7 +44,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           width: CARD_HEIGHT + 15,
           height: CARD_HEIGHT + 15,
           borderRadius: '50%',
-          backgroundColor: '#5A9F1D',
+          backgroundColor: '#33a26e',
           zIndex: 1,
         }}
       />
@@ -191,7 +191,8 @@ const WhyCoverKraft = () => {
   const groupedData = groupCards();
 
   return (
-    <Box id="card" sx={{ backgroundColor: '#121212', px: 2, py: 6 }}>
+    <Box id="card" sx={{ backgroundColor: '#121212', px: 2, py: 6,scrollMarginTop: '100px'
+ }}>
       <Box textAlign="center" mb={4}>
         <Typography variant="subtitle1" sx={{ color: '#f39c12', fontSize: '2.2rem', fontWeight: 600 }}>
           Tips & Tricks
