@@ -209,3 +209,12 @@ position: relative !important;}
 .custom-pagination .dot.active {
   background-color: #ffa500 !important;
 }
+.carousel__slide-item-media {
+  max-height: 300px; /* or whatever height works for your design */
+  min-height: 200px;
+  transition: transform 0.3s ease;
+}
+
+.carousel__slide-item-media:hover {
+  transform: scale(1.02);
+}

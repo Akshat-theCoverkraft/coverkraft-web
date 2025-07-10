@@ -108,6 +108,12 @@ const Carousel1 = () => {
                       controls
                       className="carousel__slide-item-media"
                       onPlay={() => handleVideoPlay(idx)}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        objectPosition: 'center'
+                      }}
                     />
                   ) : (
                     <img

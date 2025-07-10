@@ -124,7 +124,8 @@ setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
 
   return (
     <>
-      <div id="testimonials" className="position-relative mb-4 px-3" style={{ minHeight: '100px', paddingRight: '20%', paddingLeft: '20%' }}>
+      <div id="testimonials" className="position-relative mb-4 px-3" style={{ minHeight: '100px', paddingRight: '20%', paddingLeft: '20%', scrollMarginTop: '100px'
+ }}>
         <div className="text-center" style={{ maxWidth: '100%', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
           <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
             Testimonials
