@@ -71,6 +71,8 @@ const GmailSyncPage = () => {
             }
 
             const result = await signInWithPopup(auth, provider);
+
+            console.lof('result', result)
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential?.accessToken;
             const user = result?.user;
@@ -99,10 +101,9 @@ const GmailSyncPage = () => {
             console.log("Authenticated user:", userEmail);
             await fetchGmailMessages(token, userEmail, userIds);
         } catch (error) {
-            console.error("Google Sign-in error:", error);
             showToast({
                 type: 'error',
-                message: `Authentication failed: ${error.message}`
+                message: `Please select email account to start sync.`
             });
         } finally {
             setSigningIn(false);
@@ -285,6 +286,9 @@ const GmailSyncPage = () => {
                         collectedFiles.push(result.value);
                     }
                 });
+
+
+                console.log(`Collected ${collectedFiles.length} valid PDF attachments :`, collectedFiles);
 
                 if (collectedFiles.length > 0) {
                     await handleUploadDocFromGmail(collectedFiles, userEmail, userId);
