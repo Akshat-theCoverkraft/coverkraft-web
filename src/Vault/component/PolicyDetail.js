@@ -293,7 +293,7 @@ const PolicyDetail = ({ policyId }) => {
       .then(() => {
         const message = action === "archive" ? "Policy archived successfully" :
           action === "unarchive" ? "Policy removed from archive successfully" :
-            "Policy renewed successfully";
+            "Feature Comming Soon";
         toast.success(message);
       })
       .catch(() => {

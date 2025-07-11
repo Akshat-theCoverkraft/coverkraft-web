@@ -57,7 +57,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
   }, [dispatch, userId]);
 
   useEffect(() => {
-    if (userbyId.getUserById && userbyId.getUserById.data) {
+    if (userbyId.getUserById?.data) {
       const data = userbyId.getUserById.data;
       setSwitchStates({
         userSms: data.userSms,
@@ -71,10 +71,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
   const handleSwitchUpdate = (switchName) => async (event) => {
     const newChecked = event.target.checked;
-    setSwitchStates((prevStates) => ({
-      ...prevStates,
-      [switchName]: newChecked,
-    }));
+    setSwitchStates((prev) => ({ ...prev, [switchName]: newChecked }));
     setLoading(true);
 
     const formData = new FormData();
@@ -99,15 +96,10 @@ const Communication = ({ communication, onCommunicationClose }) => {
     formData.append("_id", userId);
     formData.append("userFrequent", newValue);
 
-    try {
-      dispatch(updateUser(API_URL, formData))
-        .then(() => toast.success("Successfully Updated"))
-        .catch(() => toast.error("Error in updating"));
-    } catch (error) {
-      console.error("Error updating the radio button state", error);
-    } finally {
-      setLoading(false);
-    }
+    dispatch(updateUser(API_URL, formData))
+      .then(() => toast.success("Successfully Updated"))
+      .catch(() => toast.error("Error in updating"))
+      .finally(() => setLoading(false));
   };
 
   const controlProps = (item) => ({
@@ -118,6 +110,19 @@ const Communication = ({ communication, onCommunicationClose }) => {
     inputProps: { "aria-label": item },
   });
 
+  const contactMethods = [
+    { icon: sms, label: "SMS", key: "userSms" },
+    { icon: call, label: "Call", key: "userCall" },
+    { icon: wtsp, label: "Whatsapp", key: "userWhatsapp" },
+    { icon: email, label: "Email", key: "userEmail" },
+  ];
+
+  const frequencyOptions = [
+    { value: "1", label: "Monthly" },
+    { value: "2", label: "Yearly" },
+    { value: "3", label: "Never" },
+  ];
+
   return (
     <Drawer
       anchor="right"
@@ -127,106 +132,83 @@ const Communication = ({ communication, onCommunicationClose }) => {
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
           color: THEME_COLOR.COLOR,
-          width: isMobile ? "100vw" : "30vw",
+          width: isMobile ? "100vw" : "480px",
+          maxWidth: "100vw",
+          boxSizing: "border-box",
         },
       }}
     >
-      <ToastContainer position="top-center"
-  style={{ zIndex: 99999 }} />
+      <ToastContainer position="top-center" style={{ zIndex: 99999 }} />
+
       <Box
         sx={{
           height: "100vh",
-          overflowY: "hidden",
-          overflowX: "hidden",
-          paddingBottom: 3,
-          paddingX: isMobile ? 2 : 5,
-
+          overflow: "hidden",
+          padding: isMobile ? 2 : 3,
+          display: "flex",
+          flexDirection: "column",
+          gap: 4,
         }}
-        role="presentation"
       >
-        <Grid container spacing={2} className="d-flex my-3" alignItems="center">
+        <Grid container spacing={2} alignItems="center">
           <Grid item>
-            <img src={backArrow} alt="Back" onClick={onCommunicationClose} style={{ cursor: "pointer" }} />
+            <img src={backArrow} alt="Back" onClick={onCommunicationClose} style={{ cursor: "pointer", paddingLeft: "10px" }} />
           </Grid>
           <Grid item>
             <Typography variant={isMobile ? "h6" : "h4"}>Communication Preferences</Typography>
           </Grid>
         </Grid>
 
-        <Card className="p-3 rounded-5 shadow mb-5 pr-5">
-          <h3>Policy Updates</h3>
-          <p style={{ color: "#fff" }}>
-            Policy Updates: Important updates for your purchased policies — payment, issuance, renewal, and reminders.
-          </p>
-
-          {[{ icon: sms, label: "SMS", key: "userSms" }, { icon: call, label: "Call", key: "userCall" }, { icon: wtsp, label: "Whatsapp", key: "userWhatsapp" }, {icon: email, label:"Email", key: "userEmail"}].map((item) => (
-            <Grid
-              container
-              key={item.key}
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ my: 2, paddingRight: " 20%" }}
-            >
+        <Card sx={{ borderRadius: 4, marginRight:"30px", paddingRight: "30px" }}>
+          <Typography variant="h6" gutterBottom>Policy Updates</Typography>
+          <Typography variant="body2" sx={{ color: "#bbb", mb: 2 }}>
+            Important updates for your purchased policies — payment, issuance, renewal, and reminders.
+          </Typography>
+          {contactMethods.map((item) => (
+            <Grid container key={item.key} alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
               <Grid item display="flex" alignItems="center">
-                <img src={item.icon} height={30} alt={`${item.label} icon`} style={{ marginRight: "16px" }} />
+                <img src={item.icon} height={24} alt={item.label} style={{ marginRight: 12 }} />
                 <Typography>{item.label}</Typography>
               </Grid>
               <Grid item>
-                <PinkSwitch
-                  {...label}
-                  checked={switchStates[item.key]}
-                  onChange={handleSwitchUpdate(item.key)}
-                />
+                <PinkSwitch {...label} checked={switchStates[item.key]} onChange={handleSwitchUpdate(item.key)} />
               </Grid>
             </Grid>
           ))}
         </Card>
 
-        <Card className="p-3 rounded-5 shadow" sx={{ p: "20%" }}>
-          <h3>Frequent Communication</h3>
-          <p style={{ color: "#fff", paddingRight: "20%" }}>
+        <Card sx={{ p: 3, borderRadius: 4 }}>
+          <Typography variant="h6" gutterBottom>Frequent Communication</Typography>
+          <Typography variant="body2" sx={{ color: "#bbb", mb: 2 }}>
             Manage your communication preferences easily and stay informed your way.
-          </p>
-          {[{ value: "1", label: "Monthly" }, { value: "2", label: "Yearly" }, { value: "3", label: "Never" }].map((option) => (
-            <Grid container key={option.value} alignItems="center" justifyContent="space-between" className="mb-2  mr-5" style={{ paddingRight: "20%" }}>
-              <Grid item>
-                <Typography fontWeight={500}>{option.label}</Typography>
-              </Grid>
-              <Grid item>
-                <PinkSwitch
-                  {...controlProps(option.value)}
-                  sx={{
-                    color: "#8AC642",
-                    "&.Mui-checked": {
-                      color: "#8AC642",
-                      paddingRight: "50%",
-                    },
-                  }}
-                />
-              </Grid>
+          </Typography>
+          {frequencyOptions.map((option) => (
+            <Grid container key={option.value} alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+              <Typography>{option.label}</Typography>
+              <PinkSwitch {...controlProps(option.value)} />
             </Grid>
           ))}
         </Card>
-
-        {loading && (
-          <Box
-            sx={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              zIndex: 1300,
-            }}
-          >
-            <CircularProgress color="primary" />
-          </Box>
-        )}
       </Box>
+
+      {loading && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1300,
+          }}
+        >
+          <CircularProgress color="primary" />
+        </Box>
+      )}
     </Drawer>
   );
 };
