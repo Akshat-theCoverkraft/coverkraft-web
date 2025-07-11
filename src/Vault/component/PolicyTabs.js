@@ -60,7 +60,7 @@ const useStyles = makeStyles(() => ({
   },
   filterButton: {
     backgroundColor: "#1a1a1a",
-    color: "#fff",
+    color: "#fff!important",
     border: "1px solid #444",
     borderRadius: "8px",
     padding: "12px 16px",
@@ -71,7 +71,10 @@ const useStyles = makeStyles(() => ({
     "&:hover": {
       backgroundColor: "#333",
       borderColor: "#555"
-    }
+    },
+    "&.Mui-selected": {
+      color: "#fff", 
+    },
   },
   filterMenu: {
     "& .MuiPaper-root": {

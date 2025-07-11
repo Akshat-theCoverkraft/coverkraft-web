@@ -298,7 +298,7 @@ const exportToExcel = async () => {
           <div className="d-flex justify-content-between align-items-start flex-wrap">
             <div className="d-flex flex-column">
               <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '16px' }}>
-                <Link className="text-decoration-none" style={{ fontSize: '21px', fontWeight: 'bold', color: "#A5A5A5", marginLeft: 55 }} href="#">
+                <Link className="text-decoration-none" style={{ fontSize: '21px', fontWeight: 'bold', color: "#A5A5A5", marginLeft: 55 }} href="/vault">
                   Policy Vault
                 </Link>
                 <Typography style={{ fontSize: "21px", fontWeight: "bolder", color: THEME_COLOR.COLOR }}>

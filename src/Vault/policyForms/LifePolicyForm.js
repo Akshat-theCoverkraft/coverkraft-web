@@ -413,6 +413,21 @@ const LifePolicyForm = () => {
                                 startDate={policyRenewalDate}
                                 placeholderText="MM/DD/YYYY"
                                 sx={{ width: "100%" }}
+                                slotProps={{
+                                  textField: {
+                                    InputProps: {
+                                      sx: {
+                                        color: "#fff",
+                                        "&::placeholder": {
+                                          color: "#fff",
+                                        },
+                                      },
+                                    },
+                                    InputLabelProps: {
+                                      sx: { color: "#fff" },
+                                    },
+                                  },
+                                }}
                               />
                             </DemoContainer>
                           </LocalizationProvider>
@@ -444,6 +459,21 @@ const LifePolicyForm = () => {
                                 startDate={maturityDate}
                                 placeholderText="MM/DD/YYYY"
                                 sx={{ width: "100%" }}
+                                slotProps={{
+                                  textField: {
+                                    InputProps: {
+                                      sx: {
+                                        color: "#fff",
+                                        "&::placeholder": {
+                                          color: "#fff",
+                                        },
+                                      },
+                                    },
+                                    InputLabelProps: {
+                                      sx: { color: "#fff" },
+                                    },
+                                  },
+                                }}
                               />
                             </DemoContainer>
                           </LocalizationProvider>
@@ -476,7 +506,22 @@ const LifePolicyForm = () => {
                             selectsStart
                             startDate={dob}
                             placeholderText="MM/DD/YYYY"
-                            sx={{ width: "100%" }}
+                            sx={{ width: "100%", color: "#fff" }}
+                            slotProps={{
+                              textField: {
+                                InputProps: {
+                                  sx: {
+                                    color: "#fff",
+                                    "&::placeholder": {
+                                      color: "#fff",
+                                    },
+                                  },
+                                },
+                                InputLabelProps: {
+                                  sx: { color: "#fff" },
+                                },
+                              },
+                            }}
                           />
                         </DemoContainer>
                       </LocalizationProvider>
@@ -527,17 +572,6 @@ const LifePolicyForm = () => {
                         label="Accidental Disability Coverage"
                         value={accidentalDisability}
                         onChange={(e) => setAccidentalDisability(e.target.value)}
-                      />
-                    </Box>
-
-                    {/* Action Buttons - Left Column */}
-                    <Box sx={{ marginTop: 4 }}>
-                      <Button
-                        text={mode === "edit" ? "Update Policy" : "Save Policy"}
-                        size="lg"
-                        block={true}
-                        onClick={handleSubmit}
-                        disabled={loading}
                       />
                     </Box>
                   </Box>
@@ -616,19 +650,30 @@ const LifePolicyForm = () => {
                     </Box>
 
                     {/* Action Buttons - Right Column */}
-                    <Box sx={{ marginTop: 9 }}>
-                      <Button
-                        text="Cancel"
-                        size="lg"
-                        block={true}
-                        onClick={handleCancel}
-                        style={{
-                          backgroundColor: "transparent",
-                          border: "2px solid #666",
-                          color: "#fff"
-                        }}
-                      />
-                    </Box>
+                    <Grid container spacing={4} sx={{ display: "flex", alignItems: "stretch" }}>
+                      <Box sx={{ marginTop: 1, marginRight: 4, marginLeft: 6 }}>
+                        <Button
+                          text="Cancel"
+                          size="lg"
+                          block={true}
+                          onClick={handleCancel}
+                          style={{
+                            backgroundColor: "transparent",
+                            border: "2px solid #666",
+                            color: "#fff"
+                          }}
+                        />
+                      </Box>
+                      <Box sx={{ marginTop: 1 }}>
+                        <Button
+                          text={mode === "edit" ? "Update Policy" : "Save Policy"}
+                          size="lg"
+                          block={true}
+                          onClick={handleSubmit}
+                          disabled={loading}
+                        />
+                      </Box>
+                    </Grid>
                   </Box>
                 </Grid>
               </Grid>

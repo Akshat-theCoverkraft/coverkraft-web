@@ -243,7 +243,7 @@ function Feeds() {
                     textTransform: "none",
                     fontSize: "16px",
                     fontWeight: 600,
-                    color: selectedTab === value ? "#FFFFFF" : "#fff",
+                    color: "#FFFFFF",
                     backgroundColor: selectedTab === value ? "#8BC642" : "transparent",
                     borderRadius: "30px",
                     minHeight: "48px",
@@ -252,6 +252,9 @@ function Feeds() {
                     "&:hover": {
                       backgroundColor: selectedTab === value ? "#8BC642" : "rgba(223, 218, 218, 0.1)",
                       transform: "translateY(-1px)",
+                    },
+                    "&.Mui-selected": {
+                      color: "#fff", 
                     },
                   }}
                 />
@@ -414,11 +417,11 @@ function Feeds() {
                       variant="body2"
                       sx={{
                         color: "rgba(255, 255, 255, 0.8)",
-                        lineHeight: 1.6,
+                        lineHeight: 1.1,
                         fontSize: "14px",
                         flex: 1,
                         display: "-webkit-box",
-                        WebkitLineClamp: 2,
+                        WebkitLineClamp: 1,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                       }}
