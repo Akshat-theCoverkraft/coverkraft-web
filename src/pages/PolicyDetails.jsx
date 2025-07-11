@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import parse from "html-react-parser"; // ← Import parser
+import parse from "html-react-parser";
 import API_URL from "../ServiceModule/Service";
 import Button from "../component/Button";
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
+import { toast } from "react-toastify";
 
 const getImageForType = (type) => {
   if (!type) return require("../Images/img_lifecard.png");
@@ -46,93 +47,131 @@ const PolicyDetails = () => {
       .catch(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div style={{ padding: 50, color: "#fff" }}>Loading...</div>;
-  if (!policy) return <div style={{ padding: 50, color: "#fff" }}>No data found</div>;
+  if (loading)
+    return <div style={{ padding: 50, color: "#fff" }}>Loading...</div>;
+  if (!policy)
+    return <div style={{ padding: 50, color: "#fff" }}>No data found</div>;
 
   const bannerImage = getImageForType(policy.policyType);
 
   return (
     <>
       <Navbar />
-      <div style={styles.pageWrapper}>
-        {/* Banner */}
-        <div style={styles.bannerWrapper}>
-          <img src={bannerImage} alt="Policy" style={styles.bannerImage} />
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          background: "linear-gradient(135deg, #1e1e1e, #2c2c2c)",
+        }}
+      >
+        {/* Content Section */}
+        <div style={{ flex: 1, overflowY: "auto" }}>
+          <div
+            style={{
+              padding: "2em",
+              maxWidth: "900px",
+              margin: "0 auto",
+              fontFamily: "'DM Sans', sans-serif",
+              color: "#ccc",
+              borderRadius: "12px",
+              boxShadow: "0 0 20px rgba(0,0,0,0.5)",
+              justifyContent: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              paddingBottom: "2em",
+              marginTop: "2em",
+              marginBottom: "2em",
+            }}
+          >
+            {/* Banner */}
+            <div
+              style={{
+                width: "100%",
+                maxHeight: "400px",
+                overflow: "hidden",
+                borderRadius: "35px",
+                background: "#111",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "2em",
+              }}
+            >
+              <img
+                src={bannerImage}
+                alt="Policy"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  borderRadius: "35px",
+                }}
+              />
+            </div>
+
+            {/* Title */}
+            <h1
+              style={{
+                fontSize: "2.4em",
+                fontWeight: "800",
+                color: "#fff",
+                marginBottom: "1em",
+              }}
+            >
+              {policy.policyType}
+            </h1>
+
+            {/* Description */}
+            <div
+              style={{
+                fontSize: "1.2em",
+                color: "#ccc",
+                lineHeight: "1.8",
+                textAlign: "left",
+                maxWidth: "100%",
+                marginBottom: "2em",
+              }}
+            >
+              {policy.details
+                ? parse(policy.details)
+                : "No description available."}
+            </div>
+          </div>
         </div>
 
-        {/* Title */}
-        <h1 style={styles.policyTitle}>{policy.policyType}</h1>
-
-        {/* Description */}
-        <div style={styles.policyDescription}>
-          {policy.details ? parse(policy.details) : "No description available."}
-        </div>
-
-        <Button
-          text={"Buy Now"}
-          size="lg"
-          block={true}
-          onClick={() => {
-            alert("Feature coming soon!");
+        {/* Sticky Buy Button */}
+        <div
+          style={{
+            position: "sticky",
+            bottom: 0,
+            background: "#1e1e1e",
+            padding: "1em 0",
+            boxShadow: "0 -4px 10px rgba(0,0,0,0.4)",
+            zIndex: 10,
+            display: "flex",
+            justifyContent: "center",
           }}
-        />
+        >
+          <div style={{ width: "100%", maxWidth: "900px", padding: "0 2em" }}>
+            <Button
+              text={"Buy Now"}
+              size="lg"
+              block={true}
+              onClick={() => {
+                toast.info("Feature coming soon!");
+              }}
+            />
+          </div>
+        </div>
+
       </div>
       <Footer />
     </>
   );
-};
-
-const styles = {
-  pageWrapper: {
-    padding: "2em",
-    maxWidth: "900px",
-    margin: "0 auto",
-    fontFamily: "'DM Sans', sans-serif",
-    background: "linear-gradient(135deg, #1e1e1e, #2c2c2c)",
-    color: "#ccc",
-    borderRadius: "12px",
-    boxShadow: "0 0 20px rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    textAlign: "center",
-    overflowY: "auto",
-    paddingBottom: "2em",
-    marginTop: "2em",
-    marginBottom: "2em",
-  },
-  bannerWrapper: {
-    width: "100%",
-    maxHeight: "400px",
-    overflow: "hidden",
-    borderRadius: "35px",
-    background: "#111",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: "2em",
-  },
-  bannerImage: {
-    width: "100%",
-    height: "100%",
-    objectFit: "contain",
-    borderRadius: "35px",
-  },
-  policyTitle: {
-    fontSize: "2.4em",
-    fontWeight: "800",
-    color: "#fff",
-    marginBottom: "1em",
-  },
-  policyDescription: {
-    fontSize: "1.2em",
-    color: "#ccc",
-    lineHeight: "1.8",
-    textAlign: "left",
-    maxWidth: "100%",
-    marginBottom: "2em",
-  },
 };
 
 export default PolicyDetails;
