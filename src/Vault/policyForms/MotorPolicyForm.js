@@ -94,18 +94,16 @@ const MotorPolicyForm = () => {
     };
 
     const handleStartDateChange = (date) => {
-        console.log('Start date changed:', date); // Add this line
+        console.log('Start date changed:', date); 
 
         setPolicyStartDate(date);
     };
     const handleEndDateChange = (date) => {
-        console.log('End date changed:', date); // Add this line
+        console.log('End date changed:', date); 
         setPolicyEndDate(date);
     };
     useEffect(() => {
-        // Calculate progress whenever input fields change
         const progress = calculateProgress();
-        // Handle progress value, you can store it in state or use directly
     }, [
         policyNumber,
         policyStartDate,
@@ -122,7 +120,7 @@ const MotorPolicyForm = () => {
     ]);
     const handleSubmit = async () => {
         try {
-            setLoading(true); // Set loading state to true to disable the button
+            setLoading(true); 
 
             const payload = {
                 policyNumber,
@@ -174,100 +172,8 @@ const MotorPolicyForm = () => {
             payload.idv
         );
     };
-
-    // const createPolicy = (payload) => {
-    //     console.log('================')
-
-    //     const formData = new FormData();
-
-    //     formData.append('userId', userId);
-    //     formData.append('documentId', documentId);
-    //     formData.append('policyType', responseData?.policyType.toLowerCase());
-    //     formData.append('policyNumber', policyNumber);
-    //     formData.append('policyStartDate', policyStartDate);
-    //     formData.append('policyEndDate', policyEndDate);
-    //     formData.append('premiumPaid', premiumPaid);
-    //     formData.append('netPremium', netPremium);
-    //     formData.append('insuredName', insuredName);
-    //     formData.append('insuranceCompany', insuredCompany);
-    //     formData.append('registrationNumber', registrationNumber);
-    //     formData.append('registrationYear', registrationYear);
-    //     formData.append('assetType', assetType);
-    //     formData.append('vehicleEngineNumber', vehicleEngineNumber);
-    //     formData.append('make', make);
-    //     formData.append('model', model);
-    //     formData.append('ncpPercentage', ncb);
-    //     formData.append('tpPremium', tpPremium);
-    //     formData.append('odPremium', odPremium)
-    //     formData.append('idv', idv);
-    //     dispatch(saveDocument(API_URL, formData))
-    //     .then((response) => {
-    //         if (response && response.status === 200) { // Ensure the response is successful
-    //             toast.success("Successfully Created");
-    //             navigate('/vault');
-    //         } else {
-    //             throw new Error("Failed to create policy");
-    //         }
-    //     })
-    //         .catch((error) => {
-    //             toast.error("Error creating policy");
-    //             console.log("toast", toast.error);
-    //         });
-    // }
-    // const createPolicy = (payload) => {
-    //     console.log('================')
-
-    //     const formData = new FormData();
-
-    //     formData.append('userId', userId);
-    //     formData.append('documentId', documentId);
-    //     formData.append('policyType', responseData?.policyType.toLowerCase());
-    //     formData.append('policyNumber', policyNumber);
-    //     formData.append('policyStartDate', policyStartDate);
-    //     formData.append('policyEndDate', policyEndDate);
-    //     formData.append('premiumPaid', premiumPaid);
-    //     formData.append('netPremium', netPremium);
-    //     formData.append('insuredName', insuredName);
-    //     formData.append('insuranceCompany', insuredCompany);
-    //     formData.append('registrationNumber', registrationNumber);
-    //     formData.append('registrationYear', registrationYear);
-    //     formData.append('assetType', assetType);
-    //     formData.append('vehicleEngineNumber', vehicleEngineNumber);
-    //     formData.append('make', make);
-    //     formData.append('model', model);
-    //     formData.append('ncpPercentage', ncb);
-    //     formData.append('tpPremium', tpPremium);
-    //     formData.append('odPremium', odPremium);
-    //     formData.append('idv', idv);
-    //     try {
-    //         const response =  axios.post(`${API_URL}policy/create`, formData, {
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}`, 
-    //                 'Content-Type': 'multipart/form-data', 
-    //             },
-    //         });
-    //         console.log('respnse bhi btaoo',response)
-
-    //         if (response && response.status === 200) {
-
-    //             toast.success("Successfully Created");
-    //             navigate('/vault');
-    //         } else {
-    //             console.log('hello error',response.response.status)
-    //             toast.error('Error creating policy')
-    //         }
-    //     } catch (error) {
-    //         const errorMessage = error.response?.data?.message || "Error creating policy";
-    //         toast.error(`Error: ${errorMessage}`);
-    //         console.error("Error:", errorMessage);
-    //     }
-    // }
-
     const createPolicy = async (payload) => {
-        console.log('================')
-
         const formData = new FormData();
-
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', responseData?.policyType.toLowerCase());
@@ -288,7 +194,6 @@ const MotorPolicyForm = () => {
         formData.append('tpPremium', tpPremium);
         formData.append('odPremium', odPremium);
         formData.append('idv', idv);
-
         try {
             const response = await axios.post(`${API_URL}policy/create`, formData, {
                 headers: {
@@ -310,10 +215,7 @@ const MotorPolicyForm = () => {
             console.error("Error:", errorMessage);
         }
     }
-
-
     const updatePolicy = (payload) => {
-        console.log('================')
         const formData = new FormData();
         formData.append('_id', policyId)
         formData.append('userId', userId);
@@ -345,12 +247,9 @@ const MotorPolicyForm = () => {
                 toast.error("Error updating policy");
             });
     }
-
     const handleCancel = () => {
         navigate('/vault')
     }
-
-
     return (
         <div>
             <Navbar />
@@ -415,42 +314,24 @@ const MotorPolicyForm = () => {
                                         }}
                                         required
                                     />
-                                    {policyDetails?.insuredCompany || responseData?.insuranceCompany ? (
-                                        // If backend has provided it, show read-only field
-                                        <CustomInput
-                                            type="text"
-                                            label="Insurance Company"
-                                            value={insuredCompany}
-                                            onChange={() => { }}
-                                            readOnly
-                                            disabled
-                                            required
-                                        />
-                                    ) : (
-                                        // Else show dropdown to let user select
-                                        <InsuranceDropdown
-                                            onCompanySelect={(companyId) => setInsuredCompany(companyId)}
-                                            initialValue={insuredCompany}
-                                        />
-                                    )}
-                                    {policyDetails?.insuredCompany || responseData?.insuranceCompany ? (
-                                        // If backend has provided it, show read-only field
-                                        <CustomInput
-                                            type="text"
-                                            label="Insurance Company"
-                                            value={insuredCompany}
-                                            onChange={() => { }}
-                                            readOnly
-                                            disabled
-                                            required
-                                        />
-                                    ) : (
-                                        // Else show dropdown to let user select
-                                        <InsuranceDropdown
-                                            onCompanySelect={(companyId) => setInsuredCompany(companyId)}
-                                            initialValue={insuredCompany}
-                                        />
-                                    )}
+                                    <Box>
+                      {(policyDetails?.insuredCompany || responseData?.insuranceCompany) ? (
+                        <CustomInput
+                          type="text"
+                          label="Insurance Company"
+                          value={insuredCompany}
+                          readOnly
+                          disabled
+                          required
+                        />
+                      ) : (
+                        <InsuranceDropdown
+                          onCompanySelect={(companyId) => setInsuredCompany(companyId)}
+                          initialValue={insuredCompany}
+                        />
+                      )}
+                    </Box>
+                                    
                                     <CustomInput
                                         type="text"
                                         label="Registration Number"

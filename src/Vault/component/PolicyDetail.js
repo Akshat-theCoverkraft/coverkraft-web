@@ -405,7 +405,7 @@ const PolicyDetail = ({ policyId }) => {
             style={{
               justifyContent: "center",
               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-              height: "80%",
+              height: "78%",
               minHeight: "100%",
               marginBottom: "5vh",
               backgroundColor: "#121212",
