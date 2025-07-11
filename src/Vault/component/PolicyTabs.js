@@ -49,8 +49,8 @@ const useStyles = makeStyles(() => ({
       "&.Mui-focused fieldset": { border: "none" },
       height: "48px"
     },
-    "& .MuiInputBase-input": { 
-      color: "#fff", 
+    "& .MuiInputBase-input": {
+      color: "#fff",
       fontSize: "1.4rem",
       padding: "12px 14px"
     },
@@ -151,7 +151,7 @@ const SearchAndFilter = ({ searchTerm, onSearchChange, selectedTypeFilter, onTyp
         }}
         placeholder="Search by Name, Policy number, or Policy type..."
       />
-      
+
       <Button
         className={classes.filterButton}
         onClick={(e) => setFilterAnchorEl(e.currentTarget)}
@@ -406,7 +406,7 @@ export default function PolicyTabs({
   const [selectedPolicyId, setSelectedPolicyId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState("all");
-  
+
   const classes = useStyles();
   const itemsPerPage = 3;
 
