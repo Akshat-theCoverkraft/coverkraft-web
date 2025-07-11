@@ -5,18 +5,19 @@ import "slick-carousel/slick/slick-theme.css";
 import './CSS/Testimonail.css';
 import quote from '../../Images/quote-testimonial.png';
 import { THEME_COLOR } from "../../constants";
-import { Typography, Modal, Box, Skeleton, Grid } from "@mui/material";
+import { Typography, Modal, Box, Grid } from "@mui/material";
 import TRight from "../../Images/TRight.png";
 import TLeft from "../../Images/TLeft.png";
 import API_URL from "../../ServiceModule/Service";
+import Loader from "../../component/Loader";
 
 export default function Testimonials() {
-const [slidesToShow, setSlidesToShow] = useState(1);
-  const [carouselKey, setCarouselKey] = useState(Date.now());
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
+  const [playingVideo, setPlayingVideo] = useState(null);
+
   const sliderRef = useRef();
 
   useEffect(() => {
@@ -39,15 +40,6 @@ const [slidesToShow, setSlidesToShow] = useState(1);
     fetchTestimonials();
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
-      setCarouselKey(Date.now());
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const openModal = (testimonial) => {
     setSelectedTestimonial(testimonial);
     setModalOpen(true);
@@ -58,29 +50,34 @@ setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
     setSelectedTestimonial(null);
   };
 
-  const pauseAllVideos = () => {
-    const videos = document.querySelectorAll("video");
+  const pauseAllVideos = (e) => {
+    if (playingVideo) {
+      playingVideo.pause();
+      setPlayingVideo(null);
+    }
+    const videos = document.querySelectorAll('video');
     videos.forEach(video => {
-      if (!video.paused) video.pause();
+      if (video !== e.target) {
+        video.pause();
+      }
     });
   };
 
+  const handleVideoPlay = (e) => {
+  if (playingVideo && playingVideo !== e.target) {
+    playingVideo.pause();
+  }
+  setPlayingVideo(e.target);
+};
+
   const settings = {
-    infinite: testimonials.length > 1,
-    slidesToShow,
-    slidesToScroll: 1,
+    infinite: testimonials.length > 2,
+    slidesToShow: 2,
+    slidesToScroll: 2,
     autoplay: false,
     arrows: false,
     dots: true,
     afterChange: pauseAllVideos,
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-        },
-      }
-    ]
   };
 
   const renderMediaSection = (testimonial) => {
@@ -98,7 +95,11 @@ setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
     if (hasVideo) {
       return (
         <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
-          <video controls style={mediaStyle}>
+          <video 
+            controls 
+            style={mediaStyle}
+            onPlay={handleVideoPlay}
+          >
             <source src={testimonial.media.url} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -124,9 +125,8 @@ setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
 
   return (
     <>
-      <div id="testimonials" className="position-relative mb-4 px-3" style={{ minHeight: '100px', paddingRight: '20%', paddingLeft: '20%', scrollMarginTop: '100px'
- }}>
-        <div className="text-center" style={{ maxWidth: '100%', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+      <div id="testimonials" className="position-relative mb-4 px-3" style={{ minHeight: '100px', paddingRight: '20%', paddingLeft: '20%', scrollMarginTop: '100px' }}>
+        <div className="text-center" style={{ maxWidth: '80%', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
           <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
             Testimonials
           </Typography>
@@ -143,7 +143,7 @@ setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
               <Grid container spacing={2}>
                 {[1, 2].map((_, idx) => (
                   <Grid item xs={12} sm={6} key={idx}>
-                    <Skeleton variant="rectangular" width="100%" height={250} animation="wave" sx={{ borderRadius: 2 }} />
+                    <Loader variant="rectangular" width="100%" height={250} animation="wave" sx={{ borderRadius: 2 }} />
                   </Grid>
                 ))}
               </Grid>
@@ -151,8 +151,8 @@ setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
               <div style={{ padding: '2rem', display: 'flex', justifyContent: 'center' }}>
                 <Box
                   sx={{
-                    width: '100%',
-                    maxWidth: 600,
+                    width: '90%',
+                    maxWidth: 500,
                     height: 250,
                     bgcolor: '#1c1c1c',
                     borderRadius: 2,
@@ -175,7 +175,7 @@ setSlidesToShow(testimonials.length < 2 || window.innerWidth <= 620 ? 1 : 2);
                 <button className="testimonial-arrow-btn left-arrow" onClick={() => sliderRef.current?.slickPrev()}>
                   <img src={TLeft} alt="Left" />
                 </button>
-                <Slider ref={sliderRef} key={carouselKey} {...settings} className="quotes">
+                <Slider ref={sliderRef} {...settings} className="quotes">
                   {testimonials.map((testimonial, index) => {
                     const hasMedia = testimonial.media && (testimonial.media.type === 'video' || testimonial.media.type === 'image');
 

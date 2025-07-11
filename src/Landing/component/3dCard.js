@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Carousel } from 'react-responsive-carousel';
 import API_URL from '../../ServiceModule/Service';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-
+import Loader from '../../component/Loader';
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 180;
 
@@ -126,15 +126,15 @@ const SkeletonCard = () => (
       display: 'flex',
       flexDirection: 'column',
       gap: 1,
-      backgroundColor: '#1e1e1e',
+      backgroundColor: '#1ee1',
       borderRadius: '20px',
       p: 2,
     }}
   >
-    <Skeleton variant="text" height={40} width="60%" sx={{ bgcolor: '#333' }} />
-    <Skeleton variant="text" height={20} width="90%" sx={{ bgcolor: '#333' }} />
-    <Skeleton variant="text" height={20} width="80%" sx={{ bgcolor: '#333' }} />
-    <Skeleton variant="text" height={20} width="70%" sx={{ bgcolor: '#333' }} />
+    <Skeleton variant="text" height={40} width="60%" sx={{ bgcolor: '#fff' }} />
+    <Skeleton variant="text" height={20} width="90%" sx={{ bgcolor: '#fff' }} />
+    <Skeleton variant="text" height={20} width="80%" sx={{ bgcolor: '#fff' }} />
+    <Skeleton variant="text" height={20} width="70%" sx={{ bgcolor: '#fff' }} />
   </Box>
 );
 
@@ -191,8 +191,9 @@ const WhyCoverKraft = () => {
   const groupedData = groupCards();
 
   return (
-    <Box id="card" sx={{ backgroundColor: '#121212', px: 2, py: 6,scrollMarginTop: '100px'
- }}>
+    <Box id="card" sx={{
+      backgroundColor: '#121212', px: 2, py: 6, scrollMarginTop: '100px'
+    }}>
       <Box textAlign="center" mb={4}>
         <Typography variant="subtitle1" sx={{ color: '#f39c12', fontSize: '2.2rem', fontWeight: 600 }}>
           Tips & Tricks
@@ -203,10 +204,11 @@ const WhyCoverKraft = () => {
       {loading ? (
         <Box display="flex" justifyContent="center" gap={3} flexWrap="wrap">
           {[...Array(isSmall ? 1 : isMedium ? 2 : 3)].map((_, idx) => (
-            <SkeletonCard key={idx} />
+            <Loader key={idx} />
           ))}
         </Box>
       ) : cardData.length === 0 ? (
+
         <Box textAlign="center" color="#aaa" mt={4}>
           <Typography variant="h6" color="white">
             No tips & tricks available right now.

@@ -19,7 +19,7 @@ import PolicyDetail from "./component/PolicyDetail";
 import Button from "../component/Button";
 import GradientButton from "../component/GradientButton";
 import About from "../Landing/component/About";
-
+import Loader from "../component/Loader";
 // Images and constants
 import share from "../Images/ic-share1.png";
 import cross from "../Images/xmark.png";
@@ -425,7 +425,7 @@ const exportToExcel = async () => {
               backgroundColor: '#212121', display: 'flex', justifyContent: 'center',
               alignItems: 'center', borderRadius: '16px', zIndex: 10
             }}>
-              <Spinner style={{ width: '3rem', height: '3rem', color: '#8AC642' }} animation="border" />
+              <Loader style={{ width: '3rem', height: '3rem', color: '#8AC642' }} animation="border" />
             </div>
           )}
           <Typography variant="h6" align="center" style={{ fontWeight: 600, fontSize: '20px', color: '#fff', paddingTop: '20px' }}>
