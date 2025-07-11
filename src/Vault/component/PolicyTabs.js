@@ -11,7 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import Loader from "../../component/Loader";
 // Import images
 import scooty from "../../Images/Scooty.png";
 import HealthInsurance from "../../Images/FamilyHealthInsurance.png";
@@ -681,7 +681,7 @@ export default function PolicyTabs({
 
           {loading ? (
             <Box className={classes.loaderContainer}>
-              <CircularProgress className={classes.loader} />
+              <Loader className={classes.loader} />
             </Box>
           ) : (
             <>

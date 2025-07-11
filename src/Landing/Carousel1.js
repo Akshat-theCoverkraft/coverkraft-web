@@ -4,7 +4,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./component/CSS/carousel1.css";
 import API_URL from "../ServiceModule/Service";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
+import Loader from "../component/Loader"; 
 const Carousel1 = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ const Carousel1 = () => {
     videoRefs.current.forEach((video, idx) => {
       if (video && idx !== playingIndex) {
         video.pause();
-        video.currentTime = 0; // optional: reset to beginning
+        video.currentTime = 0; 
       }
     });
   };
@@ -72,14 +72,11 @@ const Carousel1 = () => {
       >
         <FaChevronLeft />
       </button>
-
       <div className="carousel__wrap">
         <div className="carousel__inner">
           {loading ? (
-            <div className="carousel__skeleton-wrap">
-              {[...Array(slidesPerPage)].map((_, i) => (
-                <div key={i} className="carousel__skeleton-item">Loading...</div>
-              ))}
+            <div className="carousel__loader-wrap">
+              <Loader size={100} message="Loading video..." />
             </div>
           ) : items.length === 0 ? (
             <div className="carousel__no-data">No featured videos available.</div>
@@ -112,7 +109,7 @@ const Carousel1 = () => {
                         width: '100%',
                         height: '100%',
                         objectFit: 'contain',
-                        objectPosition: 'center'
+                        objectPosition: 'center',
                       }}
                     />
                   ) : (

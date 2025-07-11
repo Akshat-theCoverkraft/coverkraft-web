@@ -40,8 +40,11 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
+    const SESSION_DURATION = 48 * 60 * 60 * 1000; 
     const excludedPages = ["", "/login", "/register"];
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
 
     const loginTime = sessionStorage.getItem("loginTime");
 
