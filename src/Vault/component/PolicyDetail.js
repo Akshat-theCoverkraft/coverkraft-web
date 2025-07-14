@@ -378,13 +378,15 @@ const PolicyDetail = ({ policyId }) => {
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
-            height: "85vh",
+            height: "100%",
+            minHeight: "100%",
+            maxHeight: "95vh",
             boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
             backgroundColor: THEME_COLOR.BACKGROUND,
             color: THEME_COLOR.COLOR,
           }}
         >
-          <img src={emptyImage} alt="No Data" style={{ width: '40%', height: 'auto', marginTop: '10%' }} />
+          <img src={emptyImage} alt="No Data" style={{ width: '30%', height: 'auto', marginTop: '25%' }} />
           <p className="mt-5 fs-bold">Add your new policy effortlessly to your account</p>
         </Card>
       </>
@@ -405,7 +407,7 @@ const PolicyDetail = ({ policyId }) => {
             style={{
               justifyContent: "center",
               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-              height: "78%",
+              height: "95vh",
               minHeight: "100%",
               marginBottom: "5vh",
               backgroundColor: "#121212",
