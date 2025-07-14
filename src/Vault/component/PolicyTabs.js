@@ -349,7 +349,7 @@ const PolicyCard = ({ policy, shareAllPolicy, selectedPolicies, handleCheckboxCh
 };
 
 const EmptyState = ({ hasFilters, onClearFilters }) => (
-  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", height: "400px", color: THEME_COLOR.COLOR }}>
+  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", height: "95vh", color: THEME_COLOR.COLOR, minHeight: "95vh" }}>
     <img src={emptyImage} alt="No Data" style={{ width: '40%', height: 'auto', maxWidth: '200px' }} />
     <Typography sx={{ fontSize: "1.6rem", mb: 2, mt: 3 }}>
       {hasFilters ? "No policies match your search" : "No Records Found"}
@@ -511,7 +511,7 @@ export default function PolicyTabs({
 
     return (
       <TabPanel value={tabValue} sx={{ p: 2 }}>
-        <Box sx={{ minHeight: "400px" }}>
+        <Box sx={{ minHeight: "95vh" }}>
           {filteredList.length === 0 ? (
             <EmptyState hasFilters={hasFilters} onClearFilters={handleClearAll} />
           ) : (
@@ -595,7 +595,7 @@ export default function PolicyTabs({
                             color: "white",
                             borderRadius: "50%",
                             width: "20px",
-                            height: "20px",
+                            height: "30px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -629,7 +629,7 @@ export default function PolicyTabs({
           </Box>
 
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "300px" }}>
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "95vh" }}>
               <Loader sx={{ color: "#8AC642" }} />
             </Box>
           ) : (

@@ -342,8 +342,8 @@ const exportToExcel = async () => {
           </div>
         </Stack>
 
-        <Grid container spacing={2} className="px-5">
-          <Grid item xs={12} md={5.5}>
+        <Grid container spacing={1} className="px-5">
+          <Grid item xs={12} md={6.5}>
             <PolicyTabs
               handleCardClick={handleCardClick}
               shareAllPolicy={shareAllPolicy}
@@ -356,7 +356,7 @@ const exportToExcel = async () => {
               selectedType={selectedType}
             />
           </Grid>
-          <Grid item xs={12} md={6.5}>
+          <Grid item xs={12} md={5.5}>
             <PolicyDetail policyId={selectedPolicyId} />
           </Grid>
         </Grid>
