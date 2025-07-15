@@ -17,11 +17,10 @@ import bgImage from '../../Images/bg.png';
 
 const BlogSection = () => {
   const [latestPosts, setLatestPosts] = useState({});
+  const [featuredVideo, setFeaturedVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
   const videoRefs = useRef([]);
-  videoRefs.current = [];
 
   const registerVideo = (el) => {
     if (el && !videoRefs.current.includes(el)) {
@@ -30,19 +29,29 @@ const BlogSection = () => {
   };
 
   useEffect(() => {
-    const fetchNews = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get('http://52.52.154.65:5242/news/getAll?isActive=true');
-        const sorted = (res.data?.data || [])
+        const [newsRes, featuredRes] = await Promise.all([
+          axios.get('http://52.52.154.65:5242/news/getAll?isActive=true'),
+          fetch('http://52.52.154.65:5242/featureVideo/getAll'),
+        ]);
+
+        const sortedNews = (newsRes.data?.data || [])
           .filter(item => item.status === 'active')
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         const latestByType = {
-          videos: sorted.filter(p => p.type === 'video').slice(0, 2),
+          videos: sortedNews.filter(p => p.type === 'video').slice(0, 1),
         };
         ['short', 'news', 'blog'].forEach(type => {
-          latestByType[type] = sorted.find(p => p.type === type);
+          latestByType[type] = sortedNews.find(p => p.type === type);
         });
+
+        const featuredData = await featuredRes.json();
+        const activeFeatured = Array.isArray(featuredData.data)
+          ? featuredData.data.filter(item => item.status === 'active')
+          : [];
+        setFeaturedVideo(activeFeatured[0] || null);
 
         setLatestPosts(latestByType);
       } catch (err) {
@@ -52,21 +61,23 @@ const BlogSection = () => {
       }
     };
 
-    fetchNews();
-  }, []);
+    fetchData();
 
-  useEffect(() => {
-    const pauseAll = () => {
+    const pauseAllVideos = () => {
       videoRefs.current.forEach((video) => !video.paused && video.pause());
     };
-    window.addEventListener('scroll', pauseAll);
-    return () => window.removeEventListener('scroll', pauseAll);
+    window.addEventListener('scroll', pauseAllVideos);
+    return () => window.removeEventListener('scroll', pauseAllVideos);
   }, []);
 
-  const getUrl = (p) =>
-    p.videoUrl
-      ? p.videoUrl.startsWith('http') ? p.videoUrl : `http://52.52.154.65:5242/${p.videoUrl}`
-      : p.newsImg.startsWith('http') ? p.newsImg : `http://52.52.154.65:5242/${p.newsImg}`;
+  const getUrl = (post) =>
+    post.videoUrl
+      ? post.videoUrl.startsWith('http')
+        ? post.videoUrl
+        : `http://52.52.154.65:5242/${post.videoUrl}`
+      : post.newsImg?.startsWith('http')
+      ? post.newsImg
+      : `http://52.52.154.65:5242/${post.newsImg}`;
 
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
@@ -88,12 +99,26 @@ const BlogSection = () => {
   }));
 
   const renderCard = (post, type, isLarge = false) => {
-    if (loading) return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: '20px' }} />;
-    if (!post) return (
-      <Card sx={{ bgcolor: '#212121', borderRadius: '20px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
-        <Typography>No {type} available.</Typography>
-      </Card>
-    );
+    if (loading) {
+      return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: '20px' }} />;
+    }
+    if (!post) {
+      return (
+        <Card
+          sx={{
+            bgcolor: '#212121',
+            borderRadius: '20px',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#888',
+          }}
+        >
+          <Typography>No {type} available.</Typography>
+        </Card>
+      );
+    }
 
     const url = getUrl(post);
     const isVideo = /\.(mp4|mov|avi|mkv|webm)$/i.test(url);
@@ -120,7 +145,7 @@ const BlogSection = () => {
         <Box sx={{ position: 'relative', height: '100%' }}>
           <Chip
             icon={<TravelExploreIcon />}
-            label={post.type.toUpperCase()}
+            label={post.type?.toUpperCase() || 'VIDEO'}
             size="small"
             sx={{
               position: 'absolute',
@@ -129,7 +154,7 @@ const BlogSection = () => {
               zIndex: 2,
               bgcolor: '#8AC642',
               color: '#000',
-              fontWeight: 600
+              fontWeight: 600,
             }}
           />
           {isVideo ? (
@@ -211,7 +236,7 @@ const BlogSection = () => {
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        scrollMarginTop: '100px'
+        scrollMarginTop: '100px',
       }}
     >
       <Typography
@@ -220,7 +245,7 @@ const BlogSection = () => {
           color: '#FF9906',
           fontWeight: 700,
           mb: 4,
-          textAlign: 'center'
+          textAlign: 'center',
         }}
       >
         Blogs And News
@@ -234,30 +259,20 @@ const BlogSection = () => {
         </Grid>
         <Grid item xs={12} md={3}>
           <Box sx={{ height: '500px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Box sx={{ height: '240px' }}>
-              {renderCard(latestPosts.news, 'news')}
-            </Box>
-            <Box sx={{ height: '240px' }}>
-              {renderCard(latestPosts.blog, 'blog')}
-            </Box>
+            <Box sx={{ height: '240px' }}>{renderCard(latestPosts.news, 'news')}</Box>
+            <Box sx={{ height: '240px' }}>{renderCard(latestPosts.blog, 'blog')}</Box>
           </Box>
         </Grid>
         <Grid item xs={12} md={4}>
           <Box sx={{ height: '500px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Box sx={{ height: '240px' }}>
-              {renderCard(latestPosts.videos?.[0], 'video')}
-            </Box>
-            <Box sx={{ height: '240px' }}>
-              {renderCard(latestPosts.videos?.[1], 'video')}
-            </Box>
+            <Box sx={{ height: '240px' }}>{renderCard(latestPosts.videos?.[0], 'video')}</Box>
+            <Box sx={{ height: '240px' }}>{renderCard(featuredVideo, 'video')}</Box>
           </Box>
         </Grid>
       </Grid>
 
       <Box textAlign="center" mt={4}>
-        <StyledButton onClick={() => navigate('/feed/blog')}>
-          VIEW ALL
-        </StyledButton>
+        <StyledButton onClick={() => navigate('/feed/blog')}>VIEW ALL</StyledButton>
       </Box>
     </Box>
   );

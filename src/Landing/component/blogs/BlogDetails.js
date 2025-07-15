@@ -9,6 +9,7 @@ import moment from 'moment-timezone'
 import { capitalizeFirstLetter, truncateString } from "../../../utils/helpers";
 import arrow from '../../../Images/Symbol.png'
 import { THEME_COLOR } from "../../../constants";
+import Footer from "../Footer";
 
 const NewsBlog = () => {
   const navigate = useNavigate();
@@ -191,6 +192,7 @@ console.log(type, id, "<===type")
         }
       </div>
     </div>
+    <Footer />
     </>
   );
 };
