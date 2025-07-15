@@ -363,7 +363,6 @@ const exportToExcel = async () => {
   ) : (
      <Card
             sx={{
-              // flex:1,
               borderRadius: 5,
               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
               backgroundColor: "#121212 !important",
@@ -380,7 +379,7 @@ const exportToExcel = async () => {
       flexDirection: "column",
       height: "60vh",
       color: THEME_COLOR.COLOR,
-      minHeight: "82.7vh",
+      minHeight: "82.7vh", // Adjusted to fit the card height
     }}
   >
     <img
