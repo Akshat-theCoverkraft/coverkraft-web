@@ -369,7 +369,7 @@ const exportToExcel = async () => {
               backgroundColor: "#121212 !important",
               border: "0.5px solid white",
               pt: 2.5,
-              minHeight: "80vh",
+              height: "91vh",
             }}
           >
     <Box

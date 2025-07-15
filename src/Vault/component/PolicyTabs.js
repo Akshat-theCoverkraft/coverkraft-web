@@ -703,7 +703,7 @@ export default function PolicyTabs({
           position: "relative  !important",
         }}
       >
-        <Box sx={{ minHeight: "60vh !important", height: "100%" }}>
+        <Box sx={{ height: "66vh !important", }}>
           {filteredList.length === 0 ? (
             <EmptyState
               hasFilters={hasFilters}
@@ -711,7 +711,7 @@ export default function PolicyTabs({
             />
           ) : (
             <>
-              <Box sx={{ mb: 2 }}>
+<Box sx={{ mb: 2, height: '57vh', overflowY: 'auto',}}>
                 {paginatedData.map((policy) => (
                   <PolicyCard
                     key={policy._id}
@@ -736,7 +736,7 @@ export default function PolicyTabs({
                   itemsPerPage={itemsPerPage}
                 />
               ) : (
-                        <Box sx={{  minHeight: "46vh !important",}} /> // same height as Pagination
+                        <Box sx={{  minHeight: "27vh !important",}} /> // same height as Pagination
 
               )}
             </>
