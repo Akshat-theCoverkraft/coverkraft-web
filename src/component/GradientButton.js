@@ -9,10 +9,10 @@ function GradientButton({ onClick, text, className, size, block, startIcon }) {
     display: "flex",
     alignItems: "center",
     justifyContent: startIcon ? "space-evenly" : "center",
-    padding: "15px 10px",
+    padding: "12px 10px",
     borderRadius: "30px",
     border: "none", // Ensure border is removed if not needed
-    fontSize: "1.2rem",
+    fontSize: "1.6rem",
     fontWeight: "bold",
     height: "8%"
     

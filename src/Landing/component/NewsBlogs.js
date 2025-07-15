@@ -15,11 +15,17 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import bgImage from '../../Images/bg.png';
 
+const typeLabels = {
+  blog: 'Blogs',
+  news: 'News',
+  video: 'Videos',
+  short: 'Shorts',
+};
+
 const BlogSection = () => {
   const [latestPosts, setLatestPosts] = useState({});
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
   const videoRefs = useRef([]);
   videoRefs.current = [];
 
@@ -38,11 +44,11 @@ const BlogSection = () => {
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         const latestByType = {
-          videos: sorted.filter(p => p.type === 'video').slice(0, 2),
+          videos: sorted.find(p => p.type === 'video'),
+          shorts: sorted.find(p => p.type === 'short'),
+          blogs: sorted.find(p => p.type === 'blog'),
+          news: sorted.find(p => p.type === 'news'),
         };
-        ['short', 'news', 'blog'].forEach(type => {
-          latestByType[type] = sorted.find(p => p.type === type);
-        });
 
         setLatestPosts(latestByType);
       } catch (err) {
@@ -71,12 +77,12 @@ const BlogSection = () => {
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
     color: '#8AC642',
-    border: '1px solid #8AC642',
+    border: '1.5px solid #8AC642',
     borderRadius: '40px',
-    padding: '12px 32px',
-    fontSize: '1.8rem',
-    fontWeight: '600',
-    minWidth: '180px',
+    padding: '8px 24px',
+    fontSize: '1.3rem',
+    fontWeight: '800',
+    minWidth: '150px',
     cursor: 'pointer',
     userSelect: 'none',
     transition: 'all 0.3s ease',
@@ -88,12 +94,16 @@ const BlogSection = () => {
   }));
 
   const renderCard = (post, type, isLarge = false) => {
+    const label = typeLabels[type] || type + 's';
+
     if (loading) return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: '20px' }} />;
-    if (!post) return (
-      <Card sx={{ bgcolor: '#212121', borderRadius: '20px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
-        <Typography>No {type} available.</Typography>
-      </Card>
-    );
+    if (!post) {
+      return (
+        <Card sx={{ bgcolor: '#212121', borderRadius: '20px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
+          <Typography>No {label} available.</Typography>
+        </Card>
+      );
+    }
 
     const url = getUrl(post);
     const isVideo = /\.(mp4|mov|avi|mkv|webm)$/i.test(url);
@@ -120,7 +130,7 @@ const BlogSection = () => {
         <Box sx={{ position: 'relative', height: '100%' }}>
           <Chip
             icon={<TravelExploreIcon />}
-            label={post.type.toUpperCase()}
+            label={label.toUpperCase()}
             size="small"
             sx={{
               position: 'absolute',
@@ -163,10 +173,10 @@ const BlogSection = () => {
                 color: '#fff',
               }}
             >
-              <Typography variant={isLarge ? 'h5' : 'h6'} fontWeight={600}>
+              <Typography variant={isLarge ? 'h5' : 'h6'} fontWeight={700} fontSize={isLarge ? '1.8rem' : '1.6rem'}>
                 {post.subtitle}
               </Typography>
-              <Typography variant="caption" display="block" sx={{ mb: 1 }}>
+              <Typography variant="caption" display="block" sx={{ mb: 1, fontSize: '1rem' }}>
                 {moment(post.createdAt).format('MMM DD, YYYY')}
               </Typography>
               <Button
@@ -177,7 +187,7 @@ const BlogSection = () => {
                   textTransform: 'none',
                   fontWeight: 500,
                   padding: 0,
-                  fontSize: '1.4rem',
+                  fontSize: '1.2rem',
                   minWidth: 'auto',
                   '&:hover': {
                     backgroundColor: 'transparent',
@@ -229,7 +239,7 @@ const BlogSection = () => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={5}>
           <Box sx={{ height: '500px' }}>
-            {renderCard(latestPosts.short, 'short', true)}
+            {renderCard(latestPosts.shorts, 'short', true)}
           </Box>
         </Grid>
         <Grid item xs={12} md={3}>
@@ -238,18 +248,13 @@ const BlogSection = () => {
               {renderCard(latestPosts.news, 'news')}
             </Box>
             <Box sx={{ height: '240px' }}>
-              {renderCard(latestPosts.blog, 'blog')}
+              {renderCard(latestPosts.blogs, 'blog')}
             </Box>
           </Box>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Box sx={{ height: '500px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Box sx={{ height: '240px' }}>
-              {renderCard(latestPosts.videos?.[0], 'video')}
-            </Box>
-            <Box sx={{ height: '240px' }}>
-              {renderCard(latestPosts.videos?.[1], 'video')}
-            </Box>
+          <Box sx={{ height: '500px' }}>
+            {renderCard(latestPosts.videos, 'video', true)}
           </Box>
         </Grid>
       </Grid>

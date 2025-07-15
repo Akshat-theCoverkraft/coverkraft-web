@@ -9,25 +9,17 @@ import Box from '@mui/material/Box';
 import CustomInput from '../../component/CustomInput';
 import Button from '../../component/Button';
 import { useLocation } from 'react-router-dom';
-import Vault from '../Vault';
 import { useDispatch } from 'react-redux'
 import 'react-toastify/dist/ReactToastify.css';
 import API_URL from '../../ServiceModule/Service';
-import { saveDocument, updateDocument } from '../../store/action/action';
+import {  updateDocument } from '../../store/action/action';
 import { useNavigate } from 'react-router-dom'
-import moment from 'moment';
 import Footer from '../../Landing/component/Footer';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
 import ProgressBarCircle from '../../component/ProgressBarCircle';
 import DateTimePicker from '../../component/DateTimePicker';
 import { formatDate } from '../../utils/dateUtils';
 import axios from 'axios';
 import { THEME_COLOR } from '../../constants';
-import { WidthFull } from '@mui/icons-material';
 import InsuranceDropdown from '../../component/InsurannceCompanyDropDown';
 const MotorPolicyForm = () => {
     const location = useLocation();
