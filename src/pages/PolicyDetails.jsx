@@ -148,15 +148,14 @@ const PolicyDetails = () => {
           style={{
             position: "sticky",
             bottom: 0,
-            background: "#1e1e1e",
+            background: "transparent",
             padding: "1em 0",
-            boxShadow: "0 -4px 10px rgba(0,0,0,0.4)",
             zIndex: 10,
             display: "flex",
             justifyContent: "center",
           }}
         >
-          <div style={{ width: "100%", maxWidth: "900px", padding: "0 2em" }}>
+          <div style={{ width: "50%", maxWidth: "400px", padding: "0 2em" }}>
             <Button
               text={"Buy Now"}
               size="lg"

@@ -175,98 +175,73 @@ function Feeds() {
         return null;
     }
   };
-
   return (
     <Box sx={{
       minHeight: "100vh",
       background: "#121212",
     }}>
       <Navbar />
-
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        {/* Header Section */}
-        <Box sx={{ textAlign: "center", mb: 6 }}>
-          <Typography
-            variant="h2"
-            sx={{
-              color: "#FFFFFF",
-              fontWeight: 700,
-              fontSize: { xs: "2.5rem", md: "3.5rem" },
-              mb: 2,
-              // background: "linear-gradient(135deg, #8BC642 0%, #A8E6CF 100%)",
-              background: "#8BC642",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            Blogs, News, Shorts And Videos           </Typography>
-          <Typography
-            variant="h6"
-            sx={{
-              color: "rgba(255, 255, 255, 0.7)",
-              fontWeight: 400,
-              maxWidth: "600px",
-              mx: "auto",
-              fontSize: "1.7rem",
-            }}
-          >
-            Stay updated with the latest stories, insights, and multimedia content
-          </Typography>
-        </Box>
-
         {/* Modern Tab Navigation */}
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 6 }}>
-          <Box sx={{
-            backgroundColor: "#212121",
-            backdropFilter: "blur(20px)",
-            borderRadius: "30px",
-            padding: "8px",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
-          }}>
-            <Tabs
-              value={selectedTab}
-              onChange={handleTabChange}
-              TabIndicatorProps={{ style: { display: "none" } }}
-              sx={{
-                "& .MuiTabs-flexContainer": {
-                  gap: "8px",
-                },
-              }}
-            >
-              {Object.entries(tabLabels).map(([value, label]) => (
-                <Tab
-                  key={value}
-                  label={label}
-                  value={value}
-                  sx={{
-                    textTransform: "none",
-                    fontSize: "16px",
-                    fontWeight: 600,
-                    color: "#FFFFFF",
-                    backgroundColor: selectedTab === value ? "#8BC642" : "transparent",
-                    borderRadius: "30px",
-                    minHeight: "48px",
-                    padding: "12px 24px",
-                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                    "&:hover": {
-                      backgroundColor: selectedTab === value ? "#8BC642" : "rgba(223, 218, 218, 0.1)",
-                      transform: "translateY(-1px)",
-                    },
-                    "&.Mui-selected": {
-                      color: "#fff", 
-                    },
-                  }}
-                />
-              ))}
-            </Tabs>
-          </Box>
-        </Box>
-
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mb: 6 }}>
+  <Box
+    sx={{
+      backgroundColor: "#121212",
+      padding: "0.5rem",
+      borderRadius: "50px",
+      width: "100%",
+      maxWidth: "1000px",
+      boxShadow: "0 0 10px rgba(139, 198, 66, 0.15)",
+    }}
+  >
+    <Tabs
+      value={selectedTab}
+      onChange={handleTabChange}
+      variant="scrollable"
+      scrollButtons="auto"
+      TabIndicatorProps={{ style: { display: "none" } }}
+      sx={{
+        width: "100%",
+        "& .MuiTabs-flexContainer": {
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "0.5rem",
+        },
+      }}
+    >
+      {Object.entries(tabLabels).map(([value, label]) => {
+        const isSelected = selectedTab === value;
+        return (
+          <Tab
+            key={value}
+            label={label}
+            value={value}
+            disableRipple
+            sx={{
+              flexShrink: 0,
+              backgroundColor: isSelected ? "#8BC642" : "transparent",
+              color: isSelected ? "#ffffff" : "#fff",
+              padding: "0.75rem 1.5rem",
+              borderRadius: "40px",
+              border: "2px solid #8BC642",
+              fontSize: "1.1rem",
+              fontWeight: isSelected ? 600 : 500,
+              minWidth: "120px",
+              textTransform: "none",
+              transition: "all 0.3s ease",
+              textAlign: "center",
+              color: "#fff"
+             
+            }}
+          />
+        );
+      })}
+    </Tabs>
+  </Box>
+</Box>
         {/* Content Grid */}
         <Grid container spacing={4}>
           {isLoading && renderSkeletonCards()}
-
           {!isLoading && contentData.length === 0 && hasLoadedOnce && (
             <Grid item xs={12}>
               <Box sx={{

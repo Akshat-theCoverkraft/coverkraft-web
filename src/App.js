@@ -32,7 +32,7 @@ import PolicyType from './Landing/component/PolicyType';
 import PolicyDetails from './pages/PolicyDetails';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
-
+import BackToTop from "./component/BackToTop.js";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -61,7 +61,7 @@ function App() {
         const now = Date.now();
 
         if (now - loginTimestamp > SESSION_DURATION) {
-          console.log("⚠️ Session expired.");
+          // console.log("⚠️ Session expired.");
           handleLogout();
         } else {
           setIsLoggedIn(true);
@@ -69,14 +69,14 @@ function App() {
           const remainingTime = SESSION_DURATION - (now - loginTimestamp);
 
           const logoutTimer = setTimeout(() => {
-            console.log("⏰ Auto-logout: session expired.");
+            // console.log("⏰ Auto-logout: session expired.");
             handleLogout();
           }, remainingTime);
 
           return () => clearTimeout(logoutTimer);
         }
       } else {
-        console.log("🚫 No session found.");
+        // console.log("🚫 No session found.");
         handleLogout();
       }
     }
@@ -107,6 +107,7 @@ function App() {
       <Toaster position="top-right" reverseOrder={false} />
       <UniversalHomeButton />
       <ScrollToTop />
+      <BackToTop />
       <Routes>
         <Route path="" element={<Landing />} />
         <Route path="/register" element={<Register />} />

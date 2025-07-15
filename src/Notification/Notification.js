@@ -210,7 +210,7 @@ useEffect(() => {
                 style={{
                   backgroundColor: "#1C1C1C",
                   minWidth: "80vw",
-                  minHeight: "120px" // Fixed height to prevent resize calculations
+                  minHeight: "10px" // Fixed height to prevent resize calculations
                 }}
                 className="px-5 py-3"
               >

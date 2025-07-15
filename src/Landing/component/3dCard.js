@@ -5,13 +5,14 @@ import {
   Modal,
   IconButton,
   useMediaQuery,
-  Skeleton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Carousel } from 'react-responsive-carousel';
+import { motion, AnimatePresence } from 'framer-motion';
 import API_URL from '../../ServiceModule/Service';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Loader from '../../component/Loader';
+
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 180;
 
@@ -39,7 +40,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
       <Box
         sx={{
           position: 'absolute',
-          top: '0px',
+          top: 0,
           left: '-50px',
           width: CARD_HEIGHT + 15,
           height: CARD_HEIGHT + 15,
@@ -48,14 +49,13 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           zIndex: 1,
         }}
       />
-
       <Typography
         sx={{
           position: 'absolute',
-          top: '20px',
+          top: 20,
           left: '-15px',
           fontFamily: 'DM Sans, sans-serif',
-          fontSize: '36px',
+          fontSize: 36,
           color: 'transparent',
           WebkitTextStroke: '2px white',
           fontWeight: 900,
@@ -68,11 +68,11 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
       <Box
         sx={{
           position: 'relative',
-          background: 'linear-gradient(to bottom right, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.5) 100%)',
+          background: 'linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(0,0,0,0.5))',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderRadius: '20px',
-          padding: '20px',
+          padding: 2,
           width: '120%',
           height: CARD_HEIGHT,
           boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
@@ -83,14 +83,24 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           justifyContent: 'center',
         }}
       >
-
-        <Typography variant="h5" pl="15px" sx={{ color: 'white', fontWeight: 600, textAlign: 'left' }}>
+        <Typography
+          variant="h5"
+          pl={2}
+          sx={{ color: 'white', fontWeight: 600, textAlign: 'left' }}
+        >
           {title}
         </Typography>
 
         <Typography
           variant="body2"
-          sx={{ color: '#fff', mt: 1, lineHeight: 1.4, textAlign: 'left', pl: '10px', fontSize: '14px' }}
+          sx={{
+            color: '#fff',
+            mt: 1,
+            lineHeight: 1.4,
+            textAlign: 'left',
+            pl: 1,
+            fontSize: 14,
+          }}
         >
           {truncateText(description, 80)}
         </Typography>
@@ -103,9 +113,8 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
               cursor: 'pointer',
               mt: 1,
               fontWeight: 'bold',
-              fontSize: '13px',
+              fontSize: 13,
               textAlign: 'left',
-              pl: '10px',
               paddingLeft: '70%',
             }}
           >
@@ -117,27 +126,6 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
   );
 };
 
-const SkeletonCard = () => (
-  <Box
-    sx={{
-      width: CARD_WIDTH,
-      height: CARD_HEIGHT + 15,
-      mx: 'auto',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 1,
-      backgroundColor: '#1ee1',
-      borderRadius: '20px',
-      p: 2,
-    }}
-  >
-    <Skeleton variant="text" height={40} width="60%" sx={{ bgcolor: '#fff' }} />
-    <Skeleton variant="text" height={20} width="90%" sx={{ bgcolor: '#fff' }} />
-    <Skeleton variant="text" height={20} width="80%" sx={{ bgcolor: '#fff' }} />
-    <Skeleton variant="text" height={20} width="70%" sx={{ bgcolor: '#fff' }} />
-  </Box>
-);
-
 const WhyCoverKraft = () => {
   const [cardData, setCardData] = useState([]);
   const [popupContent, setPopupContent] = useState(null);
@@ -147,6 +135,7 @@ const WhyCoverKraft = () => {
 
   const isSmall = useMediaQuery('(max-width:600px)');
   const isMedium = useMediaQuery('(max-width:1024px)');
+  const groupSize = isSmall ? 1 : isMedium ? 2 : 3;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -179,36 +168,30 @@ const WhyCoverKraft = () => {
     setPopupContent(null);
   };
 
-  const groupCards = () => {
-    const groupSize = isSmall ? 1 : isMedium ? 2 : 3;
-    const grouped = [];
-    for (let i = 0; i < cardData.length; i += groupSize) {
-      grouped.push(cardData.slice(i, i + groupSize));
-    }
-    return grouped;
-  };
-
-  const groupedData = groupCards();
+  const groupedData = [];
+  for (let i = 0; i < cardData.length; i += groupSize) {
+    groupedData.push(cardData.slice(i, i + groupSize));
+  }
 
   return (
-    <Box id="card" sx={{
-      backgroundColor: '#121212', px: 2, py: 6, scrollMarginTop: '100px'
-    }}>
+    <Box id="card" sx={{ backgroundColor: '#121212', px: 2, py: 6, scrollMarginTop: '100px' }}>
       <Box textAlign="center" mb={4}>
-        <Typography variant="subtitle1" sx={{ color: '#f39c12', fontSize: '2.2rem', fontWeight: 600 }}>
+        <Typography
+          variant="subtitle1"
+          sx={{ color: '#f39c12', fontSize: '2.2rem', fontWeight: 600 }}
+        >
           Tips & Tricks
         </Typography>
       </Box>
 
-      {/* Loading State or No Data */}
+      {/* Loader or No Data */}
       {loading ? (
         <Box display="flex" justifyContent="center" gap={3} flexWrap="wrap">
-          {[...Array(isSmall ? 1 : isMedium ? 2 : 3)].map((_, idx) => (
+          {[...Array(groupSize)].map((_, idx) => (
             <Loader key={idx} />
           ))}
         </Box>
       ) : cardData.length === 0 ? (
-
         <Box textAlign="center" color="#aaa" mt={4}>
           <Typography variant="h6" color="white">
             No tips & tricks available right now.
@@ -238,7 +221,7 @@ const WhyCoverKraft = () => {
                 {group.map((card, j) => (
                   <PolicyCard
                     key={`${i}-${j}`}
-                    number={i * (isSmall ? 1 : isMedium ? 2 : 3) + j + 1}
+                    number={i * groupSize + j + 1}
                     title={card.subtitle}
                     description={card.description}
                     onSeeMore={() => openPopup(card)}
@@ -269,52 +252,66 @@ const WhyCoverKraft = () => {
         </>
       )}
 
-      {/* Popup Modal */}
-      <Modal open={showPopup} onClose={closePopup}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: '#212121',
-            color: '#fff',
-            p: 4,
-            borderRadius: 2,
-            width: '90%',
-            maxWidth: 600,
-            maxHeight: 500,
-            boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.6)',
-            overflow: 'hidden',
-          }}
-        >
-          <IconButton
-            onClick={closePopup}
-            sx={{ position: 'absolute', top: 8, right: 8, color: '#fff' }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Typography variant="h5" mb={2} sx={{ pl: '20px' }}>
-            {popupContent?.title}
-          </Typography>
-          <Box
-            sx={{
-              maxHeight: '350px',
-              overflowY: 'auto',
-              pr: 1,
-              '&::-webkit-scrollbar': { width: 0 },
-              scrollbarWidth: 'none',
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{ fontSize: '16px', color: '#ccc', whiteSpace: 'pre-line', pl: '20px' }}
+      {/* Modal with Thanos Snap Effect */}
+      <AnimatePresence>
+        {showPopup && (
+          <Modal open={true} onClose={closePopup}>
+            <Box
+              component={motion.div}
+              initial={{ opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' }}
+              exit={{ opacity: 0, clipPath: 'inset(0% 100% 0% 0%)' }}
+              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: '#212121',
+                color: '#fff',
+                p: 4,
+                borderRadius: 2,
+                width: '90%',
+                maxWidth: 600,
+                maxHeight: 500,
+                boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.6)',
+                overflow: 'hidden',
+              }}
             >
-              {popupContent?.description}
-            </Typography>
-          </Box>
-        </Box>
-      </Modal>
+              <IconButton
+                onClick={closePopup}
+                sx={{ position: 'absolute', top: 8, right: 8, color: '#fff' }}
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="h5" mb={2} sx={{ pl: 2 }}>
+                {popupContent?.title}
+              </Typography>
+
+              <Box
+                sx={{
+                  maxHeight: 350,
+                  overflowY: 'auto',
+                  pr: 1,
+                  '&::-webkit-scrollbar': { width: 0 },
+                  scrollbarWidth: 'none',
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: 16,
+                    color: '#ccc',
+                    whiteSpace: 'pre-line',
+                    pl: 2,
+                  }}
+                >
+                  {popupContent?.description}
+                </Typography>
+              </Box>
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
     </Box>
   );
 };
