@@ -15,6 +15,13 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import bgImage from '../../Images/bg.png';
 
+const typeLabels = {
+  blog: 'Blogs',
+  news: 'News',
+  video: 'Videos',
+  short: 'Shorts',
+};
+
 const BlogSection = () => {
   const [latestPosts, setLatestPosts] = useState({});
   const [featuredVideo, setFeaturedVideo] = useState(null);
@@ -83,12 +90,12 @@ const BlogSection = () => {
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
     color: '#8AC642',
-    border: '1px solid #8AC642',
+    border: '1.5px solid #8AC642',
     borderRadius: '40px',
-    padding: '12px 32px',
-    fontSize: '1.8rem',
-    fontWeight: '600',
-    minWidth: '180px',
+    padding: '8px 24px',
+    fontSize: '1.3rem',
+    fontWeight: '800',
+    minWidth: '150px',
     cursor: 'pointer',
     userSelect: 'none',
     transition: 'all 0.3s ease',
@@ -189,10 +196,10 @@ const BlogSection = () => {
                 color: '#fff',
               }}
             >
-              <Typography variant={isLarge ? 'h5' : 'h6'} fontWeight={600}>
+              <Typography variant={isLarge ? 'h5' : 'h6'} fontWeight={700} fontSize={isLarge ? '1.8rem' : '1.6rem'}>
                 {post.subtitle}
               </Typography>
-              <Typography variant="caption" display="block" sx={{ mb: 1 }}>
+              <Typography variant="caption" display="block" sx={{ mb: 1, fontSize: '1rem' }}>
                 {moment(post.createdAt).format('MMM DD, YYYY')}
               </Typography>
               <Button
@@ -203,7 +210,7 @@ const BlogSection = () => {
                   textTransform: 'none',
                   fontWeight: 500,
                   padding: 0,
-                  fontSize: '1.4rem',
+                  fontSize: '1.2rem',
                   minWidth: 'auto',
                   '&:hover': {
                     backgroundColor: 'transparent',
@@ -255,7 +262,7 @@ const BlogSection = () => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={5}>
           <Box sx={{ height: '500px' }}>
-            {renderCard(latestPosts.short, 'short', true)}
+            {renderCard(latestPosts.shorts, 'short', true)}
           </Box>
         </Grid>
         <Grid item xs={12} md={3}>
