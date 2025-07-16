@@ -19,6 +19,7 @@ import API_URL from "../ServiceModule/Service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
 import backArrow from "../Images/ic_back_button.png";
 import sms from "../Images/ic-sms.png";
 import call from "../Images/ic-call.png";
@@ -122,7 +123,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
       onClose={onCommunicationClose}
       sx={{
         "& .MuiDrawer-paper": {
-          width: isMobile ? "100%" : "35vw",
+          width: isMobile ? "100%" : "33vw",
           maxWidth: 420,
           backgroundColor: "#111",
           color: "#fff",

@@ -712,7 +712,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           lineHeight: 1.6,
         }}
       >
-        Are you sure, You want to delete your account?
+       Are you sure you want to delete your account? All your data will be permanently lost.
+
       </Typography>
 
       <div
