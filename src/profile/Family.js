@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { THEME_COLOR } from "../constants";
+
 const Family = ({ family, onfamilyclose }) => {
   const [familyData, setFamilyData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -62,7 +63,7 @@ const Family = ({ family, onfamilyclose }) => {
   const handleFamilyAddSuccess = () => {
     // Refresh the family details when a new member is added
     fetchFamilyDetails();
-    setDrawerOpen(false); 
+    setDrawerOpen(false);
   };
 
   return (
@@ -74,28 +75,37 @@ const Family = ({ family, onfamilyclose }) => {
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
           color: THEME_COLOR.COLOR,
-          width: "25vw",
+          width: { xs: "90vw", sm: "50vw", md: "35vw", lg: "26vw" }, // Responsive width
+          maxWidth: "400px", // Optional max width for large screens
+          padding: "10px",
         },
       }}
     >
-      <ToastContainer position="top-center"
-  style={{ zIndex: 99999 }} />
+      <ToastContainer position="top-left" style={{ zIndex: 99999 }} />
       <Box
-        sx={{ width: "25vw", padding: 0 }}
+        sx={{ width: "100%", padding: 0 }}
         role="presentation"
         style={{ overflowX: "hidden" }}
       >
-        <Grid container spacing={2} className="d-flex m-3">
+        <Grid container spacing={2} className="d-flex m-3" alignItems="center">
           <Grid item>
-            <img src={backArrow} alt="Back" onClick={onfamilyclose} />
+            <img
+              src={backArrow}
+              alt="Back"
+              onClick={onfamilyclose}
+              style={{ cursor: "pointer" }}
+            />
           </Grid>
-          <Grid item>
-            <Typography variant="h4">Plans for your family</Typography>
+          <Grid item xs>
+            <Typography variant="h5" noWrap>
+              Manage Your Family Members
+            </Typography>
           </Grid>
         </Grid>
-        <Grid container xs={12} spacing={2}>
+
+        <Grid container spacing={2} direction="column" style={{ padding: "0 16px" }}>
           {familyData?.map((profile, index) => (
-            <Grid item xs={6} key={index}>
+            <Grid item xs={12} key={index}>
               <Card style={styles.card}>
                 <div
                   className="profile-image-container"
@@ -119,28 +129,15 @@ const Family = ({ family, onfamilyclose }) => {
                 >
                   {profile.fullName}
                 </p>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                <div style={styles.infoContainer}>
                   <EmailIcon />
-                  <span style={{ fontSize: "1.3rem" }} className="ml-2">
+                  <span style={{ fontSize: "1.3rem", marginLeft: "8px" }}>
                     {profile?.email}
                   </span>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "10px",
-                  }}
-                >
+                <div style={{ ...styles.infoContainer, marginTop: "10px" }}>
                   <CallIcon />
-                  <span style={{ fontSize: "1.2rem" }} className="ml-2">
+                  <span style={{ fontSize: "1.2rem", marginLeft: "8px" }}>
                     {profile?.mobile}
                   </span>
                 </div>
@@ -148,20 +145,27 @@ const Family = ({ family, onfamilyclose }) => {
             </Grid>
           ))}
         </Grid>
+
         <Grid
           container
-          xs={12}
           justifyContent="center"
           alignItems="center"
           className="mt-5"
           onClick={handleFamilyOpen}
+          style={{ padding: "0 16px", marginTop: "20px", cursor: "pointer" }}
         >
-          <Card style={styles.card}>
-            <img height={70} src={addMember} />
-            <h4 style={{ color: "#0098DB" }}>Add member</h4>
+          <Card style={{ ...styles.card, width: "60%",
+    borderStyle: 'dashed',
+    borderColor: "#8AC642",
+    
+    borderWidth: 1.5, }}>
+            <img height={70} src={addMember} alt="Add Member" />
+            <h4 style={{ color: "#8AC642", marginTop: "10px" }}>Add New Member</h4>
           </Card>
         </Grid>
       </Box>
+
+      {/* Pass drawerOpen as prop to FamilyAdd */}
       <FamilyAdd
         familyAdd={drawerOpen}
         onfamilyAddClose={handleFamilyClose}
@@ -176,25 +180,28 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: "30px",
-    margin: "0 20px",
+    padding: "20px",
     textAlign: "center",
+    width: "100%", // Make card take full width of container
+    boxSizing: "border-box",
   },
   profileImageContainer: {
     display: "flex",
     justifyContent: "center",
-    marginBottom: "0px",
+    marginBottom: "10px",
   },
   profileImage: {
     width: "130px",
     height: "130px",
     borderRadius: "50%",
+    objectFit: "cover",
   },
   relationship: {
     backgroundColor: "#FACFC6",
-    padding: "5px 5px",
+    padding: "5px 10px",
     borderRadius: "5px",
-    marginBottom: "0px 0px",
+    marginBottom: "10px",
+    display: "inline-block",
   },
   name: {
     marginBottom: "10px",
@@ -202,11 +209,7 @@ const styles = {
   infoContainer: {
     display: "flex",
     alignItems: "center",
-    marginBottom: "0px",
-    padding: "5px 0",
-  },
-  infoText: {
-    // marginLeft: '10px',
+    justifyContent: "center",
   },
 };
 

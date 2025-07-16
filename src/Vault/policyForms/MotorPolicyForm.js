@@ -55,6 +55,8 @@ const MotorPolicyForm = () => {
     const [registrationYear, setRegistrationYear] = useState(responseData?.registrationYear || policyDetails?.policyDetails?.registrationYear || "");
     const [make, setMake] = useState(responseData?.make || policyDetails?.policyDetails?.make || "");
     const [model, setModel] = useState(responseData?.model || policyDetails?.policyDetails?.model || '');
+    const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
 
     const [loading, setLoading] = useState(false);
     const userId = sessionStorage.getItem('userId');
@@ -265,6 +267,8 @@ const MotorPolicyForm = () => {
                                         onChange={(e) => {
                                             setPolicyNumber(e.target.value);
                                         }}
+                                              inputStyle={commonInputStyle}
+
                                         required
                                     />
 
@@ -305,6 +309,8 @@ const MotorPolicyForm = () => {
 
                                         }}
                                         required
+                                              inputStyle={commonInputStyle}
+
                                     />
                                     <Box>
                       {(policyDetails?.insuredCompany || responseData?.insuranceCompany) ? (
@@ -315,6 +321,8 @@ const MotorPolicyForm = () => {
                           readOnly
                           disabled
                           required
+                                inputStyle={commonInputStyle}
+
                         />
                       ) : (
                         <InsuranceDropdown
@@ -333,6 +341,8 @@ const MotorPolicyForm = () => {
 
                                         }}
                                         required
+                                              inputStyle={commonInputStyle}
+
                                     />
                                     <CustomInput
                                         type="text"
@@ -342,6 +352,8 @@ const MotorPolicyForm = () => {
                                             setRegistrationYear(e.target.value);
 
                                         }}
+                                              inputStyle={commonInputStyle}
+
 
                                     />
                                     <CustomInput
@@ -353,6 +365,8 @@ const MotorPolicyForm = () => {
 
                                         }}
                                         required
+                                              inputStyle={commonInputStyle}
+
                                     />
 
                                     <CustomInput
@@ -363,6 +377,8 @@ const MotorPolicyForm = () => {
                                             setNcb(e.target.value);
 
                                         }}
+                                              inputStyle={commonInputStyle}
+
 
                                     />
 
@@ -384,6 +400,8 @@ const MotorPolicyForm = () => {
                                             setNetPremium(e.target.value);
 
                                         }}
+                                              inputStyle={commonInputStyle}
+
 
                                     />
                                     <CustomInput
@@ -394,6 +412,8 @@ const MotorPolicyForm = () => {
                                             setPremiumPaid(e.target.value);
                                         }}
                                         required
+                                              inputStyle={commonInputStyle}
+
                                     />
 
                                     <CustomInput
@@ -403,14 +423,19 @@ const MotorPolicyForm = () => {
                                         onChange={(e) => {
                                             setAssetType(e.target.value);
                                         }}
+                                              inputStyle={commonInputStyle}
+
                                         required
                                     />
                                     <CustomInput
                                         type="text"
                                         label="Vehicle Engine Number"
                                         value={vehicleEngineNumber}
+                                                                                          inputStyle={commonInputStyle}
+
                                         onChange={(e) => {
                                             setVehicleEngineNumber(e.target.value);
+
                                         }}
                                         required
 
@@ -419,8 +444,12 @@ const MotorPolicyForm = () => {
                                         type="text"
                                         label="Make "
                                         value={make}
+                                        
+      inputStyle={commonInputStyle}
+
                                         onChange={(e) => {
                                             setMake(e.target.value);
+
                                         }}
                                         required
                                     />
@@ -428,8 +457,11 @@ const MotorPolicyForm = () => {
                                         type="text"
                                         label="Model "
                                         value={model}
+                                                                                          inputStyle={commonInputStyle}
+
                                         onChange={(e) => {
                                             setModel(e.target.value);
+
                                         }}
                                         required
                                     />
@@ -437,8 +469,12 @@ const MotorPolicyForm = () => {
                                         type="text"
                                         label="Tp premium"
                                         value={tpPremium}
+                                        
+                                                                                inputStyle={commonInputStyle}
+
                                         onChange={(e) => {
                                             setTpPremium(e.target.value);
+
 
                                         }}
 
@@ -449,8 +485,9 @@ const MotorPolicyForm = () => {
                                         value={odPremium}
                                         onChange={(e) => {
                                             setOdpremium(e.target.value);
-
                                         }}
+                                                                                          inputStyle={commonInputStyle}
+
 
                                     />
                                     <Box display="flex" justifyContent="center" gap={4} mt={5} width="100%">

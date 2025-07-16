@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Dropdown.css"; // Import the CSS file
+import "./Dropdown.css";
 import API_URL from "../ServiceModule/Service";
 
-const GlobalDropdown = ({ onStateSelect, initialValue }) => {
+const GlobalDropdown = ({
+  onStateSelect,
+  initialValue,
+  required = false,
+  className = "",
+  style = {},
+}) => {
   const [options, setOptions] = useState([]);
   const [selectedValue, setSelectedValue] = useState(initialValue);
   const [loading, setLoading] = useState(true);
@@ -34,15 +40,28 @@ const GlobalDropdown = ({ onStateSelect, initialValue }) => {
   }, [initialValue]);
 
   const handleChange = (event) => {
-    setSelectedValue(event.target.value);
-    onStateSelect(event.target.value);
+    const newValue = event.target.value;
+    setSelectedValue(newValue);
+    onStateSelect(newValue);
   };
+
+  const defaultStyle = {
+    padding: "0.5rem",
+    backgroundColor: "#2c2c2c",
+    borderRadius: "1rem",
+    color: "#fff",
+    border: "2px solid #444",
+    minHeight: "2.5rem",
+  };
+
+  const finalStyle = Object.keys(style).length > 0 ? style : defaultStyle;
 
   return (
     <div className="dropdown-container">
       <label className="dropdown-label text-light" htmlFor="stateDropdown">
-        Select State<span className="text-danger">*</span>
+        Select State{required && <span className="text-danger">*</span>}
       </label>
+
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -50,9 +69,11 @@ const GlobalDropdown = ({ onStateSelect, initialValue }) => {
       ) : (
         <select
           id="stateDropdown"
-          className="dropdown-select rounded-5 bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300"
+          className={`dropdown-select ${className}`}
           value={selectedValue}
           onChange={handleChange}
+          required={required}
+          style={finalStyle}
         >
           <option value="" disabled>
             Select a state

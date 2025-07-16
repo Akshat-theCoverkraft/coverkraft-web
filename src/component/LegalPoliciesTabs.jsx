@@ -644,18 +644,57 @@ const policies = [
 
         ),
     },
-    {
-        label: "License",
-        id: "License",
-        content: (
-            <div id="License">
-                <h2 style={{ color: "#FFFFFF", marginBottom: "2rem", fontSize: "1.8rem", fontWeight: "700" }}>License</h2>
-                <div style={{ color: "#FFFFFF", lineHeight: "1.9", fontSize: "1.1rem", fontWeight: "500" }}>
-                    <p style={{ margin: "0", textAlign: "left" }}>Your license information will go here...</p>
-                </div>
-            </div>
-        ),
-    },
+   {
+    label: "License",
+    id: "License",
+    content: (
+        <div
+            id="License"
+            style={{
+                maxWidth: '1500px',
+                margin: '2rem auto',
+                color: '#E0E0E0',
+                lineHeight: '1.8',
+                fontSize: '1.7rem',
+                borderRadius: '10px',
+                fontFamily: 'DM Sans, sans-serif',
+            }}
+        >
+            <h2 style={{ color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' }}>
+                License
+            </h2>
+
+            <p>
+                <strong>Coverkraft Insurance Brokers Private Limited</strong> is a licensed entity regulated by the Insurance Regulatory and Development Authority of India (IRDAI).
+            </p>
+
+            <p>
+                <strong>Registered Office:</strong> D-3-591-D, Danish Nagar, Near Central School -3, Hoshangabad Road, Bhopal (Madhya Pradesh) - 462 026
+            </p>
+
+            <p>
+                <strong>License Type:</strong> IRDAI Direct Insurance Broker (Life & General)
+            </p>
+
+            <p>
+                <strong>License Number:</strong> 1078 &nbsp; | &nbsp;
+                <strong>Valid Till:</strong> 13/07/2028
+            </p>
+
+            <p>
+                <strong>Code No.:</strong> IRDAI/INT/BRK/DB1170/2024 &nbsp; | &nbsp;
+                <strong>CIN:</strong> U66220MP2024PTC071585 &nbsp; | &nbsp;
+                <strong>Registration No.:</strong> 071585
+            </p>
+
+            <p>
+                Visitors are hereby informed that their information submitted on the website may be shared with insurers. Product information is authentic and solely based on the information received from the insurers.
+            </p>
+
+            
+        </div>
+    ),
+},
     {
         label: "Disclaimer",
         id: "disclaimer",

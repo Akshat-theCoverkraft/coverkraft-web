@@ -27,6 +27,8 @@ const Login = () => {
   const recaptchRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
 
   // Syncs `valid` with input validation
   useEffect(() => {
@@ -274,13 +276,8 @@ const Login = () => {
                         className={` ${!valid && phoneNumber.length > 0 ? "is-invalid" : ""
                           }`}
                         required
-                        style={{
-                          fontSize: "14px",
-                          padding: "16px 20px",
-                          height: "60px",
-                          borderRadius: "50px",
-                          boxSizing: "border-box",
-                        }}
+                              inputStyle={commonInputStyle}
+
                       />
                       {!valid && phoneNumber.length > 0 && (
                         <div className="invalid-feedback">
