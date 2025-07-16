@@ -140,7 +140,7 @@ const Feeds = () => {
                     borderRadius: "40px", textTransform: "none", padding: "0.75rem 1.5rem",
                     backgroundColor: selectedTab === val ? "#8BC642" : "transparent",
                     color: selectedTab === val ? "#fff" : "#fff",
-                    border: "2px solid #8BC642", fontSize: "1.1rem", fontWeight: 600,
+                    border: "2px solid #8BC642", fontSize: "1.4rem", fontWeight: 600,
                     minWidth: "120px", transition: "all 0.3s ease",
                   }}
                 />

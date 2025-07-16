@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import services from "../../Images/Coming-Soon.png";
+import services from "../../Images/CoverKraft_IRDA.png";
 import "./CSS/service.css";
 import Background from "../../Images/OurCerification1.png";
 
@@ -20,7 +20,7 @@ const Service = () => {
       <div className="service-container">
         <div className="service-left">
           <Typography
-            className="service-title ml-5"
+            className="service-title ml-5 mb-3"
             variant="h5"
             fontWeight="bold"
             fontSize="2.8rem"
@@ -28,7 +28,7 @@ const Service = () => {
             OUR CERTIFICATIONS
           </Typography>
           <Typography
-            className="service-heading ml-5"
+            className="service-heading ml-5 mb-3"
             variant="h3"
             fontWeight="700"
             fontSize="2.5rem"
@@ -47,7 +47,7 @@ const Service = () => {
           </Typography>
         </div>
 
-        <div className="service-right">
+        <div className="service-right mb-5">
           <img src={services} alt="certification" className="service-image" />
         </div>
       </div>

@@ -80,6 +80,7 @@ const Dropdown = ({
                   backgroundColor: "#495057",
                 },
                 margin: "0.5rem 0px",
+                 fontSize: "1.3rem",
               }}
             >
               {option.label}

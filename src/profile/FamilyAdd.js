@@ -96,7 +96,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
   style={{ zIndex: 99999 }} />
       <Box
         sx={{
-          width: "26vw",
+          width: "23.7vw",
           padding: "50px",
           display: "flex",
           flexDirection: "column",

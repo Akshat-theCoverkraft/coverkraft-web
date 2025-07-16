@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@mui/material";
 
 const ProfileInfoView = ({ username, useremail, onEdit }) => {
@@ -14,7 +13,7 @@ const ProfileInfoView = ({ username, useremail, onEdit }) => {
           borderRadius: "3rem",
           width: "100%",
           height: "40px",
-          fontSize: "1rem",
+          fontSize: "1.4rem",
         }}
       >
         Edit Profile

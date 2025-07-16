@@ -27,23 +27,19 @@ const BlogSection = () => {
   const [featuredVideo, setFeaturedVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  // Use an object keyed by post ID to store video refs
   const videoRefs = useRef({});
 
-  // Register video refs, keyed by post._id
- const registerVideo = (el, id) => {
-  if (el && id) {
-    videoRefs.current[id] = el;
-  }
-};
-
+  const registerVideo = (el, id) => {
+    if (el && id) {
+      videoRefs.current[id] = el;
+    }
+  };
 
   const getVideoType = (url) => {
     if (url.endsWith('.mp4')) return 'video/mp4';
     if (url.endsWith('.webm')) return 'video/webm';
     if (url.endsWith('.ogg')) return 'video/ogg';
-    return 'video/mp4'; // default fallback
+    return 'video/mp4';
   };
 
   useEffect(() => {
@@ -54,17 +50,16 @@ const BlogSection = () => {
           fetch('http://52.52.154.65:5242/featureVideo/getAll'),
         ]);
 
-
         const sortedNews = (newsRes.data?.data || [])
           .filter(item => item.status === 'active')
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         const latestByType = {
           videos: sortedNews.filter(p => p.type === 'video').slice(0, 1),
+          shorts: sortedNews.filter(p => p.type === 'short').slice(0, 1)[0],
+          news: sortedNews.find(p => p.type === 'news'),
+          blog: sortedNews.find(p => p.type === 'blog'),
         };
-        ['short', 'news', 'blog'].forEach(type => {
-          latestByType[type] = sortedNews.find(p => p.type === type);
-        });
 
         const featuredData = await featuredRes.json();
         const activeFeatured = Array.isArray(featuredData.data)
@@ -92,7 +87,6 @@ const BlogSection = () => {
     return () => window.removeEventListener('scroll', pauseAllVideos);
   }, []);
 
-  console.log("vdoRefs:");
   const getUrl = (post) =>
     post.videoUrl
       ? post.videoUrl.startsWith('http')
@@ -172,43 +166,43 @@ const BlogSection = () => {
         }}
       >
         <Box sx={{ position: 'relative', height: '100%' }}>
-         <Chip
-  icon={<TravelExploreIcon />}
-  label={
-    (() => {
-      const type = post.type?.toLowerCase();
-      const exceptions = {
-        news: 'News',
-        blog: 'Blogs',
-        video: 'Videos',
-        featured: 'Featureds',
-      };
-      return type
-        ? exceptions[type] || (type.charAt(0).toUpperCase() + type.slice(1) + 's')
-        : 'Featureds';
-    })()
-  }
-  size="small"
-  sx={{
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    zIndex: 2,
-    bgcolor: '#8AC642',
-    color: '#000',
-    fontWeight: 600,
-    fontSize: "1.1rem"
-  }}
-/>
-
+          <Chip
+            icon={<TravelExploreIcon />}
+            label={
+              (() => {
+                const type = post.type?.toLowerCase();
+                const exceptions = {
+                  news: 'News',
+                  blog: 'Blogs',
+                  video: 'Videos',
+                  featured: 'Featureds',
+                  short: 'Shorts',
+                };
+                return type
+                  ? exceptions[type] || (type.charAt(0).toUpperCase() + type.slice(1) + 's')
+                  : 'Featureds';
+              })()
+            }
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: 10,
+              left: 10,
+              zIndex: 2,
+              bgcolor: '#8AC642',
+              color: '#000',
+              fontWeight: 600,
+              fontSize: '1.1rem',
+            }}
+          />
 
           {isVideo ? (
             <video
-ref={(el) => registerVideo(el, post._id)}
+              ref={(el) => registerVideo(el, post._id)}
               controls
               preload="metadata"
               style={{ ...mediaStyle, objectFit: 'contain', backgroundColor: '#000' }}
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
               onPlay={(e) => {
                 Object.entries(videoRefs.current).forEach(([id, video]) => {
                   if (id !== post._id && video && !video.paused) {
@@ -236,10 +230,10 @@ ref={(el) => registerVideo(el, post._id)}
                 color: '#fff',
               }}
             >
-              <Typography sx={{fontSize: "1.4rem"}} fontWeight={300}>
+              <Typography sx={{ fontSize: '1.4rem' }} fontWeight={300}>
                 {post.subtitle}
               </Typography>
-              <Typography variant="caption" display="block" sx={{ mb: 1, fontSize: "1.3rem"  }}>
+              <Typography variant="caption" display="block" sx={{ mb: 1, fontSize: '1.3rem' }}>
                 {moment(post.createdAt).format('MMM DD, YYYY')}
               </Typography>
               <Button
@@ -250,7 +244,6 @@ ref={(el) => registerVideo(el, post._id)}
                   textTransform: 'none',
                   fontWeight: 500,
                   padding: 0,
-                  fontSize: '1.2rem',
                   fontSize: '1.2rem',
                   minWidth: 'auto',
                   '&:hover': {
@@ -347,7 +340,6 @@ ref={(el) => registerVideo(el, post._id)}
                 </Card>
               )}
             </Box>
-
           </Box>
         </Grid>
       </Grid>

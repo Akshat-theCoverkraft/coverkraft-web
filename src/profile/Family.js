@@ -154,9 +154,13 @@ const Family = ({ family, onfamilyclose }) => {
           onClick={handleFamilyOpen}
           style={{ padding: "0 16px", marginTop: "20px", cursor: "pointer" }}
         >
-          <Card style={{ ...styles.card, width: "100%" }}>
+          <Card style={{ ...styles.card, width: "60%",
+    borderStyle: 'dashed',
+    borderColor: "#8AC642",
+    
+    borderWidth: 1.5, }}>
             <img height={70} src={addMember} alt="Add Member" />
-            <h4 style={{ color: "#0098DB", marginTop: "10px" }}>Add member</h4>
+            <h4 style={{ color: "#8AC642", marginTop: "10px" }}>Add New Member</h4>
           </Card>
         </Grid>
       </Box>

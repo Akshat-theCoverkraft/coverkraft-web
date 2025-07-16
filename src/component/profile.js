@@ -26,7 +26,7 @@ import GlobalDatePicker from "./GlobalDatePicker";
 import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 import ContactUs from "../profile/ContactUs";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import { BorderColor, Padding } from "@mui/icons-material";
 
 const ProfileDrawer = ({ open, onClose, userName }) => {
@@ -59,8 +59,20 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [returnPath, setReturnPath] = useState("/");
-  const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
-  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
+  const commonItemStyle = {
+    maxWidth: 900,
+    width: "100%",
+    paddingLeft: "10px !important",
+  };
+  const commonInputStyle = {
+    height: 48,
+    fontSize: "1.222rem",
+    borderRadius: 42,
+    paddingLeft: "20px",
+    width: "100%",
+    color: "white",
+    borderColor: "grey",
+  };
 
   const LOCAL_STORAGE_KEYS = [
     "loggedIn",
@@ -72,12 +84,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   ];
 
   const calculateProfileCompletion = (data) => {
-    const requiredFields = [
-      "userName",
-      "userEmail",
-      "userPhone",
-      "userImg"
-    ];
+    const requiredFields = ["userName", "userEmail", "userPhone", "userImg"];
 
     const totalFields = requiredFields.length;
     let completedFields = 0;
@@ -167,7 +174,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDifference = today.getMonth() - birthDate.getMonth();
 
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
       age--;
     }
 
@@ -187,7 +197,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     formData.append("userPhone", userPhone);
 
     if (userDob) {
-      const formattedDob = userDob.toLocaleDateString('en-GB').split('/').reverse().join('-');
+      const formattedDob = userDob
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .reverse()
+        .join("-");
       formData.append("userDob", formattedDob);
     }
 
@@ -255,7 +269,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const handleEmailChange = (e) => {
     const emailId = e.target.value;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const validEmail = emailRegex.test(emailId) &&
+    const validEmail =
+      emailRegex.test(emailId) &&
       emailId.split("@").length === 2 &&
       emailId.split("@")[1].split(".").length <= 3;
     setuserEmail(emailId);
@@ -313,7 +328,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       >
         <div className="flex items-center justify-end px-4 py-2">
           <CloseIcon
-
             onClick={() => {
               onClose();
               setUpdate(false);
@@ -323,7 +337,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               cursor: "pointer",
               color: "#fff",
               fontSize: "2rem",
-              transition: "transform 0.2s ease, color 0.2s ease"
+              transition: "transform 0.2s ease, color 0.2s ease",
             }}
             onMouseEnter={(e) => {
               e.target.style.transform = "scale(1.2)";
@@ -336,12 +350,18 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           />
         </div>
 
-
         <div className="main-container">
-          <div className="background-image-container1" style={{ height: "30vh", padding: "0 2rem" }}>
+          <div
+            className="background-image-container1"
+            style={{ height: "30vh", padding: "0 2rem" }}
+          >
             <div className="profile-details">
               <div className="profile-image-container">
-                <img src={profileImage} alt="Profile" className="profile-image" />
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className="profile-image"
+                />
                 {update && (
                   <label htmlFor="profile-image-upload">
                     <img
@@ -376,7 +396,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                       width: "100%",
                       height: "5vh",
                       borderRadius: "3rem",
-                      fontSize: "1rem",
+                      fontSize: "1.5rem",
                     }}
                   />
                 </div>
@@ -394,12 +414,24 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             }}
           >
             {[
-              { label: "Family Member", icon: family, onClick: handleFamilyOpen },
-              { label: "Communication Preferences", icon: communication, onClick: handleCommunicationOpen },
+              {
+                label: "Family Member",
+                icon: family,
+                onClick: handleFamilyOpen,
+              },
+              {
+                label: "Communication Preferences",
+                icon: communication,
+                onClick: handleCommunicationOpen,
+              },
               { label: "Contact Us", icon: help, onClick: handleHelpOpen },
               { label: "About", icon: about, onClick: handleAboutOpen },
               { label: "Logout", icon: logout, onClick: handleLogout },
-              { label: "Delete Account", icon: logout, onClick: () => setShowDeleteModal(true) },
+              {
+                label: "Delete Account",
+                icon: logout,
+                onClick: () => setShowDeleteModal(true),
+              },
             ].map((item, idx) => (
               <Grid
                 container
@@ -414,235 +446,333 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 }}
               >
                 <Grid item xs={2}>
-                  <img src={item.icon} style={{ maxHeight: "2.5rem" }} alt={item.label} />
+                  <img
+                    src={item.icon}
+                    style={{ maxHeight: "2.5rem" }}
+                    alt={item.label}
+                  />
                 </Grid>
                 <Grid item xs={8}>
                   <span>{item.label}</span>
                 </Grid>
                 <Grid item xs={2}>
-                  <img src={rightArrow} style={{ maxHeight: "2rem" }} alt="arrow" />
+                  <img
+                    src={rightArrow}
+                    style={{ maxHeight: "2rem" }}
+                    alt="arrow"
+                  />
                 </Grid>
               </Grid>
             ))}
           </Card>
         ) : (
           <div className="main-container mt-3 p-4">
-<Grid container spacing={3} direction="column" alignItems="center">
-  {/* Full Name */}
-  <Grid item style={commonItemStyle}>
-    <CustomInput
-      label="Full Name"
-      placeholder="Enter your name"
-      value={username}
-      onChange={(e) => setuserName(e.target.value)}
-      required
-      fullWidth
-      inputStyle={commonInputStyle}
-    />
-  </Grid>
+            <Grid container spacing={3} direction="column" alignItems="center">
+              {/* Full Name */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  label="Full Name"
+                  placeholder="Enter your name"
+                  value={username}
+                  onChange={(e) => setuserName(e.target.value)}
+                  required
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                />
+              </Grid>
 
-  {/* Email */}
-  <Grid item style={commonItemStyle}>
-    <CustomInput
-      type="email"
-      label="Email Address"
-      placeholder="Enter your email"
-      value={useremail}
-      onChange={handleEmailChange}
-      required
-      fullWidth
-      inputStyle={commonInputStyle}
-      validationMessage={!isValidEmail ? "Please enter a valid email address" : ""}
-    />
-  </Grid>
+              {/* Email */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  type="email"
+                  label="Email Address"
+                  placeholder="Enter your email"
+                  value={useremail}
+                  onChange={handleEmailChange}
+                  required
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                  validationMessage={
+                    !isValidEmail ? "Please enter a valid email address" : ""
+                  }
+                />
+              </Grid>
 
-  {/* Phone */}
-  <Grid item style={commonItemStyle}>
-    <CustomInput
-      type="tel"
-      label="Mobile Number"
-      placeholder="Enter your mobile number"
-      value={userPhone}
-      onChange={handlephonechange}
-      required
-      fullWidth
-      inputStyle={commonInputStyle}
-      validationMessage={!valid ? "Please enter a valid 10-digit number" : ""}
-    />
-  </Grid>
+              {/* Phone */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  type="tel"
+                  label="Mobile Number"
+                  placeholder="Enter your mobile number"
+                  value={userPhone}
+                  onChange={handlephonechange}
+                  required
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                  validationMessage={
+                    !valid ? "Please enter a valid 10-digit number" : ""
+                  }
+                />
+              </Grid>
 
-  {/* Date of Birth */}
-  <Grid item style={commonItemStyle}>
-    <label htmlFor="dob" className="form-label fw-bold text-light mb-2 d-block">
-      Date of Birth
-    </label>
-    <GlobalDatePicker
-      label=""
-      selectedDate={userDob}
-      handleDateChange={handleDobChange}
-      className="form-control"
-      placeholder="Select your date of birth"
-      style={{height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey" }}
-    />
-  </Grid>
-
-  {/* Address */}
-  <Grid item style={commonItemStyle}>
-    <CustomInput
-      label="Address"
-      placeholder="Enter your address"
-      value={userAddress}
-      onChange={(e) => setuserAddress(e.target.value)}
-      fullWidth
-      inputStyle={commonInputStyle}
-    />
-  </Grid>
-
-  {/* State */}
-  <Grid item style={commonItemStyle}>
-    <GlobalDropdown
-      onStateSelect={handleStateSelect}
-      initialValue={selectedStateId}
-      style={{ ...commonInputStyle, width: "100%" }}
-    />
-  </Grid>
-
-  {/* City */}
-  <Grid item style={commonItemStyle}>
-    <CityDropdown
-      label="City"
-      selectedStateId={selectedStateId}
-      onCitySelect={handleCitySelect}
-      initialValue={selectedCityId}
-      style={{ ...commonInputStyle, width: "100%" }}
-    />
-  </Grid>
-
-  {/* Pincode */}
-  <Grid item style={commonItemStyle}>
-    <CustomInput
-      label="Pincode"
-      placeholder="Enter your pincode"
-      value={pinCode}
-      onChange={handlePinCodeChange}
-      fullWidth
-      inputStyle={commonInputStyle}
-      validationMessage={
-        !isValidPinCode ? "Please enter a valid pin code (5 or 6 digits)" : ""
-      }
-    />
-  </Grid>
-
-  {/* Gender */}
-  <Grid item style={commonItemStyle}>
-    <label htmlFor="gender" className="form-label fw-bold text-light mb-2 d-block">
-      Gender
-    </label>
-    <select
-      id="gender"
-      className="form-control bg-dark text-light rounded-3"
-      value={gender}
-      onChange={(e) => setgender(e.target.value)}
-      style={{ ...commonInputStyle, width: "100%" }}
-    >
-      <option value="">Select Your Gender</option>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-      <option value="other">Other</option>
-    </select>
-  </Grid>
-
-  {/* Buttons */}
-  <Grid item style={commonItemStyle}>
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <Button
-          text="Update Profile"
-          onClick={handleUpateProfile}
-          disabled={!isValidEmail || !valid || !username || !useremail || !userPhone}
-          bgcolor={
-            !isValidEmail || !valid || !username || !useremail || !userPhone
-              ? "#ccc"
-              : "#8AC642"
-          }
-          customStyle={{
-            width: "100%",
-            height: 48,
-            borderRadius: 24,
-            fontSize: "1rem",
-          }}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <Button
-          text="Cancel"
-          onClick={() => setUpdate(false)}
-          customStyle={{
-            width: "100%",
-            height: 48,
-            borderRadius: 24,
-            fontSize: "1rem",
-            backgroundColor: "#444",
-            color: "#fff",
-          }}
-        />
-      </Grid>
-    </Grid>
-  </Grid>
-</Grid>
-
-
-</div>
-
-
-
-        )}
-
-        {showDeleteModal && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              background: "rgba(0,0,0,0.5)",
-              zIndex: 9999,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                background: "#212121",
-                borderRadius: "1rem",
-                padding: "2rem",
-                minWidth: "300px",
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="h6" style={{ marginBottom: "1rem", color: "#fff" }}>
-                Are you sure you want to delete your account?
-              </Typography>
-              <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
-                <Button
-                  text="Yes, Delete"
-                  bgcolor="#e53935"
-                  onClick={() => {
-                    setShowDeleteModal(false);
-                    handleDeleteAccount();
+              {/* Date of Birth */}
+              <Grid item style={commonItemStyle}>
+                <label
+                  htmlFor="dob"
+                  className="form-label fw-bold text-light mb-2 d-block"
+                >
+                  Date of Birth
+                </label>
+                <GlobalDatePicker
+                  label=""
+                  selectedDate={userDob}
+                  handleDateChange={handleDobChange}
+                  className="form-control"
+                  placeholder="Select your date of birth"
+                  style={{
+                    height: 48,
+                    fontSize: "1.222rem",
+                    borderRadius: 42,
+                    paddingLeft: "20px",
+                    width: "100%",
+                    color: "white",
+                    borderColor: "grey",
                   }}
                 />
-                <Button
-                  text="Cancel"
-                  bgcolor="#8AC642"
-                  onClick={() => setShowDeleteModal(false)}
+              </Grid>
+
+              {/* Address */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  label="Address"
+                  placeholder="Enter your address"
+                  value={userAddress}
+                  onChange={(e) => setuserAddress(e.target.value)}
+                  fullWidth
+                  inputStyle={commonInputStyle}
                 />
-              </div>
-            </div>
+              </Grid>
+
+              {/* State */}
+              <Grid item style={commonItemStyle}>
+                <GlobalDropdown
+                  onStateSelect={handleStateSelect}
+                  initialValue={selectedStateId}
+                  style={{ ...commonInputStyle, width: "100%" }}
+                />
+              </Grid>
+
+              {/* City */}
+              <Grid item style={commonItemStyle}>
+                <CityDropdown
+                  label="City"
+                  selectedStateId={selectedStateId}
+                  onCitySelect={handleCitySelect}
+                  initialValue={selectedCityId}
+                  style={{ ...commonInputStyle, width: "100%" }}
+                />
+              </Grid>
+
+              {/* Pincode */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  label="Pincode"
+                  placeholder="Enter your pincode"
+                  value={pinCode}
+                  onChange={handlePinCodeChange}
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                  validationMessage={
+                    !isValidPinCode
+                      ? "Please enter a valid pin code (5 or 6 digits)"
+                      : ""
+                  }
+                />
+              </Grid>
+
+              {/* Gender */}
+              <Grid item style={commonItemStyle}>
+                <label
+                  htmlFor="gender"
+                  className="form-label fw-bold text-light mb-2 d-block"
+                >
+                  Gender
+                </label>
+                <select
+                  id="gender"
+                  className="form-control bg-dark text-light rounded-3"
+                  value={gender}
+                  onChange={(e) => setgender(e.target.value)}
+                  style={{ ...commonInputStyle, width: "100%" }}
+                >
+                  <option value="">Select Your Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </Grid>
+
+              {/* Buttons */}
+              <Grid item style={commonItemStyle}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Button
+                      text="Update Profile"
+                      onClick={handleUpateProfile}
+                      disabled={
+                        !isValidEmail ||
+                        !valid ||
+                        !username ||
+                        !useremail ||
+                        !userPhone
+                      }
+                      bgcolor={
+                        !isValidEmail ||
+                        !valid ||
+                        !username ||
+                        !useremail ||
+                        !userPhone
+                          ? "#ccc"
+                          : "#8AC642"
+                      }
+                      customStyle={{
+                        width: "100%",
+                        height: 48,
+                        borderRadius: 24,
+                        fontSize: "1.4rem",
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      text="Cancel"
+                      onClick={() => setUpdate(false)}
+                      customStyle={{
+                        width: "100%",
+                        height: 48,
+                        borderRadius: 24,
+                        fontSize: "1.4rem",
+                        backgroundColor: "#444",
+                        color: "#fff",
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
           </div>
         )}
+
+      {showDeleteModal && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      background: "rgba(0, 0, 0, 0.6)",
+      zIndex: 9999,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+    }}
+  >
+    <div
+      style={{
+        backgroundColor: "#1c1c1c",
+        borderRadius: "16px",
+        padding: "2rem",
+        maxWidth: "500px",
+        width: "100%",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+        textAlign: "center",
+        border: "1px solid rgba(255,255,255,0.1)",
+      }}
+    >
+      <Typography
+        variant="h5"
+        sx={{
+          mb: 1,
+          color: "#fff",
+          fontWeight: 800,
+          fontSize: "1.8rem",
+        }}
+      >
+        Delete Account
+      </Typography>
+
+      <Typography
+        variant="body1"
+        sx={{
+          mb: 3,
+          color: "#ccc",
+          fontSize: "1.3rem",
+          lineHeight: 1.6,
+        }}
+      >
+        Are you sure, You want to delete your account?
+      </Typography>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: "1rem",
+          justifyContent: "center",
+        }}
+      >
+        <button
+          style={{
+            flex: 1,
+            minWidth: "120px",
+            backgroundColor: "#e53935",
+            color: "#fff",
+            border: "none",
+            borderRadius: "30px",
+            padding: "14px 0",
+            fontSize: "16px",
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "background 0.3s",
+          }}
+          onClick={() => {
+            setShowDeleteModal(false);
+            handleDeleteAccount();
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#e53935")}
+        >
+          Delete
+        </button>
+
+        <button
+          style={{
+            flex: 1,
+            minWidth: "120px",
+            backgroundColor: "#8AC642",
+            color: "#000",
+            border: "none",
+            borderRadius: "30px",
+            padding: "14px 0",
+            fontSize: "16px",
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "background 0.3s",
+          }}
+          onClick={() => setShowDeleteModal(false)}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#7ab634")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#8AC642")}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       </Box>
       <Family family={drawerOpen} onfamilyclose={handleFamilyClose} />
       <Communication

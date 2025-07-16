@@ -9,7 +9,7 @@ const DeleteAccountModal = ({ onConfirm, onCancel }) => {
         position: "fixed",
         top: 0, left: 0,
         width: "100vw", height: "100vh",
-        background: "rgba(0,0,0,0.5)",
+        background: "rgba(0,0,0,0.7)",
         zIndex: 9999,
         display: "flex",
         alignItems: "center",
@@ -25,8 +25,11 @@ const DeleteAccountModal = ({ onConfirm, onCancel }) => {
           textAlign: "center",
         }}
       >
+         <Typography variant="h6" sx={{ mb: 2, color: "#fff" }}>
+Delete Account
+        </Typography>
         <Typography variant="h6" sx={{ mb: 2, color: "#fff" }}>
-          Are you sure you want to delete your account?
+          Are you sure, You want to delete your account?
         </Typography>
         <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
           <Button
