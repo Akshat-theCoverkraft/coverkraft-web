@@ -20,12 +20,23 @@ const BlogSection = () => {
   const [featuredVideo, setFeaturedVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const videoRefs = useRef([]);
 
-  const registerVideo = (el) => {
-    if (el && !videoRefs.current.includes(el)) {
-      videoRefs.current.push(el);
-    }
+  // Use an object keyed by post ID to store video refs
+  const videoRefs = useRef({});
+
+  // Register video refs, keyed by post._id
+ const registerVideo = (el, id) => {
+  if (el && id) {
+    videoRefs.current[id] = el;
+  }
+};
+
+
+  const getVideoType = (url) => {
+    if (url.endsWith('.mp4')) return 'video/mp4';
+    if (url.endsWith('.webm')) return 'video/webm';
+    if (url.endsWith('.ogg')) return 'video/ogg';
+    return 'video/mp4'; // default fallback
   };
 
   useEffect(() => {
@@ -35,6 +46,7 @@ const BlogSection = () => {
           axios.get('http://52.52.154.65:5242/news/getAll?isActive=true'),
           fetch('http://52.52.154.65:5242/featureVideo/getAll'),
         ]);
+
 
         const sortedNews = (newsRes.data?.data || [])
           .filter(item => item.status === 'active')
@@ -64,8 +76,11 @@ const BlogSection = () => {
     fetchData();
 
     const pauseAllVideos = () => {
-      videoRefs.current.forEach((video) => !video.paused && video.pause());
+      Object.values(videoRefs.current).forEach((video) => {
+        if (video && !video.paused) video.pause();
+      });
     };
+
     window.addEventListener('scroll', pauseAllVideos);
     return () => window.removeEventListener('scroll', pauseAllVideos);
   }, []);
@@ -82,12 +97,12 @@ const BlogSection = () => {
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
     color: '#8AC642',
-    border: '1px solid #8AC642',
+    border: '2px solid #8AC642',
     borderRadius: '40px',
     padding: '12px 32px',
-    fontSize: '1.8rem',
-    fontWeight: '600',
-    minWidth: '180px',
+    fontSize: '1.3rem',
+    fontWeight: '800',
+    minWidth: '120px',
     cursor: 'pointer',
     userSelect: 'none',
     transition: 'all 0.3s ease',
@@ -121,7 +136,13 @@ const BlogSection = () => {
     }
 
     const url = getUrl(post);
-    const isVideo = /\.(mp4|mov|avi|mkv|webm)$/i.test(url);
+    const isVideo =
+      /\.(mp4|mov|avi|mkv|webm)$/i.test(url) ||
+      post.video ||
+      post.videoUrl ||
+      post.type === 'video' ||
+      post.type === 'featured';
+
     const mediaStyle = {
       width: '100%',
       height: '100%',
@@ -143,33 +164,52 @@ const BlogSection = () => {
         }}
       >
         <Box sx={{ position: 'relative', height: '100%' }}>
-          <Chip
-            icon={<TravelExploreIcon />}
-            label={post.type?.toUpperCase() || 'VIDEO'}
-            size="small"
-            sx={{
-              position: 'absolute',
-              top: 10,
-              left: 10,
-              zIndex: 2,
-              bgcolor: '#8AC642',
-              color: '#000',
-              fontWeight: 600,
-            }}
-          />
+         <Chip
+  icon={<TravelExploreIcon />}
+  label={
+    (() => {
+      const type = post.type?.toLowerCase();
+      const exceptions = {
+        news: 'News',
+        blog: 'Blogs',
+        video: 'Videos',
+        featured: 'Featureds',
+      };
+      return type
+        ? exceptions[type] || (type.charAt(0).toUpperCase() + type.slice(1) + 's')
+        : 'Featureds';
+    })()
+  }
+  size="small"
+  sx={{
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 2,
+    bgcolor: '#8AC642',
+    color: '#000',
+    fontWeight: 600,
+    fontSize: "1.1rem"
+  }}
+/>
+
+
           {isVideo ? (
             <video
-              ref={registerVideo}
+ref={(el) => registerVideo(el, post._id)}
               controls
               preload="metadata"
               style={{ ...mediaStyle, objectFit: 'contain', backgroundColor: '#000' }}
+              onClick={e => e.stopPropagation()}
               onPlay={(e) => {
-                videoRefs.current.forEach((v) => {
-                  if (v !== e.target && !v.paused) v.pause();
+                Object.entries(videoRefs.current).forEach(([id, video]) => {
+                  if (id !== post._id && video && !video.paused) {
+                    video.pause();
+                  }
                 });
               }}
             >
-              <source src={url} type="video/mp4" />
+              <source src={url} type={getVideoType(url)} />
               Your browser does not support the video tag.
             </video>
           ) : (
@@ -188,10 +228,10 @@ const BlogSection = () => {
                 color: '#fff',
               }}
             >
-              <Typography variant={isLarge ? 'h5' : 'h6'} fontWeight={600}>
+              <Typography sx={{fontSize: "1.4rem"}} fontWeight={300}>
                 {post.subtitle}
               </Typography>
-              <Typography variant="caption" display="block" sx={{ mb: 1 }}>
+              <Typography variant="caption" display="block" sx={{ mb: 1, fontSize: "1.3rem"  }}>
                 {moment(post.createdAt).format('MMM DD, YYYY')}
               </Typography>
               <Button
@@ -202,7 +242,7 @@ const BlogSection = () => {
                   textTransform: 'none',
                   fontWeight: 500,
                   padding: 0,
-                  fontSize: '1.4rem',
+                  fontSize: '1.2rem',
                   minWidth: 'auto',
                   '&:hover': {
                     backgroundColor: 'transparent',

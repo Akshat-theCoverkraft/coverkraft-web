@@ -103,6 +103,8 @@ const LifePolicyForm = () => {
   const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
 
   const inputFields = [
     policyNumber,
@@ -332,6 +334,8 @@ const LifePolicyForm = () => {
                         value={policyNumber}
                         disabled={true}
                         required
+                              inputStyle={commonInputStyle}
+
                       />
                     </Box>
 
@@ -535,6 +539,8 @@ const LifePolicyForm = () => {
                         value={insuredName}
                         onChange={(e) => setInsuredName(e.target.value)}
                         required
+                              inputStyle={commonInputStyle}
+
                       />
                     </Box>
 
@@ -547,6 +553,8 @@ const LifePolicyForm = () => {
                           readOnly
                           disabled
                           required
+                                inputStyle={commonInputStyle}
+
                         />
                       ) : (
                         <InsuranceDropdown
@@ -563,6 +571,8 @@ const LifePolicyForm = () => {
                         label="Critical Illness Coverage"
                         value={criticalIllness}
                         onChange={(e) => setCriticalIllness(e.target.value)}
+                              inputStyle={commonInputStyle}
+
                       />
                     </Box>
 
@@ -572,6 +582,8 @@ const LifePolicyForm = () => {
                         label="Accidental Disability Coverage"
                         value={accidentalDisability}
                         onChange={(e) => setAccidentalDisability(e.target.value)}
+                              inputStyle={commonInputStyle}
+
                       />
                     </Box>
                   </Box>
@@ -587,6 +599,8 @@ const LifePolicyForm = () => {
                         label="Net Premium"
                         value={netPremium}
                         onChange={(e) => setNetPremium(e.target.value)}
+                              inputStyle={commonInputStyle}
+
                       />
                     </Box>
 
@@ -596,6 +610,8 @@ const LifePolicyForm = () => {
                         label="Total Premium"
                         value={premiumPaid}
                         onChange={(e) => setPremiumPaid(e.target.value)}
+                              inputStyle={commonInputStyle}
+
                         required
                       />
                     </Box>
@@ -605,6 +621,8 @@ const LifePolicyForm = () => {
                         type="text"
                         label="Sum Assured"
                         value={sumAssured}
+                              inputStyle={commonInputStyle}
+
                         onChange={(e) => setSumAssured(e.target.value)}
                         required
                       />
@@ -617,6 +635,8 @@ const LifePolicyForm = () => {
                         label="Personal Accident Coverage"
                         value={pa}
                         onChange={(e) => setPa(e.target.value)}
+                              inputStyle={commonInputStyle}
+
                       />
                     </Box>
 
@@ -626,6 +646,8 @@ const LifePolicyForm = () => {
                         label="Terminal Illness Coverage"
                         value={terminalIllness}
                         onChange={(e) => setTerminalIllness(e.target.value)}
+                              inputStyle={commonInputStyle}
+
                       />
                     </Box>
 
@@ -635,6 +657,8 @@ const LifePolicyForm = () => {
                         type="text"
                         label="Policy Name"
                         value={policyName}
+                              inputStyle={commonInputStyle}
+
                         onChange={(e) => setPolicyName(e.target.value)}
                         required
                       />
@@ -646,6 +670,8 @@ const LifePolicyForm = () => {
                         label="Additional Notes"
                         value={others}
                         onChange={(e) => setOthers(e.target.value)}
+                              inputStyle={commonInputStyle}
+
                       />
                     </Box>
 

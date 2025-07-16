@@ -55,6 +55,8 @@ const HealthPolicyForm = () => {
   const [dob, setDob] = useState(responseData?.dob || "");
   const [policyName, setPolicyName] = useState(responseData?.policyName || policyDetails?.policyDetails?.policyName || '');
   // const [idv, setIdv] = useState(responseData.idv || "");
+  const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
 
   const [loading, setLoading] = useState(false);
   const userId = sessionStorage.getItem('userId');
@@ -227,6 +229,8 @@ const HealthPolicyForm = () => {
                       setPolicyNumber(e.target.value);
                     }}
                     required
+                          inputStyle={commonInputStyle}
+
                   />
                   <label className="form-label fw-bold" htmlFor="inputField">
                     DOB <span className='text-danger'>*</span>
@@ -272,6 +276,8 @@ const HealthPolicyForm = () => {
                       setInsuredName(e.target.value);
                     }}
                     required
+                          inputStyle={commonInputStyle}
+
                   />
                   {policyDetails?.insuredCompany || responseData?.insuranceCompany ? (
                     // If backend has provided it, show read-only field
@@ -283,6 +289,8 @@ const HealthPolicyForm = () => {
                       readOnly
                       disabled
                       required
+                            inputStyle={commonInputStyle}
+
                     />
                   ) : (
                     // Else show dropdown to let user select
@@ -302,6 +310,7 @@ const HealthPolicyForm = () => {
                     value={netPremium}
                     onChange={(e) => {
                       setNetPremium(e.target.value);
+      inputStyle={commonInputStyle}
 
                     }}
                   />
@@ -313,6 +322,8 @@ const HealthPolicyForm = () => {
                       setPremiumPaid(e.target.value);
                     }}
                     required
+                          inputStyle={commonInputStyle}
+
                   />
                   <CustomInput
                     type="text"
@@ -323,6 +334,8 @@ const HealthPolicyForm = () => {
 
                     }}
                     required
+                          inputStyle={commonInputStyle}
+
                   />
                   <CustomInput
                     type="text"
@@ -332,6 +345,8 @@ const HealthPolicyForm = () => {
                       setSumAssured(e.target.value);
                     }}
                     required
+                          inputStyle={commonInputStyle}
+
                   />
                   <CustomInput
                     type="text"
@@ -339,6 +354,8 @@ const HealthPolicyForm = () => {
                     value={totalSumAssured}
                     onChange={(e) => {
                       setTotalSumAssured(e.target.value);
+                            inputStyle={commonInputStyle}
+
                     }}
                   />
                   <Box display="flex" justifyContent="center" gap={4} mt={5} width="100%">
