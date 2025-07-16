@@ -27,6 +27,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 import ContactUs from "../profile/ContactUs";
 import CloseIcon from '@mui/icons-material/Close';
+import { BorderColor, Padding } from "@mui/icons-material";
 
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
@@ -58,6 +59,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [returnPath, setReturnPath] = useState("/");
+  const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
 
   const LOCAL_STORAGE_KEYS = [
     "loggedIn",
@@ -424,158 +427,173 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           </Card>
         ) : (
           <div className="main-container mt-3 p-4">
-            <Grid container spacing={2}>
-              {/* Name */}
-              <Grid item xs={12} md={6}>
-                <CustomInput
-                  label="Name"
-                  placeholder="Enter your name"
-                  value={username}
-                  onChange={(e) => setuserName(e.target.value)}
-                  required
-                />
-              </Grid>
+<Grid container spacing={3} direction="column" alignItems="center">
+  {/* Full Name */}
+  <Grid item style={commonItemStyle}>
+    <CustomInput
+      label="Full Name"
+      placeholder="Enter your name"
+      value={username}
+      onChange={(e) => setuserName(e.target.value)}
+      required
+      fullWidth
+      inputStyle={commonInputStyle}
+    />
+  </Grid>
 
-              {/* Email */}
-              <Grid item xs={12} md={6}>
-                <CustomInput
-                  type="email"
-                  label="Email Address"
-                  value={useremail}
-                  onChange={handleEmailChange}
-                  placeholder="Enter your email"
-                  error={!isValidEmail}
-                  helperText={!isValidEmail ? "Please enter a valid email address" : ""}
-                  required
-                />
-              </Grid>
+  {/* Email */}
+  <Grid item style={commonItemStyle}>
+    <CustomInput
+      type="email"
+      label="Email Address"
+      placeholder="Enter your email"
+      value={useremail}
+      onChange={handleEmailChange}
+      required
+      fullWidth
+      inputStyle={commonInputStyle}
+      validationMessage={!isValidEmail ? "Please enter a valid email address" : ""}
+    />
+  </Grid>
 
-              {/* Mobile Number */}
-              <Grid item xs={12} md={6}>
-                <CustomInput
-                  type="tel"
-                  label="Mobile Number"
-                  value={userPhone}
-                  onChange={handlephonechange}
-                  placeholder="Enter your mobile number"
-                  error={!valid}
-                  helperText={!valid ? "Please enter a valid 10-digit mobile number" : ""}
-                  required
-                />
-              </Grid>
+  {/* Phone */}
+  <Grid item style={commonItemStyle}>
+    <CustomInput
+      type="tel"
+      label="Mobile Number"
+      placeholder="Enter your mobile number"
+      value={userPhone}
+      onChange={handlephonechange}
+      required
+      fullWidth
+      inputStyle={commonInputStyle}
+      validationMessage={!valid ? "Please enter a valid 10-digit number" : ""}
+    />
+  </Grid>
 
-              {/* DOB */}
-              <Grid item xs={12} md={6}>
-                <div style={{ height: "48px" }}>
-                  <GlobalDatePicker
-                    label="DOB"
-                    selectedDate={userDob}
-                    handleDateChange={handleDobChange}
-                    className="custom-picker form-control rounded-5"
-                    placeholder="Select Date"
-                    width="100%"
-                  />
-                </div>
-              </Grid>
+  {/* Date of Birth */}
+  <Grid item style={commonItemStyle}>
+    <label htmlFor="dob" className="form-label fw-bold text-light mb-2 d-block">
+      Date of Birth
+    </label>
+    <GlobalDatePicker
+      label=""
+      selectedDate={userDob}
+      handleDateChange={handleDobChange}
+      className="form-control"
+      placeholder="Select your date of birth"
+      style={{height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey" }}
+    />
+  </Grid>
 
-              {/* Address */}
-              <Grid item xs={12}>
-                <CustomInput
-                  label="Address"
-                  placeholder="Enter your Address"
-                  value={userAddress}
-                  onChange={(e) => setuserAddress(e.target.value)}
-                />
-              </Grid>
+  {/* Address */}
+  <Grid item style={commonItemStyle}>
+    <CustomInput
+      label="Address"
+      placeholder="Enter your address"
+      value={userAddress}
+      onChange={(e) => setuserAddress(e.target.value)}
+      fullWidth
+      inputStyle={commonInputStyle}
+    />
+  </Grid>
 
-              {/* State Dropdown */}
-              <Grid item xs={12} md={6}>
-                <GlobalDropdown
-                  onStateSelect={handleStateSelect}
-                  initialValue={selectedStateId}
-                />
-              </Grid>
+  {/* State */}
+  <Grid item style={commonItemStyle}>
+    <GlobalDropdown
+      onStateSelect={handleStateSelect}
+      initialValue={selectedStateId}
+      style={{ ...commonInputStyle, width: "100%" }}
+    />
+  </Grid>
 
-              {/* City Dropdown */}
-              <Grid item xs={12} md={6}>
-                <CityDropdown
-                  selectedStateId={selectedStateId}
-                  onCitySelect={handleCitySelect}
-                  initialValue={selectedCityId}
-                />
-              </Grid>
+  {/* City */}
+  <Grid item style={commonItemStyle}>
+    <CityDropdown
+      label="City"
+      selectedStateId={selectedStateId}
+      onCitySelect={handleCitySelect}
+      initialValue={selectedCityId}
+      style={{ ...commonInputStyle, width: "100%" }}
+    />
+  </Grid>
 
-              {/* Pincode */}
-              <Grid item xs={12} md={6}>
-                <CustomInput
-                  label="Pincode"
-                  placeholder="Enter your PinCode"
-                  value={pinCode}
-                  onChange={handlePinCodeChange}
-                  error={!isValidPinCode}
-                  helperText={
-                    !isValidPinCode ? "Please enter a valid pin code (5 or 6 digits)" : ""
-                  }
-                />
-              </Grid>
+  {/* Pincode */}
+  <Grid item style={commonItemStyle}>
+    <CustomInput
+      label="Pincode"
+      placeholder="Enter your pincode"
+      value={pinCode}
+      onChange={handlePinCodeChange}
+      fullWidth
+      inputStyle={commonInputStyle}
+      validationMessage={
+        !isValidPinCode ? "Please enter a valid pin code (5 or 6 digits)" : ""
+      }
+    />
+  </Grid>
 
-              {/* Gender */}
-              <Grid item xs={12} md={6}>
-                <label
-                  className="form-label fw-bold text-light mb-2 block"
-                  htmlFor="gender"
-                >
-                  Gender
-                </label>
-                <select
-                  id="gender"
-                  className="dropdown-select w-full bg-dark text-light border rounded-lg py-2 px-4"
-                  value={gender}
-                  onChange={(e) => setgender(e.target.value)}
-                >
-                  <option disabled value="">Select Your Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-              </Grid>
+  {/* Gender */}
+  <Grid item style={commonItemStyle}>
+    <label htmlFor="gender" className="form-label fw-bold text-light mb-2 d-block">
+      Gender
+    </label>
+    <select
+      id="gender"
+      className="form-control bg-dark text-light rounded-3"
+      value={gender}
+      onChange={(e) => setgender(e.target.value)}
+      style={{ ...commonInputStyle, width: "100%" }}
+    >
+      <option value="">Select Your Gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+  </Grid>
 
-              {/* Buttons - Side by Side on Desktop, Stacked on Mobile */}
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <Button
-                      size="sm"
-                      text="Update"
-                      onClick={handleUpateProfile}
-                      disabled={!isValidEmail || !valid || !isValidPinCode}
-                      bgcolor={(!isValidEmail || !valid || !isValidPinCode) ? "#d3d3d3" : "#8AC642"}
-                      customStyle={{
-                        width: "100%",
-                        height: "6vh",
-                        borderRadius: "3rem",
-                        fontSize: "1rem",
-                      }}
-                    />
-                  </Grid>
+  {/* Buttons */}
+  <Grid item style={commonItemStyle}>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Button
+          text="Update Profile"
+          onClick={handleUpateProfile}
+          disabled={!isValidEmail || !valid || !username || !useremail || !userPhone}
+          bgcolor={
+            !isValidEmail || !valid || !username || !useremail || !userPhone
+              ? "#ccc"
+              : "#8AC642"
+          }
+          customStyle={{
+            width: "100%",
+            height: 48,
+            borderRadius: 24,
+            fontSize: "1rem",
+          }}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Button
+          text="Cancel"
+          onClick={() => setUpdate(false)}
+          customStyle={{
+            width: "100%",
+            height: 48,
+            borderRadius: 24,
+            fontSize: "1rem",
+            backgroundColor: "#444",
+            color: "#fff",
+          }}
+        />
+      </Grid>
+    </Grid>
+  </Grid>
+</Grid>
 
-                  <Grid item xs={12} md={6}>
-                    <Button
-                      size="sm"
-                      text="Cancel"
-                      onClick={() => setUpdate(false)}
-                      customStyle={{
-                        width: "100%",
-                        height: "6vh",
-                        borderRadius: "3rem",
-                        fontSize: "1rem",
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </div>
+
+</div>
+
 
 
         )}

@@ -17,6 +17,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
   const [useremail, setuserEmail] = useState("");
   const [valid, setValid] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
+ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
 
   const familyOption = [
     { value: "Spouse", label: "Spouse" },
@@ -94,23 +96,23 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
   style={{ zIndex: 99999 }} />
       <Box
         sx={{
-          width: "25vw",
+          width: "26vw",
           padding: "50px",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          margin: "0 auto", // centers the content horizontally
+          // alignItems: "center",
+          // justifyContent: "center",
         }}
         role="presentation"
       >
-        <Grid container spacing={2}>
-          <Grid item>
-            <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
-          </Grid>
-          <Grid item>
-            <Typography variant="h4">Plans for your family</Typography>
-          </Grid>
+        <Grid container spacing={1}>
+          <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+  <Box sx={{ marginLeft: -4, marginRight: 2, cursor: "pointer" }}>
+    <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
+  </Box>
+  <Typography variant="h4">Add New Member</Typography>
+</Box>
+
         </Grid>
         <Box sx={{ marginTop: 3, width: "100%" }}>
           <Dropdown
@@ -132,7 +134,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             onChange={(e) => setFullName(e.target.value)}
             required
             padding={"2rem"}
-          />
+      inputStyle={commonInputStyle}
+/>
         </Box>
         <Box sx={{ marginTop: "1.5rem", width: "100%" }}>
           <CustomInput
@@ -141,6 +144,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             placeholder="Enter your Phone Number"
             value={userPhone}
             onChange={handlephonechange}
+                  inputStyle={commonInputStyle}
+
             className={!valid ? "is-invalid" : ""}
             validationMessage={
               !valid ? " Please enter a valid 10-digit phone number." : ""
@@ -151,10 +156,12 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
         </Box>
         <Box sx={{ marginTop: "1.5rem", width: "100%" }}>
           <CustomInput
-            label="Family Email"
-            placeholder="Enter your Family Email"
+            label="Email"
+            placeholder="Enter Email"
             value={useremail}
             onChange={handleEmailChange}
+                  inputStyle={commonInputStyle}
+
             className={!isValidEmail ? "is-invalid" : ""}
             validationMessage={
               !isValidEmail

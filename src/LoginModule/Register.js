@@ -18,6 +18,8 @@ const Register = () => {
     const [valid, setValid] = useState(true);
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+    const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -221,11 +223,8 @@ const Register = () => {
                                             className="slim-input"
                                             name="fullName"
                                             required
-                                            inputStyle={{
-                                                fontSize: '14px',
-                                                padding: '8px 12px',
-                                                height: '60px',
-                                            }}
+                                            inputStyle={commonInputStyle}
+
                                         />
                                     </div>
 
@@ -240,11 +239,7 @@ const Register = () => {
                                             className={`slim-input ${!isValidEmail && email.length > 0 ? 'is-invalid' : ''}`}
                                             name="email"
                                             required
-                                            inputStyle={{
-                                                fontSize: '14px',
-                                                padding: '8px 12px',
-                                                height: '60px',
-                                            }}
+                                            inputStyle={commonInputStyle}
                                         />
                                         {!isValidEmail && email.length > 0 && (
                                             <div className="invalid-feedback">
@@ -264,11 +259,7 @@ const Register = () => {
                                             className={`slim-input ${!valid && mobileNumber.length > 0 ? 'is-invalid' : ''}`}
                                             name="mobileNumber"
                                             required
-                                            inputStyle={{
-                                                fontSize: '14px',
-                                                padding: '8px 12px',
-                                                height: '60px',
-                                            }}
+                                            inputStyle={commonInputStyle}
                                         />
                                         {!valid && mobileNumber.length > 0 && (
                                             <div className="invalid-feedback">

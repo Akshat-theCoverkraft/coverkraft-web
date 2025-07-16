@@ -7,13 +7,10 @@ import {
   Card,
   CircularProgress,
   useMediaQuery,
+  Stack,
+  IconButton,
 } from "@mui/material";
-import backArrow from "../Images/ic_back_button.png";
-import sms from "../Images/ic-sms.png";
-import call from "../Images/ic-call.png";
-import wtsp from "../Images/ic-wtsp.png";
-import email from "../Images/ic-mail.png";
-import { alpha, styled, useTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import Radio from "@mui/material/Radio";
 import { getBYIDUsers, updateUser } from "../store/action/action";
@@ -21,21 +18,24 @@ import { useDispatch, useSelector } from "react-redux";
 import API_URL from "../ServiceModule/Service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { THEME_COLOR } from "../constants";
+
+import backArrow from "../Images/ic_back_button.png";
+import sms from "../Images/ic-sms.png";
+import call from "../Images/ic-call.png";
+import wtsp from "../Images/ic-wtsp.png";
+import email from "../Images/ic-mail.png";
 
 const PinkSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#8AC642",
     "&:hover": {
-      backgroundColor: alpha("#8AC642", theme.palette.action.hoverOpacity),
+      backgroundColor: "#e1f5d6",
     },
   },
   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
     backgroundColor: "#8AC642",
   },
 }));
-
-const label = { inputProps: { "aria-label": "Color switch demo" } };
 
 const Communication = ({ communication, onCommunicationClose }) => {
   const [selectedValue, setSelectedValue] = useState("a");
@@ -57,8 +57,8 @@ const Communication = ({ communication, onCommunicationClose }) => {
   }, [dispatch, userId]);
 
   useEffect(() => {
-    if (userbyId.getUserById?.data) {
-      const data = userbyId.getUserById.data;
+    const data = userbyId.getUserById?.data;
+    if (data) {
       setSwitchStates({
         userSms: data.userSms,
         userCall: data.userCall,
@@ -69,32 +69,32 @@ const Communication = ({ communication, onCommunicationClose }) => {
     }
   }, [userbyId]);
 
-  const handleSwitchUpdate = (switchName) => async (event) => {
-    const newChecked = event.target.checked;
-    setSwitchStates((prev) => ({ ...prev, [switchName]: newChecked }));
+  const handleSwitchUpdate = (key) => async (event) => {
+    const checked = event.target.checked;
+    setSwitchStates((prev) => ({ ...prev, [key]: checked }));
     setLoading(true);
 
     const formData = new FormData();
     formData.append("_id", userId);
-    formData.append(switchName, newChecked);
+    formData.append(key, checked);
 
     try {
       await dispatch(updateUser(API_URL, formData));
-    } catch (error) {
-      console.error("Error updating the switch state", error);
+    } catch {
+      toast.error("Error updating preference");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRadioChange = (event) => {
-    const newValue = event.target.value;
-    setSelectedValue(newValue);
+  const handleRadioChange = (e) => {
+    const value = e.target.value;
+    setSelectedValue(value);
     setLoading(true);
 
     const formData = new FormData();
     formData.append("_id", userId);
-    formData.append("userFrequent", newValue);
+    formData.append("userFrequent", value);
 
     dispatch(updateUser(API_URL, formData))
       .then(() => toast.success("Successfully Updated"))
@@ -102,18 +102,10 @@ const Communication = ({ communication, onCommunicationClose }) => {
       .finally(() => setLoading(false));
   };
 
-  const controlProps = (item) => ({
-    checked: selectedValue === item,
-    onChange: handleRadioChange,
-    value: item,
-    name: "color-radio-button-demo",
-    inputProps: { "aria-label": item },
-  });
-
   const contactMethods = [
     { icon: sms, label: "SMS", key: "userSms" },
     { icon: call, label: "Call", key: "userCall" },
-    { icon: wtsp, label: "Whatsapp", key: "userWhatsapp" },
+    { icon: wtsp, label: "WhatsApp", key: "userWhatsapp" },
     { icon: email, label: "Email", key: "userEmail" },
   ];
 
@@ -129,84 +121,92 @@ const Communication = ({ communication, onCommunicationClose }) => {
       open={communication}
       onClose={onCommunicationClose}
       sx={{
-        "& .MuiPaper-root": {
-          backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-          color: THEME_COLOR.COLOR,
-          width: isMobile ? "100vw" : "480px",
-          maxWidth: "100vw",
-          boxSizing: "border-box",
+        "& .MuiDrawer-paper": {
+          width: isMobile ? "100%" : "35vw",
+          maxWidth: 420,
+          backgroundColor: "#111",
+          color: "#fff",
+          padding: theme.spacing(4),
         },
       }}
     >
-      <ToastContainer position="top-center" style={{ zIndex: 99999 }} />
-
-      <Box
-        sx={{
-          height: "100vh",
-          overflow: "hidden",
-          padding: isMobile ? 2 : 3,
-          display: "flex",
-          flexDirection: "column",
-          gap: 4,
-        }}
-      >
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
-            <img src={backArrow} alt="Back" onClick={onCommunicationClose} style={{ cursor: "pointer", paddingLeft: "10px" }} />
-          </Grid>
-          <Grid item>
-            <Typography variant={isMobile ? "h6" : "h4"}>Communication Preferences</Typography>
-          </Grid>
-        </Grid>
-
-        <Card sx={{ borderRadius: 4, marginRight:"30px", paddingRight: "30px" }}>
-          <Typography variant="h6" gutterBottom>Policy Updates</Typography>
-          <Typography variant="body2" sx={{ color: "#bbb", mb: 2 }}>
-            Important updates for your purchased policies — payment, issuance, renewal, and reminders.
+      <ToastContainer position="top-center" />
+      <Box>
+        <Stack direction="row" alignItems="center" spacing={2} mb={4}>
+          <IconButton onClick={onCommunicationClose}>
+            <img src={backArrow} alt="Back" style={{ width: 24 }} />
+          </IconButton>
+          <Typography variant="h5" fontWeight={600}>
+            Communication Preferences
           </Typography>
-          {contactMethods.map((item) => (
-            <Grid container key={item.key} alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
-              <Grid item display="flex" alignItems="center">
-                <img src={item.icon} height={24} alt={item.label} style={{ marginRight: 12 }} />
-                <Typography>{item.label}</Typography>
-              </Grid>
-              <Grid item>
-                <PinkSwitch {...label} checked={switchStates[item.key]} onChange={handleSwitchUpdate(item.key)} />
-              </Grid>
-            </Grid>
-          ))}
-        </Card>
+        </Stack>
 
-        <Card sx={{ p: 3, borderRadius: 4 }}>
-          <Typography variant="h6" gutterBottom>Frequent Communication</Typography>
-          <Typography variant="body2" sx={{ color: "#bbb", mb: 2 }}>
-            Manage your communication preferences easily and stay informed your way.
+        <Box mb={5}>
+          <Typography variant="h5" fontWeight={600} gutterBottom>
+            Policy Updates
           </Typography>
-          {frequencyOptions.map((option) => (
-            <Grid container key={option.value} alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
-              <Typography>{option.label}</Typography>
-              <PinkSwitch {...controlProps(option.value)} />
-            </Grid>
-          ))}
-        </Card>
+          <Typography sx={{fontSize: "1.3rem"}} color="white" mb={3}>
+            Receive important updates for your policies — payments, renewals, and more.
+          </Typography>
+
+          <Stack spacing={2}>
+            {contactMethods.map(({ icon, label, key }) => (
+              <Stack key={key} direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <img src={icon} alt={label} width={24} />
+                  <Typography variant="body1">{label}</Typography>
+                </Stack>
+                <PinkSwitch checked={switchStates[key]} onChange={handleSwitchUpdate(key)} />
+              </Stack>
+            ))}
+          </Stack>
+        </Box>
+
+        <Box>
+          <Typography variant="h4" fontWeight={600} gutterBottom>
+            Frequency
+          </Typography>
+          <Typography sx={{fontSize: "1.3rem"}} color="white" mb={3}>
+            How often would you like to hear from us?
+          </Typography>
+
+          <Stack spacing={2}>
+            {frequencyOptions.map(({ value, label }) => (
+              <Stack key={value} direction="row" justifyContent="space-between" alignItems="center">
+                <Typography variant="body1">{label}</Typography>
+                <PinkSwitch
+                  checked={selectedValue === value}
+                  onChange={handleRadioChange}
+                  value={value}
+                  sx={{
+                    color: "#8AC642",
+                    "&.Mui-checked": {
+                      color: "#8AC642",
+                    },
+                  }}
+                />
+              </Stack>
+            ))}
+          </Stack>
+        </Box>
       </Box>
 
       {loading && (
         <Box
           sx={{
-            position: "fixed",
+            position: "absolute",
             top: 0,
             left: 0,
-            width: "100vw",
-            height: "100vh",
+            width: "100%",
+            height: "100%",
+            backdropFilter: "blur(2px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 1300,
+            zIndex: 999,
           }}
         >
-          <CircularProgress color="primary" />
+          <CircularProgress color="inherit" />
         </Box>
       )}
     </Drawer>
