@@ -9,15 +9,15 @@ const Service = () => {
     <section
       className="service-section"
       style={{
-        backgroundImage: `url(${Background})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        // backgroundImage: `url(${Background})`,
+        // backgroundSize: "cover",
+        // backgroundPosition: "center",
+        // backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="grid-overlay" />
+      {/* <div className="grid-overlay" /> */}
 
-      <div className="service-container">
+      {/* <div className="service-container">
         <div className="service-left">
           <Typography
             className="service-title ml-5 mb-3"
@@ -50,13 +50,13 @@ const Service = () => {
         <div className="service-right mb-5">
           <img src={services} alt="certification" className="service-image" />
         </div>
-      </div>
+      </div> */}
 
       {/* Ellipses */}
-      <span className="ellipse ellipse-1" />
+      {/* <span className="ellipse ellipse-1" />
       <span className="ellipse ellipse-2" />
       <span className="ellipse ellipse-3" />
-      <span className="ellipse ellipse-4" />
+      <span className="ellipse ellipse-4" /> */}
     </section>
   );
 };

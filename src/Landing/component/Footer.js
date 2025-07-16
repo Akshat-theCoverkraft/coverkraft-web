@@ -94,7 +94,7 @@ const handleStaticNav = (route) => () => {
                 className="text-color lh-base mb-0"
                 style={{ fontSize: "1.4rem", fontFamily: "DM Sans" }}
               >
-                 CoverKraft empowers its clients with the required insurance knowledge for making propoer insurance choice. Our clients can save all thier policies in the Policy Vault and get timely reminder for renewal.
+                 CoverKraft empowers its clients with the required insurance knowledge for making proper insurance choice. Our clients can save all thier policies in the Policy Vault and get timely reminder for renewal.
               </p>
             </div>
           </div>
