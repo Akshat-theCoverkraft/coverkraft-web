@@ -200,6 +200,7 @@ const BlogSection = () => {
             <video
               ref={(el) => registerVideo(el, post._id)}
               controls
+              controlsList="nodownload" 
               preload="metadata"
               style={{ ...mediaStyle, objectFit: 'contain', backgroundColor: '#000' }}
               onClick={(e) => e.stopPropagation()}
@@ -312,6 +313,7 @@ const BlogSection = () => {
               {featuredVideo?.video ? (
                 <video
                   controls
+                  controlsList="nodownload" 
                   preload="metadata"
                   style={{
                     width: '100%',

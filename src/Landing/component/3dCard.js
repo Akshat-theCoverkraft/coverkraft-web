@@ -100,10 +100,13 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
             textAlign: 'left',
             pl: 1,
             fontSize: 14,
-          }}
-        >
-          {truncateText(description, 80)}
-        </Typography>
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}>{description}</Typography>
+
 
         {isTruncated && (
           <Typography
@@ -118,7 +121,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
               paddingLeft: '70%',
             }}
           >
-            Read More...
+            Read More
           </Typography>
         )}
       </Box>

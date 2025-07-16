@@ -97,6 +97,7 @@ export default function Testimonials() {
         <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
           <video 
             controls 
+            controlsList="nodownload" 
             style={mediaStyle}
             onPlay={handleVideoPlay}
           >
