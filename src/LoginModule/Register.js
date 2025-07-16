@@ -230,7 +230,7 @@ const Register = () => {
 
                                     <div className="mb-3">
                                         <CustomInput
-                                            label="Email"
+                                            label="Email Address"
                                             type="email"
                                             value={email}
                                             onChange={handleEmailChange}

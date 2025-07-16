@@ -2,11 +2,11 @@ import React, { useState, useRef } from "react";
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typography,
   Card, Grid, Breadcrumbs, Link, Stack, CircularProgress,
+  Box,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import { toast, ToastContainer } from "react-toastify";
-import { Spinner } from "react-bootstrap";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Gmail from "../Images/Group 1000001305.png";
@@ -27,8 +27,8 @@ import AddIcon from "../Images/addIcon.png";
 import uploadPdf from "../Images/uploadPdf.png";
 import uploadImg from "../Images/uploadImg.png";
 import API_URL from "../ServiceModule/Service";
-import IMAGE_PATH from "../ServiceModule/imagePath";
 import { THEME_COLOR } from "../constants";
+import emptyImage from "../../src/Images/NoData.png";
 
 import "./vault.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -229,7 +229,7 @@ const exportToExcel = async () => {
 
   // File upload card component
   const FileUploadCard = ({ type, files, icon, text, inputRef, onChange }) => (
-    <Card className="border mx-1 mb-1" style={{ backgroundColor: "#2a2a2a", color: "#fff", boxShadow: "rgba(27, 186, 54, 0.1) 0px 0px 16px" }}>
+    <Card className="border mx-1 mb-1" style={{ backgroundColor: "#2a2a2a !important", color: "#fff !important", boxShadow: "rgba(27, 186, 54, 0.1) 0px 0px 16px" }}>
       {!files ? (
         <>
           <input type="file" multiple onChange={onChange} hidden ref={inputRef} accept={type === 'pdf' ? '.pdf,.doc,.docx' : 'image/*'} />
@@ -263,41 +263,14 @@ const exportToExcel = async () => {
         .overflow-hidden { scrollbar-width: none; -ms-overflow-style: none; }
         .overflow-hidden::-webkit-scrollbar { display: none; }
       `}</style>
-      <div className="d-flex align-items-center gap-2 flex-wrap" style={{ marginTop: "12px", marginLeft: 55 }}>
-        <input
-          type="text"
-          placeholder="Search by policy name"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{
-            padding: "8px 16px", borderRadius: "8px", border: "1px solid #ccc",
-            fontSize: "16px", width: "200px", background: "#fff", color: "#000"
-          }}
-        />
-
-        <select
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
-          style={{
-            padding: "8px 16px", borderRadius: "8px", border: "1px solid #ccc",
-            fontSize: "16px", width: "160px", background: "#fff", color: "#000"
-          }}
-        >
-          <option value="">All Types</option>
-          <option value="life">Life</option>
-          <option value="health">Health</option>
-          <option value="car">Car</option>
-          <option value="bike">Bike</option>
-          <option value="accident">Accident</option>
-        </select>
-      </div>
+    
 
       <Navbar />
-      <div className="bg-color" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
-        <Stack spacing={2} className="p-5">
-          <div className="d-flex justify-content-between align-items-start flex-wrap">
+      <div className="bg-color !important" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
+        <Stack spacing={2} className="px-5 py-3">
+          <div className="d-flex justify-content-between align-items-start flex-wrap ">
             <div className="d-flex flex-column">
-              <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '16px' }}>
+              <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '5px', }}>
                 <Link className="text-decoration-none" style={{ fontSize: '21px', fontWeight: 'bold', color: "#A5A5A5", marginLeft: 55 }} href="/vault">
                   Policy Vault
                 </Link>
@@ -342,24 +315,88 @@ const exportToExcel = async () => {
           </div>
         </Stack>
 
-        <Grid container spacing={1} className="px-5">
-          <Grid item xs={12} md={6.5}>
-            <PolicyTabs
-              handleCardClick={handleCardClick}
-              shareAllPolicy={shareAllPolicy}
-              selectedPolicies={selectedPolicies}
-              handleCheckboxChange={handleCheckboxChange}
-              onPolicyListLengthChange={setPolicyListLength}
-              onArchieveListLength={() => { }}
-              onAllPolicyIdsChange={setAllPolicyIds}
-              searchQuery={searchQuery}
-              selectedType={selectedType}
-            />
-          </Grid>
-          <Grid item xs={12} md={5.5}>
-            <PolicyDetail policyId={selectedPolicyId} />
-          </Grid>
-        </Grid>
+       <Grid
+  container
+  spacing={1}
+  sx={{ px: '40px !important', width: '100% !important', margin: '0 auto !important ' }}
+>
+  <Grid
+    item
+    xs={12}
+    md={6.5}
+    sx={{
+      width: '100% !important',
+      maxWidth: '100% !important',
+      flexGrow: 1,
+      zIndex: 2,
+      position: 'relative !important',
+    }}
+  >
+    <PolicyTabs
+      handleCardClick={handleCardClick}
+      shareAllPolicy={shareAllPolicy}
+      selectedPolicies={selectedPolicies}
+      handleCheckboxChange={handleCheckboxChange}
+      onPolicyListLengthChange={setPolicyListLength}
+      onArchieveListLength={() => {}}
+      onAllPolicyIdsChange={setAllPolicyIds}
+      searchQuery={searchQuery}
+      selectedType={selectedType}
+    />
+  </Grid>
+
+  <Grid
+    item
+    xs={12}
+    md={5.5}
+    sx={{
+      width: '100% !important',
+      maxWidth: '100% !important',
+      flexGrow: 1, 
+      zIndex: 2,
+      position: 'relative !important',
+    }}
+  >
+    {/* <PolicyDetail policyId={selectedPolicyId} /> */}
+     {selectedPolicyId ? (
+    <PolicyDetail policyId={selectedPolicyId} />
+  ) : (
+     <Card
+            sx={{
+              // flex:1,
+              borderRadius: 5,
+              boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+              backgroundColor: "#121212 !important",
+              border: "0.5px solid white",
+              pt: 2.5,
+              height: "91vh",
+            }}
+          >
+    <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column",
+      height: "60vh",
+      color: THEME_COLOR.COLOR,
+      minHeight: "82.7vh",
+    }}
+  >
+    <img
+      src={emptyImage}
+      alt="No Data"
+      style={{ width: "40%", height: "auto", maxWidth: "200px" }}
+    />
+    <Typography sx={{ fontSize: "1.6rem", mb: 2, mt: 3 }}>
+      {"No Record Found"}
+    </Typography>
+  </Box>
+    </Card>
+  )}
+  </Grid>
+</Grid>
+
       </div>
 
       <About />

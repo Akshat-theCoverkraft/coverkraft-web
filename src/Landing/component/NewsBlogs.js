@@ -15,6 +15,13 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import bgImage from '../../Images/bg.png';
 
+const typeLabels = {
+  blog: 'Blogs',
+  news: 'News',
+  video: 'Videos',
+  short: 'Shorts',
+};
+
 const BlogSection = () => {
   const [latestPosts, setLatestPosts] = useState({});
   const [featuredVideo, setFeaturedVideo] = useState(null);
@@ -85,14 +92,15 @@ const BlogSection = () => {
     return () => window.removeEventListener('scroll', pauseAllVideos);
   }, []);
 
+  console.log("vdoRefs:");
   const getUrl = (post) =>
     post.videoUrl
       ? post.videoUrl.startsWith('http')
         ? post.videoUrl
         : `http://52.52.154.65:5242/${post.videoUrl}`
       : post.newsImg?.startsWith('http')
-      ? post.newsImg
-      : `http://52.52.154.65:5242/${post.newsImg}`;
+        ? post.newsImg
+        : `http://52.52.154.65:5242/${post.newsImg}`;
 
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
@@ -243,6 +251,7 @@ ref={(el) => registerVideo(el, post._id)}
                   fontWeight: 500,
                   padding: 0,
                   fontSize: '1.2rem',
+                  fontSize: '1.2rem',
                   minWidth: 'auto',
                   '&:hover': {
                     backgroundColor: 'transparent',
@@ -294,7 +303,7 @@ ref={(el) => registerVideo(el, post._id)}
       <Grid container spacing={2}>
         <Grid item xs={12} md={5}>
           <Box sx={{ height: '500px' }}>
-            {renderCard(latestPosts.short, 'short', true)}
+            {renderCard(latestPosts.shorts, 'short', true)}
           </Box>
         </Grid>
         <Grid item xs={12} md={3}>
@@ -306,7 +315,39 @@ ref={(el) => registerVideo(el, post._id)}
         <Grid item xs={12} md={4}>
           <Box sx={{ height: '500px', display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Box sx={{ height: '240px' }}>{renderCard(latestPosts.videos?.[0], 'video')}</Box>
-            <Box sx={{ height: '240px' }}>{renderCard(featuredVideo, 'video')}</Box>
+            <Box sx={{ height: '240px' }}>
+              {featuredVideo?.video ? (
+                <video
+                  controls
+                  preload="metadata"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    borderRadius: '20px',
+                    backgroundColor: '#000',
+                  }}
+                >
+                  <source src={featuredVideo.video} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <Card
+                  sx={{
+                    bgcolor: '#212121',
+                    borderRadius: '20px',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#888',
+                  }}
+                >
+                  <Typography>No video available</Typography>
+                </Card>
+              )}
+            </Box>
+
           </Box>
         </Grid>
       </Grid>

@@ -31,6 +31,7 @@ import download from "../../Images/ic-download1.png";
 import view from "../../Images/ic-view.png";
 import emptyImage from "../../Images/NoData.png";
 import { red } from "@mui/material/colors";
+import moment from "moment";
 
 const PolicyDetail = ({ policyId }) => {
   const [policyDetails, setPolicyDetails] = useState([]);
@@ -301,65 +302,69 @@ const PolicyDetail = ({ policyId }) => {
       });
   };
 
-  const renderPolicyActions = (policy) => {
-    const isArchived = policy?.status === "archive";
+const renderPolicyActions = (policy) => {
+  const isArchived = policy?.status === "archive";
 
-    if (isArchived) {
-      return (
-        <Grid item className="m-4" xs={12} md={12} style={{ paddingLeft: "30%" }}>
-          <button
-            className="btn btn-sm rounded-6"
-            style={{
-              borderColor: "#8AC642",
-              color: "#8AC642",
-              paddingLeft: "20px",
-              width: "50%",
-            }}
-            onClick={() => handlePolicyAction("unarchive")}
-          >
-            Remove from Archive
-          </button>
-        </Grid>
-      );
-    }
-
+  if (isArchived) {
     return (
-      <Grid item className="m-4" xs={12} md={12} style={{ padding: "0 40px" }}>
-        <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
-          <button
-            className="btn btn-sm rounded-6"
-            style={{
-              borderColor: "#8AC642",
-              color: "#8AC642",
-              padding: "15px 40px",
-              minWidth: "180px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onClick={() => handlePolicyAction("renew")}
-          >
-            Renew Policy
-          </button>
-          <button
-            className="btn btn-sm rounded-7"
-            style={{
-              borderColor: "#8AC642",
-              color: "#8AC642",
-              padding: "15px 40px",
-              minWidth: "180px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onClick={() => handlePolicyAction("archive")}
-          >
-            Archive Policy
-          </button>
-        </div>
+      <Grid item xs={12} md={12} style={{ width: '100%', display: 'flex', justifyContent: 'center',  }}>
+        <button
+          className="btn btn-sm rounded-6"
+          style={{
+            border: '1px solid #8AC642',
+            color: '#8AC642',
+            padding: '12px 20px',
+            width: '50%',
+            maxWidth: '300px',
+            minWidth: '200px',
+          }}
+          onClick={() => handlePolicyAction("unarchive")}
+        >
+          Remove from Archive
+        </button>
       </Grid>
     );
-  };
+  }
+
+  return (
+    <Grid item xs={12} md={12} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', gap: '20px', flexWrap: 'wrap' }}>
+        <button
+          className="btn btn-sm rounded-6"
+          style={{
+            border: '1px solid #8AC642',
+            color: '#8AC642',
+            padding: '15px 20px',
+            width: '45%',
+            minWidth: '150px',
+            maxWidth: '280px',
+            textAlign: 'center',
+          }}
+          onClick={() => handlePolicyAction("renew")}
+        >
+          Renew Policy
+        </button>
+
+        <button
+          className="btn btn-sm rounded-7"
+          style={{
+            border: '1px solid #8AC642',
+            color: '#8AC642',
+            padding: '15px 20px',
+            width: '45%',
+            minWidth: '150px',
+            maxWidth: '280px',
+            textAlign: 'center',
+          }}
+          onClick={() => handlePolicyAction("archive")}
+        >
+          Archive Policy
+        </button>
+      </div>
+    </Grid>
+  );
+};
+
 
   const renderTooltip = (text) => (
     <Tooltip style={{ fontSize: '1.8rem', padding: '8px 12px' }}>
@@ -371,22 +376,24 @@ const PolicyDetail = ({ policyId }) => {
     return (
       <>
         <ToastContainer position="top-center" style={{ zIndex: 99999 }} />
-        <Card
-          className="rounded-5 border"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            height: "100%",
-            minHeight: "100%",
-            maxHeight: "95vh",
-            boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-            backgroundColor: THEME_COLOR.BACKGROUND,
-            color: THEME_COLOR.COLOR,
-          }}
-        >
-          <img src={emptyImage} alt="No Data" style={{ width: '30%', height: 'auto', marginTop: '25%' }} />
+       <Card
+            // key={index}
+            className="p-5 rounded-5"
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+              height: "85.4vh",
+              minHeight: "100% !important",
+              marginBottom: "5vh",
+              backgroundColor: "#121212",
+              color: THEME_COLOR.COLOR,
+              border: "0.5px solid white",
+            }}
+          >
+          <img src={emptyImage} alt="No Data" style={{ width: '30%', height: 'auto', marginVertical: '25%' }} />
           <p className="mt-5 fs-bold">Add your new policy effortlessly to your account</p>
         </Card>
       </>
@@ -407,19 +414,19 @@ const PolicyDetail = ({ policyId }) => {
             style={{
               justifyContent: "center",
               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-              height: "95vh",
-              minHeight: "100%",
+              height: "91.4vh",
+              minHeight: "100% !important",
               marginBottom: "5vh",
               backgroundColor: "#121212",
               color: THEME_COLOR.COLOR,
               border: "0.5px solid white",
             }}
           >
-            <div className="d-flex justify-content-between mb-5">
+            <div className="d-flex justify-content-between mb-5 ">
               <p style={{ fontSize: "24px", fontWeight: "700" }} className="fw-bold pl-4">
-                Details
+                Policy Details
               </p>
-              <GradientButton
+              <GradientButton 
                 text="Edit"
                 size="sm"
                 className="fw-bold"
@@ -437,7 +444,7 @@ const PolicyDetail = ({ policyId }) => {
                   {policy?.policyDetails?.registrationNumber || policy?.policyNumber}
                 </p>
                 <p style={{ color: "#fff", fontSize: "16px", fontWeight: "500" }} className="pl-4">
-                  Expires on {formatDate(policy?.policyEndDate)}
+                    Expires on {" "} {moment(policy.policyEndDate, ['DD/MM/YYYY', 'YYYY-MM-DD']).format('DD MMM, YYYY')}
                 </p>
               </div>
               <div>
@@ -487,9 +494,10 @@ const PolicyDetail = ({ policyId }) => {
                   boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                   backgroundColor: "#212121",
                   color: THEME_COLOR.COLOR,
+                  paddingBottom: '20px'
                 }}
               >
-                <div className="d-flex justify-content-end m-4">
+                <div className=" d-flex justify-content-end m-4">
                   <OverlayTrigger placement="top" overlay={renderTooltip("View Policy")}>
                     <img
                       src={view}
