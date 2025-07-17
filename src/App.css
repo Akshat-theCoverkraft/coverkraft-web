@@ -188,6 +188,13 @@
   background: linear-gradient(135deg, #42CDC9, #B4E498);
 }
 
+.custom-hover-underline {
+  text-decoration: none;
+}
+
+.custom-hover-underline:hover {
+  text-decoration: underline;
+}
 
 /* Text Sizes */
 .text-size-xs {

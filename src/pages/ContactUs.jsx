@@ -238,7 +238,7 @@ function ContactUs() {
                           onClick={() => document.getElementById("file-upload").click()}
                           style={{
                             cursor: "pointer",
-                            height: "45px",
+                            height: "35px",
                             fontSize: "1.25rem",
                           }}
                         />
@@ -299,7 +299,19 @@ function ContactUs() {
                 <div className="col-md-6 d-flex flex-column align-items-center justify-content-center text-light text-center">
                   <img src={require("../Images/objects.png")} alt="Decor" className="img-fluid mb-4" style={{ maxWidth: "300px" }} />
                   <div>
-                    <p className="text-size-md"><FmdGoodIcon className="me-2 text-success" />16 D-1, Danish Nagar, Hoshangabad Road, Bhopal (M.P)</p>
+                    <p className="text-size-md">
+                      <a
+                        href="https://www.google.com/maps/search/?api=1&query=16+D-1,+Danish+Nagar,+Hoshangabad+Road,+Bhopal+(M.P)"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-light custom-hover-underline"
+                      >
+                        <FmdGoodIcon className="me-2 text-success" />
+                        16 D-1, Danish Nagar, Hoshangabad Road, Bhopal (M.P)
+                      </a>
+                    </p>
+
+
                     <p><CallIcon className="me-2 text-success text-size-md" />+91-xxx-xxxx-xxxx</p>
                     <p><MailIcon className="me-2 text-success" /><a href="mailto:contact@thecoverkraft.com" className="text-decoration-underline text-light text-size-md">contact@thecoverkraft.com</a></p>
                   </div>
