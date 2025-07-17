@@ -30,7 +30,6 @@ import share from "../../Images/share.png";
 import download from "../../Images/ic-download1.png";
 import view from "../../Images/ic-view.png";
 import emptyImage from "../../Images/NoData.png";
-import { red } from "@mui/material/colors";
 import moment from "moment";
 
 const PolicyDetail = ({ policyId }) => {
@@ -428,7 +427,7 @@ const PolicyDetail = ({ policyId }) => {
             display: "flex",
             flexDirection: "column",
             boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-            height: "85.4vh",
+            height: "70vh",
             minHeight: "100% !important",
             marginBottom: "5vh",
             backgroundColor: "#121212",
@@ -580,7 +579,7 @@ const PolicyDetail = ({ policyId }) => {
                       top: -30,
                       right: 25,
                       color: "#ffffff",
-                      fontSize: "20px",
+                      fontSize: "18px",
                       fontWeight: "bold",
                       zIndex: 1,
                     }}
@@ -596,7 +595,7 @@ const PolicyDetail = ({ policyId }) => {
                   marginTop: "48px",
                   paddingTop: "5px",
                   width: "100%",
-                  height: "50%",
+                  // height: "50%",
                   boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                   backgroundColor: "#212121",
                   color: THEME_COLOR.COLOR,

@@ -89,7 +89,7 @@ export default function Testimonials() {
       width: '100%',
       height: '100%',
       maxHeight: '200px',
-      objectFit: 'cover',
+      objectFit: 'contain',
       borderRadius: '10px'
     };
 
@@ -171,7 +171,7 @@ export default function Testimonials() {
               </div>
             ) : (
               <div className="slider-arrow-container">
-                <button className="testimonial-arrow-btn left-arrow" onClick={() => sliderRef.current?.slickPrev()}>
+                <button className="testimonial-arrow-btn left-arrow mr-9" onClick={() => sliderRef.current?.slickPrev()}>
                   <img src={TLeft} alt="Left" />
                 </button>
                 <Slider ref={sliderRef} {...settings} className="quotes">
@@ -202,7 +202,7 @@ export default function Testimonials() {
                             zIndex: 1
                           }}></div>
 
-                          <div className="text-section" style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%' }}>
+                          <div className="text-section ml-5" style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%' }}>
                             <img src={quote} alt="quote" className="mb-3" style={{ width: '30px' }} />
                             <div
                               className="quote mb-2"
@@ -251,7 +251,7 @@ export default function Testimonials() {
                                   {testimonial.author}
                                 </span>
                                 <span className="author-role" style={{
-                                  fontSize: '0.85rem',
+                                  fontSize: '1.2rem',
                                   color: '#ccc'
                                 }}>
                                   {testimonial.role || "Client"}

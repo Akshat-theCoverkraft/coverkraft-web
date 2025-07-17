@@ -25,7 +25,7 @@ function Button({
     display: 'flex',
     alignItems: 'center',
     justifyContent: startIcon ? 'space-between' : 'center',
-    padding: padding ?? '10px 20px',
+    padding: padding ?? '10px 30px',
     fontSize: fontSize ?? '16px',
     borderRadius: borderRadius ?? '30px', // 👈 Now it's dynamic
     cursor: disabled ? 'not-allowed' : 'pointer',
