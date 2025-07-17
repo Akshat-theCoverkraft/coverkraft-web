@@ -83,7 +83,7 @@ const About = () => {
               variant="h6"
               sx={{
                 fontWeight: 600,
-                fontSize: '1.7rem',
+                fontSize: '2rem',
                 color: 'white',
                 mb: 1.5,
               }}
