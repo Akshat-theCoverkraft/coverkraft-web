@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Navbar, { StyledButton } from "../../../component/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios'
-import { Box, Button as MuiButton } from '@mui/material';
+import { Box, IconButton, Button as MuiButton } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import API_URL from "../../../ServiceModule/Service";
 import moment from 'moment-timezone'
@@ -10,6 +10,7 @@ import { capitalizeFirstLetter, truncateString } from "../../../utils/helpers";
 import arrow from '../../../Images/Symbol.png'
 import { THEME_COLOR } from "../../../constants";
 import Footer from "../Footer";
+import backArrow from "../../../Images/ic_back_button.png";
 
 const NewsBlog = () => {
   const navigate = useNavigate();
@@ -101,10 +102,12 @@ const NewsBlog = () => {
               px: 2,
             }}
           >
-            <StyledButton style={{ fontSize: "1.3rem" }} onClick={() => navigate(-1)}>
+            {/* <StyledButton style={{ fontSize: "1.3rem" }} onClick={() => navigate(-1)}>
               Back
-            </StyledButton>
-
+            </StyledButton> */}
+            <IconButton onClick={() => navigate(`/feed/${type}`)}>
+              <img src={backArrow} alt="Back" style={{ width: 24 }} />
+            </IconButton>
             <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
               <h1 className="mb-0 text-center">
                 {capitalizeFirstLetter(type) === "News"
