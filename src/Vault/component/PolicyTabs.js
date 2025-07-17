@@ -50,12 +50,12 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     gap: "12px",
     flexWrap: "wrap",
-    width: "100%",
+    width: "100% !important",
   },
   searchField: {
     flex: 1,
-    minWidth: "250px",
-    "& .MuiOutlinedInput-root": {
+    minWidth: "250px !important",
+    "& .MuiOutlinedInput-root !important": {
       backgroundColor: "#1a1a1a !important",
       borderRadius: "8px",
       border: "none",
@@ -311,7 +311,7 @@ const PolicyCard = ({
                 position: "absolute",
                 top: -50,
                 right: 0,
-                width: "120px",
+                width: "120px !important",
                 height: "25px",
                 backgroundImage: `url(${redBg})`,
                 backgroundSize: "cover",
@@ -363,7 +363,7 @@ const PolicyCard = ({
                 src={config.image}
                 alt="Policy"
                 style={{
-                  width: "100%",
+                  width: "100% !important",
                   maxWidth: "80px",
                   height: "auto",
                   objectFit: "contain",
@@ -805,12 +805,12 @@ export default function PolicyTabs({
           backgroundColor: "#121212 !important",
           border: "0.5px solid white",
           pt: 1.5,
-          height: "70vh",
+          height: "70vh ",
         }}
       >
         <TabContext value={value}>
           <Box
-            sx={{ width: "100%", maxWidth: "1200px", mx: "auto", mb: 0, px: 2 }}
+            sx={{ width: "100% ", mx: "auto", mb: 0, px: 2 }}
           >
             <SearchAndFilter
               searchTerm={searchTerm}
