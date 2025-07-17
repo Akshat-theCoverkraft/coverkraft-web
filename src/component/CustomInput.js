@@ -7,56 +7,45 @@ function CustomInput({
   label,
   value,
   onChange,
-  isValid,
-  className = "",
-  placeholder,
-  onKeyDown,
   validationMessage,
-  required = false,
-  showAsterisk = true,
+  placeholder,
   name = "",
-  children,
+  className = "",
   backgroundColor,
   inputStyle,
   sx,
-  padding = "0.5rem",
   fullWidth = true,
   containerStyle = {},
 }) {
   const inputId = `inputField-${name}`;
 
-  const baseClassNames =
-    "form-control form-control-lg bg-dark text-light border-2 border-grey shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300 ";
-
   const combinedStyle = {
-    padding,
+    padding: "0.5rem",
     backgroundColor: backgroundColor || "#2c2c2c",
     borderRadius: "30px",
-    ...(!inputStyle && !sx ? {} : {}), // apply base only if no style provided
-    ...(inputStyle || sx || {}), // override with provided style
+    border: validationMessage ? "1px solid red" : "0",
+    outline: "none",
+    boxShadow: validationMessage ? "0 0 0 2px rgba(255, 0, 0, 0.4)" : "none",
+    ...(inputStyle || sx || {}),
   };
 
   return (
-    <div
-      data-mdb-input-init
-      className={`form-outline mb-3 ${fullWidth ? "w-100" : ""}`}
-      style={containerStyle}
-    >
+    <div className={`form-outline mb-3 ${fullWidth ? "w-100" : ""}`} style={containerStyle}>
       {label && (
         <label className="form-label fw-bold text-light mb-2 d-block" htmlFor={inputId}>
           {label}
-          {required && showAsterisk && <span className="text-danger">*</span>}
         </label>
       )}
 
       {type === "select" ? (
         <select
           id={inputId}
-          className={`${baseClassNames} ${className}`}
+          className={`${className}`}
           value={value}
           onChange={onChange}
           name={name}
           style={combinedStyle}
+          aria-invalid={!!validationMessage}
         >
           {children}
         </select>
@@ -72,33 +61,28 @@ function CustomInput({
               },
             })
           }
-          className={`${baseClassNames} ${className}`}
           placeholderText={placeholder}
           name={name}
           dateFormat="dd/MM/yyyy"
-          showMonthDropdown
-          showYearDropdown
-          dropdownMode="select"
-          onKeyDown={onKeyDown}
+          className={className}
           style={combinedStyle}
-          calendarClassName="custom-datepicker"
         />
       ) : (
         <input
           type={type}
           id={inputId}
-          //className={`${baseClassNames} ${className}`}
+          className={className}
           value={value}
           onChange={onChange}
-          onKeyDown={onKeyDown}
           placeholder={placeholder}
           name={name}
           style={combinedStyle}
+          aria-invalid={!!validationMessage}
         />
       )}
 
       {validationMessage && (
-        <div className="invalid-feedback text-danger">{validationMessage}</div>
+        <div className="invalid-feedback text-danger d-block">{validationMessage}</div>
       )}
     </div>
   );

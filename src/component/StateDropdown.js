@@ -46,21 +46,26 @@ const GlobalDropdown = ({
   };
 
   const defaultStyle = {
-    padding: "0.5rem",
-    backgroundColor: "#2c2c2c",
-    borderRadius: "1rem",
-    color: "#fff",
-    border: "2px solid #444",
-    minHeight: "2.5rem",
+    padding: "0.5rem 0.5rem 0.5rem",
+    backgroundColor: "rgb(44, 44, 44)",
+    borderRadius: "42px",
+    color: "white",
+    border: "none",
+    outline: "none",
+    boxShadow: "none",
+    height: "48px",
+    fontSize: "1.222rem",
+    width: "100%",
+    appearance: "none",
+    WebkitAppearance: "none",
+    MozAppearance: "none",
   };
 
   const finalStyle = Object.keys(style).length > 0 ? style : defaultStyle;
 
   return (
     <div className="dropdown-container">
-      <label className="dropdown-label text-light" htmlFor="stateDropdown">
-        Select State{required && <span className="text-danger">*</span>}
-      </label>
+      <label class="form-label fw-bold text-light mb-2 d-block" for="inputField-">Select State{required && <span className="text-danger">*</span>}</label>
 
       {loading ? (
         <p>Loading...</p>
