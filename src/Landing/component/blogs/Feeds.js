@@ -21,7 +21,7 @@ const TABS = {
   news: "News",
   short: "Shorts",
   video: "Videos",
-  featured: "Featured",
+  featured: "Featured Videos",
 };
 
 const Feeds = () => {
@@ -114,7 +114,7 @@ const Feeds = () => {
       <Container maxWidth="xl" sx={{ py: 4 }}>
 
         {/* Tabs */}
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 6 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 8 }}>
           <Box sx={{
             backgroundColor: "#121212", padding: "0.5rem", borderRadius: "50px",
             maxWidth: "1000px", width: "100%", boxShadow: "0 0 10px rgba(139, 198, 66, 0.15)",
@@ -137,6 +137,7 @@ const Feeds = () => {
                   label={label}
                   value={val}
                   sx={{
+                    flex:1,
                     borderRadius: "40px", textTransform: "none", padding: "0.75rem 1.5rem",
                     backgroundColor: selectedTab === val ? "#8BC642" : "transparent",
                     color: selectedTab === val ? "#fff" : "#fff",
@@ -198,22 +199,22 @@ const Feeds = () => {
                         />
                       ) : (
                         <CardMedia
-                          component="img" image={item.newsImg} height="220"
+                          component="img" image={item.newsImg} height="200"
                           sx={{ objectFit: "cover", transition: "transform 0.4s ease" }}
                         />
                       )}
                      
                     </Box>
 
-                    <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+                    <CardContent sx={{ display: "flex", flexDirection: "column" }}>
                       <Typography variant="h6" sx={{
                         color: "#fff", fontWeight: 600, fontSize: "18px",
-                        display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
+                        display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden"
                       }}>
                         {item.subtitle}
                       </Typography>
 
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap",marginBottom: "10px" }}>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <Avatar sx={{ width: 20, height: 20, bgcolor: "#8BC642" }}>
                             <PersonRounded sx={{ fontSize: 12 }} />
@@ -224,26 +225,28 @@ const Feeds = () => {
                         </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <CalendarTodayRounded sx={{ fontSize: "1.8rem", color: "#8BC642" }} />
-                          <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "16px" }}>
+                          <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>
                             {moment(item.createdAt).format("MMM DD, YYYY")}
                           </Typography>
                         </Box>
                       </Box>
 
-                      <Typography
+                     {item.description? <Typography
                         ref={el => textRefs.current[index] = el}
                         variant="body2"
+                        marginBottom={2}
                         sx={{
-                          color: "rgba(255,255,255,0.8)", lineHeight: 1.1, fontSize: "14px",
-                          display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden"
+                          color: "rgba(255,255,255,0.8)", lineHeight: 1.3, fontSize: "13px",
+                          display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
                         }}
                       >
                         {item.description}
-                      </Typography>
+                      </Typography>:null}
 
-                      {showReadMore && (
+                      {item.description && showReadMore && (
                         <Button
                           onClick={e => { e.stopPropagation(); handleCardClick(item); }}
+                          marginBottom={0}
                           sx={{
                             color: "#8BC642", fontSize: "12px", fontWeight: 300,pointerEvents: "auto", marginLeft: "75%",
                             textTransform: "none", p: 0, minWidth: "auto",

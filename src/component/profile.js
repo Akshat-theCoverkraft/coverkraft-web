@@ -49,11 +49,17 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const [update, setUpdate] = useState(false);
   const [selectedStateId, setSelectedStateId] = useState("");
   const [selectedCityId, setSelectedCityId] = useState("");
-  const [isValidPinCode, setIsValidPinCode] = useState(true);
   const [valid, setValid] = useState(true);
-  const [isValidEmail, setIsValidEmail] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [profileCompletion, setProfileCompletion] = useState(0);
+
+  const [nameError, setNameError] = useState("");
+  const [isValidName, setIsValidName] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidPhone, setIsValidPhone] = useState(true);
+  const [isValidPinCode, setIsValidPinCode] = useState(true);
+  const [isValidDob, setIsValidDob] = useState(true);
+
   const userbyId = useSelector((state) => state.user);
   const states = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -71,7 +77,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     paddingLeft: "20px",
     width: "100%",
     color: "white",
-    borderColor: "grey",
   };
 
   const LOCAL_STORAGE_KEYS = [
@@ -158,6 +163,19 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   }, [userbyId]);
 
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setuserName(value);
+
+    if (!value.trim()) {
+      setNameError("Full name is required");
+    } else if (value.trim().length < 3) {
+      setNameError("Full name must be at least 3 characters");
+    } else {
+      setNameError("");
+    }
+  };
+
   const handleStateSelect = (stateId) => {
     setSelectedStateId(stateId);
   };
@@ -166,72 +184,67 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     setSelectedCityId(cityId);
   };
 
-  const isOldEnough = (dob) => {
-    if (!dob) return false;
+  const isOldEnough = (date) => {
+    if (!date) return false;
 
     const today = new Date();
-    const birthDate = new Date(dob);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
+    const ageDiff = today.getFullYear() - date.getFullYear();
 
-    if (
-      monthDifference < 0 ||
-      (monthDifference === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
+    // Account for month/day
+    const hasHadBirthdayThisYear =
+      today.getMonth() > date.getMonth() ||
+      (today.getMonth() === date.getMonth() && today.getDate() >= date.getDate());
 
-    return age >= 18;
+    const actualAge = hasHadBirthdayThisYear ? ageDiff : ageDiff - 1;
+
+    return actualAge >= 18;
   };
 
+
   const handleUpateProfile = () => {
-    if (!isValidEmail || !valid || !isValidPinCode) {
-      toast.error("Please correct the validation errors");
+    const nameValid = username.trim().length >= 3;
+    setIsValidName(nameValid);
+
+    const emailValid =
+      !useremail || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(useremail);
+    setIsValidEmail(emailValid);
+
+    const phoneValid = !userPhone || /^\d{10}$/.test(userPhone);
+    setIsValidPhone(phoneValid);
+
+    const pinValid = !pinCode || /^\d{5,6}$/.test(pinCode);
+    setIsValidPinCode(pinValid);
+
+    const dobValid = userDob || isOldEnough(userDob);
+    setIsValidDob(dobValid);
+
+    if (!nameValid || !emailValid || !phoneValid || !pinValid || !dobValid) {
       return;
     }
 
     const formData = new FormData();
     formData.append("_id", sessionStorage.getItem("userId"));
     formData.append("userName", username);
-    formData.append("userEmail", useremail);
-    formData.append("userPhone", userPhone);
-
+    if (useremail) formData.append("userEmail", useremail);
+    if (userPhone) formData.append("userPhone", userPhone);
     if (userDob) {
-      const formattedDob = userDob
-        .toLocaleDateString("en-GB")
-        .split("/")
-        .reverse()
-        .join("-");
+      const formattedDob = userDob.toLocaleDateString("en-GB").split("/").reverse().join("-");
       formData.append("userDob", formattedDob);
     }
-
     formData.append("userAddress", userAddress);
     formData.append("state", selectedStateId);
     formData.append("city", selectedCityId);
-    formData.append("pinCode", pinCode);
+    if (pinCode) formData.append("pinCode", pinCode);
     formData.append("gender", gender);
+    if (userImgFile) formData.append("userImg", userImgFile);
 
-    if (userImgFile) {
-      formData.append("userImg", userImgFile);
-    }
-
-    if (!isOldEnough(userDob)) {
-      toast.error("You must be at least 18 years old to register.");
-      return;
-    }
-
-    dispatch(updateUser(API_URL, formData))
-      .then(() => {
-        toast.success("Profile updated successfully");
-        setTimeout(() => {
-          onClose();
-          setUpdate(false);
-        }, 1000);
-      })
-      .catch(() => {
-        toast.error("Error updating profile");
-      });
+    dispatch(updateUser(API_URL, formData)).then(() => {
+      setUpdate(false);
+      onClose();
+    });
   };
+
+
 
   const handleDeleteAccount = () => {
     const userId = sessionStorage.getItem("userId");
@@ -260,28 +273,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   };
 
-  const handlePinCodeChange = (e) => {
-    const pin = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setpinCode(pin);
-    setIsValidPinCode(/^\d{5,6}$/.test(pin));
-  };
-
-  const handleEmailChange = (e) => {
-    const emailId = e.target.value;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const validEmail =
-      emailRegex.test(emailId) &&
-      emailId.split("@").length === 2 &&
-      emailId.split("@")[1].split(".").length <= 3;
-    setuserEmail(emailId);
-    setIsValidEmail(validEmail);
-  };
-
-  const handlephonechange = (e) => {
-    const number = e.target.value.replace(/\D/g, "").slice(0, 10);
-    setuserPhone(number);
-    setValid(/^\d{10}$/.test(number.replace("+91", "")));
-  };
 
   const handleDobChange = (date) => {
     setuserDob(date);
@@ -320,7 +311,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       <Box
         sx={{
           width: "100%",
-          padding: 0,
+          padding: 1,
           overflowX: "hidden",
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
         }}
@@ -407,7 +398,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
         {!update ? (
           <Card
-            className="main-container m-3 p-4 my-4"
+            className="main-container m-3 p-6 my-4"
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
@@ -474,11 +465,19 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   label="Full Name"
                   placeholder="Enter your name"
                   value={username}
-                  onChange={(e) => setuserName(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setuserName(val);
+                    setIsValidName(val.trim().length >= 3);
+                  }}
                   required
                   fullWidth
                   inputStyle={commonInputStyle}
+                  validationMessage={
+                    !isValidName ? "Full name must be at least 3 characters" : ""
+                  }
                 />
+
               </Grid>
 
               {/* Email */}
@@ -488,14 +487,20 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   label="Email Address"
                   placeholder="Enter your email"
                   value={useremail}
-                  onChange={handleEmailChange}
-                  required
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setuserEmail(val);
+                    const valid =
+                      !val || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
+                    setIsValidEmail(valid);
+                  }}
                   fullWidth
                   inputStyle={commonInputStyle}
                   validationMessage={
-                    !isValidEmail ? "Please enter a valid email address" : ""
+                    useremail && !isValidEmail ? "Please enter a valid email" : ""
                   }
                 />
+
               </Grid>
 
               {/* Phone */}
@@ -505,17 +510,14 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   label="Mobile Number"
                   placeholder="Enter your mobile number"
                   value={userPhone}
-                  onChange={handlephonechange}
-                  required
                   fullWidth
                   inputStyle={commonInputStyle}
-                  validationMessage={
-                    !valid ? "Please enter a valid 10-digit number" : ""
-                  }
+                  disabled
                 />
+
+
               </Grid>
 
-              {/* Date of Birth */}
               <Grid item style={commonItemStyle}>
                 <label
                   htmlFor="dob"
@@ -524,22 +526,17 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   Date of Birth
                 </label>
                 <GlobalDatePicker
-                  label=""
                   selectedDate={userDob}
-                  handleDateChange={handleDobChange}
-                  className="form-control"
-                  placeholder="Select your date of birth"
-                  style={{
-                    height: 48,
-                    fontSize: "1.222rem",
-                    borderRadius: 42,
-                    paddingLeft: "20px",
-                    width: "100%",
-                    color: "white",
-                    borderColor: "grey",
+                  handleDateChange={(date) => {
+                    setuserDob(date);
+                    setIsValidDob(date ? isOldEnough(date) : false);
                   }}
+                  placeholder="Select your date of birth"
+                  error={!isValidDob}
+                  validationMessage="You must be at least 18 years old"
                 />
               </Grid>
+
 
               {/* Address */}
               <Grid item style={commonItemStyle}>
@@ -579,15 +576,20 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   label="Pincode"
                   placeholder="Enter your pincode"
                   value={pinCode}
-                  onChange={handlePinCodeChange}
+                  onChange={(e) => {
+                    const pin = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setpinCode(pin);
+                    setIsValidPinCode(!pin || /^\d{5,6}$/.test(pin));
+                  }}
                   fullWidth
                   inputStyle={commonInputStyle}
                   validationMessage={
-                    !isValidPinCode
+                    pinCode && !isValidPinCode
                       ? "Please enter a valid pin code (5 or 6 digits)"
                       : ""
                   }
                 />
+
               </Grid>
 
               {/* Gender */}
@@ -600,16 +602,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 </label>
                 <select
                   id="gender"
-                  className="form-control bg-dark text-light rounded-3"
                   value={gender}
                   onChange={(e) => setgender(e.target.value)}
-                  style={{ ...commonInputStyle, width: "100%" }}
+                  className="custom-dark-dropdown"
                 >
                   <option value="">Select Your Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
+
               </Grid>
 
               {/* Buttons */}
@@ -628,10 +630,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                       }
                       bgcolor={
                         !isValidEmail ||
-                        !valid ||
-                        !username ||
-                        !useremail ||
-                        !userPhone
+                          !valid ||
+                          !username ||
+                          !useremail ||
+                          !userPhone
                           ? "#ccc"
                           : "#8AC642"
                       }
@@ -663,116 +665,116 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           </div>
         )}
 
-      {showDeleteModal && (
-  <div
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100vw",
-      height: "100vh",
-      background: "rgba(0, 0, 0, 0.6)",
-      zIndex: 9999,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "20px",
-    }}
-  >
-    <div
-      style={{
-        backgroundColor: "#1c1c1c",
-        borderRadius: "16px",
-        padding: "2rem",
-        maxWidth: "500px",
-        width: "100%",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-        textAlign: "center",
-        border: "1px solid rgba(255,255,255,0.1)",
-      }}
-    >
-      <Typography
-        variant="h5"
-        sx={{
-          mb: 1,
-          color: "#fff",
-          fontWeight: 800,
-          fontSize: "1.8rem",
-        }}
-      >
-        Delete Account
-      </Typography>
+        {showDeleteModal && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(0, 0, 0, 0.6)",
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "20px",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "#1c1c1c",
+                borderRadius: "16px",
+                padding: "2rem",
+                maxWidth: "500px",
+                width: "100%",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                textAlign: "center",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{
+                  mb: 1,
+                  color: "#fff",
+                  fontWeight: 800,
+                  fontSize: "1.8rem",
+                }}
+              >
+                Delete Account
+              </Typography>
 
-      <Typography
-        variant="body1"
-        sx={{
-          mb: 3,
-          color: "#ccc",
-          fontSize: "1.3rem",
-          lineHeight: 1.6,
-        }}
-      >
-       Are you sure you want to delete your account? All your data will be permanently lost.
+              <Typography
+                variant="body1"
+                sx={{
+                  mb: 3,
+                  color: "#ccc",
+                  fontSize: "1.3rem",
+                  lineHeight: 1.6,
+                }}
+              >
+                Are you sure you want to delete your account? All your data will be permanently lost.
 
-      </Typography>
+              </Typography>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: "1rem",
-          justifyContent: "center",
-        }}
-      >
-        <button
-          style={{
-            flex: 1,
-            minWidth: "120px",
-            backgroundColor: "#e53935",
-            color: "#fff",
-            border: "none",
-            borderRadius: "30px",
-            padding: "14px 0",
-            fontSize: "16px",
-            fontWeight: 600,
-            cursor: "pointer",
-            transition: "background 0.3s",
-          }}
-          onClick={() => {
-            setShowDeleteModal(false);
-            handleDeleteAccount();
-          }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#e53935")}
-        >
-          Delete
-        </button>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  gap: "1rem",
+                  justifyContent: "center",
+                }}
+              >
+                <button
+                  style={{
+                    flex: 1,
+                    minWidth: "120px",
+                    backgroundColor: "#e53935",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "30px",
+                    padding: "14px 0",
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "background 0.3s",
+                  }}
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    handleDeleteAccount();
+                  }}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = "#e53935")}
+                >
+                  Delete
+                </button>
 
-        <button
-          style={{
-            flex: 1,
-            minWidth: "120px",
-            backgroundColor: "#8AC642",
-            color: "#000",
-            border: "none",
-            borderRadius: "30px",
-            padding: "14px 0",
-            fontSize: "16px",
-            fontWeight: 600,
-            cursor: "pointer",
-            transition: "background 0.3s",
-          }}
-          onClick={() => setShowDeleteModal(false)}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#7ab634")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#8AC642")}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+                <button
+                  style={{
+                    flex: 1,
+                    minWidth: "120px",
+                    backgroundColor: "#8AC642",
+                    color: "#000",
+                    border: "none",
+                    borderRadius: "30px",
+                    padding: "14px 0",
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "background 0.3s",
+                  }}
+                  onClick={() => setShowDeleteModal(false)}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = "#7ab634")}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = "#8AC642")}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </Box>
       <Family family={drawerOpen} onfamilyclose={handleFamilyClose} />

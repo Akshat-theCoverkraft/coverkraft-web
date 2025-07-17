@@ -19,7 +19,7 @@
 .policy-container {
   position: relative;
   border-radius: 25px;
-  padding: 1px;
+  padding: -500px;
   z-index: 1;
 }
  

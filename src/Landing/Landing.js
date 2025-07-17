@@ -48,7 +48,7 @@ const Landing = () => {
       <Testimonials />
       <Faq />
       {/* <Carousel/> */}
-      <Service />
+      {/* <Service /> */}
       <Footer />
     </div>
   );

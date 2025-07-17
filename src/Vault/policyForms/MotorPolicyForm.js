@@ -367,41 +367,44 @@ const MotorPolicyForm = () => {
                     required
                   />
 
-                  <Grid container spacing={1} className="mb-2">
-                    <Grid item xs={12} md={6}>
-                      <label
-                        className="form-label fw-bold mb-0" // ensure tight spacing
-                        htmlFor="start-date"
-                      >
-                        Start date <span className="text-danger">*</span>
-                      </label>
-                      <DateTimePicker
-                        id="start-date"
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(policyStartDate)}
-                        onChange={handleStartDateChange}
-                        className="bg-dark text-light w-100" // full width and dark bg
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <label
-                        className="form-label fw-bold mb-0"
-                        htmlFor="end-date"
-                      >
-                        End date <span className="text-danger">*</span>
-                      </label>
-                      <DateTimePicker
-                        id="end-date"
-                        type="date"
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(policyEndDate)}
-                        onChange={handleEndDateChange}
-                        className="w-100"
-                      />
-                    </Grid>
-                  </Grid>
+
+              <Grid container spacing={1} className="mb-2">
+  <Grid item xs={12} md={6} margin={0} >
+    <label
+      className="form-label fw-bold mb-0" // ensure tight spacing
+      htmlFor="start-date"
+    >
+      Start date <span className="text-danger">*</span>
+    </label>
+    <DateTimePicker
+      id="start-date"
+      type="date"
+      isIcon={false}
+      label="DD/MM/YYYY"
+      value={formatDate(policyStartDate)}
+      onChange={handleStartDateChange}
+      className="w-100" // full width and dark bg
+    />
+  </Grid>
+  <Grid item xs={12} md={6}>
+    <label
+      className="form-label fw-bold mb-0"
+      htmlFor="end-date"
+    >
+      End date <span className="text-danger">*</span>
+    </label>
+    <DateTimePicker
+      id="end-date"
+      type="date"
+      isIcon={false}
+      label="DD/MM/YYYY"
+      value={formatDate(policyEndDate)}
+      onChange={handleEndDateChange}
+      className="w-100"
+    />
+  </Grid>
+</Grid>
+
 
                   <CustomInput
                     type="text"

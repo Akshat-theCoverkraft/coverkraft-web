@@ -10,6 +10,7 @@ import TRight from "../../Images/TRight.png";
 import TLeft from "../../Images/TLeft.png";
 import API_URL from "../../ServiceModule/Service";
 import Loader from "../../component/Loader";
+import { headingStyle } from "../../theme/themeStyles";
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
@@ -64,11 +65,11 @@ export default function Testimonials() {
   };
 
   const handleVideoPlay = (e) => {
-  if (playingVideo && playingVideo !== e.target) {
-    playingVideo.pause();
-  }
-  setPlayingVideo(e.target);
-};
+    if (playingVideo && playingVideo !== e.target) {
+      playingVideo.pause();
+    }
+    setPlayingVideo(e.target);
+  };
 
   const settings = {
     infinite: testimonials.length > 2,
@@ -87,16 +88,17 @@ export default function Testimonials() {
     const mediaStyle = {
       width: '100%',
       height: '100%',
-      maxHeight: '200px',
+      // maxHeight: '200px',
       objectFit: 'cover',
       borderRadius: '10px'
     };
 
     if (hasVideo) {
       return (
-        <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
-          <video 
-            controls 
+        <div className="media-section" style={{ flex: '1 1 50%',marginRight:"5px" }}>
+          <video
+            controls
+            controlsList="nodownload"
             style={mediaStyle}
             onPlay={handleVideoPlay}
           >
@@ -109,7 +111,7 @@ export default function Testimonials() {
 
     if (hasImage) {
       return (
-        <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
+        <div className="media-section" style={{ flex: '1 1 50%' ,marginRight:"5px"}}>
           <img
             src={testimonial.media.url}
             alt="Testimonial media"
@@ -125,18 +127,15 @@ export default function Testimonials() {
 
   return (
     <>
-      <div id="testimonials" className="position-relative mb-4 px-3" style={{ minHeight: '100px', paddingRight: '20%', paddingLeft: '20%', scrollMarginTop: '100px' }}>
-        <div className="text-center" style={{ maxWidth: '80%', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-          <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
+      <div className="testimonials-container px-3">
+        <div className="text-center">
+          <Typography variant="h3" sx={headingStyle}>
             Testimonials
           </Typography>
-          <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
+          <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
             Hear From our Clients
           </Typography>
         </div>
-      </div>
-
-      <div className="testimonials-container px-3">
         <section className="testimonials">
           <div className="container">
             {loading ? (
@@ -172,7 +171,7 @@ export default function Testimonials() {
               </div>
             ) : (
               <div className="slider-arrow-container">
-                <button className="testimonial-arrow-btn left-arrow" onClick={() => sliderRef.current?.slickPrev()}>
+                <button className="testimonial-arrow-btn left-arrow mr-9" onClick={() => sliderRef.current?.slickPrev()}>
                   <img src={TLeft} alt="Left" />
                 </button>
                 <Slider ref={sliderRef} {...settings} className="quotes">
@@ -203,7 +202,7 @@ export default function Testimonials() {
                             zIndex: 1
                           }}></div>
 
-                          <div className="text-section" style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%' }}>
+                          <div className="text-section " style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%',marginLeft:"10px" }}>
                             <img src={quote} alt="quote" className="mb-3" style={{ width: '30px' }} />
                             <div
                               className="quote mb-2"
@@ -252,7 +251,7 @@ export default function Testimonials() {
                                   {testimonial.author}
                                 </span>
                                 <span className="author-role" style={{
-                                  fontSize: '0.85rem',
+                                  fontSize: '1.2rem',
                                   color: '#ccc'
                                 }}>
                                   {testimonial.role || "Client"}

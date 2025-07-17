@@ -4,7 +4,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./component/CSS/carousel1.css";
 import API_URL from "../ServiceModule/Service";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import Loader from "../component/Loader"; 
+import Loader from "../component/Loader";
 const Carousel1 = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ const Carousel1 = () => {
     videoRefs.current.forEach((video, idx) => {
       if (video && idx !== playingIndex) {
         video.pause();
-        video.currentTime = 0; 
+        video.currentTime = 0;
       }
     });
   };
@@ -103,6 +103,7 @@ const Carousel1 = () => {
                       ref={(el) => (videoRefs.current[idx] = el)}
                       src={item.video}
                       controls
+                      controlsList="nodownload" 
                       className="carousel__slide-item-media"
                       onPlay={() => handleVideoPlay(idx)}
                       style={{
@@ -110,6 +111,9 @@ const Carousel1 = () => {
                         height: '100%',
                         objectFit: 'contain',
                         objectPosition: 'center',
+                        background: "black",
+                        borderRadius: '12px',
+                        padding:"0px !important"
                       }}
                     />
                   ) : (

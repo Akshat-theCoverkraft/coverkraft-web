@@ -47,7 +47,7 @@ const DateTimePicker = (props) => {
             }}
             sx={{
                 width: '100%',
-                marginTop: '10px',
+                marginTop: '5px',
                 '& .MuiOutlinedInput-root': {
                     borderRadius: '28px',
                     background: 'rgb(33 37 41)',

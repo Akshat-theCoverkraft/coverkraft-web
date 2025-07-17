@@ -68,7 +68,7 @@ const CityDropdown = ({
       ) : error ? (
         <p className="dropdown-error">{error}</p>
       ) : (
-        <select
+        <><label class="form-label fw-bold text-light mb-2 d-block" for="inputField-">Select City</label><select
           id="cityDropdown"
           className={`dropdown-select ${className}`}
           value={selectedValue}
@@ -84,7 +84,7 @@ const CityDropdown = ({
               {option.label}
             </option>
           ))}
-        </select>
+        </select></>
       )}
     </div>
   );
