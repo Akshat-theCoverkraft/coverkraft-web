@@ -32,12 +32,14 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
-.btn-primary{
-  background-color:#42988E
+
+.btn-primary {
+  background-color: #42988E
 }
 
 /* Navbar.css */
@@ -46,10 +48,11 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%; 
-  z-index: 1000; 
+  width: 100%;
+  z-index: 1000;
 
 }
+
 .main-container {
   display: flex;
   flex-direction: column;
@@ -66,6 +69,7 @@
   background-size: cover;
   background-position: center;
 }
+
 .background-image-container1 {
   width: 100%;
   height: 37vh;
@@ -125,29 +129,39 @@
 
 .profile-image-container {
   position: relative;
-  width: 130px; /* Adjust size as needed */
-  height: 130px; /* Adjust size as needed */
-  margin: 0 auto; /* Center the container */
+  width: 130px;
+  /* Adjust size as needed */
+  height: 130px;
+  /* Adjust size as needed */
+  margin: 0 auto;
+  /* Center the container */
 }
 
 .profile-image {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  object-fit: cover; /* Ensure the image covers the container */
+  object-fit: cover;
+  /* Ensure the image covers the container */
 }
 
 .edit-icon {
   position: absolute;
-  bottom: 0px; /* Adjust position as needed */
-  right: 5px; /* Adjust position as needed */
-  width: 45px; /* Adjust size as needed */
-  height: 45px; /* Adjust size as needed */
+  bottom: 0px;
+  /* Adjust position as needed */
+  right: 5px;
+  /* Adjust position as needed */
+  width: 45px;
+  /* Adjust size as needed */
+  height: 45px;
+  /* Adjust size as needed */
   /* background-color: white; */
   border-radius: 50%;
-  padding: 5px; /* Add padding to create space around the icon */
+  padding: 5px;
+  /* Add padding to create space around the icon */
   cursor: pointer;
-  z-index: 1; /* Ensure the edit icon is on top */
+  z-index: 1;
+  /* Ensure the edit icon is on top */
 }
 
 .edit-icon img {
@@ -164,6 +178,7 @@
 .spacer {
   height: 10px;
 }
+
 .card-img-top {
   width: 50%;
   height: 200px;
@@ -173,3 +188,53 @@
   background: linear-gradient(135deg, #42CDC9, #B4E498);
 }
 
+
+/* Text Sizes */
+.text-size-xs {
+  font-size: 0.75rem;
+}
+
+.text-size-sm {
+  font-size: 1rem;
+}
+
+.text-size-md {
+  font-size: 1.5rem;
+}
+
+.text-size-lg {
+  font-size: 2rem;
+}
+
+.text-size-xl {
+  font-size: 3rem;
+}
+
+.text-size-xxl {
+  font-size: 4rem;
+}
+
+/* Text Size Placeholder Match */
+.text-size-xs::placeholder {
+  font-size: 0.75rem;
+}
+
+.text-size-sm::placeholder {
+  font-size: 1rem;
+}
+
+.text-size-md::placeholder {
+  font-size: 1.5rem;
+}
+
+.text-size-lg::placeholder {
+  font-size: 2rem;
+}
+
+.text-size-xl::placeholder {
+  font-size: 3rem;
+}
+
+.text-size-xxl::placeholder {
+  font-size: 4rem;
+}
