@@ -44,7 +44,7 @@ const Coverkraft = () => {
             gutterBottom
             sx={{ fontSize: { xs: "22px", sm: "26px", md: "29px" } }}
           >
-            DOWNLOAD APP <span style={{ color: "#8BC642", fontWeight:"6rem", fontSize: "50px" }}>Coming Soon...</span>
+            DOWNLOAD APP <span style={{ color: "#8BC642", fontWeight:"6rem", fontSize: "50px" }}></span>
           </Typography>
           <Typography
             variant="h3"

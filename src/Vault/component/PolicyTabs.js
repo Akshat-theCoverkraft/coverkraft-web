@@ -360,10 +360,9 @@ const PolicyCard = ({
           </Grid>
 
           {/* Policy Details */}
-          <Grid item xs={12} sm={shareAllPolicy ? 8 : 8}>
-            <Box sx={{ pr: { xs: 0, sm: status || isExpired ? 8 : 2 } }}>
+<Grid item xs={12} sm={8} sx={{ px: { xs: 1, sm: 2 }, py: 1 }}>            <Box sx={{ pr: { xs: 0, sm: status || isExpired ? 8 : 2 }, }}>
               {/* Policy Type */}
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 1,  }}>
                 <Box
                   sx={{
                     backgroundColor: "#8AC642 !important",
@@ -758,7 +757,7 @@ export default function PolicyTabs({
           boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
           backgroundColor: "#121212 !important",
           border: "0.5px solid white",
-          pt: 2.5,
+          pt: 1.5,
           minHeight: "60vh",
         }}
       >
@@ -795,7 +794,7 @@ export default function PolicyTabs({
                   borderRadius: "35px !important",
                   borderWidth: "2px",
                   bordercolor: "#DEDEDE !important",
-                  padding: "0 10px  !important",
+                  padding: "0 2px  !important",
                   zIndex: 10,
                 }}
               >

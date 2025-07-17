@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import API_URL from '../../ServiceModule/Service';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Loader from '../../component/Loader';
+import { headingStyle } from '../../theme/themeStyles';
 
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 180;
@@ -26,7 +27,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
     <Box
       sx={{
         position: 'relative',
-        width: '100%',
+        width: 'fit-content',
         maxWidth: CARD_WIDTH,
         height: CARD_HEIGHT + 15,
         mx: 'auto',
@@ -41,7 +42,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         sx={{
           position: 'absolute',
           top: 0,
-          left: '-50px',
+          left: '-27px',
           width: CARD_HEIGHT + 15,
           height: CARD_HEIGHT + 15,
           borderRadius: '50%',
@@ -52,7 +53,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
       <Typography
         sx={{
           position: 'absolute',
-          top: 20,
+          top: 15,
           left: '-15px',
           fontFamily: 'DM Sans, sans-serif',
           fontSize: 36,
@@ -60,6 +61,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           WebkitTextStroke: '2px white',
           fontWeight: 900,
           zIndex: 3,
+          left: 10
         }}
       >
         {number < 10 ? `0${number}` : number}
@@ -73,7 +75,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           WebkitBackdropFilter: 'blur(20px)',
           borderRadius: '20px',
           padding: 2,
-          width: '120%',
+          width: '100%',
           height: CARD_HEIGHT,
           boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
           border: '1px solid rgba(255,255,255,0.15)',
@@ -81,6 +83,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
+          marginLeft: 4
         }}
       >
         <Typography
@@ -100,27 +103,27 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
             textAlign: 'left',
             pl: 1,
             fontSize: 14,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}>{description}</Typography>
+
+        <Typography
+          onClick={onSeeMore}
+          sx={{
+            color: '#5A9F1D',
+            cursor: 'pointer',
+            mt: 1,
+            fontWeight: 'bold',
+            fontSize: 13,
+            textAlign: 'right',
+            paddingLeft: '70%',
           }}
         >
-          {truncateText(description, 80)}
+          {isTruncated ? "Read More" : ""}
         </Typography>
-
-        {isTruncated && (
-          <Typography
-            onClick={onSeeMore}
-            sx={{
-              color: '#5A9F1D',
-              cursor: 'pointer',
-              mt: 1,
-              fontWeight: 'bold',
-              fontSize: 13,
-              textAlign: 'left',
-              paddingLeft: '70%',
-            }}
-          >
-            Read More...
-          </Typography>
-        )}
       </Box>
     </Box>
   );
@@ -178,7 +181,7 @@ const WhyCoverKraft = () => {
       <Box textAlign="center" mb={4}>
         <Typography
           variant="subtitle1"
-          sx={{ color: '#f39c12', fontSize: '2.2rem', fontWeight: 600 }}
+          sx={headingStyle}
         >
           Tips & Tricks
         </Typography>
@@ -208,15 +211,16 @@ const WhyCoverKraft = () => {
             autoPlay={false}
             showArrows={false}
             swipeable
+
           >
             {groupedData.map((group, i) => (
               <Box
                 key={i}
                 display="flex"
                 justifyContent="center"
-                flexWrap="nowrap"
-                gap={3}
-                sx={{ py: 2 }}
+              // flexWrap="nowrap"
+              // gap={3}
+              // sx={{ py: 2 }}
               >
                 {group.map((card, j) => (
                   <PolicyCard

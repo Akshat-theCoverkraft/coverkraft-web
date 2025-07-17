@@ -10,6 +10,7 @@ import TRight from "../../Images/TRight.png";
 import TLeft from "../../Images/TLeft.png";
 import API_URL from "../../ServiceModule/Service";
 import Loader from "../../component/Loader";
+import { headingStyle } from "../../theme/themeStyles";
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
@@ -64,11 +65,11 @@ export default function Testimonials() {
   };
 
   const handleVideoPlay = (e) => {
-  if (playingVideo && playingVideo !== e.target) {
-    playingVideo.pause();
-  }
-  setPlayingVideo(e.target);
-};
+    if (playingVideo && playingVideo !== e.target) {
+      playingVideo.pause();
+    }
+    setPlayingVideo(e.target);
+  };
 
   const settings = {
     infinite: testimonials.length > 2,
@@ -95,8 +96,9 @@ export default function Testimonials() {
     if (hasVideo) {
       return (
         <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
-          <video 
-            controls 
+          <video
+            controls
+            controlsList="nodownload"
             style={mediaStyle}
             onPlay={handleVideoPlay}
           >
@@ -125,18 +127,15 @@ export default function Testimonials() {
 
   return (
     <>
-      <div id="testimonials" className="position-relative mb-4 px-3" style={{ minHeight: '100px', paddingRight: '20%', paddingLeft: '20%', scrollMarginTop: '100px' }}>
-        <div className="text-center" style={{ maxWidth: '80%', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-          <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
+      <div className="testimonials-container px-3">
+        <div className="text-center">
+          <Typography variant="h3" sx={headingStyle}>
             Testimonials
           </Typography>
-          <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
+          <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
             Hear From our Clients
           </Typography>
         </div>
-      </div>
-
-      <div className="testimonials-container px-3">
         <section className="testimonials">
           <div className="container">
             {loading ? (
