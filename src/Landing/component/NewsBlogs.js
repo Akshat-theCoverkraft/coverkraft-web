@@ -14,6 +14,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import bgImage from '../../Images/bg.png';
+import { headingStyle } from '../../theme/themeStyles';
 
 const typeLabels = {
   blog: 'Blogs',
@@ -200,7 +201,7 @@ const BlogSection = () => {
             <video
               ref={(el) => registerVideo(el, post._id)}
               controls
-              controlsList="nodownload" 
+              controlsList="nodownload"
               preload="metadata"
               style={{ ...mediaStyle, objectFit: 'contain', backgroundColor: '#000' }}
               onClick={(e) => e.stopPropagation()}
@@ -284,17 +285,12 @@ const BlogSection = () => {
     >
       <Typography
         variant="h3"
-        sx={{
-          color: '#FF9906',
-          fontWeight: 700,
-          mb: 4,
-          textAlign: 'center',
-        }}
+        sx={headingStyle}
       >
         Blogs And News
       </Typography>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={2} mt={3}>
         <Grid item xs={12} md={5}>
           <Box sx={{ height: '500px' }}>
             {renderCard(latestPosts.shorts, 'short', true)}
@@ -309,11 +305,39 @@ const BlogSection = () => {
         <Grid item xs={12} md={4}>
           <Box sx={{ height: '500px', display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Box sx={{ height: '240px' }}>{renderCard(latestPosts.videos?.[0], 'video')}</Box>
-            <Box sx={{ height: '240px' }}>
+            <Box sx={{
+              height: '240px', position: 'relative', position: 'relative',
+              height: '100%',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              transition: 'transform 0.3s ease',
+              '&:hover': { transform: 'scale(1.02)' }
+            }} >
+              <Chip
+                icon={<TravelExploreIcon />}
+                label="Featured"
+                size="small"
+                sx={{
+                  position: 'absolute',
+                  top: 10,
+                  left: 10,
+                  zIndex: 2,
+                  bgcolor: '#8AC642',
+                  color: '#000',
+                  fontWeight: 600,
+                  fontSize: '1.1rem',
+                  '&:hover': {
+                    bgcolor: '#8AC642',
+                    color: '#000',
+                  },
+                }}
+                onClick={() => navigate("/feed/featured")}
+              />
               {featuredVideo?.video ? (
                 <video
                   controls
-                  controlsList="nodownload" 
+                  controlsList="nodownload"
                   preload="metadata"
                   style={{
                     width: '100%',
