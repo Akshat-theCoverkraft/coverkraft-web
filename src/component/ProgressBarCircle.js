@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "@emotion/styled";
 import { useSpring, animated } from "react-spring";
 
-const APP_COLOR = "#3498db"; // Replace with your app color
+const APP_COLOR = "#8AC642"; // Replace with your app color
 const APP_COLOR_SHADE = "#95a5a6"; // Replace with your app color shade
 
 const Container = styled.div`
