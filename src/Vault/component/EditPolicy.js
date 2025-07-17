@@ -425,7 +425,7 @@ const EditPolicy = () => {
                             <Typography variant="h4" component="h2" className='fw-bold'>Edit Policy</Typography>
                             {/* <CircularProgressWithLabel value={progress} /> */}
                         </div>
-                        <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}> Details</p>
+                        <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}>Policy Details</p>
                         <div>
                             {PolicyType === 'car_policy' || PolicyType === 'bike_policy' || PolicyType === 'other_vehicle' ? (
                                 <>

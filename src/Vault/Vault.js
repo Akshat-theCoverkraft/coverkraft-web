@@ -409,7 +409,7 @@ const Vault = () => {
                       border: "1px solid #e0e0e0",
                       backgroundColor: "#fff",
                       transition: "all 0.2s ease",
-                      marginTop: "18px",
+                      marginTop: "10px",
                       boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
                     }}
                   >
@@ -425,21 +425,20 @@ const Vault = () => {
                   </div>
                 )}
 
-               <GradientButton
-  text="Add Policy"
-  size="sm"
-  startIcon={AddIcon}
-  onClick={() => toggleDialog("addPolicy", true)}
-  style={{
-    padding: "8px 16px",
-    minHeight: "32px",
-    borderRadius: "28px",
-    fontSize: "18px",
-    marginTop: policyListLength > 0 ? "10px" : "0px",
-    width: "200px", // This will now work
-  }}
-/>
-
+                <GradientButton
+                  text="Add Policy"
+                  size="sm"
+                  startIcon={AddIcon}
+                  onClick={() => toggleDialog("addPolicy", true)}
+                  style={{
+                    padding: "8px 16px",
+                    minHeight: "32px",
+                    borderRadius: "28px",
+                    fontSize: "18px",
+                    marginTop: "10px",
+                    width: "200px", // This will now work
+                  }}
+                />
 
                 {shareAllPolicy && (
                   <>
@@ -528,7 +527,7 @@ const Vault = () => {
                   backgroundColor: "#121212 !important",
                   border: "0.5px solid white",
                   pt: 2.5,
-                  height: "91vh",
+                  height: "70vh",
                 }}
               >
                 <Box
@@ -537,9 +536,8 @@ const Vault = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     flexDirection: "column",
-                    height: "60vh",
+                    height: "68vh",
                     color: THEME_COLOR.COLOR,
-                    minHeight: "82.7vh", // Adjusted to fit the card height
                   }}
                 >
                   <img
@@ -683,39 +681,17 @@ const Vault = () => {
         open={dialogs.confirm}
         onClose={() => toggleDialog("confirm", false)}
         fullWidth
-        maxWidth="sm"
         PaperProps={{
           style: {
-            borderRadius: "16px",
-            padding: "24px",
             backgroundColor: "#212121",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+            borderRadius: "16px",
+            border: "1px solid #9E9E9E", // ensure visible border
+            padding: "24px",
+            boxShadow: "0px 8px 30px rgba(0, 0, 0, 1)", // stronger shadow
           },
         }}
       >
-        <DialogContent style={{ position: "relative", minHeight: "120px" }}>
-          {loading && (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                height: "100%",
-                width: "100%",
-                backgroundColor: "#212121",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "16px",
-                zIndex: 10,
-              }}
-            >
-              <Loader
-                style={{ width: "3rem", height: "3rem", color: "#8AC642" }}
-                animation="border"
-              />
-            </div>
-          )}
+        <DialogContent style={{ position: "relative", height: "90px" }}>
           <Typography
             variant="h6"
             align="center"
@@ -723,7 +699,19 @@ const Vault = () => {
               fontWeight: 600,
               fontSize: "20px",
               color: "#fff",
-              paddingTop: "20px",
+              paddingTop: "10px",
+            }}
+          >
+            Alert
+          </Typography>
+          <Typography
+            variant="h6"
+            align="center"
+            style={{
+              fontWeight: 500,
+              fontSize: "16px",
+              color: "#fff",
+              // paddingTop: "20px",
             }}
           >
             Are you sure you want to proceed?
@@ -734,7 +722,7 @@ const Vault = () => {
           style={{
             justifyContent: "center",
             gap: "16px",
-            padding: "16px 32px",
+            // padding: "16px 32px",
           }}
         >
           <Button
@@ -747,7 +735,7 @@ const Vault = () => {
               backgroundColor: "transparent",
               borderRadius: "8px",
               fontWeight: 600,
-              padding: "8px 24px",
+              // padding: "8px 24px",
             }}
           />
           <Button
@@ -761,7 +749,7 @@ const Vault = () => {
               border: "none",
               borderRadius: "8px",
               fontWeight: 600,
-              padding: "8px 24px",
+              // padding: "8epx 24px",
             }}
           />
         </DialogActions>

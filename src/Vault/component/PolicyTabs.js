@@ -36,13 +36,13 @@ import "./policy.css";
 import API_URL from "../../ServiceModule/Service";
 import { THEME_COLOR } from "../../constants";
 import moment from "moment";
+import redBg from "../../Images/red-img.png";
 
 const useStyles = makeStyles(() => ({
   searchContainer: {
     backgroundColor: "#2a2a2a !important",
     borderRadius: "12px",
     padding: "1px",
-    marginBottom: "20px",
     border: "1px solid #444",
     display: "flex",
     alignItems: "center",
@@ -65,7 +65,6 @@ const useStyles = makeStyles(() => ({
     "& .MuiInputBase-input": {
       color: "#fff",
       fontSize: "1.4rem",
-      padding: "12px 14px",
     },
     "& .MuiInputLabel-root": { display: "none" },
   },
@@ -295,31 +294,43 @@ const PolicyCard = ({
         color: THEME_COLOR.COLOR,
         cursor: "pointer",
         borderWidth: isSelected ? "2px" : "1px",
-        border: isSelected ? "2px solid #8AC642" : "0.1px solid white",
+        border: isSelected ? "1px solid #8AC642" : "1px solid #999999",
         transition: "all 0.3s ease",
         position: "relative",
         overflow: "hidden",
       }}
     >
-      <CardContent sx={{ p: 3 }}>
+      <CardContent sx={{ p: 1.5 }}>
         {/* Status Badge - Fixed positioning to prevent overlap */}
         {(status || isExpired) && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-              backgroundColor: "#dc3545 !important",
-              color: "white !important",
-              padding: "8px 16px",
-              borderRadius: "0 0 0 12px",
-              fontSize: "1.2rem",
-              fontWeight: "bold",
-              zIndex: 10,
-            }}
-          >
-            {isExpired ? "Expired" : status}
-          </Box>
+          <>
+            <div
+              style={{
+                position: "absolute",
+                top: -50,
+                right: 0,
+                width: "120px",
+                height: "25px",
+                backgroundImage: `url(${redBg})`,
+                backgroundSize: "cover",
+                opacity: 1,
+                marginTop: "50px",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: 2,
+                right: 25,
+                color: "#ffffff",
+                fontSize: "12px",
+                fontWeight: "bold",
+                zIndex: 1,
+              }}
+            >
+              {isExpired ? "Expired" : status}
+            </div>
+          </>
         )}
 
         <Grid container spacing={2} alignItems="center">
@@ -360,14 +371,15 @@ const PolicyCard = ({
           </Grid>
 
           {/* Policy Details */}
-<Grid item xs={12} sm={8} sx={{ px: { xs: 1, sm: 2 }, py: 1 }}>            <Box sx={{ pr: { xs: 0, sm: status || isExpired ? 8 : 2 }, }}>
+          <Grid item xs={12} sm={8} sx={{}}>
+            <Box sx={{ pr: { xs: 0, sm: status || isExpired ? 8 : 2 } }}>
               {/* Policy Type */}
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1,  }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
                 <Box
                   sx={{
                     backgroundColor: "#8AC642 !important",
-                    width: "12px",
-                    height: "12px",
+                    width: "10px",
+                    height: "10px",
                     borderRadius: "50%",
                     mr: 1,
                     flexShrink: 0,
@@ -387,12 +399,11 @@ const PolicyCard = ({
               {/* Insured Name */}
               <Typography
                 sx={{
-                  fontSize: "1.8rem",
+                  fontSize: "1.6rem",
                   color: "#fff !important",
                   fontWeight: "800",
-                  mb: 1,
                   wordBreak: "break-word",
-                  lineHeight: 1.2,
+                  mb: 0.4,
                 }}
               >
                 {policy.insuredName}
@@ -401,10 +412,10 @@ const PolicyCard = ({
               {/* Policy Number */}
               <Typography
                 sx={{
-                  fontSize: "1.2rem",
+                  fontSize: "1rem",
                   fontWeight: "600",
                   color: "#fff !important",
-                  mb: 1,
+                  mb: 0.15,
                   wordBreak: "break-all",
                 }}
               >
@@ -414,7 +425,7 @@ const PolicyCard = ({
               {/* Expiry Date */}
               <Typography
                 sx={{
-                  fontSize: "1.2rem !important",
+                  fontSize: "1rem !important",
                   fontWeight: "600",
                   color: "#fff",
                 }}
@@ -464,9 +475,8 @@ const EmptyState = ({ hasFilters, onClearFilters }) => (
       justifyContent: "center",
       alignItems: "center",
       flexDirection: "column",
-      height: "60vh",
+      height: "50vh",
       color: THEME_COLOR.COLOR,
-      minHeight: "60vh",
     }}
   >
     <img
@@ -499,10 +509,10 @@ const CustomPagination = ({
   onPageChange,
   itemsPerPage = 3,
 }) => (
-  <Box sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 2 }}>
+  <Box sx={{ display: "flex", justifyContent: "center", mt: 0, mb: 0.5 }}>
     <Pagination
       variant="outlined"
-      size="large"
+      size="small"
       count={Math.ceil(totalItems / itemsPerPage)}
       page={currentPage}
       onChange={onPageChange}
@@ -529,7 +539,7 @@ export default function PolicyTabs({
   onPolicyListLengthChange,
   onArchieveListLength,
   onAllPolicyIdsChange,
-  clearPolicyId
+  clearPolicyId,
 }) {
   const [value, setValue] = useState(0);
   const [pages, setPages] = useState({ active: 1, expired: 1, archive: 1 });
@@ -556,30 +566,33 @@ export default function PolicyTabs({
   }, []);
 
   useEffect(() => {
-  const currentList = value === 2 ? archieveList : policyList;
-  const filteredList = filterPolicies(currentList, searchTerm, selectedTypeFilter);
+    const currentList = value === 2 ? archieveList : policyList;
+    const filteredList = filterPolicies(
+      currentList,
+      searchTerm,
+      selectedTypeFilter
+    );
 
-  if (!filteredList || filteredList.length === 0) {
-    setSelectedPolicyId(null);
-    sessionStorage.removeItem("selectedPolicyId");
-    handleCardClick(null); // ⬅ notify Vault.js to clear PolicyDetail
-    return;
-  }
+    if (!filteredList || filteredList.length === 0) {
+      setSelectedPolicyId(null);
+      sessionStorage.removeItem("selectedPolicyId");
+      handleCardClick(null); // ⬅ notify Vault.js to clear PolicyDetail
+      return;
+    }
 
-  const storedId = sessionStorage.getItem("selectedPolicyId");
-  const policyExists = filteredList.some((p) => p._id === storedId);
+    const storedId = sessionStorage.getItem("selectedPolicyId");
+    const policyExists = filteredList.some((p) => p._id === storedId);
 
-  if (policyExists) {
-    setSelectedPolicyId(storedId);
-    handleCardClick(storedId);
-  } else {
-    const firstId = filteredList[0]._id;
-    setSelectedPolicyId(firstId);
-    sessionStorage.setItem("selectedPolicyId", firstId);
-    handleCardClick(firstId);
-  }
-}, [value, policyList, archieveList, searchTerm, selectedTypeFilter]);
-
+    if (policyExists) {
+      setSelectedPolicyId(storedId);
+      handleCardClick(storedId);
+    } else {
+      const firstId = filteredList[0]._id;
+      setSelectedPolicyId(firstId);
+      sessionStorage.setItem("selectedPolicyId", firstId);
+      handleCardClick(firstId);
+    }
+  }, [value, policyList, archieveList, searchTerm, selectedTypeFilter]);
 
   // useEffect(() => {
   //   const currentList = value === 2 ? archieveList : policyList;
@@ -694,23 +707,34 @@ export default function PolicyTabs({
         value={tabValue}
         sx={{
           flex: 1,
-          p: "16px !important",
-          backgroundColor: "#1c1c1c !important",
           borderRadius: "12px !important",
-          mt: 3,
           zIndex: 1,
           position: "relative  !important",
+          paddingTop: 2,
         }}
       >
-        <Box sx={{ height: "66vh !important", }}>
+        <Box
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 5,
+          }}
+        >
           {filteredList.length === 0 ? (
             <EmptyState
               hasFilters={hasFilters}
-              onClearFilters={handleClearAll}                                                
+              onClearFilters={handleClearAll}
             />
           ) : (
-            <>
-<Box sx={{ mb: 2, height: '57vh', overflowY: 'auto',}}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              {/* Scrollable List Area */}
+              <Box sx={{ flex: 1, overflowY: "auto" }}>
                 {paginatedData.map((policy) => (
                   <PolicyCard
                     key={policy._id}
@@ -725,20 +749,23 @@ export default function PolicyTabs({
                   />
                 ))}
               </Box>
-              {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
-                <CustomPagination
-                  totalItems={filteredList.length}
-                  currentPage={currentPage}
-                  onPageChange={(event, newPage) =>
-                    setPages((prev) => ({ ...prev, [pageKey]: newPage }))
-                  }
-                  itemsPerPage={itemsPerPage}
-                />
-              ) : (
-                        <Box sx={{  minHeight: "27vh !important",}} /> // same height as Pagination
 
-              )}
-            </>
+              {/* Fixed Pagination at Bottom */}
+              <Box sx={{ mt: 2 }}>
+                {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
+                  <CustomPagination
+                    totalItems={filteredList.length}
+                    currentPage={currentPage}
+                    onPageChange={(event, newPage) =>
+                      setPages((prev) => ({ ...prev, [pageKey]: newPage }))
+                    }
+                    itemsPerPage={itemsPerPage}
+                  />
+                ) : (
+                  <Box sx={{ minHeight: "27vh" }} /> // Empty space if pagination not needed
+                )}
+              </Box>
+            </div>
           )}
         </Box>
       </TabPanel>
@@ -750,7 +777,7 @@ export default function PolicyTabs({
   ).length;
 
   return (
-    <Box sx={{ px: { xs: 2, sm: 5 } }}>
+    <Box sx={{ px: { xs: 2, sm: 5 }, height: "100%" }}>
       <Card
         sx={{
           borderRadius: 5,
@@ -758,11 +785,13 @@ export default function PolicyTabs({
           backgroundColor: "#121212 !important",
           border: "0.5px solid white",
           pt: 1.5,
-          minHeight: "60vh",
+          height: "70vh",
         }}
       >
         <TabContext value={value}>
-          <Box sx={{ width: "95% !important", mx: "auto", mb: 0 }}>
+          <Box
+            sx={{ width: "100%", maxWidth: "1200px", mx: "auto", mb: 0, px: 2 }}
+          >
             <SearchAndFilter
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
@@ -774,10 +803,10 @@ export default function PolicyTabs({
 
             <Box
               sx={{
-                width: { xs: "100%", sm: "65%" },
-                bgcolor: "#929292 !important",
+                width: { xs: "100%", sm: "70%" },
+                backgroundColor: "#929292",
                 mx: "auto",
-                p: 0.1,
+                mt: 1,
                 borderRadius: "35px",
                 overflow: "hidden",
               }}
@@ -787,15 +816,12 @@ export default function PolicyTabs({
                 variant="standard"
                 TabIndicatorProps={{ style: { display: "none" } }}
                 sx={{
-                  width: "100% !important",
-                  display: "flex !important",
-                  justifyContent: "space-around !important",
-                  backgroundColor: "#3E3E3E !important",
-                  borderRadius: "35px !important",
-                  borderWidth: "2px",
-                  bordercolor: "#DEDEDE !important",
-                  padding: "0 2px  !important",
-                  zIndex: 10,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  backgroundColor: "#3E3E3E",
+                  padding: 0,
+                  borderRadius: "35px",
+                  px: 1,
                 }}
               >
                 {TAB_CONFIGS.map((tab) => (
@@ -807,24 +833,21 @@ export default function PolicyTabs({
                           display: "flex",
                           alignItems: "center",
                           gap: 1,
-                          px: 4,
+                          px: { xs: 1, sm: 2 },
                         }}
                       >
-                        <span style={{ fontSize: "1.6rem" }}>{tab.label}</span>
+                        <span style={{ fontSize: "1.4rem" }}>{tab.label}</span>
                         {tab.value === 1 && value === 1 && expiredCount > 0 && (
                           <Box
                             sx={{
                               backgroundColor: "red",
                               color: "white",
                               borderRadius: "50%",
-                              // width: "30px",
-                              // height: "20px",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
                               fontSize: "1rem",
                               fontWeight: "bold",
-                              padding: "0 6px",
                               minWidth: "20px",
                               minHeight: "20px",
                               lineHeight: "1",
@@ -847,7 +870,7 @@ export default function PolicyTabs({
                       minWidth: "unset",
                       flex: 1,
                       mx: 0.5,
-                      my: 1,
+                      my: 0.5,
                       px: { xs: 1, sm: 2 },
                     }}
                     onClick={() => tab.value < 2 && setActiveTab(tab.key)}
@@ -869,11 +892,11 @@ export default function PolicyTabs({
               <Loader sx={{ color: "#8AC642" }} />
             </Box>
           ) : (
-            <>
+            <div style={{ height: "100%" }}>
               {renderTabContent(0, policyList, "active", true, false)}
               {renderTabContent(1, policyList, "expired", false, true)}
               {renderTabContent(2, archieveList, "archive", false, false)}
-            </>
+            </div>
           )}
         </TabContext>
       </Card>
