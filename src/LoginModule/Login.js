@@ -28,7 +28,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
-  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white", borderColor: "grey" };
 
   // Syncs `valid` with input validation
   useEffect(() => {
@@ -41,14 +41,14 @@ const Login = () => {
 
 
   useEffect(() => {
-  // Example mock FCM ID (replace with real logic)
-  const getFcmId = async () => {
-    // const token = await requestForToken(); // If using Firebase
-    const token = getToken() // TEMP
-    setFcmId(token);
-  };
-  getFcmId();
-}, []);
+    // Example mock FCM ID (replace with real logic)
+    const getFcmId = async () => {
+      // const token = await requestForToken(); // If using Firebase
+      const token = getToken() // TEMP
+      setFcmId(token);
+    };
+    getFcmId();
+  }, []);
 
   // Handle phone input (10-digit number)
   const handlephonechange = (e) => {
@@ -66,51 +66,51 @@ const Login = () => {
 
   // Login handler - verifies phone and simulates Firebase OTP send
   const handleLogin = async () => {
-  try {
-    const userPhone = phoneNumber;
-    const response = await axios.get(
-      `${API_URL}user/verifyPhone?userPhone=${userPhone}`
-    );
+    try {
+      const userPhone = phoneNumber;
+      const response = await axios.get(
+        `${API_URL}user/verifyPhone?userPhone=${userPhone}`
+      );
 
-    console.log(response, "response");
+      console.log(response, "response");
 
-    if (response.status === 200) {
-      const user = response.data.user;
+      if (response.status === 200) {
+        const user = response.data.user;
 
-      console.log('this is user : ', user)
-      const userId = user._id;
-      const token = user.token;
+        console.log('this is user : ', user)
+        const userId = user._id;
+        const token = user.token;
 
-      // ✅ Store session info
-      sessionStorage.setItem("userId", userId);
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("loginTime", Date.now().toString());
-      sessionStorage.setItem("isLoggedIn", "true");
+        // ✅ Store session info
+        sessionStorage.setItem("userId", userId);
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("loginTime", Date.now().toString());
+        sessionStorage.setItem("isLoggedIn", "true");
 
-      setLoggedIn(true);
-    } else {
-      toast.error("⚠️ Couldn't verify phone number. Please try again.");
-    }
-  } catch (error) {
-    console.error("Error:", error);
-
-    if (error.response) {
-      const status = error.response.status;
-
-      if (status === 404) {
-        toast.error("❌ This phone number is not registered.");
-      } else if (status === 401) {
-        toast.error("🔒 Unauthorized. Please check your credentials.");
-      } else if (status === 500) {
-        toast.error("💥 Server error. Please try again later.");
+        setLoggedIn(true);
       } else {
-        toast.error(error.response.data.message || "Something went wrong.");
+        toast.error("⚠️ Couldn't verify phone number. Please try again.");
       }
-    } else {
-      toast.error("⚡ Network error. Please check your internet connection.");
+    } catch (error) {
+      console.error("Error:", error);
+
+      if (error.response) {
+        const status = error.response.status;
+
+        if (status === 404) {
+          toast.error("❌ This phone number is not registered.");
+        } else if (status === 401) {
+          toast.error("🔒 Unauthorized. Please check your credentials.");
+        } else if (status === 500) {
+          toast.error("💥 Server error. Please try again later.");
+        } else {
+          toast.error(error.response.data.message || "Something went wrong.");
+        }
+      } else {
+        toast.error("⚡ Network error. Please check your internet connection.");
+      }
     }
-  }
-};
+  };
 
 
 
@@ -118,7 +118,7 @@ const Login = () => {
   // Temporary OTP verification: just allow any 6-digit input for now
   const handleVerify = async () => {
     if (otp.length === 6) {
-     await dispatch(
+      await dispatch(
         verifyUser(API_URL, {
           userPhone: phoneNumber,
           userFcmId: 'Test123',
@@ -131,12 +131,22 @@ const Login = () => {
       toast.error("Please enter a 6-digit OTP.");
     }
   };
-  // Trigger login on Enter key
+
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleLogin();
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (valid && !loggedIn) {
+        handleLogin();
+      }
     }
   };
+  const handleOtpKeyPress = (e) => {
+    if (e.key === 'Enter' && otp.length === 6) {
+      e.preventDefault();
+      handleVerify();
+    }
+  };
+
   return (
     <div
       className="overflow-hidden"
@@ -276,7 +286,7 @@ const Login = () => {
                         className={` ${!valid && phoneNumber.length > 0 ? "is-invalid" : ""
                           }`}
                         required
-                              inputStyle={commonInputStyle}
+                        inputStyle={commonInputStyle}
 
                       />
                       {!valid && phoneNumber.length > 0 && (
@@ -333,6 +343,7 @@ const Login = () => {
                       renderInput={(props, _i) => (
                         <input
                           {...props}
+                          onKeyDown={handleOtpKeyPress}
                           style={{
                             textAlign: "center",
                             width: "3.5rem",

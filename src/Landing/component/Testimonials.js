@@ -88,14 +88,14 @@ export default function Testimonials() {
     const mediaStyle = {
       width: '100%',
       height: '100%',
-      maxHeight: '200px',
+      // maxHeight: '200px',
       objectFit: 'cover',
       borderRadius: '10px'
     };
 
     if (hasVideo) {
       return (
-        <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
+        <div className="media-section" style={{ flex: '1 1 50%', }}>
           <video
             controls
             controlsList="nodownload"
@@ -111,7 +111,7 @@ export default function Testimonials() {
 
     if (hasImage) {
       return (
-        <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
+        <div className="media-section" style={{ flex: '1 1 50%' }}>
           <img
             src={testimonial.media.url}
             alt="Testimonial media"
