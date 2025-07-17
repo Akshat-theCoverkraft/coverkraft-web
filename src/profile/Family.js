@@ -14,12 +14,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { THEME_COLOR } from "../constants";
+import SessionExpiredModal from "../utils/sessionExpireModal";
 
 const Family = ({ family, onfamilyclose }) => {
   const [familyData, setFamilyData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const navigate = useNavigate();
   const userId = sessionStorage.getItem("userId");
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   const fetchFamilyDetails = async () => {
     try {
@@ -43,9 +45,18 @@ const Family = ({ family, onfamilyclose }) => {
         setFamilyData([]);
       }
     } catch (error) {
+       if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } 
       console.error("Error fetching family details:", error);
       setFamilyData([]);
     }
+  };
+    const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
   };
 
   useEffect(() => {
@@ -81,6 +92,10 @@ const Family = ({ family, onfamilyclose }) => {
         },
       }}
     >
+        <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       <ToastContainer position="top-left" style={{ zIndex: 99999 }} />
       <Box
         sx={{ width: "100%", padding: 0 }}

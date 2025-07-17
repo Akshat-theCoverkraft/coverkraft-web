@@ -15,6 +15,7 @@ import { truncateString } from "../../../utils/helpers";
 import arrow from "../../../Images/Symbol.png";
 import API_URL from "../../../ServiceModule/Service";
 import Footer from "../Footer";
+import SessionExpiredModal from "../../../utils/sessionExpireModal";
 
 const TABS = {
   blog: "Blogs",
@@ -35,6 +36,8 @@ const Feeds = () => {
   const [textOverflowStates, setTextOverflowStates] = useState({});
   const videoRefs = useRef({});
   const textRefs = useRef({});
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+    const [error, setError] = useState(null);
 
   const fetchContent = async (tab, page = 1) => {
     setIsLoading(true);
@@ -51,9 +54,14 @@ const Feeds = () => {
         setContentData(res.data.data);
         setPagination(res.data.pagination);
       }
-    } catch (error) {
-      console.error("Fetch error:", error);
-    } finally {
+    }catch (error) {
+          console.error('Error fetching options:', error);
+          if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } else {
+            setError('Failed to load options');
+          }
+        }  finally {
       setIsLoading(false);
     }
   };
@@ -63,6 +71,14 @@ const Feeds = () => {
     setSelectedTab(tabToLoad);
     fetchContent(tabToLoad);
   }, [type]);
+
+
+    const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
+  };
 
   useEffect(() => {
     if (!isLoading) {
@@ -112,6 +128,11 @@ const Feeds = () => {
     <Box sx={{ minHeight: "100vh", background: "#121212" }}>
       <Navbar />
       <Container maxWidth="xl" sx={{ py: 4 }}>
+  <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
+
 
         {/* Tabs */}
         <Box sx={{ display: "flex", justifyContent: "center", mb: 6 }}>

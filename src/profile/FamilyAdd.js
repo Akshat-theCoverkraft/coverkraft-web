@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Drawer, Box, Grid, Card, Typography } from "@mui/material";
-import GlobalDropdown from "../component/StateDropdown";
 import CustomInput from "../component/CustomInput";
 import Button from "../component/Button";
 import backArrow from "../Images/ic_back_button.png";
@@ -17,8 +16,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
   const [useremail, setuserEmail] = useState("");
   const [valid, setValid] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
- const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
-  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
+  const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white", borderColor: "grey" };
 
   const familyOption = [
     { value: "Spouse", label: "Spouse" },
@@ -93,7 +92,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
       }}
     >
       <ToastContainer position="top-center"
-  style={{ zIndex: 99999 }} />
+        style={{ zIndex: 99999 }} />
       <Box
         sx={{
           width: "23.7vw",
@@ -107,17 +106,17 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
       >
         <Grid container spacing={1}>
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-  <Box sx={{ marginLeft: -4, marginRight: 2, cursor: "pointer" }}>
-    <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
-  </Box>
-  <Typography variant="h4">Add New Member</Typography>
-</Box>
+            <Box sx={{ marginLeft: -4, marginRight: 2, cursor: "pointer" }}>
+              <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
+            </Box>
+            <Typography variant="h4">Add New Member</Typography>
+          </Box>
 
         </Grid>
         <Box sx={{ marginTop: 3, width: "100%" }}>
           <Dropdown
             label="Family Member"
-            
+
             options={familyOption}
             value={familyMember}
             onChange={(e) => setFamilyMember(e.target.value)}
@@ -134,8 +133,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             onChange={(e) => setFullName(e.target.value)}
             required
             padding={"2rem"}
-      inputStyle={commonInputStyle}
-/>
+            inputStyle={commonInputStyle}
+          />
         </Box>
         <Box sx={{ marginTop: "1.5rem", width: "100%" }}>
           <CustomInput
@@ -144,7 +143,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             placeholder="Enter your Phone Number"
             value={userPhone}
             onChange={handlephonechange}
-                  inputStyle={commonInputStyle}
+            inputStyle={commonInputStyle}
 
             className={!valid ? "is-invalid" : ""}
             validationMessage={
@@ -160,7 +159,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             placeholder="Enter Email"
             value={useremail}
             onChange={handleEmailChange}
-                  inputStyle={commonInputStyle}
+            inputStyle={commonInputStyle}
 
             className={!isValidEmail ? "is-invalid" : ""}
             validationMessage={

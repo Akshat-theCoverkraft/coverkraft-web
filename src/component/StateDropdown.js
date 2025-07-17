@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Dropdown.css";
 import API_URL from "../ServiceModule/Service";
+import SessionExpiredModal from "../utils/sessionExpireModal";
 
 const GlobalDropdown = ({
   onStateSelect,
@@ -14,6 +15,8 @@ const GlobalDropdown = ({
   const [selectedValue, setSelectedValue] = useState(initialValue);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -25,15 +28,26 @@ const GlobalDropdown = ({
         }));
         setOptions(optionsData);
       } catch (error) {
-        console.error("Error fetching options:", error);
-        setError("Failed to load options");
-      } finally {
+          console.error('Error fetching options:', error);
+          if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } else {
+            setError('Failed to load options');
+          }
+        }  finally {
         setLoading(false);
       }
     };
 
     fetchOptions();
   }, []);
+ const handleSessionExpiredOk = () => {
+   // Clear all saved data
+  localStorage.clear();
+  sessionStorage.clear(); 
+    setShowSessionExpired(false);
+    navigate('/login');
+  };
 
   useEffect(() => {
     setSelectedValue(initialValue);
@@ -46,22 +60,30 @@ const GlobalDropdown = ({
   };
 
   const defaultStyle = {
-    padding: "0.5rem",
-    backgroundColor: "#2c2c2c",
-    borderRadius: "1rem",
-    color: "#fff",
-    border: "2px solid #444",
-    minHeight: "2.5rem",
+    padding: "0.5rem 0.5rem 0.5rem",
+    backgroundColor: "rgb(44, 44, 44)",
+    borderRadius: "42px",
+    color: "white",
+    border: "none",
+    outline: "none",
+    boxShadow: "none",
+    height: "48px",
+    fontSize: "1.222rem",
+    width: "100%",
+    appearance: "none",
+    WebkitAppearance: "none",
+    MozAppearance: "none",
   };
 
   const finalStyle = Object.keys(style).length > 0 ? style : defaultStyle;
 
   return (
     <div className="dropdown-container">
-      <label className="dropdown-label text-light" htmlFor="stateDropdown">
-        Select State{required && <span className="text-danger">*</span>}
-      </label>
-
+      <label class="form-label fw-bold text-light mb-2 d-block" for="inputField-">Select State{required && <span className="text-danger">*</span>}</label>
+   <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       {loading ? (
         <p>Loading...</p>
       ) : error ? (

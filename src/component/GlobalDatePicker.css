@@ -1,26 +1,24 @@
-/* GlobalDatePicker.css */
-.react-datepicker__input-container {
-    position: relative;
-    display: inline-block;
-    /* width: 379%; */
-}
-.react-datepicker-wrapper{
-    width: 100%;
-}
-
-.custom-datepicker-textfield .MuiInputBase-root {
-    width: 118%; /* or any other desired styles */
-}
-
-.global-date-picker label {
-    /* Custom label styles */
-    font-weight: 600;
-    font-size: 20px;
+.custom-date-input {
+    padding: 0.5rem 0.5rem 0.5rem 20px;
+    background-color: rgb(44, 44, 44);
+    border-radius: 42px;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    height: 48px;
+    font-size: 1.222rem;
+    width: 228%;
+    color: white;
 }
 
-.custom-datepicker .react-datepicker-popper {
-    /* Custom popper styles */
+/* Placeholder style */
+.custom-date-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.222rem;
 }
-.custom-border{
-    border-radius: 25px;
+
+/* Remove autofill background (Chrome/Safari) */
+input:-webkit-autofill {
+    box-shadow: 0 0 0 1000px rgb(44, 44, 44) inset !important;
+    -webkit-text-fill-color: white !important;
 }

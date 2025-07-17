@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dropdown.css';
 import API_URL from '../ServiceModule/Service';
+import { useNavigate } from 'react-router-dom';
+import SessionExpiredModal from '../utils/sessionExpireModal';
 
 const CityDropdown = ({
   selectedStateId,
@@ -14,6 +16,8 @@ const CityDropdown = ({
   const [selectedValue, setSelectedValue] = useState(initialValue);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   useEffect(() => {
     if (selectedStateId) {
@@ -30,8 +34,12 @@ const CityDropdown = ({
           setOptions(optionsData);
         } catch (error) {
           console.error('Error fetching options:', error);
-          setError('Failed to load options');
-        } finally {
+          if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } else {
+            setError('Failed to load options');
+          }
+        }  finally {
           setLoading(false);
         }
       };
@@ -39,6 +47,13 @@ const CityDropdown = ({
       fetchOptions();
     }
   }, [selectedStateId]);
+
+    const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
+  };
 
   useEffect(() => {
     setSelectedValue(initialValue);
@@ -68,7 +83,13 @@ const CityDropdown = ({
       ) : error ? (
         <p className="dropdown-error">{error}</p>
       ) : (
-        <select
+        
+        <>
+         <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
+        <label class="form-label fw-bold text-light mb-2 d-block" for="inputField-">Select City</label><select
           id="cityDropdown"
           className={`dropdown-select ${className}`}
           value={selectedValue}
@@ -84,7 +105,7 @@ const CityDropdown = ({
               {option.label}
             </option>
           ))}
-        </select>
+        </select></>
       )}
     </div>
   );

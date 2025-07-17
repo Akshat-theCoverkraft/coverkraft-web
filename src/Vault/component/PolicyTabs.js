@@ -37,6 +37,8 @@ import API_URL from "../../ServiceModule/Service";
 import { THEME_COLOR } from "../../constants";
 import moment from "moment";
 import redBg from "../../Images/red-img.png";
+import SessionExpiredModal from "../../utils/sessionExpireModal";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   searchContainer: {
@@ -550,6 +552,8 @@ export default function PolicyTabs({
   const [selectedPolicyId, setSelectedPolicyId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState("all");
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   const classes = useStyles();
   const itemsPerPage = 3;
@@ -642,6 +646,9 @@ export default function PolicyTabs({
         onAllPolicyIdsChange?.(data.map((policy) => policy._id));
       }
     } catch (error) {
+       if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } 
       console.error("Error fetching data:", error);
       const emptyData = [];
       if (isArchive) {
@@ -654,6 +661,13 @@ export default function PolicyTabs({
     } finally {
       setLoading(false);
     }
+  };
+
+   const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
   };
 
   useEffect(() => {
@@ -778,6 +792,10 @@ export default function PolicyTabs({
 
   return (
     <Box sx={{ px: { xs: 2, sm: 5 }, height: "100%" }}>
+        <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       <Card
         sx={{
           borderRadius: 5,

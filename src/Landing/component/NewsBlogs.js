@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import bgImage from '../../Images/bg.png';
 import { headingStyle } from '../../theme/themeStyles';
+import SessionExpiredModal from '../../utils/sessionExpireModal';
 
 const typeLabels = {
   blog: 'Blogs',
@@ -27,7 +28,8 @@ const BlogSection = () => {
   const [latestPosts, setLatestPosts] = useState({});
   const [featuredVideo, setFeaturedVideo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
   const videoRefs = useRef({});
 
   const registerVideo = (el, id) => {
@@ -69,9 +71,14 @@ const BlogSection = () => {
         setFeaturedVideo(activeFeatured[0] || null);
 
         setLatestPosts(latestByType);
-      } catch (err) {
-        console.error('Failed fetching:', err);
-      } finally {
+      }catch (error) {
+          console.error('Error fetching options:', error);
+          if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } else {
+            setError('Failed to load options');
+          }
+        }  finally {
         setLoading(false);
       }
     };
@@ -87,6 +94,13 @@ const BlogSection = () => {
     window.addEventListener('scroll', pauseAllVideos);
     return () => window.removeEventListener('scroll', pauseAllVideos);
   }, []);
+
+      const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
+  };
 
   const getUrl = (post) =>
     post.videoUrl
@@ -283,6 +297,10 @@ const BlogSection = () => {
         scrollMarginTop: '100px',
       }}
     >
+       <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       <Typography
         variant="h3"
         sx={headingStyle}
