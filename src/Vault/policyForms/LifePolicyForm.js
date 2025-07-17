@@ -26,6 +26,8 @@ import ProgressBarCircle from "../../component/ProgressBarCircle";
 import DateTimePicker from "../../component/DateTimePicker";
 import { formatDate } from "../../utils/dateUtils";
 import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 const LifePolicyForm = () => {
   const location = useLocation();
   const responseData = location.state?.responseData;
@@ -67,18 +69,18 @@ const LifePolicyForm = () => {
   );
   const [criticalIllness, setCriticalIllness] = useState(
     responseData?.criticalIllness ||
-    policyDetails?.policyDetails?.criticalIllness ||
-    ""
+      policyDetails?.policyDetails?.criticalIllness ||
+      ""
   );
   const [accidentalDisability, setAccidentalDisability] = useState(
     responseData?.accidentalDisability ||
-    policyDetails?.policyDetails?.accidentalDisability ||
-    ""
+      policyDetails?.policyDetails?.accidentalDisability ||
+      ""
   );
   const [terminalIllness, setTerminalIllness] = useState(
     responseData?.terminalIllness ||
-    policyDetails?.policyDetails?.terminalIllness ||
-    ""
+      policyDetails?.policyDetails?.terminalIllness ||
+      ""
   );
   const [pa, setPa] = useState(responseData?.pa || "");
   const [policyRenewalDate, setPolicyRenewalDate] = useState(
@@ -103,8 +105,20 @@ const LifePolicyForm = () => {
   const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
-  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
+  const commonItemStyle = {
+    maxWidth: 900,
+    width: "100%",
+    paddingLeft: "10px !important",
+  };
+  const commonInputStyle = {
+    height: 48,
+    fontSize: "1.222rem",
+    borderRadius: 42,
+    paddingLeft: "20px",
+    width: "100%",
+    color: "white",
+    borderColor: "grey",
+  };
 
   const inputFields = [
     policyNumber,
@@ -262,8 +276,8 @@ const LifePolicyForm = () => {
   };
 
   const handleCancel = () => {
-    navigate('/vault')
-  }
+    navigate("/vault");
+  };
 
   return (
     <Box sx={{ backgroundColor: "#000", minHeight: "100vh" }}>
@@ -283,29 +297,31 @@ const LifePolicyForm = () => {
               }}
             >
               {/* Header Section */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 4,
-                  flexWrap: "wrap",
-                  gap: 2
-                }}
-              >
+              <div className="d-flex justify-content-between">
                 <Typography
+                  onClick={() => navigate(-1)}
                   variant="h4"
-                  component="h1"
-                  sx={{
-                    fontWeight: 700,
-                    color: "#fff",
-                    fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" }
-                  }}
+                  component="h2"
+                  className="fw-bold d-flex align-items-center gap-2"
                 >
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <ArrowBackIcon
+                      style={{ color: "#fff", fontSize: "28px" }}
+                    />
+                  </span>
                   {headingText}
                 </Typography>
-                <ProgressBarCircle progress={calculateProgress()} />
-              </Box>
+                <ProgressBarCircle
+                  progress={calculateProgress()}
+                  color="#8AC642"
+                />{" "}
+              </div>
 
               {/* Section Title */}
               <Typography
@@ -315,7 +331,7 @@ const LifePolicyForm = () => {
                   fontSize: "1.25rem",
                   fontWeight: 600,
                   marginBottom: 3,
-                  letterSpacing: "0.5px"
+                  letterSpacing: "0.5px",
                 }}
               >
                 Policy Details
@@ -325,7 +341,9 @@ const LifePolicyForm = () => {
               <Grid container spacing={4}>
                 {/* Left Column */}
                 <Grid item xs={12} lg={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+                  >
                     {/* Policy Number */}
                     <Box>
                       <CustomInput
@@ -334,8 +352,7 @@ const LifePolicyForm = () => {
                         value={policyNumber}
                         disabled={true}
                         required
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -350,10 +367,11 @@ const LifePolicyForm = () => {
                               fontWeight: 600,
                               color: "#fff",
                               marginBottom: 1,
-                              fontSize: "0.95rem"
+                              fontSize: "0.95rem",
                             }}
                           >
-                            Start Date <span style={{ color: "#f44336" }}>*</span>
+                            Start Date{" "}
+                            <span style={{ color: "#f44336" }}>*</span>
                           </Typography>
                           <DateTimePicker
                             height={50}
@@ -373,7 +391,7 @@ const LifePolicyForm = () => {
                               fontWeight: 600,
                               color: "#fff",
                               marginBottom: 1,
-                              fontSize: "0.95rem"
+                              fontSize: "0.95rem",
                             }}
                           >
                             End Date <span style={{ color: "#f44336" }}>*</span>
@@ -400,7 +418,7 @@ const LifePolicyForm = () => {
                               fontWeight: 600,
                               color: "#fff",
                               marginBottom: 1,
-                              fontSize: "0.95rem"
+                              fontSize: "0.95rem",
                             }}
                           >
                             Policy Renewal Date
@@ -446,7 +464,7 @@ const LifePolicyForm = () => {
                               fontWeight: 600,
                               color: "#fff",
                               marginBottom: 1,
-                              fontSize: "0.95rem"
+                              fontSize: "0.95rem",
                             }}
                           >
                             Maturity Date
@@ -494,7 +512,7 @@ const LifePolicyForm = () => {
                           fontWeight: 600,
                           color: "#fff",
                           marginBottom: 1,
-                          fontSize: "0.95rem"
+                          fontSize: "0.95rem",
                         }}
                       >
                         Date of Birth
@@ -539,13 +557,13 @@ const LifePolicyForm = () => {
                         value={insuredName}
                         onChange={(e) => setInsuredName(e.target.value)}
                         required
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
                     <Box>
-                      {(policyDetails?.insuredCompany || responseData?.insuranceCompany) ? (
+                      {policyDetails?.insuredCompany ||
+                      responseData?.insuranceCompany ? (
                         <CustomInput
                           type="text"
                           label="Insurance Company"
@@ -553,12 +571,13 @@ const LifePolicyForm = () => {
                           readOnly
                           disabled
                           required
-                                inputStyle={commonInputStyle}
-
+                          inputStyle={commonInputStyle}
                         />
                       ) : (
                         <InsuranceDropdown
-                          onCompanySelect={(companyId) => setInsuredCompany(companyId)}
+                          onCompanySelect={(companyId) =>
+                            setInsuredCompany(companyId)
+                          }
                           initialValue={insuredCompany}
                         />
                       )}
@@ -571,8 +590,7 @@ const LifePolicyForm = () => {
                         label="Critical Illness Coverage"
                         value={criticalIllness}
                         onChange={(e) => setCriticalIllness(e.target.value)}
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -581,9 +599,10 @@ const LifePolicyForm = () => {
                         type="text"
                         label="Accidental Disability Coverage"
                         value={accidentalDisability}
-                        onChange={(e) => setAccidentalDisability(e.target.value)}
-                              inputStyle={commonInputStyle}
-
+                        onChange={(e) =>
+                          setAccidentalDisability(e.target.value)
+                        }
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
                   </Box>
@@ -591,7 +610,9 @@ const LifePolicyForm = () => {
 
                 {/* Right Column */}
                 <Grid item xs={12} lg={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+                  >
                     {/* Premium Details */}
                     <Box>
                       <CustomInput
@@ -599,8 +620,7 @@ const LifePolicyForm = () => {
                         label="Net Premium"
                         value={netPremium}
                         onChange={(e) => setNetPremium(e.target.value)}
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -610,8 +630,7 @@ const LifePolicyForm = () => {
                         label="Total Premium"
                         value={premiumPaid}
                         onChange={(e) => setPremiumPaid(e.target.value)}
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                         required
                       />
                     </Box>
@@ -621,8 +640,7 @@ const LifePolicyForm = () => {
                         type="text"
                         label="Sum Assured"
                         value={sumAssured}
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                         onChange={(e) => setSumAssured(e.target.value)}
                         required
                       />
@@ -635,8 +653,7 @@ const LifePolicyForm = () => {
                         label="Personal Accident Coverage"
                         value={pa}
                         onChange={(e) => setPa(e.target.value)}
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -646,8 +663,7 @@ const LifePolicyForm = () => {
                         label="Terminal Illness Coverage"
                         value={terminalIllness}
                         onChange={(e) => setTerminalIllness(e.target.value)}
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -657,8 +673,7 @@ const LifePolicyForm = () => {
                         type="text"
                         label="Policy Name"
                         value={policyName}
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                         onChange={(e) => setPolicyName(e.target.value)}
                         required
                       />
@@ -670,36 +685,48 @@ const LifePolicyForm = () => {
                         label="Additional Notes"
                         value={others}
                         onChange={(e) => setOthers(e.target.value)}
-                              inputStyle={commonInputStyle}
-
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
-
-                    {/* Action Buttons - Right Column */}
-                    <Grid container spacing={4} sx={{ display: "flex", alignItems: "stretch" }}>
-                      <Box sx={{ marginTop: 1, marginRight: 4, marginLeft: 6 }}>
-                        <Button
-                          text="Cancel"
-                          size="lg"
-                          block={true}
-                          onClick={handleCancel}
-                          style={{
-                            backgroundColor: "transparent",
-                            border: "2px solid #666",
-                            color: "#fff"
-                          }}
-                        />
-                      </Box>
-                      <Box sx={{ marginTop: 1 }}>
-                        <Button
-                          text={mode === "edit" ? "Update Policy" : "Save Policy"}
-                          size="lg"
-                          block={true}
-                          onClick={handleSubmit}
-                          disabled={loading}
-                        />
-                      </Box>
-                    </Grid>
+                  </Box>
+                  <Box
+                    flex={1}
+                    display="flex"
+                    justifyContent="center"
+                    gap={2}
+                    mt={2}
+                    width="100%"
+                  >
+                    <Button
+                      text={mode === "edit" ? "Update" : "Save"}
+                      size="lg"
+                      onClick={handleSubmit}
+                      style={{
+                        backgroundColor: "#8AC642",
+                        color: "#fff",
+                        padding: "10px 40px",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        fontSize: "16px",
+                        textTransform: "none",
+                      }}
+                    />
+                    <Button
+                      text="Cancel"
+                      size="lg"
+                      onClick={handleCancel}
+                      style={{
+                        width: "500px",
+                        backgroundColor: "transparent",
+                        color: "#8AC642",
+                        border: "2px solid #8AC642",
+                        padding: "10px 40px",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        fontSize: "16px",
+                        textTransform: "none",
+                      }}
+                    />
                   </Box>
                 </Grid>
               </Grid>
