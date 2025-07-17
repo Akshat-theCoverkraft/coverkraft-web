@@ -21,7 +21,7 @@ import { formatDate } from "../../utils/dateUtils";
 import axios from "axios";
 import { THEME_COLOR } from "../../constants";
 import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const MotorPolicyForm = () => {
   const location = useLocation();
@@ -323,24 +323,34 @@ const MotorPolicyForm = () => {
             }}
           >
             <div className="d-flex justify-content-between">
-             
-
- <Typography  onClick={() => navigate(-1)}  variant="h4" component="h2" className="fw-bold d-flex align-items-center gap-2">
-      <span
-        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-      >
-        <ArrowBackIcon style={{ color: '#fff', fontSize: '28px' }} />
-      </span>
-      {headingText}
-    </Typography>
-              <ProgressBarCircle  progress={calculateProgress()} />{" "}
+              <Typography
+                onClick={() => navigate(-1)}
+                variant="h4"
+                component="h2"
+                className="fw-bold d-flex align-items-center gap-2"
+              >
+                <span
+                  style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <ArrowBackIcon style={{ color: "#fff", fontSize: "28px" }} />
+                </span>
+                {headingText}
+              </Typography>
+              <ProgressBarCircle
+                progress={calculateProgress()}
+                color="#8AC642"
+              />{" "}
             </div>
             <p
               className="custom-color my-4"
               style={{ fontSize: "18px", fontWeight: "700" }}
             >
               {" "}
-             Policy Details
+              Policy Details
             </p>
             <div>
               <Grid container spacing={5}>
@@ -356,6 +366,7 @@ const MotorPolicyForm = () => {
                     inputStyle={commonInputStyle}
                     required
                   />
+
 
               <Grid container spacing={1} className="mb-2">
   <Grid item xs={12} md={6} margin={0} >
@@ -393,6 +404,7 @@ const MotorPolicyForm = () => {
     />
   </Grid>
 </Grid>
+
 
                   <CustomInput
                     type="text"
@@ -547,48 +559,46 @@ const MotorPolicyForm = () => {
                     }}
                     inputStyle={commonInputStyle}
                   />
-                
                 </Grid>
-                  <Box
+                <Box
                   flex={1}
-                    display="flex"
-                    justifyContent="center"
-                    gap={2}
-                    mt={2}
-                    width="100%"
-                  >
-                    <Button
-                      text={mode === "edit" ? "Update" : "Save"}
-                      size="lg"
-                      onClick={handleSubmit}
-                      
-                      style={{
-                        backgroundColor: "#8AC642",
-                        color: "#fff",
-                        padding: "10px 40px",
-                        fontWeight: 600,
-                        borderRadius: "8px",
-                        fontSize: "16px",
-                        textTransform: "none",
-                      }}
-                    />
-                    <Button
-                      text="Cancel"
-                      size="lg"
-                      onClick={handleCancel}
-                      style={{
-                        width:'500px',
-                        backgroundColor: "transparent",
-                        color: "#8AC642",
-                        border: "2px solid #8AC642",
-                        padding: "10px 40px",
-                        fontWeight: 600,
-                        borderRadius: "8px",
-                        fontSize: "16px",
-                        textTransform: "none",
-                      }}
-                    />
-                  </Box>
+                  display="flex"
+                  justifyContent="center"
+                  gap={2}
+                  mt={2}
+                  width="100%"
+                >
+                  <Button
+                    text={mode === "edit" ? "Update" : "Save"}
+                    size="lg"
+                    onClick={handleSubmit}
+                    style={{
+                      backgroundColor: "#8AC642",
+                      color: "#fff",
+                      padding: "10px 40px",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      fontSize: "16px",
+                      textTransform: "none",
+                    }}
+                  />
+                  <Button
+                    text="Cancel"
+                    size="lg"
+                    onClick={handleCancel}
+                    style={{
+                      width: "500px",
+                      backgroundColor: "transparent",
+                      color: "#8AC642",
+                      border: "2px solid #8AC642",
+                      padding: "10px 40px",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      fontSize: "16px",
+                      textTransform: "none",
+                    }}
+                  />
+                </Box>
               </Grid>
             </div>
           </Card>
