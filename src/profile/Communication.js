@@ -30,13 +30,27 @@ const PinkSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#8AC642",
     "&:hover": {
-      backgroundColor: "#e1f5d6",
+      backgroundColor: "rgba(138, 198, 66, 0.1)",
     },
   },
+
   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
     backgroundColor: "#8AC642",
   },
+
+  "& .MuiSwitch-switchBase": {
+    color: "#888888",
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.08)",
+    },
+  },
+
+  "& .MuiSwitch-track": {
+    backgroundColor: "#555555",
+    opacity: 1,
+  },
 }));
+
 
 const Communication = ({ communication, onCommunicationClose }) => {
   const [selectedValue, setSelectedValue] = useState("a");
@@ -166,7 +180,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
         <Box>
           <Typography variant="h4" fontWeight={600} gutterBottom>
-            Frequency
+            Communication Frequency
           </Typography>
           <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
             How often would you like to hear from us?
