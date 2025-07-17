@@ -161,7 +161,7 @@ const Feeds = () => {
               <Typography variant="h5" sx={{ color: "#FFFFFF", mb: 2 }}>
                 No Content Available
               </Typography>
-              <Typography variant="body1" sx={{ color: "rgba(255, 255, 255, 0.6)" }}>
+              <Typography variant="body1" sx={{ color: "rgba(255, 255, 255, 0.6)", fontSize:"1.6rem" }}>
                 Check back later for new {TABS[selectedTab].toLowerCase()}
               </Typography>
             </Box>

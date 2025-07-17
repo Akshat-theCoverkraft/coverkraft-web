@@ -192,9 +192,9 @@ const HeroSection = () => {
                 borderRadius: "50px",
                 px: 4,
                 py: 1.5,
-                fontSize: "1rem",
+                fontSize: "1.1rem",
                 fontWeight: 600,
-                textTransform: "uppercase",
+                textTransform: "none",
                 letterSpacing: "1px",
                 transition: "background-color 0.3s ease, transform 0.2s ease",
                 boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
@@ -210,7 +210,7 @@ const HeroSection = () => {
               }}
               aria-label={t("policyVault") || "Policy Vault"}
             >
-              {t("policyVault") || "Policy Vault"}
+              Policy Vault
             </Button>
           </motion.div>
         </Grid>
@@ -240,7 +240,7 @@ const HeroSection = () => {
           onTouchEnd={handleMouseLeave}
         >
           <motion.img
-            style={{ translateX, translateY }}
+            // style={{ translateX, translateY }}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 1, duration: 0.6, ease: "easeOut" }}
