@@ -34,7 +34,7 @@ const MORE_MENU_ITEMS = [
 
 const SESSION_KEYS = ["userId", "token", "loginTime", "isLoggedIn"];
 
-const StyledButton = styled("button")(() => ({
+export const StyledButton = styled("button")(() => ({
   backgroundColor: "transparent",
   color: "#8AC642",
   border: "1.5px solid #8AC642",

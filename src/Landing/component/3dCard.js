@@ -13,6 +13,8 @@ import API_URL from '../../ServiceModule/Service';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Loader from '../../component/Loader';
 import { headingStyle } from '../../theme/themeStyles';
+import ellipse from '../../Images/Ellipse12.png';
+import cardBG from '../../Images/tip2.png';
 
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 180;
@@ -29,7 +31,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         position: 'relative',
         width: 'fit-content',
         maxWidth: CARD_WIDTH,
-        height: CARD_HEIGHT + 15,
+        height: CARD_HEIGHT + 40,
         mx: 'auto',
         display: 'flex',
         alignItems: 'center',
@@ -39,29 +41,30 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
       }}
     >
       <Box
+        component="img"
+        src={ellipse}
+        alt="ellipse"
         sx={{
           position: 'absolute',
-          top: 0,
-          left: '-27px',
-          width: CARD_HEIGHT + 15,
-          height: CARD_HEIGHT + 15,
-          borderRadius: '50%',
-          backgroundColor: '#33a26e',
-          zIndex: 1,
+          top: '3px',
+          left: '0px',
+          width: '200px !important',
+          height: '215px',
+          zIndex: 0,
         }}
       />
+
       <Typography
         sx={{
           position: 'absolute',
           top: 15,
-          left: '-15px',
+          left: 42,
           fontFamily: 'DM Sans, sans-serif',
           fontSize: 36,
           color: 'transparent',
           WebkitTextStroke: '2px white',
           fontWeight: 900,
           zIndex: 3,
-          left: 10
         }}
       >
         {number < 10 ? `0${number}` : number}
@@ -69,23 +72,23 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
 
       <Box
         sx={{
-          position: 'relative',
-          background: 'linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(0,0,0,0.5))',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          backgroundImage: `url(${cardBG})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           borderRadius: '20px',
           padding: 2,
           width: '100%',
           height: CARD_HEIGHT,
-          boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
-          border: '1px solid rgba(255,255,255,0.15)',
           zIndex: 2,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          marginLeft: 4
+          marginLeft: 4.5,
+          backdropFilter: 'blur(8px)',
+          color: '#121212',
         }}
       >
+
         <Typography
           variant="h5"
           pl={2}
@@ -101,14 +104,17 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
             mt: 1,
             lineHeight: 1.4,
             textAlign: 'left',
-            pl: 1,
+            pl: 2,
             fontSize: 14,
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-          }}>{description}</Typography>
+          }}
+        >
+          {description}
+        </Typography>
 
         <Typography
           onClick={onSeeMore}
@@ -122,7 +128,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
             paddingLeft: '70%',
           }}
         >
-          {isTruncated ? "Read More" : ""}
+          {isTruncated ? 'Read More' : ''}
         </Typography>
       </Box>
     </Box>
@@ -270,14 +276,15 @@ const WhyCoverKraft = () => {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                bgcolor: '#212121',
+                bgcolor: 'rgba(33, 33, 33, 0.75)',
+                backdropFilter: 'blur(12px)',
+                borderRadius: 3,
                 color: '#fff',
-                p: 4,
-                borderRadius: 2,
+                p: 3,
                 width: '90%',
                 maxWidth: 600,
-                maxHeight: 500,
-                boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.6)',
+                maxHeight: 600,
+                boxShadow: '0px 0px 30px rgba(0, 0, 0, 0.6)',
                 overflow: 'hidden',
               }}
             >

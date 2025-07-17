@@ -15,7 +15,6 @@ import { ToastContainer } from "react-toastify";
 import Landing from "./Landing/Landing";
 import Vault from "./Vault/Vault";
 import AddPolicy from "./Vault/component/AddPolicy";
-import EditPolicy from "./Vault/component/EditPolicy";
 import ProfileDrawer from "./component/profile";
 import MotorPolicyForm from "./Vault/policyForms/MotorPolicyForm";
 import HealthPolicyForm from "./Vault/policyForms/HealthPolicyForm";
@@ -117,7 +116,6 @@ function App() {
         <Route path="/health-policy" element={<HealthPolicyForm />} />
         <Route path="/life-policy" element={<LifePolicyForm />} />
         <Route path="/add-policy" element={<AddPolicy />} />
-        <Route path="/edit-policy" element={<EditPolicy />} />
         <Route path="/profile" element={<ProfileDrawer />} />
         <Route path="/family" element={<Family />} />
         <Route path="/about" element={<About />} />
