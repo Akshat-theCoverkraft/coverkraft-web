@@ -378,7 +378,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               <p className="register-text text-center">{useremail}</p>
 
               {!update && (
-                <div className="flex justify-center mt-3">
+                <div className="flex justify-center ">
                   <Button
                     text={"Edit Profile"}
                     size="lg"

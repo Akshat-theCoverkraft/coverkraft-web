@@ -116,6 +116,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
     { value: "3", label: "Never" },
   ];
 
+
   return (
     <Drawer
       anchor="right"
@@ -123,8 +124,8 @@ const Communication = ({ communication, onCommunicationClose }) => {
       onClose={onCommunicationClose}
       sx={{
         "& .MuiDrawer-paper": {
-          width: isMobile ? "100%" : "33vw",
-          maxWidth: 420,
+          width: "35vw",
+          maxWidth: "400px",
           backgroundColor: "#111",
           color: "#fff",
           padding: theme.spacing(4),
@@ -146,7 +147,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
           <Typography variant="h5" fontWeight={600} gutterBottom>
             Policy Updates
           </Typography>
-          <Typography sx={{fontSize: "1.3rem"}} color="white" mb={3}>
+          <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
             Receive important updates for your policies — payments, renewals, and more.
           </Typography>
 
@@ -167,7 +168,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
           <Typography variant="h4" fontWeight={600} gutterBottom>
             Frequency
           </Typography>
-          <Typography sx={{fontSize: "1.3rem"}} color="white" mb={3}>
+          <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
             How often would you like to hear from us?
           </Typography>
 
