@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Dropdown.css";
 import API_URL from "../ServiceModule/Service";
+import SessionExpiredModal from "../utils/sessionExpireModal";
+import { useNavigate } from "react-router-dom";
 
 const GlobalDropdown = ({
   onStateSelect,
@@ -14,6 +16,8 @@ const GlobalDropdown = ({
   const [selectedValue, setSelectedValue] = useState(initialValue);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -25,15 +29,26 @@ const GlobalDropdown = ({
         }));
         setOptions(optionsData);
       } catch (error) {
-        console.error("Error fetching options:", error);
-        setError("Failed to load options");
-      } finally {
+          console.error('Error fetching options:', error);
+          if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } else {
+            setError('Failed to load options');
+          }
+        }  finally {
         setLoading(false);
       }
     };
 
     fetchOptions();
   }, []);
+ const handleSessionExpiredOk = () => {
+   // Clear all saved data
+  localStorage.clear();
+  sessionStorage.clear(); 
+    setShowSessionExpired(false);
+    navigate('/login');
+  };
 
   useEffect(() => {
     setSelectedValue(initialValue);
@@ -66,7 +81,10 @@ const GlobalDropdown = ({
   return (
     <div className="dropdown-container">
       <label class="form-label fw-bold text-light mb-2 d-block" for="inputField-">Select State{required && <span className="text-danger">*</span>}</label>
-
+   <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       {loading ? (
         <p>Loading...</p>
       ) : error ? (

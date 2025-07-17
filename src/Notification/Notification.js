@@ -17,12 +17,17 @@ import API_URL from "../ServiceModule/Service";
 import { THEME_COLOR } from "../constants";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router-dom";
+import SessionExpiredModal from "../utils/sessionExpireModal";
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
+
 
   // Suppress ResizeObserver errors
 useEffect(() => {
@@ -43,6 +48,13 @@ useEffect(() => {
   const getDeletedIds = () => JSON.parse(sessionStorage.getItem("deletedNotifications")) || [];
   const saveDeletedIds = (ids) => sessionStorage.setItem("deletedNotifications", JSON.stringify(ids));
 
+      const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
+  };
+
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
     try {
@@ -59,6 +71,9 @@ useEffect(() => {
 
       setNotifications(filteredNotifications);
     } catch (error) {
+       if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          }
       console.error("Error fetching notifications:", error);
     } finally {
       setLoading(false);
@@ -155,6 +170,10 @@ useEffect(() => {
   return (
     <div style={{ backgroundColor: "#121212", color: "#E0E0E0", minHeight: "100vh" }}>
       <Navbar />
+        <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       <div className="m-5 p-5" style={{ minHeight: "60vh" }}>
         <div style={{
           overflowY: "auto",

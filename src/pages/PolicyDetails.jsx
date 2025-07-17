@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import parse from "html-react-parser";
 import API_URL from "../ServiceModule/Service";
@@ -7,6 +7,7 @@ import Button from "../component/Button";
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
 import { toast } from "react-toastify";
+import SessionExpiredModal from "../utils/sessionExpireModal";
 
 const getImageForType = (type) => {
   if (!type) return require("../Images/img_lifecard.png");
@@ -34,6 +35,8 @@ const PolicyDetails = () => {
   const { id } = useParams();
   const [policy, setPolicy] = useState(null);
   const [loading, setLoading] = useState(true);
+ const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   useEffect(() => {
     axios
@@ -44,8 +47,19 @@ const PolicyDetails = () => {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((error) => {
+           if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } 
+        setLoading(false)});
   }, [id]);
+
+      const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
+  };
 
   if (loading)
     return <div style={{ padding: 50, color: "#fff" }}>Loading...</div>;
@@ -57,6 +71,10 @@ const PolicyDetails = () => {
   return (
     <>
       <Navbar />
+        <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       <div
         style={{
           minHeight: "100vh",

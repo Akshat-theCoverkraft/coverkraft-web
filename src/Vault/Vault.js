@@ -42,6 +42,7 @@ import emptyImage from "../../src/Images/NoData.png";
 
 import "./vault.css";
 import "react-toastify/dist/ReactToastify.css";
+import SessionExpiredModal from "../utils/sessionExpireModal";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -83,10 +84,11 @@ const Vault = () => {
   const [allPolicyIds, setAllPolicyIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   const inputRef = useRef();
   const imageRef = useRef();
-  const navigate = useNavigate();
 
   // Navigation mapping
   const navigationMap = {
@@ -112,11 +114,14 @@ const Vault = () => {
   const handleFileUpload = (e, type) => {
     const uploadedFiles = e.target.files;
     type === "pdf" ? setFiles(uploadedFiles) : setImage(uploadedFiles);
+     toggleDialog("addPolicy", false)
     toggleDialog("confirm", true);
   };
 
   // OCR data extraction
   const handleConfirm = async () => {
+        setLoading(true);
+
     const token = sessionStorage.getItem("token");
     const formData = new FormData();
     const filesToUpload = files || image;
@@ -128,8 +133,8 @@ const Vault = () => {
       formData.append("policyFile", filesToUpload[i]);
     }
 
-    setLoading(true);
     try {
+      
       const response = await axios.post(
         `${API_URL}document/ocrExtractData`,
         formData,
@@ -140,6 +145,7 @@ const Vault = () => {
           },
         }
       );
+    setLoading(false);
 
       if (response.status === 200) {
         const responseData = response.data;
@@ -158,10 +164,22 @@ const Vault = () => {
       setImage(null);
       toggleDialog("confirm", false);
     } catch (error) {
+          setLoading(false);
+
+      if (error.response?.status === 401) {
+        setShowSessionExpired(true);
+      }
       toast.error("File extraction failed!");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate("/login");
+    localStorage.clear();
+    sessionStorage.clear();
   };
 
   // Share functionality
@@ -285,6 +303,7 @@ const Vault = () => {
         backgroundColor: "#2a2a2a !important",
         color: "#fff !important",
         boxShadow: "rgba(27, 186, 54, 0.1) 0px 0px 16px",
+        borderRadius:10
       }}
     >
       {!files ? (
@@ -339,6 +358,10 @@ const Vault = () => {
         "&::-webkit-scrollbar": { display: "none" },
       }}
     >
+      <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       <style jsx>{`
         * {
           scrollbar-width: none;
@@ -357,6 +380,7 @@ const Vault = () => {
       `}</style>
 
       <Navbar />
+      {/* <Loader loading={loading} /> */}
       <div
         className="bg-color !important"
         style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
@@ -562,7 +586,6 @@ const Vault = () => {
       <StyledDialog
         open={dialogs.addPolicy}
         onClose={() => toggleDialog("addPolicy", false)}
-        fullWidth
         maxWidth="sm"
         sx={{
           "& .MuiPaper-root": {
@@ -574,7 +597,7 @@ const Vault = () => {
       >
         <DialogTitle
           className="text-center fw-bold pt-4 fs-2"
-          style={{ backgroundColor: "#212121", color: "#fff" }}
+          style={{ backgroundColor: "#212121", color: "#fff", }}
         >
           Add Policies
         </DialogTitle>
@@ -605,6 +628,7 @@ const Vault = () => {
             inputRef={inputRef}
             onChange={(e) => handleFileUpload(e, "pdf")}
           />
+          <div style={{height:10}} />
           <FileUploadCard
             type="image"
             files={image}
@@ -615,7 +639,7 @@ const Vault = () => {
           />
 
           <Card
-            className="mt-3 p-3"
+            className="mt-4 p-3"
             style={{
               background: "#121212",
               borderRadius: "20px",
@@ -680,18 +704,18 @@ const Vault = () => {
       <StyledDialog
         open={dialogs.confirm}
         onClose={() => toggleDialog("confirm", false)}
-        fullWidth
+        maxWidth
         PaperProps={{
           style: {
             backgroundColor: "#212121",
             borderRadius: "16px",
             border: "1px solid #9E9E9E", // ensure visible border
-            padding: "24px",
+            padding: "10px",
             boxShadow: "0px 8px 30px rgba(0, 0, 0, 1)", // stronger shadow
           },
         }}
       >
-        <DialogContent style={{ position: "relative", height: "90px" }}>
+        <DialogContent style={{ position: "relative", height: "85px" }}>
           <Typography
             variant="h6"
             align="center"
@@ -699,7 +723,7 @@ const Vault = () => {
               fontWeight: 600,
               fontSize: "20px",
               color: "#fff",
-              paddingTop: "10px",
+              // paddingTop: "10px",
             }}
           >
             Alert
@@ -726,7 +750,7 @@ const Vault = () => {
           }}
         >
           <Button
-            text="Cancel"
+            text="No"
             size="md"
             onClick={() => toggleDialog("confirm", false)}
             style={{
@@ -735,21 +759,18 @@ const Vault = () => {
               backgroundColor: "transparent",
               borderRadius: "8px",
               fontWeight: 600,
-              // padding: "8px 24px",
             }}
           />
           <Button
-            text="Confirm"
+            text="Yes"
             size="md"
             onClick={handleConfirm}
-            disabled={loading}
             style={{
               backgroundColor: "#8AC642",
               color: "#fff",
               border: "none",
               borderRadius: "8px",
               fontWeight: 600,
-              // padding: "8epx 24px",
             }}
           />
         </DialogActions>

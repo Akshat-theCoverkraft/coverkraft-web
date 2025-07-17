@@ -31,10 +31,12 @@ import download from "../../Images/ic-download1.png";
 import view from "../../Images/ic-view.png";
 import emptyImage from "../../Images/NoData.png";
 import moment from "moment";
+import SessionExpiredModal from "../../utils/sessionExpireModal";
 
 const PolicyDetail = ({ policyId }) => {
   const [policyDetails, setPolicyDetails] = useState([]);
-  const navigate = useNavigate();
+   const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -52,6 +54,9 @@ const PolicyDetail = ({ policyId }) => {
         setPolicyDetails(Array.isArray(data) ? data : []);
         sessionStorage.setItem("policyId", policyId);
       } catch (error) {
+          if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } 
         console.error("Error fetching policy list:", error);
         setPolicyDetails([]);
       }
@@ -59,6 +64,13 @@ const PolicyDetail = ({ policyId }) => {
 
     fetchPolicyDetails();
   }, [policyId]);
+
+      const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
+  };
 
   const getPolicyImage = (policyType) => {
     const imageMap = {
@@ -451,6 +463,10 @@ const PolicyDetail = ({ policyId }) => {
   return (
     <>
       <ToastContainer position="top-center" style={{ zIndex: 99999 }} />
+        <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       {policyDetails.map((policy, index) => {
         const status = getExpiryStatus(policy?.policyEndDate);
         const documentPath = policy?.documentDetails?.documentPath;

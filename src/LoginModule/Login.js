@@ -16,6 +16,7 @@ import axios from "axios";
 // import { requestForToken } from '../helper';
 import LOGING from "../Images/LOGING.png";
 import { getToken } from "firebase/messaging";
+import SessionExpiredModal from "../utils/sessionExpireModal";
 const Login = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [otp, setOtp] = useState([]);
@@ -26,9 +27,11 @@ const Login = () => {
   const [fcmId, setFcmId] = useState("");
   const recaptchRef = useRef(null);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
   const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white", borderColor: "grey" };
+  const [error, setError] = useState(null);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   // Syncs `valid` with input validation
   useEffect(() => {
@@ -98,11 +101,11 @@ const Login = () => {
         const status = error.response.status;
 
         if (status === 404) {
-          toast.error("❌ This phone number is not registered.");
+          toast.error(" This phone number is not registered.");
         } else if (status === 401) {
-          toast.error("🔒 Unauthorized. Please check your credentials.");
+          toast.error(" Unauthorized. Please check your credentials.");
         } else if (status === 500) {
-          toast.error("💥 Server error. Please try again later.");
+          toast.error(" Server error. Please try again later.");
         } else {
           toast.error(error.response.data.message || "Something went wrong.");
         }
@@ -111,7 +114,12 @@ const Login = () => {
       }
     }
   };
-
+    const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
+  };
 
 
   // OTP verification (final login)
@@ -158,7 +166,10 @@ const Login = () => {
     >
       <ToastContainer />
       {/* <Navbar /> */}
-
+  <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
       {/* LOGIN image with centered text */}
       <div
         style={{

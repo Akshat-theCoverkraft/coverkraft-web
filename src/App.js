@@ -48,7 +48,7 @@ function App() {
     const loginTime = sessionStorage.getItem("loginTime");
 
     const handleLogout = () => {
-      sessionStorage.clear(); // 💥 Kill session
+      sessionStorage.clear(); // Kill session
       setLogout(true);
       setIsLoggedIn(false);
       navigate("/login");
