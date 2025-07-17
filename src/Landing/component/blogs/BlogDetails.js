@@ -59,7 +59,7 @@ const NewsBlog = () => {
       return (
         <video
           controls
-          style={isMainBlog ? { maxWidth: "80%", maxHeight: '80vh', margin: "auto" } : { width: "100%", height: "200px", objectFit: "cover" }}
+          style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
           className={isMainBlog ? "" : "card-img-top"}
         >
           <source src={mediaUrl} type="video/mp4" />
@@ -70,7 +70,7 @@ const NewsBlog = () => {
       return (
         <img
           src={mediaUrl}
-          style={isMainBlog ? { maxWidth: "80%", maxHeight: '80vh', margin: "auto" } : { width: "100%", height: "200px", objectFit: "cover" }}
+          style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
           className={isMainBlog ? "" : "card-img-top"}
           alt={altText}
         />
@@ -97,7 +97,7 @@ const NewsBlog = () => {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              mb: 5,
+              mb: 1,
               px: 2,
             }}
           >
@@ -116,7 +116,13 @@ const NewsBlog = () => {
             <Box sx={{ width: '85px' }} />
           </Box>
 
-          <div className="card d-flex flex-row gap-4 mb-4" style={{ backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.SECONDARY_TEXT }}>
+<div
+  className={`card d-flex ${["short", "video", "featured"].includes(type) ? "flex-column" : "flex-row"} gap-4 mb-4`}
+  style={{
+    backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+    color: THEME_COLOR.SECONDARY_TEXT
+  }}
+>
             {renderMediaContent(blog?.newsImg, blog?.subtitle, true)}
             <div className="card-body">
               <h2 className="text-center">
@@ -124,15 +130,15 @@ const NewsBlog = () => {
                   {blog?.subtitle}
                 </strong>
               </h2>
-              <div className="text-muted mb-3">
-                <span className="mr-3" style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
-                  <i className="fas fa-user" style={{ color: 'rgb(138, 198, 66)' }}></i> {blog?.createdBy}
+              <div className="text-muted mb-5">
+                <span className="mr-3 mt-5" style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
+                  <i className="fas fa-user" style={{ color: 'rgb(138, 198, 66)' }}></i> {capitalizeFirstLetter(blog?.createdBy)}
                 </span>
                 <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
                   <i className="fas fa-calendar-alt primary-color" style={{ color: 'rgb(138, 198, 66)' }}></i> {moment(blog?.createdAt).format("MMM DD, YYYY")}
                 </span>
               </div>
-              <p className="text-left">
+              <p className="text-left mt-2">
                 {blog?.description}
               </p>
             </div>
