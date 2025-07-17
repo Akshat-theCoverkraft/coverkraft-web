@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Box, Typography } from "@mui/material";
+import { Drawer, Box, Typography, IconButton } from "@mui/material";
 import Button from "../component/Button";
 import CustomInput from "../component/CustomInput";
 import icDefaultProfile from "../Images/ic_default_profile.png";
@@ -28,6 +28,8 @@ import { THEME_COLOR } from "../constants";
 import ContactUs from "../profile/ContactUs";
 import CloseIcon from "@mui/icons-material/Close";
 import { BorderColor, Padding } from "@mui/icons-material";
+import backArrow from "../Images/ic_back_button.png";
+import { capitalizeFirstLetter } from "../utils/helpers";
 
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
@@ -317,34 +319,38 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         }}
         role="presentation"
       >
-        <div className="flex items-center justify-end px-4 py-2">
-          <CloseIcon
-            onClick={() => {
-              onClose();
-              setUpdate(false);
-              setTimeout(() => navigate(returnPath), 150);
-            }}
-            style={{
-              cursor: "pointer",
-              color: "#fff",
-              fontSize: "2rem",
-              transition: "transform 0.2s ease, color 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "scale(1.2)";
-              e.target.style.color = "#8AC642";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "scale(1)";
-              e.target.style.color = "#fff";
-            }}
-          />
-        </div>
+        {update ? (<>
+          <IconButton onClick={() => { setUpdate(false) }}>
+            <img src={backArrow} alt="Back" style={{ width: 24 }} />
+          </IconButton>
+        </>) : (
+          <div className="flex items-center justify-end px-4">
+            <CloseIcon
+              onClick={() => {
+                onClose();
+                setUpdate(false);
+                setTimeout(() => navigate(returnPath), 150);
+              }}
+              style={{
+                cursor: "pointer",
+                color: "#fff",
+                fontSize: "2rem",
+                transition: "transform 0.2s ease, color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.2)";
+                e.target.style.color = "#8AC642";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)";
+                e.target.style.color = "#fff";
+              }}
+            />
+          </div>)}
 
         <div className="main-container">
           <div
             className="background-image-container1"
-            style={{ height: "30vh", padding: "0 2rem" }}
           >
             <div className="profile-details">
               <div className="profile-image-container">
@@ -373,12 +379,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               </div>
 
               <h2 className="text-header text-light mt-2 text-center">
-                {username}
+                {capitalizeFirstLetter(username)}
               </h2>
-              <p className="register-text text-center">{useremail}</p>
+              {useremail && <p className="register-text text-center">{useremail}</p>}
 
               {!update && (
-                <div className="flex justify-center ">
+                <div className="flex justify-center mt-4 mb-4">
                   <Button
                     text={"Edit Profile"}
                     size="lg"
@@ -398,7 +404,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
         {!update ? (
           <Card
-            className="main-container m-3 p-6 my-4"
+            className="main-container p-6 mt-4"
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
@@ -457,8 +463,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             ))}
           </Card>
         ) : (
-          <div className="main-container mt-3 p-4">
-            <Grid container spacing={3} direction="column" alignItems="center">
+          <div className="main-container p-4">
+            <Grid container spacing={2} direction="column" alignItems="center">
               {/* Full Name */}
               <Grid item style={commonItemStyle}>
                 <CustomInput
