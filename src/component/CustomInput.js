@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function CustomInput({
+  onKeyDown = () => {},
   type = "text",
   label,
   value,
@@ -43,6 +44,7 @@ function CustomInput({
           className={`${className}`}
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           name={name}
           style={combinedStyle}
           aria-invalid={!!validationMessage}
@@ -61,6 +63,7 @@ function CustomInput({
               },
             })
           }
+          onKeyDown={onKeyDown}
           placeholderText={placeholder}
           name={name}
           dateFormat="dd/MM/yyyy"
@@ -74,6 +77,7 @@ function CustomInput({
           className={className}
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           placeholder={placeholder}
           name={name}
           style={combinedStyle}

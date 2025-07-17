@@ -141,11 +141,9 @@ const Login = () => {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && valid && !loggedIn) {
       e.preventDefault();
-      if (valid && !loggedIn) {
-        handleLogin();
-      }
+      handleLogin();
     }
   };
   const handleOtpKeyPress = (e) => {

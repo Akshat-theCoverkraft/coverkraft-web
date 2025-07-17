@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
 import Navbar, { StyledButton } from "../../../component/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { Box, Button as MuiButton } from "@mui/material";
-import { toast, ToastContainer } from "react-toastify";
+import axios from 'axios'
+import { Box, IconButton, Button as MuiButton } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify';
 import API_URL from "../../../ServiceModule/Service";
 import moment from "moment-timezone";
 import { capitalizeFirstLetter, truncateString } from "../../../utils/helpers";
 import arrow from "../../../Images/Symbol.png";
 import { THEME_COLOR } from "../../../constants";
 import Footer from "../Footer";
-import SessionExpiredModal from "../../../utils/sessionExpireModal";
+import backArrow from "../../../Images/ic_back_button.png";
 
 const NewsBlog = () => {
   const navigate = useNavigate();
@@ -68,11 +68,7 @@ const NewsBlog = () => {
       return (
         <video
           controls
-          style={
-            isMainBlog
-              ? { maxWidth: "80%", maxHeight: "80vh", margin: "auto" }
-              : { width: "100%", height: "200px", objectFit: "cover" }
-          }
+          style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
           className={isMainBlog ? "" : "card-img-top"}
         >
           <source src={mediaUrl} type="video/mp4" />
@@ -83,11 +79,7 @@ const NewsBlog = () => {
       return (
         <img
           src={mediaUrl}
-          style={
-            isMainBlog
-              ? { maxWidth: "80%", maxHeight: "80vh", margin: "auto" }
-              : { width: "100%", height: "200px", objectFit: "cover" }
-          }
+          style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
           className={isMainBlog ? "" : "card-img-top"}
           alt={altText}
         />
@@ -120,27 +112,20 @@ const NewsBlog = () => {
         >
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 5,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 1,
               px: 2,
             }}
           >
-            <StyledButton
-              style={{ fontSize: "1.3rem" }}
-              onClick={() => navigate(-1)}
-            >
+            {/* <StyledButton style={{ fontSize: "1.3rem" }} onClick={() => navigate(-1)}>
               Back
-            </StyledButton>
-
-            <Box
-              sx={{
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
-              }}
-            >
+            </StyledButton> */}
+            <IconButton onClick={() => navigate(`/feed/${type}`)}>
+              <img src={backArrow} alt="Back" style={{ width: 24 }} />
+            </IconButton>
+            <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
               <h1 className="mb-0 text-center">
                 {capitalizeFirstLetter(type) === "News"
                   ? "News"
@@ -151,28 +136,21 @@ const NewsBlog = () => {
             <Box sx={{ width: "85px" }} />
           </Box>
 
-          <div
-            className="card d-flex flex-row gap-4 mb-4"
-            style={{
-              backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-              color: THEME_COLOR.SECONDARY_TEXT,
-            }}
-          >
+<div
+  className={`card d-flex ${["short", "video", "featured"].includes(type) ? "flex-column" : "flex-row"} gap-4 mb-4`}
+  style={{
+    backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+    color: THEME_COLOR.SECONDARY_TEXT
+  }}
+>
             {renderMediaContent(blog?.newsImg, blog?.subtitle, true)}
             <div className="card-body">
               <h2 className="text-center">
                 <strong>{blog?.subtitle}</strong>
               </h2>
-              <div className="text-muted mb-3">
-                <span
-                  className="mr-3"
-                  style={{ color: THEME_COLOR.SECONDARY_TEXT }}
-                >
-                  <i
-                    className="fas fa-user"
-                    style={{ color: "rgb(138, 198, 66)" }}
-                  ></i>{" "}
-                  {blog?.createdBy}
+              <div className="text-muted mb-5">
+                <span className="mr-3 mt-5" style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
+                  <i className="fas fa-user" style={{ color: 'rgb(138, 198, 66)' }}></i> {capitalizeFirstLetter(blog?.createdBy)}
                 </span>
                 <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
                   <i
@@ -182,7 +160,9 @@ const NewsBlog = () => {
                   {moment(blog?.createdAt).format("MMM DD, YYYY")}
                 </span>
               </div>
-              <p className="text-left">{blog?.description}</p>
+              <p className="text-left mt-2">
+                {blog?.description}
+              </p>
             </div>
           </div>
 
