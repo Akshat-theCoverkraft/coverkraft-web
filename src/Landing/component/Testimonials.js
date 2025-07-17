@@ -88,14 +88,14 @@ export default function Testimonials() {
     const mediaStyle = {
       width: '100%',
       height: '100%',
-      maxHeight: '200px',
-      objectFit: 'contain',
+      // maxHeight: '200px',
+      objectFit: 'cover',
       borderRadius: '10px'
     };
 
     if (hasVideo) {
       return (
-        <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
+        <div className="media-section" style={{ flex: '1 1 50%',marginRight:"5px" }}>
           <video
             controls
             controlsList="nodownload"
@@ -111,7 +111,7 @@ export default function Testimonials() {
 
     if (hasImage) {
       return (
-        <div className="media-section" style={{ flex: '1 1 50%', paddingRight: '20px' }}>
+        <div className="media-section" style={{ flex: '1 1 50%' ,marginRight:"5px"}}>
           <img
             src={testimonial.media.url}
             alt="Testimonial media"
@@ -202,7 +202,7 @@ export default function Testimonials() {
                             zIndex: 1
                           }}></div>
 
-                          <div className="text-section ml-5" style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%' }}>
+                          <div className="text-section " style={{ flex: hasMedia ? '1 1 50%' : '1 1 100%',marginLeft:"10px" }}>
                             <img src={quote} alt="quote" className="mb-3" style={{ width: '30px' }} />
                             <div
                               className="quote mb-2"
