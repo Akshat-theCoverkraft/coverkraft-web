@@ -351,7 +351,7 @@ const PolicyCard = ({
           )}
 
           {/* Policy Image */}
-          <Grid item xs={12} sm={shareAllPolicy ? 2 : 3}>
+          <Grid item xs={12} sm={shareAllPolicy ? 2 : 2}>
             <Box
               sx={{
                 display: "flex",
@@ -725,6 +725,7 @@ export default function PolicyTabs({
           zIndex: 1,
           position: "relative  !important",
           paddingTop: 2,
+          
         }}
       >
         <Box
@@ -732,6 +733,7 @@ export default function PolicyTabs({
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 5,
+            
           }}
         >
           {filteredList.length === 0 ? (
@@ -744,11 +746,11 @@ export default function PolicyTabs({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                height: "100%",
+              height:"100%"  
               }}
             >
               {/* Scrollable List Area */}
-              <Box sx={{ flex: 1, overflowY: "auto" }}>
+              <Box sx={{ flex: 1,}}>
                 {paginatedData.map((policy) => (
                   <PolicyCard
                     key={policy._id}
@@ -765,7 +767,7 @@ export default function PolicyTabs({
               </Box>
 
               {/* Fixed Pagination at Bottom */}
-              <Box sx={{ mt: 2 }}>
+              <Box className='absolute bottom-0 !important' sx={{ mt: 2 }}>
                 {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
                   <CustomPagination
                     totalItems={filteredList.length}
