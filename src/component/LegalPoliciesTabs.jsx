@@ -846,6 +846,7 @@ useEffect(() => {
     const el = document.getElementById(hash);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, 200); // slight delay to ensure DOM is ready
 }, [location.hash]);
