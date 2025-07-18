@@ -236,7 +236,7 @@ export default function Testimonials() {
                             }
                             <div className="author d-flex align-items-center mt-3" style={{ gap: '10px' }}>
                               <img
-                                src={testimonial.pfp}
+                                src={testimonial.pfp || '../../Images/blackpfp.webp'}
                                 height={50}
                                 width={50}
                                 className="rounded-circle"

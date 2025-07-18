@@ -21,12 +21,15 @@ const About = () => {
               flexDirection: "column",
             }}
           >
-            <h1 className="text-center">About CoverKraft</h1>
+            <h1 className="text-center" style={{fontSize: "3.5rem", fontWeight:  800, color:  "#8BC642"}}>About CoverKraft</h1>
             <p
-              className="text-center fs-5 my-4"
+              className="text-center my-4"
               style={{
                 color: THEME_COLOR.SECONDARY_TEXT,
                 maxWidth: "800px",
+                fontWeight: 500,
+                lineHeight: "1.6",
+                fontSize: "1.7rem",
               }}
             >
               CoverKraft Insurance Broking  Pvt Ltd is on a mission to
@@ -57,7 +60,7 @@ const About = () => {
                   className="image"
                   style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }}
                 />
-                <h2 className="header mb-3 text-center">Mission</h2>
+                <h2 className="header mb-3 text-center" style={{color: "#8BC642", fontWeight: 600}}>Mission</h2>
                 <p
                   className="text px-4 pb-4"
                   style={{ color: THEME_COLOR.SECONDARY_TEXT, textAlign: "center" }}
@@ -84,7 +87,7 @@ const About = () => {
                   className="image"
                   style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }}
                 />
-                <h2 className="header mb-3 text-center">Vision</h2>
+                <h2 className="header mb-3 text-center" style={{color: "#8BC642", fontWeight: 600}}> Vision</h2>
                 <p
                   className="text px-4 pb-4"
                   style={{ color: THEME_COLOR.SECONDARY_TEXT, textAlign: "center" }}
