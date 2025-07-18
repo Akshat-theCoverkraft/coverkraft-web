@@ -10,6 +10,9 @@
   font-weight: 500;
 }
 
+.full-width {
+  width: 100%;
+}
 /* Style the select */
 .dropdown-select {
   padding-right: 2.5rem;
@@ -59,7 +62,22 @@
   -moz-appearance: none;
   font-family: inherit;
 }
-
+.placeholder-selected {
+  padding: 0.5rem 0.5rem 0.5rem 20px;
+    background-color: rgb(44, 44, 44);
+    border-radius: 42px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    height: 48px;
+    color: #888888;
+    font-size: 1.222rem;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    font-family: inherit;
+}
 /* Remove focus ring and unwanted borders */
 .custom-dark-dropdown:focus {
   outline: none !important;
