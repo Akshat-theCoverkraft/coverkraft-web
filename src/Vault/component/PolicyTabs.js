@@ -725,7 +725,7 @@ export default function PolicyTabs({
           zIndex: 1,
           position: "relative  !important",
           paddingTop: 2,
-          
+          minHeight:'60vh'
         }}
       >
         <Box
@@ -733,7 +733,6 @@ export default function PolicyTabs({
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 5,
-            
           }}
         >
           {filteredList.length === 0 ? (
@@ -746,7 +745,7 @@ export default function PolicyTabs({
               style={{
                 display: "flex",
                 flexDirection: "column",
-              height:"100%"  
+                height:"60vh"  
               }}
             >
               {/* Scrollable List Area */}
@@ -767,7 +766,7 @@ export default function PolicyTabs({
               </Box>
 
               {/* Fixed Pagination at Bottom */}
-              <Box className='absolute bottom-0 !important' sx={{ mt: 2 }}>
+              <Box className='absolute bottom-0 !important' sx={{ }}>
                 {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
                   <CustomPagination
                     totalItems={filteredList.length}
@@ -805,7 +804,7 @@ export default function PolicyTabs({
           backgroundColor: "#121212 !important",
           border: "0.5px solid white",
           pt: 1.5,
-          height: "70vh",
+          height:'80.5vh'
         }}
       >
         <TabContext value={value}>
@@ -906,7 +905,7 @@ export default function PolicyTabs({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                height: "60vh",
+                height: "100%",
               }}
             >
               <Loader sx={{ color: "#8AC642" }} />
