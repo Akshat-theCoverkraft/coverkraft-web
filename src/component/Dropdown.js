@@ -1,11 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { THEME_COLOR } from "../constants";
 
 const Dropdown = ({
   label,
@@ -13,80 +11,85 @@ const Dropdown = ({
   value,
   onChange,
   fullWidth = true,
-  backgroundColor,
+  required = false,
   ...props
 }) => {
   return (
-    <Box sx={{ minWidth: 120 }}>
-      <FormControl fullWidth={fullWidth}>
+    <Box sx={{ width: "100%" }}>
+      <FormControl fullWidth={fullWidth} variant="standard">
         <label
-          id={`${label}-label`}
-          className="form-label fw-bold text-light mb-3"
+          htmlFor={`${label}-select`}
+          className="form-label fw-bold text-light mb-2 d-block"
         >
           {label}
+          {required && <span className="text-danger">*</span>}
         </label>
         <Select
-          labelId={`${label}-label`}
           id={`${label}-select`}
           value={value}
-          // label={label}
           onChange={onChange}
+          displayEmpty
+          required={required}
+          disableUnderline
+          renderValue={(selected) => {
+            if (!selected) {
+              return <span style={{ color: "#aaa" }}>Select a value</span>;
+            }
+            // Find label from value
+            const selectedOption = options.find((opt) => opt.value === selected);
+            return selectedOption ? selectedOption.label : "";
+          }}
           style={{
-            borderRadius: "3rem",
-            color: "#fff",
-            padding: "0px 10px",
-            height: "7vh",
+            backgroundColor: "rgb(44, 44, 44)",
+            borderRadius: "42px",
+            color: value ? "white" : "#aaa",
+            padding: "0.5rem 1.25rem 0.5rem 20px",
+            height: "48px",
+            fontSize: "1.222rem",
+            width: "100%",
           }}
-          sx={{
-            fontSize: "1.3rem",
-          }}
-          className="bg-dark"
           MenuProps={{
             PaperProps: {
               sx: {
-                backgroundColor: "#121212 !important",
-                color: "#fff",
-                marginTop: "1rem",
-                borderRadius: "2rem",
+                backgroundColor: "rgb(44, 44, 44)",
+                color: "white",
+                borderRadius: "16px",
+                mt: 1,
+                boxShadow: "none",
+              },
+            },
+            MenuListProps: {
+              disablePadding: true,
+              sx: {
+                padding: 0,
               },
             },
           }}
-          {...props}
         >
           {options.map((option) => (
-            // <MenuItem
-            //   key={option.value}
-            //   value={option.value}
-            //   style={{
-            //     backgroundColor: "#212529",
-            //     color: THEME_COLOR.COLOR,
-            //   }}
-            // >
-            //   {option.label}
-            // </MenuItem>
             <MenuItem
               key={option.value}
               value={option.value}
               sx={{
-                backgroundColor: "#121212",
+                backgroundColor: "rgb(44, 44, 44)",
                 color: "#ffffff",
+                fontSize: "1.222rem",
                 "&:hover": {
-                  backgroundColor: "#343a40",
+                  backgroundColor: "#5a5a5a",
                 },
                 "&.Mui-selected": {
-                  backgroundColor: "#3E3E3E !important",
+                  backgroundColor: "rgb(44, 44, 44)",
                 },
                 "&.Mui-selected:hover": {
-                  backgroundColor: "#495057",
+                  backgroundColor: "#5a5a5a",
                 },
-                margin: "0.5rem 0px",
-                 fontSize: "1.3rem",
               }}
             >
               {option.label}
             </MenuItem>
           ))}
         </Select>
+
       </FormControl>
     </Box>
   );
@@ -104,6 +107,7 @@ Dropdown.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onChange: PropTypes.func.isRequired,
   fullWidth: PropTypes.bool,
+  required: PropTypes.bool,
 };
 
 export default Dropdown;

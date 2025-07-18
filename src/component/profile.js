@@ -220,7 +220,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const dobValid = userDob || isOldEnough(userDob);
     setIsValidDob(dobValid);
 
-    if (!nameValid || !emailValid || !phoneValid || !pinValid || !dobValid) {
+    if (!nameValid) {
       return;
     }
 
@@ -263,6 +263,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   };
 
+
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -296,6 +298,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     setTimeout(() => window.location.reload(), 100);
   };
 
+  const fetchUserProfile = () => {
+    const userId = sessionStorage.getItem("userId");
+    if (userId) {
+      dispatch(getBYIDUsers(API_URL, userId));
+    }
+  }
+
   return (
     <Drawer
       anchor="right"
@@ -319,34 +328,39 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         }}
         role="presentation"
       >
-        {update?(<>
-        <IconButton onClick={()=>{setUpdate(false)}}>
+        {update ? (<>
+          <IconButton
+            onClick={() => {
+              fetchUserProfile();
+              setUpdate(false);
+            }}
+          >
             <img src={backArrow} alt="Back" style={{ width: 24 }} />
           </IconButton>
-        </>):(
+        </>) : (
           <div className="flex items-center justify-end px-4">
-          <CloseIcon
-            onClick={() => {
-              onClose();
-              setUpdate(false);
-              setTimeout(() => navigate(returnPath), 150);
-            }}
-            style={{
-              cursor: "pointer",
-              color: "#fff",
-              fontSize: "2rem",
-              transition: "transform 0.2s ease, color 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "scale(1.2)";
-              e.target.style.color = "#8AC642";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "scale(1)";
-              e.target.style.color = "#fff";
-            }}
-          />
-        </div>)} 
+            <CloseIcon
+              onClick={() => {
+                onClose();
+                setUpdate(false);
+                setTimeout(() => navigate(returnPath), 150);
+              }}
+              style={{
+                cursor: "pointer",
+                color: "#fff",
+                fontSize: "2rem",
+                transition: "transform 0.2s ease, color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.2)";
+                e.target.style.color = "#8AC642";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)";
+                e.target.style.color = "#fff";
+              }}
+            />
+          </div>)}
 
         <div className="main-container">
           <div
@@ -384,7 +398,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               {useremail && <p className="register-text text-center">{useremail}</p>}
 
               {!update && (
-                <div className="flex justify-center mt-4 mb-4">
+                <div className="flex justify-center mt-4 mb-8">
                   <Button
                     text={"Edit Profile"}
                     size="lg"
@@ -628,18 +642,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                       text="Update Profile"
                       onClick={handleUpateProfile}
                       disabled={
-                        !isValidEmail ||
-                        !valid ||
-                        !username ||
-                        !useremail ||
-                        !userPhone
+                        !username
                       }
                       bgcolor={
-                        !isValidEmail ||
-                          !valid ||
-                          !username ||
-                          !useremail ||
-                          !userPhone
+                        !username
                           ? "#ccc"
                           : "#8AC642"
                       }

@@ -86,8 +86,8 @@ const Family = ({ family, onfamilyclose }) => {
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
           color: THEME_COLOR.COLOR,
-          width: { xs: "90vw", sm: "50vw", md: "35vw", lg: "26vw" }, // Responsive width
-          maxWidth: "400px", // Optional max width for large screens
+          width: "35vw",
+          maxWidth: "400px",
           padding: "10px",
         },
       }}
@@ -169,11 +169,13 @@ const Family = ({ family, onfamilyclose }) => {
           onClick={handleFamilyOpen}
           style={{ padding: "0 16px", marginTop: "20px", cursor: "pointer" }}
         >
-          <Card style={{ ...styles.card, width: "60%",
-    borderStyle: 'dashed',
-    borderColor: "#8AC642",
-    
-    borderWidth: 1.5, }}>
+          <Card style={{
+            ...styles.card, width: "60%",
+            borderStyle: 'dashed',
+            borderColor: "#8AC642",
+
+            borderWidth: 1.5,
+          }}>
             <img height={70} src={addMember} alt="Add Member" />
             <h4 style={{ color: "#8AC642", marginTop: "10px" }}>Add New Member</h4>
           </Card>

@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function CustomInput({
-  onKeyDown = () => {},
+  onKeyDown = () => { },
   type = "text",
   label,
   value,
@@ -17,6 +17,7 @@ function CustomInput({
   sx,
   fullWidth = true,
   containerStyle = {},
+  required = false,
 }) {
   const inputId = `inputField-${name}`;
 
@@ -34,7 +35,7 @@ function CustomInput({
     <div className={`form-outline mb-3 ${fullWidth ? "w-100" : ""}`} style={containerStyle}>
       {label && (
         <label className="form-label fw-bold text-light mb-2 d-block" htmlFor={inputId}>
-          {label}
+          {label} {required && <span className="text-danger">*</span>}
         </label>
       )}
 
