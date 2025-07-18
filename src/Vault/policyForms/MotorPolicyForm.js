@@ -23,7 +23,7 @@ import { THEME_COLOR } from "../../constants";
 import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SessionExpiredModal from "../../utils/sessionExpireModal";
-
+import GlobalDatePicker from "../../component/GlobalDatePicker";
 const MotorPolicyForm = () => {
   const location = useLocation();
     const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -387,23 +387,7 @@ const MotorPolicyForm = () => {
 
 
               <Grid container spacing={1} className="mb-2">
-  <Grid item xs={12} md={6} margin={0} >
-    <label
-      className="form-label fw-bold mb-0" // ensure tight spacing
-      htmlFor="start-date"
-    >
-      Start date <span className="text-danger">*</span>
-    </label>
-    <DateTimePicker
-      id="start-date"
-      type="date"
-      isIcon={false}
-      label="DD/MM/YYYY"
-      value={formatDate(policyStartDate)}
-      onChange={handleStartDateChange}
-      className="w-100" // full width and dark bg
-    />
-  </Grid>
+
   <Grid item xs={12} md={6}>
     <label
       className="form-label fw-bold mb-0"
