@@ -547,7 +547,7 @@ const Vault = () => {
                   backgroundColor: "#121212 !important",
                   border: "0.5px solid white",
                   pt: 2.5,
-                  height:'80.5vh',
+                  height:'650px',
                   justifyContent:'center',
                   alignContent:'center'
                 }}
