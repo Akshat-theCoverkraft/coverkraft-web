@@ -559,11 +559,12 @@ export default function PolicyTabs({
   const itemsPerPage = 3;
 
   useEffect(() => {
+    setActiveTab('active')
     const savedPolicyId = sessionStorage.getItem("selectedPolicyId");
     const savedTab = sessionStorage.getItem("selectedTab");
     if (savedPolicyId) setSelectedPolicyId(savedPolicyId);
     if (savedTab) {
-      const tabValue = parseInt(savedTab);
+      const tabValue = parseInt(0);
       setValue(tabValue);
       if (tabValue < 2) setActiveTab(TAB_CONFIGS[tabValue].key);
     }
@@ -674,6 +675,7 @@ export default function PolicyTabs({
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
     } else {
+    
       fetchData("policy/getById", { policyType: activeTab });
     }
   }, [value, activeTab]);
