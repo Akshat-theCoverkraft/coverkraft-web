@@ -439,7 +439,7 @@ const PolicyDetail = ({ policyId }) => {
             display: "flex",
             flexDirection: "column",
             boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-            height: "70vh",
+            height: "80.5vh",
             minHeight: "100% !important",
             marginBottom: "5vh",
             backgroundColor: "#121212",

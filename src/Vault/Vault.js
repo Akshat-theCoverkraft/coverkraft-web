@@ -458,9 +458,9 @@ const Vault = () => {
                     padding: "8px 16px",
                     minHeight: "32px",
                     borderRadius: "28px",
-                    fontSize: "18px",
+                    fontSize: "16px",
                     marginTop: "10px",
-                    width: "200px", // This will now work
+                    width: "180px", // This will now work
                   }}
                 />
 
@@ -505,12 +505,10 @@ const Vault = () => {
         >
           <Grid
             item
-            xs={12}
             md={6.5}
             sx={{
               width: "100% !important",
               maxWidth: "100% !important",
-              flexGrow: 1,
               zIndex: 2,
               position: "relative !important",
             }}
@@ -530,12 +528,10 @@ const Vault = () => {
 
           <Grid
             item
-            xs={12}
             md={5.5}
             sx={{
               width: "100% !important",
               maxWidth: "100% !important",
-              flexGrow: 1,
               zIndex: 2,
               position: "relative !important",
             }}
@@ -551,7 +547,9 @@ const Vault = () => {
                   backgroundColor: "#121212 !important",
                   border: "0.5px solid white",
                   pt: 2.5,
-                  height: "70vh",
+                  height:'80.5vh',
+                  justifyContent:'center',
+                  alignContent:'center'
                 }}
               >
                 <Box
@@ -559,15 +557,18 @@ const Vault = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    alignContent:"center",
                     flexDirection: "column",
-                    height: "68vh",
+                    alignSelf:'center',
+                    height:'auto',
                     color: THEME_COLOR.COLOR,
                   }}
                 >
                   <img
                     src={emptyImage}
+                    height='auto'
                     alt="No Data"
-                    style={{ width: "40%", height: "auto", maxWidth: "200px" }}
+                    style={{ width: "40%", height: "100%", maxWidth: "200px", height:'100%', resize:'none'}}
                   />
                   <Typography sx={{ fontSize: "1.6rem", mb: 2, mt: 3 }}>
                     {"No Record Found"}

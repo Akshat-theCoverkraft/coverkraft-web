@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar, { StyledButton } from "../../../component/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios'
@@ -11,6 +11,7 @@ import arrow from "../../../Images/Symbol.png";
 import { THEME_COLOR } from "../../../constants";
 import Footer from "../Footer";
 import backArrow from "../../../Images/ic_back_button.png";
+import SessionExpiredModal from "../../../utils/sessionExpireModal";
 
 const NewsBlog = () => {
   const navigate = useNavigate();
@@ -202,7 +203,7 @@ const NewsBlog = () => {
                               className="fas fa-user"
                               style={{ color: "rgb(138, 198, 66)" }}
                             ></i>{" "}
-                            {mBlog?.createdBy}
+                            {capitalizeFirstLetter(mBlog?.createdBy)}
                           </span>
                           <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
                             <i
