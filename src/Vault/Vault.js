@@ -73,7 +73,7 @@ const StyledButton = styled("button")(({ isAllSelected }) => ({
 
 const Vault = () => {
   // Consolidated state
-  const [dialogs, setDialogs] = useState({ addPolicy: false, confirm: false, error:"" });
+  const [dialogs, setDialogs] = useState({ addPolicy: false, confirm: false, error: "" });
   const [files, setFiles] = useState(null);
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -113,7 +113,7 @@ const Vault = () => {
     type === "pdf" ? setFiles(null) : setImage(null);
 
   const handleFileUpload = (e, type) => {
-   
+
     const uploadedFiles = e.target.files;
     type === "pdf" ? setFiles(uploadedFiles) : setImage(uploadedFiles);
     // toggleDialog("addPolicy", false)
@@ -122,13 +122,14 @@ const Vault = () => {
 
   // OCR data extraction
   const handleConfirm = async () => {
-    if(files==null && image ==null){
-      toggleDialog("error", "Select Files")
+      setLoading(true);
+    if (files == null && image == null) {
+      toggleDialog("error", "Select at least one file to proceed.")
       return;
     }
     toggleDialog('error', "");
     toggleDialog("addPolicy", false)
-        setLoading(true);
+  
 
     const token = sessionStorage.getItem("token");
     const formData = new FormData();
@@ -142,7 +143,7 @@ const Vault = () => {
     }
 
     try {
-      
+
       const response = await axios.post(
         `${API_URL}document/ocrExtractData`,
         formData,
@@ -153,7 +154,7 @@ const Vault = () => {
           },
         }
       );
-    setLoading(false);
+
 
       if (response.status === 200) {
         const responseData = response.data;
@@ -162,17 +163,17 @@ const Vault = () => {
         const ocrTextObject = JSON.parse(responseData.ocrText);
         const policyType = ocrTextObject.policyType.toLowerCase();
         const route = navigationMap[policyType];
-
+        setLoading(false);
         if (route) navigate(route, { state: { responseData: ocrTextObject } });
       } else {
         toast.error("File processing failed!");
       }
-
+      setLoading(false);
       setFiles(null);
       setImage(null);
       toggleDialog("confirm", false);
     } catch (error) {
-          setLoading(false);
+      setLoading(false);
 
       if (error.response?.status === 401) {
         setShowSessionExpired(true);
@@ -311,7 +312,7 @@ const Vault = () => {
         backgroundColor: "#2a2a2a !important",
         color: "#fff !important",
         boxShadow: "rgba(27, 186, 54, 0.1) 0px 0px 16px",
-        borderRadius:10
+        borderRadius: 10
       }}
     >
       {!files ? (
@@ -326,7 +327,7 @@ const Vault = () => {
           />
           <Card
             className="p-3 cursor-pointer d-flex justify-content-center align-items-center"
-            onClick={ onClick}
+            onClick={onClick}
             style={{
               backgroundColor: "#333",
               fontSize: "18px",
@@ -348,7 +349,10 @@ const Vault = () => {
             style={{ backgroundColor: "#333", color: "#fff", fontSize: "18px" }}
           >
             <span>{file.name}</span>
-            <IconButton onClick={() => resetFiles(type)} sx={{ color: "#fff" }}>
+            <IconButton onClick={() => {
+              toggleDialog('error', "")
+              resetFiles(type)
+            }} sx={{ color: "#fff" }}>
               <CloseIcon />
             </IconButton>
           </Card>
@@ -370,6 +374,7 @@ const Vault = () => {
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
+
       <style jsx>{`
         * {
           scrollbar-width: none;
@@ -388,7 +393,7 @@ const Vault = () => {
       `}</style>
 
       <Navbar />
-      {/* <Loader loading={loading} /> */}
+
       <div
         className="bg-color !important"
         style={{ backgroundColor: THEME_COLOR.BACKGROUND }}
@@ -422,11 +427,12 @@ const Vault = () => {
                   My Policy
                 </Typography>
               </Breadcrumbs>
-
+              {loading===true && <Loader loading={loading} />}
               <div
                 className="d-flex align-items-center flex-row gap-2 flex-wrap"
                 style={{ marginLeft: 55 }}
               >
+
                 {policyListLength > 0 && (
                   <div
                     onClick={handleShareIconClick}
@@ -461,8 +467,12 @@ const Vault = () => {
                   text="Add Policy"
                   size="sm"
                   startIcon={AddIcon}
-                  onClick={() =>{resetFiles()
-                     toggleDialog("addPolicy", true)}}
+                  onClick={() => {
+                    setFiles(null)
+                    setImage(null)
+                    toggleDialog('error', "")
+                    toggleDialog("addPolicy", true)
+                  }}
                   style={{
                     padding: "8px 16px",
                     minHeight: "32px",
@@ -522,13 +532,14 @@ const Vault = () => {
               position: "relative !important",
             }}
           >
+
             <PolicyTabs
               handleCardClick={handleCardClick}
               shareAllPolicy={shareAllPolicy}
               selectedPolicies={selectedPolicies}
               handleCheckboxChange={handleCheckboxChange}
               onPolicyListLengthChange={setPolicyListLength}
-              onArchieveListLength={() => {}}
+              onArchieveListLength={() => { }}
               onAllPolicyIdsChange={setAllPolicyIds}
               searchQuery={searchQuery}
               selectedType={selectedType}
@@ -556,9 +567,9 @@ const Vault = () => {
                   backgroundColor: "#121212 !important",
                   border: "0.5px solid white",
                   pt: 2.5,
-                  height:'600px',
-                  justifyContent:'center',
-                  alignContent:'center'
+                  height: '600px',
+                  justifyContent: 'center',
+                  alignContent: 'center'
                 }}
               >
                 <Box
@@ -566,10 +577,10 @@ const Vault = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    alignContent:"center",
+                    alignContent: "center",
                     flexDirection: "column",
-                    alignSelf:'center',
-                    height:'auto',
+                    alignSelf: 'center',
+                    height: 'auto',
                     color: THEME_COLOR.COLOR,
                   }}
                 >
@@ -577,7 +588,7 @@ const Vault = () => {
                     src={emptyImage}
                     height='auto'
                     alt="No Data"
-                    style={{ width: "40%", height: "100%", maxWidth: "200px", height:'100%', resize:'none'}}
+                    style={{ width: "40%", height: "100%", maxWidth: "200px", height: '100%', resize: 'none' }}
                   />
                   <Typography sx={{ fontSize: "1.6rem", mb: 2, mt: 3 }}>
                     {"No Record Found"}
@@ -587,9 +598,11 @@ const Vault = () => {
             )}
           </Grid>
         </Grid>
+
       </div>
 
       <About />
+
       <Footer />
 
       {/* Add Policy Dialog */}
@@ -636,74 +649,74 @@ const Vault = () => {
             icon={uploadPdf}
             text="Upload Document"
             inputRef={inputRef}
-            onClick={()=>{
-              if(image===null|| image===""){
+            onClick={() => {
+              if (image === null || image === "") {
                 inputRef.current.click()
-              }else{
+              } else {
                 toggleDialog('error', 'Only one file can be selected.. Clear image data to proceed with PDF.')
               }
-             
+
             }}
             onChange={(e) => {
-             // if(image===null|| image===""){
-                handleFileUpload(e, "pdf")
-             // }else{
+              // if(image===null|| image===""){
+              handleFileUpload(e, "pdf")
+              // }else{
               //  toggleDialog('error', 'Only one file can be selected.. Clear image data to proceed with PDF.')
-             // }
+              // }
             }}
           />
-          <div style={{height:10}} />
+          <div style={{ height: 10 }} />
           <FileUploadCard
             type="image"
             files={image}
             icon={uploadImg}
             text="Upload Image"
             inputRef={imageRef}
-            onClick={()=>{
-              if(files===null|| files===""){
+            onClick={() => {
+              if (files === null || files === "") {
                 imageRef.current.click()
-              }else{
+              } else {
                 toggleDialog('error', 'Only one file can be selected.. Clear pdf data to proceed with Image.')
               }
             }}
-            onChange={(e) => { 
-                handleFileUpload(e, "image")
-             }}
+            onChange={(e) => {
+              handleFileUpload(e, "image")
+            }}
           />
-           {dialogs.error!==''?<div style={{alignSelf:'center',justifyContent:'center',color:'red'}}>{dialogs.error}</div>:null}
-<div
-  style={{
-    display: "flex",
-    justifyContent: "center", // center horizontally
-    gap: "16px", // space between buttons
-  }}
->
- 
-  <Button
-    text="Cancel"
-    size="md"
-    onClick={() =>toggleDialog("addPolicy", false)}
-    style={{
-      border: "2px solid #8AC642",
-      color: "#8AC642",
-      backgroundColor: "transparent",
-      borderRadius: "8px",
-      fontWeight: 600,
-    }}
-  />
-  <Button
-    text="Upload"
-    size="md"
-    onClick={handleConfirm}
-    style={{
-      backgroundColor: "#8AC642",
-      color: "#fff",
-      border: "none",
-      borderRadius: "8px",
-      fontWeight: 600,
-    }}
-  />
-</div>
+          {dialogs.error !== '' ? <div style={{ alignSelf: 'center', justifyContent: 'center', color: 'red' }}>{dialogs.error}</div> : null}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center", // center horizontally
+              gap: "16px", // space between buttons
+            }}
+          >
+
+            <Button
+              text="Cancel"
+              size="md"
+              onClick={() => toggleDialog("addPolicy", false)}
+              style={{
+                border: "2px solid #8AC642",
+                color: "#8AC642",
+                backgroundColor: "transparent",
+                borderRadius: "8px",
+                fontWeight: 600,
+              }}
+            />
+            <Button
+              text="Upload"
+              size="md"
+              onClick={handleConfirm}
+              style={{
+                backgroundColor: "#8AC642",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                fontWeight: 600,
+              }}
+            />
+          </div>
 
           <Card
             className="mt-4 p-3"
@@ -816,9 +829,10 @@ const Vault = () => {
             // padding: "16px 32px",
           }}
         >
-        
+
         </DialogActions>
       </StyledDialog>
+
     </div>
   );
 };
