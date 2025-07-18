@@ -65,7 +65,7 @@ animate-style{
 }
 .custom-datepicker {
  
-  max-width: 200%; /* Ensure it doesn't exceed the parent's width */
+  max-width: 200% !important; /* Ensure it doesn't exceed the parent's width */
 }
 
 .primary-color{
