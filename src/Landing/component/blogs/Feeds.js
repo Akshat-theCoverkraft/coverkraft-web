@@ -11,7 +11,7 @@ import Navbar from "../../../component/Navbar";
 import moment from "moment-timezone";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { truncateString } from "../../../utils/helpers";
+import { capitalizeFirstLetter, truncateString } from "../../../utils/helpers";
 import arrow from "../../../Images/Symbol.png";
 import API_URL from "../../../ServiceModule/Service";
 import Footer from "../Footer";
@@ -241,7 +241,7 @@ const Feeds = () => {
                             <PersonRounded sx={{ fontSize: 12 }} />
                           </Avatar>
                           <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>
-                            {item.createdBy || "Super Admin"}
+                            {capitalizeFirstLetter(item.createdBy) || "Super Admin"}
                           </Typography>
                         </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
