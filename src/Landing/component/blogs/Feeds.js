@@ -37,7 +37,7 @@ const Feeds = () => {
   const videoRefs = useRef({});
   const textRefs = useRef({});
   const [showSessionExpired, setShowSessionExpired] = useState(false);
-    const [error, setError] = useState(null);
+  const [error, setError] = useState(null);
 
   const fetchContent = async (tab, page = 1) => {
     setIsLoading(true);
@@ -72,12 +72,11 @@ const Feeds = () => {
     fetchContent(tabToLoad);
   }, [type]);
 
-
-    const handleSessionExpiredOk = () => {
+  const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
     navigate('/login');
     localStorage.clear();
-  sessionStorage.clear(); 
+    sessionStorage.clear(); 
   };
 
   useEffect(() => {
@@ -99,7 +98,16 @@ const Feeds = () => {
   };
 
   const handlePageChange = (_, page) => fetchContent(selectedTab, page);
-  const handleCardClick = (item) => navigate(`/feed/${selectedTab}/${item._id}`);
+  
+  // Remove the card click handler - cards will no longer be clickable
+  // const handleCardClick = (item) => navigate(`/feed/${selectedTab}/${item._id}`);
+  
+  // Create a specific handler for read more button
+  const handleReadMoreClick = (e, item) => {
+    e.stopPropagation(); // Prevent event bubbling
+    navigate(`/feed/${selectedTab}/${item._id}`);
+  };
+
   const handleVideoClick = (index) => {
     Object.entries(videoRefs.current).forEach(([key, video]) => {
       if (parseInt(key) !== index && video) video.pause();
@@ -128,11 +136,10 @@ const Feeds = () => {
     <Box sx={{ minHeight: "100vh", background: "#121212" }}>
       <Navbar />
       <Container maxWidth="xl" sx={{ py: 4 }}>
-  <SessionExpiredModal
-        visible={showSessionExpired}
-        onConfirm={handleSessionExpiredOk}
-      />
-
+        <SessionExpiredModal
+          visible={showSessionExpired}
+          onConfirm={handleSessionExpiredOk}
+        />
 
         {/* Tabs */}
         <Box sx={{ display: "flex", justifyContent: "center", mb: 8 }}>
@@ -197,12 +204,13 @@ const Feeds = () => {
               return (
                 <Grid item xs={12} sm={6} md={4} key={item._id}>
                   <Card
-                    onClick={() => handleCardClick(item)}
+                    // Removed onClick handler - card is no longer clickable
                     sx={{
                       borderRadius: "24px", backgroundColor: "rgba(255,255,255,0.03)",
                       backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)",
-                      height: "100%", display: "flex", flexDirection: "column",pointerEvents: "none", overflow: "hidden",
-                       transition: "all 0.4s ease",
+                      height: "100%", display: "flex", flexDirection: "column", overflow: "hidden",
+                      transition: "all 0.4s ease",
+                      // Removed cursor: "pointer" since card is no longer clickable
                       "&:hover": {
                         transform: "translateY(-8px)", boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
                         border: "1px solid rgba(139, 198, 66, 0.3)",
@@ -224,7 +232,6 @@ const Feeds = () => {
                           sx={{ objectFit: "cover", transition: "transform 0.4s ease" }}
                         />
                       )}
-                     
                     </Box>
 
                     <CardContent sx={{ display: "flex", flexDirection: "column" }}>
@@ -252,7 +259,7 @@ const Feeds = () => {
                         </Box>
                       </Box>
 
-                     {item.description? <Typography
+                      {item.description ? <Typography
                         ref={el => textRefs.current[index] = el}
                         variant="body2"
                         marginBottom={2}
@@ -262,15 +269,15 @@ const Feeds = () => {
                         }}
                       >
                         {item.description}
-                      </Typography>:null}
+                      </Typography> : null}
 
                       {item.description && showReadMore && (
                         <Button
-                          onClick={e => { e.stopPropagation(); handleCardClick(item); }}
-                          marginBottom={0}
+                          onClick={(e) => handleReadMoreClick(e, item)} // Use the new handler
                           sx={{
-                            color: "#8BC642", fontSize: "12px", fontWeight: 300,pointerEvents: "auto", marginLeft: "75%",
-                            textTransform: "none", p: 0, minWidth: "auto",
+                            color: "#8BC642", fontSize: "12px", fontWeight: 300,
+                            textTransform: "none", p: 0, minWidth: "auto", alignSelf: "flex-end",
+                            cursor: "pointer", // Ensure button shows pointer cursor
                             "&:hover": { backgroundColor: "rgba(139,198,66,0.1)" }
                           }}
                           endIcon={
