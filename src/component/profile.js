@@ -30,6 +30,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { BorderColor, Padding } from "@mui/icons-material";
 import backArrow from "../Images/ic_back_button.png";
 import { capitalizeFirstLetter } from "../utils/helpers";
+import { color } from "framer-motion";
 
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
@@ -72,13 +73,15 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     width: "100%",
     paddingLeft: "10px !important",
   };
+
+  
   const commonInputStyle = {
     height: 48,
     fontSize: "1.222rem",
     borderRadius: 42,
     paddingLeft: "20px",
     width: "100%",
-    color: "white",
+    color: "#fff",
   };
 
   const LOCAL_STORAGE_KEYS = [
@@ -220,7 +223,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const dobValid = userDob || isOldEnough(userDob);
     setIsValidDob(dobValid);
 
-    if (!nameValid || !emailValid || !phoneValid || !pinValid || !dobValid) {
+    if (!nameValid) {
       return;
     }
 
@@ -263,6 +266,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   };
 
+
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -296,6 +301,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     setTimeout(() => window.location.reload(), 100);
   };
 
+  const fetchUserProfile = () => {
+    const userId = sessionStorage.getItem("userId");
+    if (userId) {
+      dispatch(getBYIDUsers(API_URL, userId));
+    }
+  }
+
   return (
     <Drawer
       anchor="right"
@@ -319,34 +331,39 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         }}
         role="presentation"
       >
-        {update?(<>
-        <IconButton onClick={()=>{setUpdate(false)}}>
+        {update ? (<>
+          <IconButton
+            onClick={() => {
+              fetchUserProfile();
+              setUpdate(false);
+            }}
+          >
             <img src={backArrow} alt="Back" style={{ width: 24 }} />
           </IconButton>
-        </>):(
+        </>) : (
           <div className="flex items-center justify-end px-4">
-          <CloseIcon
-            onClick={() => {
-              onClose();
-              setUpdate(false);
-              setTimeout(() => navigate(returnPath), 150);
-            }}
-            style={{
-              cursor: "pointer",
-              color: "#fff",
-              fontSize: "2rem",
-              transition: "transform 0.2s ease, color 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "scale(1.2)";
-              e.target.style.color = "#8AC642";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "scale(1)";
-              e.target.style.color = "#fff";
-            }}
-          />
-        </div>)} 
+            <CloseIcon
+              onClick={() => {
+                onClose();
+                setUpdate(false);
+                setTimeout(() => navigate(returnPath), 150);
+              }}
+              style={{
+                cursor: "pointer",
+                color: "#fff",
+                fontSize: "2rem",
+                transition: "transform 0.2s ease, color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.2)";
+                e.target.style.color = "#8AC642";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)";
+                e.target.style.color = "#fff";
+              }}
+            />
+          </div>)}
 
         <div className="main-container">
           <div
@@ -384,7 +401,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               {useremail && <p className="register-text text-center">{useremail}</p>}
 
               {!update && (
-                <div className="flex justify-center mt-4 mb-4">
+                <div className="flex justify-center mt-4 mb-8">
                   <Button
                     text={"Edit Profile"}
                     size="lg"
@@ -408,6 +425,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
+              marginTop: "30px",
             }}
           >
             {[
@@ -439,7 +457,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 style={{
                   cursor: "pointer",
                   borderBottom: "0.5px solid #fff",
-                  marginBottom: "1rem",
+                  marginBottom: "1.2rem",
+                  marginTop: "0.02rem",
                 }}
               >
                 <Grid item xs={2}>
@@ -452,13 +471,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 <Grid item xs={8}>
                   <span>{item.label}</span>
                 </Grid>
-                <Grid item xs={2}>
+                {/* <Grid item xs={2}>
                   <img
                     src={rightArrow}
                     style={{ maxHeight: "2rem" }}
                     alt="arrow"
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
             ))}
           </Card>
@@ -485,7 +504,21 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 />
 
               </Grid>
+                {/* Phone */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  type="tel"
+                  label="Mobile Number"
+                  placeholder="Enter your mobile number"
+                  value={userPhone}
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                  disabled
+                  required
+                />
 
+
+              </Grid>
               {/* Email */}
               <Grid item style={commonItemStyle}>
                 <CustomInput
@@ -509,38 +542,26 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
               </Grid>
 
-              {/* Phone */}
-              <Grid item style={commonItemStyle}>
-                <CustomInput
-                  type="tel"
-                  label="Mobile Number"
-                  placeholder="Enter your mobile number"
-                  value={userPhone}
-                  fullWidth
-                  inputStyle={commonInputStyle}
-                  disabled
-                />
-
-
-              </Grid>
+             
 
               <Grid item style={commonItemStyle}>
                 <label
                   htmlFor="dob"
-                  className="form-label fw-bold text-light mb-2 d-block"
+                  className="form-label text-light mb-2 d-block"
                 >
                   Date of Birth
                 </label>
-                <GlobalDatePicker
-                  selectedDate={userDob}
-                  handleDateChange={(date) => {
-                    setuserDob(date);
-                    setIsValidDob(date ? isOldEnough(date) : false);
-                  }}
-                  placeholder="Select your date of birth"
-                  error={!isValidDob}
-                  validationMessage="You must be at least 18 years old"
-                />
+                  <GlobalDatePicker
+                    selectedDate={userDob}
+                    handleDateChange={(date) => {
+                      setuserDob(date);
+                      setIsValidDob(date ? isOldEnough(date) : false);
+                    }}
+                    placeholder="Select your date of birth"
+                    error={!isValidDob}
+                    validationMessage="You must be at least 18 years old"
+                  />
+
               </Grid>
 
 
@@ -559,6 +580,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               {/* State */}
               <Grid item style={commonItemStyle}>
                 <GlobalDropdown
+                                    className={` ${selectedStateId === ""? 'placeholder-selected !important' : 'custom-dark-dropdown'}`}
+
                   onStateSelect={handleStateSelect}
                   initialValue={selectedStateId}
                   style={{ ...commonInputStyle, width: "100%" }}
@@ -569,6 +592,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               <Grid item style={commonItemStyle}>
                 <CityDropdown
                   label="City"
+                    className={` ${selectedCityId === ""? 'placeholder-selected' : 'custom-dark-dropdown'}`}
                   selectedStateId={selectedStateId}
                   onCitySelect={handleCitySelect}
                   initialValue={selectedCityId}
@@ -610,7 +634,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   id="gender"
                   value={gender}
                   onChange={(e) => setgender(e.target.value)}
-                  className="custom-dark-dropdown"
+  className={` ${gender === ''? 'placeholder-selected' : 'custom-dark-dropdown'}`}
                 >
                   <option value="">Select Your Gender</option>
                   <option value="male">Male</option>
@@ -628,18 +652,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                       text="Update Profile"
                       onClick={handleUpateProfile}
                       disabled={
-                        !isValidEmail ||
-                        !valid ||
-                        !username ||
-                        !useremail ||
-                        !userPhone
+                        !username
                       }
                       bgcolor={
-                        !isValidEmail ||
-                          !valid ||
-                          !username ||
-                          !useremail ||
-                          !userPhone
+                        !username
                           ? "#ccc"
                           : "#8AC642"
                       }

@@ -289,7 +289,7 @@ const HealthPolicyForm = () => {
               Policy Details
             </p>
             <div>
-              <Grid container spacing={6}>
+              <Grid container spacing={8}>
                 <Grid item xs={12} md={6}>
                   <CustomInput
                     type="text"
@@ -301,50 +301,61 @@ const HealthPolicyForm = () => {
                     }}
                     required
                     inputStyle={commonInputStyle}
-                  />
-                  <label className="form-label fw-bold" htmlFor="inputField">
-                    DOB <span className="text-danger">*</span>
-                  </label>
-                  <DateTimePicker
-                    height={50}
-                    isIcon={false}
-                    label="DD/MM/YYYY"
-                    value={formatDate(dob)}
-                    onChange={handleDobChange}
-                  />
-                  <Grid container spacing={3} className="mt-2 mb-2">
+                    />
+                    <div className="">
+                    <label className="form-label fw-bold" htmlFor="dob-picker">
+                      DOB <span className="text-danger">*</span>
+                    </label>
+                    <div className="mb-1">
+                      </div>
+                    <DateTimePicker
+                      id="dob-picker"
+                      isIcon={false}
+                      label="DD/MM/YYYY"
+                      value={formatDate(dob)}
+                      onChange={handleDobChange}
+                      className="w-100 mb-0"
+                    />
+                    </div>
+                    <Grid container spacing={3} className="mt-2 mb-2">
                     <Grid item xs={12} md={6}>
+                      <div className="mb-3">
                       <label
                         className="form-label fw-bold"
-                        htmlFor="inputField"
+                        htmlFor="start-date-picker"
                       >
                         Start date <span className="text-danger">*</span>
                       </label>
                       <DateTimePicker
-                        height={50}
+                        id="start-date-picker"
                         isIcon={false}
                         label="DD/MM/YYYY"
                         value={formatDate(policyStartDate)}
                         onChange={handleStartDateChange}
+                        className="w-100"
                       />
+                      </div>
                     </Grid>
                     <Grid item xs={12} md={6}>
+                      <div className="mb-3">
                       <label
                         className="form-label fw-bold"
-                        htmlFor="inputField"
+                        htmlFor="end-date-picker"
                       >
                         End date <span className="text-danger">*</span>
                       </label>
                       <DateTimePicker
-                        height={50}
+                        id="end-date-picker"
+                        className="w-100"
                         isIcon={false}
                         label="DD/MM/YYYY"
                         value={formatDate(policyEndDate)}
                         onChange={handleEndDateChange}
                       />
+                      </div>
                     </Grid>
-                  </Grid>
-                  <CustomInput
+                    </Grid>
+                    <CustomInput
                     type="text"
                     label="Insured Name"
                     value={insuredName}
@@ -385,8 +396,8 @@ const HealthPolicyForm = () => {
                     value={netPremium}
                     onChange={(e) => {
                       setNetPremium(e.target.value);
-                      inputStyle = { commonInputStyle };
                     }}
+                    inputStyle = { commonInputStyle }
                   />
                   <CustomInput
                     type="text"
@@ -424,8 +435,8 @@ const HealthPolicyForm = () => {
                     value={totalSumAssured}
                     onChange={(e) => {
                       setTotalSumAssured(e.target.value);
-                      inputStyle = { commonInputStyle };
                     }}
+                    inputStyle = { commonInputStyle }
                   />
                 </Grid>
                   <Box

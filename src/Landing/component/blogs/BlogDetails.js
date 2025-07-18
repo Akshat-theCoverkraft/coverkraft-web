@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Navbar, { StyledButton } from "../../../component/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios'
@@ -11,6 +11,7 @@ import arrow from "../../../Images/Symbol.png";
 import { THEME_COLOR } from "../../../constants";
 import Footer from "../Footer";
 import backArrow from "../../../Images/ic_back_button.png";
+import SessionExpiredModal from "../../../utils/sessionExpireModal";
 
 const NewsBlog = () => {
   const navigate = useNavigate();
@@ -20,7 +21,12 @@ const NewsBlog = () => {
   const [error, setError] = useState(null);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   
+  // Refs to store video elements
+  const videoRefs = useRef([]);
+  const mainVideoRef = useRef(null);
+  
   console.log(type, id, "<===type");
+  
   const fetchBlogDetails = async () => {
     try {
       const { data } = await axios.get(
@@ -53,13 +59,64 @@ const NewsBlog = () => {
     }
   };
 
+  // Function to pause all videos
+  const pauseAllVideos = () => {
+    // Pause main video
+    if (mainVideoRef.current) {
+      mainVideoRef.current.pause();
+    }
+    
+    // Pause all other videos
+    videoRefs.current.forEach(video => {
+      if (video) {
+        video.pause();
+      }
+    });
+  };
+
+  // Function to handle video play - pause others when one starts
+  const handleVideoPlay = (playingVideo) => {
+    // Pause main video if it's not the one playing
+    if (mainVideoRef.current && mainVideoRef.current !== playingVideo) {
+      mainVideoRef.current.pause();
+    }
+    
+    // Pause all other videos except the one playing
+    videoRefs.current.forEach(video => {
+      if (video && video !== playingVideo) {
+        video.pause();
+      }
+    });
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchBlogDetails();
   }, [id]);
 
+  // Cleanup effect to pause all videos when component unmounts or route changes
+  useEffect(() => {
+    return () => {
+      pauseAllVideos();
+    };
+  }, []);
+
+  // Also pause videos when navigating away (additional safety)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      pauseAllVideos();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      pauseAllVideos();
+    };
+  }, []);
+
   // Function to render media content (image or video)
-  const renderMediaContent = (mediaUrl, altText, isMainBlog = false) => {
+  const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null) => {
     if (!mediaUrl) return null;
 
     const isVideo = mediaUrl.match(/\.(mp4|mov|avi|mkv|webm)$/i);
@@ -67,9 +124,16 @@ const NewsBlog = () => {
     if (isVideo) {
       return (
         <video
+          ref={isMainBlog ? mainVideoRef : (el) => {
+            if (index !== null) {
+              videoRefs.current[index] = el;
+            }
+          }}
           controls
           style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
           className={isMainBlog ? "" : "card-img-top"}
+          onPlay={(e) => handleVideoPlay(e.target)}
+          preload="metadata" // Only load metadata initially to improve performance
         >
           <source src={mediaUrl} type="video/mp4" />
           Your browser does not support the video tag.
@@ -88,13 +152,23 @@ const NewsBlog = () => {
   };
 
   const handleCardClick = (blogId) => {
+    // Pause all videos before navigating
+    pauseAllVideos();
     navigate(`/feed/blog/${blogId}`);
   };
-      const handleSessionExpiredOk = () => {
+  
+  const handleSessionExpiredOk = () => {
+    pauseAllVideos();
     setShowSessionExpired(false);
     navigate('/login');
     localStorage.clear();
-  sessionStorage.clear(); 
+    sessionStorage.clear(); 
+  };
+
+  // Handle navigation back
+  const handleBackClick = () => {
+    pauseAllVideos();
+    navigate(`/feed/${type}`);
   };
 
   return (
@@ -119,10 +193,7 @@ const NewsBlog = () => {
               px: 2,
             }}
           >
-            {/* <StyledButton style={{ fontSize: "1.3rem" }} onClick={() => navigate(-1)}>
-              Back
-            </StyledButton> */}
-            <IconButton onClick={() => navigate(`/feed/${type}`)}>
+            <IconButton onClick={handleBackClick}>
               <img src={backArrow} alt="Back" style={{ width: 24 }} />
             </IconButton>
             <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
@@ -136,13 +207,13 @@ const NewsBlog = () => {
             <Box sx={{ width: "85px" }} />
           </Box>
 
-<div
-  className={`card d-flex ${["short", "video", "featured"].includes(type) ? "flex-column" : "flex-row"} gap-4 mb-4`}
-  style={{
-    backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-    color: THEME_COLOR.SECONDARY_TEXT
-  }}
->
+          <div
+            className={`card d-flex ${["short", "video", "featured"].includes(type) ? "flex-column" : "flex-row"} gap-4 mb-4`}
+            style={{
+              backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+              color: THEME_COLOR.SECONDARY_TEXT
+            }}
+          >
             {renderMediaContent(blog?.newsImg, blog?.subtitle, true)}
             <div className="card-body">
               <h2 className="text-center">
@@ -190,7 +261,7 @@ const NewsBlog = () => {
                         (e.target.style.transform = "translateY(0)")
                       }
                     >
-                      {renderMediaContent(mBlog?.newsImg, mBlog?.subtitle)}
+                      {renderMediaContent(mBlog?.newsImg, mBlog?.subtitle, false, index)}
                       <div className="card-body d-flex flex-column">
                         <h3 className="card-title h5">{mBlog?.subtitle}</h3>
                         <div className="text-muted mb-2">
@@ -202,7 +273,7 @@ const NewsBlog = () => {
                               className="fas fa-user"
                               style={{ color: "rgb(138, 198, 66)" }}
                             ></i>{" "}
-                            {mBlog?.createdBy}
+                            {capitalizeFirstLetter(mBlog?.createdBy)}
                           </span>
                           <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
                             <i
@@ -219,7 +290,8 @@ const NewsBlog = () => {
                           <MuiButton
                             variant="text"
                             className="text-light p-0"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent card click
                               handleCardClick(mBlog?._id);
                             }}
                             style={{

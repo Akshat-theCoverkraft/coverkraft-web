@@ -8,12 +8,13 @@ const GlobalDatePicker = ({
   selectedDate,
   handleDateChange,
   placeholder,
-  className = '',
+  className,
   error = false,
   validationMessage = '',
+
 }) => {
   return (
-    <div className="global-date-picker">
+    <div className="">
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}

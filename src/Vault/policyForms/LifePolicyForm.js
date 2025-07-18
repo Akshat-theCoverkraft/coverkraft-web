@@ -357,200 +357,113 @@ const LifePolicyForm = () => {
                     </Box>
 
                     {/* Date Fields Row */}
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            sx={{
-                              display: "block",
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 1,
-                              fontSize: "0.95rem",
-                            }}
-                          >
-                            Start Date{" "}
-                            <span style={{ color: "#f44336" }}>*</span>
-                          </Typography>
-                          <DateTimePicker
-                            height={50}
-                            isIcon={false}
-                            label="DD/MM/YYYY"
-                            value={formatDate(policyStartDate)}
-                            onChange={handleStartDateChange}
-                          />
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            sx={{
-                              display: "block",
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 1,
-                              fontSize: "0.95rem",
-                            }}
-                          >
-                            End Date <span style={{ color: "#f44336" }}>*</span>
-                          </Typography>
-                          <DateTimePicker
-                            height={50}
-                            isIcon={false}
-                            label="DD/MM/YYYY"
-                            value={formatDate(policyEndDate)}
-                            onChange={handleEndDateChange}
-                          />
-                        </Box>
-                      </Grid>
+                    <Grid container spacing={10}>
+                       <Grid item xs={12} md={6} margin={0} >
+    <label
+      className="form-label fw-bold mb-2 text-white fs-6" // ensure tight spacing
+      htmlFor="start-date"
+    >
+      Start date <span className="text-danger">*</span>
+    </label>
+    <DateTimePicker
+      id="start-date"
+      type="date"
+      isIcon={false}
+      label="DD/MM/YYYY"
+      value={formatDate(policyStartDate)}
+      onChange={handleStartDateChange}
+      className="w-100" // full width and dark bg
+    />
+  </Grid>
+                       <Grid item xs={12} md={6}>
+    <label
+      className="form-label fw-bold mb-2 text-white fs-6"
+      htmlFor="end-date"
+    >
+      End date <span className="text-danger">*</span>
+    </label>
+    <DateTimePicker
+      id="end-date"
+      type="date"
+      isIcon={false}
+      label="DD/MM/YYYY"
+      value={formatDate(policyEndDate)}
+      onChange={handleEndDateChange}
+      className="w-100"
+    />
+  </Grid>
                     </Grid>
 
-                    {/* Renewal and Maturity Date Row */}
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            sx={{
-                              display: "block",
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 1,
-                              fontSize: "0.95rem",
-                            }}
-                          >
-                            Policy Renewal Date
-                          </Typography>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={["DatePicker"]}>
-                              <DatePicker
-                                defaultValue={dayjs(policyRenewalDate)}
-                                selected={policyRenewalDate}
-                                onChange={(newValue) => {
-                                  setPolicyRenewalDate(newValue);
-                                }}
-                                selectsStart
-                                startDate={policyRenewalDate}
-                                placeholderText="MM/DD/YYYY"
-                                sx={{ width: "100%" }}
-                                slotProps={{
-                                  textField: {
-                                    InputProps: {
-                                      sx: {
-                                        color: "#fff",
-                                        "&::placeholder": {
-                                          color: "#fff",
-                                        },
-                                      },
-                                    },
-                                    InputLabelProps: {
-                                      sx: { color: "#fff" },
-                                    },
-                                  },
-                                }}
-                              />
-                            </DemoContainer>
-                          </LocalizationProvider>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            sx={{
-                              display: "block",
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 1,
-                              fontSize: "0.95rem",
-                            }}
-                          >
-                            Maturity Date
-                          </Typography>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={["DatePicker"]}>
-                              <DatePicker
-                                defaultValue={dayjs(maturityDate)}
-                                selected={maturityDate}
-                                onChange={(newValue) => {
-                                  setMaturityDate(newValue);
-                                }}
-                                selectsStart
-                                startDate={maturityDate}
-                                placeholderText="MM/DD/YYYY"
-                                sx={{ width: "100%" }}
-                                slotProps={{
-                                  textField: {
-                                    InputProps: {
-                                      sx: {
-                                        color: "#fff",
-                                        "&::placeholder": {
-                                          color: "#fff",
-                                        },
-                                      },
-                                    },
-                                    InputLabelProps: {
-                                      sx: { color: "#fff" },
-                                    },
-                                  },
-                                }}
-                              />
-                            </DemoContainer>
-                          </LocalizationProvider>
-                        </Box>
-                      </Grid>
-                    </Grid>
+                    
+                    <Grid container spacing={4}>
+  <Grid item xs={12} sm={6}>
+    <Box>
+      <Typography
+        component="label"
+        className="fw-bold mb-2 text-white fs-6" 
+      >
+        Policy Renewal Date <span style={{ color: "#f44336" }}>*</span>
+      </Typography>
+      <DateTimePicker
+      id="policy-renewal-date"
+        type="date"
+        value={policyRenewalDate}
+        onChange={(value) => setPolicyRenewalDate(value)}
+        label="DD/MM/YYYY"
+        isIcon={false}
+        className="w-100"
+      />
+    </Box>
+  </Grid>
+
+  <Grid item xs={12} sm={6}>
+    <Box>
+      <Typography
+        component="label"
+        className="fw-bold mb-2 text-white font-size-16 ml-4"
+      >
+       Policy Maturity Date <span style={{ color: "#f44336" }}>*</span>
+      </Typography>
+      <DateTimePicker
+      id="maturity-date"
+        type="date"
+        value={maturityDate}
+        onChange={(value) => setMaturityDate(value)}
+        label="DD/MM/YYYY"
+        isIcon={false}
+        className="w-100 ml-4"
+      />
+    </Box>
+  </Grid>
+</Grid>
 
                     {/* DOB Field */}
-                    <Box>
-                      <Typography
-                        component="label"
-                        sx={{
-                          display: "block",
-                          fontWeight: 600,
-                          color: "#fff",
-                          marginBottom: 1,
-                          fontSize: "0.95rem",
-                        }}
-                      >
-                        Date of Birth
-                      </Typography>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={["DatePicker"]}>
-                          <DatePicker
-                            defaultValue={dayjs(dob)}
-                            selected={dob}
-                            onChange={(newValue) => {
-                              setDob(newValue);
-                            }}
-                            selectsStart
-                            startDate={dob}
-                            placeholderText="MM/DD/YYYY"
-                            sx={{ width: "100%", color: "#fff" }}
-                            slotProps={{
-                              textField: {
-                                InputProps: {
-                                  sx: {
-                                    color: "#fff",
-                                    "&::placeholder": {
-                                      color: "#fff",
-                                    },
-                                  },
-                                },
-                                InputLabelProps: {
-                                  sx: { color: "#fff" },
-                                },
-                              },
-                            }}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
-                    </Box>
+                   <Box sx={{ mt: 2 }}>
+  <Typography
+    component="label"
+    sx={{
+      display: "block",
+      fontWeight: 600,
+      color: "#fff",
+      marginBottom: 1,
+      fontSize: "0.95rem",
+    }}
+  >
+    Date of Birth
+  </Typography>
+  <DateTimePicker
+    value={dob}
+    onChange={(val) => setDob(val)}
+    label="MM/DD/YYYY"
+    isIcon={false}
+    className="w-100"
+    error={false} 
+    validationMessage="Invalid date"
+  />
+</Box>
 
                     {/* Personal Details */}
-                    <Box>
+                    <Box className="mt-4">
                       <CustomInput
                         type="text"
                         label="Insured Name"
@@ -703,12 +616,13 @@ const LifePolicyForm = () => {
                       onClick={handleSubmit}
                       style={{
                         backgroundColor: "#8AC642",
-                        color: "#fff",
+                        color: "#fff !important",
                         padding: "10px 40px",
                         fontWeight: 600,
                         borderRadius: "8px",
                         fontSize: "16px",
                         textTransform: "none",
+                        
                       }}
                     />
                     <Button

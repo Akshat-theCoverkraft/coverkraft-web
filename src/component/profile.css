@@ -1,0 +1,19 @@
+.custom-dark-dropdown.placeholder-selected {
+  color: #888888;
+}
+
+.placeholder-selected {
+  padding: 0.5rem 0.5rem 0.5rem 20px;
+    background-color: rgb(44, 44, 44);
+    border-radius: 42px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    height: 48px;
+    font-size: 1.222rem;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    font-family: inherit;
+}

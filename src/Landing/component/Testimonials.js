@@ -133,7 +133,7 @@ export default function Testimonials() {
             Testimonials
           </Typography>
           <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
-            Hear From our Clients
+            Hear from our Clients
           </Typography>
         </div>
         <section className="testimonials">
@@ -236,7 +236,7 @@ export default function Testimonials() {
                             }
                             <div className="author d-flex align-items-center mt-3" style={{ gap: '10px' }}>
                               <img
-                                src={testimonial.pfp}
+                                src={testimonial.pfp || '../../Images/blackpfp.webp'}
                                 height={50}
                                 width={50}
                                 className="rounded-circle"

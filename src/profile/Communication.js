@@ -30,13 +30,27 @@ const PinkSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#8AC642",
     "&:hover": {
-      backgroundColor: "#e1f5d6",
+      backgroundColor: "rgba(138, 198, 66, 0.1)",
     },
   },
+
   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
     backgroundColor: "#8AC642",
   },
+
+  "& .MuiSwitch-switchBase": {
+    color: "#888888",
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.08)",
+    },
+  },
+
+  "& .MuiSwitch-track": {
+    backgroundColor: "#555555",
+    opacity: 1,
+  },
 }));
+
 
 const Communication = ({ communication, onCommunicationClose }) => {
   const [selectedValue, setSelectedValue] = useState("a");
@@ -116,6 +130,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
     { value: "3", label: "Never" },
   ];
 
+
   return (
     <Drawer
       anchor="right"
@@ -123,8 +138,8 @@ const Communication = ({ communication, onCommunicationClose }) => {
       onClose={onCommunicationClose}
       sx={{
         "& .MuiDrawer-paper": {
-          width: isMobile ? "100%" : "33vw",
-          maxWidth: 420,
+          width: "35vw",
+          maxWidth: "400px",
           backgroundColor: "#111",
           color: "#fff",
           padding: theme.spacing(4),
@@ -146,7 +161,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
           <Typography variant="h5" fontWeight={600} gutterBottom>
             Policy Updates
           </Typography>
-          <Typography sx={{fontSize: "1.3rem"}} color="white" mb={3}>
+          <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
             Receive important updates for your policies — payments, renewals, and more.
           </Typography>
 
@@ -165,9 +180,9 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
         <Box>
           <Typography variant="h4" fontWeight={600} gutterBottom>
-            Frequency
+            Communication Frequency
           </Typography>
-          <Typography sx={{fontSize: "1.3rem"}} color="white" mb={3}>
+          <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
             How often would you like to hear from us?
           </Typography>
 

@@ -477,7 +477,7 @@ const EmptyState = ({ hasFilters, onClearFilters }) => (
       justifyContent: "center",
       alignItems: "center",
       flexDirection: "column",
-      height: "50vh",
+      height: "500px",
       color: THEME_COLOR.COLOR,
     }}
   >
@@ -511,7 +511,7 @@ const CustomPagination = ({
   onPageChange,
   itemsPerPage = 3,
 }) => (
-  <Box sx={{ display: "flex", justifyContent: "center", mt: 0, mb: 0.5 }}>
+  <Box sx={{ display: "flex", justifyContent: "center", mb: 0.5 }}>
     <Pagination
       variant="outlined"
       size="small"
@@ -559,11 +559,12 @@ export default function PolicyTabs({
   const itemsPerPage = 3;
 
   useEffect(() => {
+    setActiveTab('active')
     const savedPolicyId = sessionStorage.getItem("selectedPolicyId");
     const savedTab = sessionStorage.getItem("selectedTab");
     if (savedPolicyId) setSelectedPolicyId(savedPolicyId);
     if (savedTab) {
-      const tabValue = parseInt(savedTab);
+      const tabValue = parseInt(0);
       setValue(tabValue);
       if (tabValue < 2) setActiveTab(TAB_CONFIGS[tabValue].key);
     }
@@ -674,6 +675,7 @@ export default function PolicyTabs({
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
     } else {
+    
       fetchData("policy/getById", { policyType: activeTab });
     }
   }, [value, activeTab]);
@@ -725,7 +727,7 @@ export default function PolicyTabs({
           zIndex: 1,
           position: "relative  !important",
           paddingTop: 2,
-          
+          minHeight:'600px'
         }}
       >
         <Box
@@ -733,7 +735,6 @@ export default function PolicyTabs({
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 5,
-            
           }}
         >
           {filteredList.length === 0 ? (
@@ -746,11 +747,11 @@ export default function PolicyTabs({
               style={{
                 display: "flex",
                 flexDirection: "column",
-              height:"100%"  
+                height:"500px"  
               }}
             >
               {/* Scrollable List Area */}
-              <Box sx={{ flex: 1,}}>
+              <Box sx={{ flex: 0.85,}}>
                 {paginatedData.map((policy) => (
                   <PolicyCard
                     key={policy._id}
@@ -767,7 +768,7 @@ export default function PolicyTabs({
               </Box>
 
               {/* Fixed Pagination at Bottom */}
-              <Box className='absolute bottom-0 !important' sx={{ mt: 2 }}>
+              <Box className='absolute bottom-0 !important' sx={{ }}>
                 {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
                   <CustomPagination
                     totalItems={filteredList.length}
@@ -778,7 +779,7 @@ export default function PolicyTabs({
                     itemsPerPage={itemsPerPage}
                   />
                 ) : (
-                  <Box sx={{ minHeight: "27vh" }} /> // Empty space if pagination not needed
+                  <Box sx={{ minHeight: "200px" }} /> // Empty space if pagination not needed
                 )}
               </Box>
             </div>
@@ -805,7 +806,7 @@ export default function PolicyTabs({
           backgroundColor: "#121212 !important",
           border: "0.5px solid white",
           pt: 1.5,
-          height: "70vh ",
+          height:'600px'
         }}
       >
         <TabContext value={value}>
@@ -906,7 +907,7 @@ export default function PolicyTabs({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                height: "60vh",
+                height: "100%",
               }}
             >
               <Loader sx={{ color: "#8AC642" }} />

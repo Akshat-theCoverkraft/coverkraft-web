@@ -15,7 +15,12 @@ const Loader = ({ size = 50, message = "Content Loading..." }) => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "100vh",
+        overflow:'x',
+        zIndex:1000,
+        background:'#000000bf',
+        position:'absolute',
+        height: "90%",
+        width:'100%',
         padding: "2rem",
         // backgroundColor: "#f9f9f9", // optional light background
       }}
