@@ -725,7 +725,7 @@ export default function PolicyTabs({
           zIndex: 1,
           position: "relative  !important",
           paddingTop: 2,
-          height:600
+          minHeight:'60vh'
         }}
       >
         <Box
@@ -733,7 +733,6 @@ export default function PolicyTabs({
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 5,
-            
           }}
         >
           {filteredList.length === 0 ? (
@@ -746,7 +745,7 @@ export default function PolicyTabs({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                height:"100%"  
+                height:"60vh"  
               }}
             >
               {/* Scrollable List Area */}
