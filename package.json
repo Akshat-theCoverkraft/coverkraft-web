@@ -23,7 +23,7 @@
     "@types/grecaptcha": "^3.0.9",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
-    "date-fns": "^3.6.0",
+    "date-fns": "^2.29.3",
     "dayjs": "^1.11.11",
     "firebase": "^11.9.1",
     "framer-motion": "^12.23.5",
