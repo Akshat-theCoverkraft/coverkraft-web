@@ -1,10 +1,10 @@
 import React, { useState, useEffect, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import './GlobalDatePicker.css'; // Pull in Global style
+import { TextField, InputAdornment, IconButton } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
-import { TextField, IconButton, InputAdornment } from '@mui/material';
-import { THEME_COLOR } from '../constants';
 
 const DateTimePicker = (props) => {
     const [selectedDate, setSelectedDate] = useState(
@@ -27,34 +27,22 @@ const DateTimePicker = (props) => {
         }
     };
 
-    // Custom MUI-styled input for DatePicker
     const CustomInput = forwardRef(({ value, onClick }, ref) => (
-        <TextField
-            variant="outlined"
-            value={value}
-            placeholder={props.label}
-            onClick={onClick}
-            inputRef={ref}
-            InputProps={{
-                readOnly: true,
-                endAdornment: props.isIcon && (
-                    <InputAdornment position="end">
-                        <IconButton>
-                            <FontAwesomeIcon icon={faCalendar} />
-                        </IconButton>
-                    </InputAdornment>
-                ),
-            }}
-            sx={{
-                width: '100%',
-                marginTop: '5px',
-                '& .MuiOutlinedInput-root': {
-                    borderRadius: '28px',
-                    background: 'rgb(33 37 41)',
-                    color: THEME_COLOR.COLOR,
-                },
-            }}
-        />
+        <div className="global-date-picker" onClick={onClick} ref={ref}>
+            <input
+                type="text"
+                className={`custom-date-input ${props.className || ''} ${props.error ? 'date-picker-error' : ''}`}
+                value={value}
+                placeholder={props.label || 'Select date'}
+                readOnly
+            />
+            {props.isIcon && (
+                <FontAwesomeIcon icon={faCalendar} className="calendar-icon" />
+            )}
+            {props.error && props.validationMessage && (
+                <div className="invalid-feedback text-danger d-block">{props.validationMessage}</div>
+            )}
+        </div>
     ));
 
     return (

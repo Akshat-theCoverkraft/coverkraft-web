@@ -23,7 +23,7 @@ import { THEME_COLOR } from "../../constants";
 import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SessionExpiredModal from "../../utils/sessionExpireModal";
-
+import GlobalDatePicker from "../../component/GlobalDatePicker";
 const MotorPolicyForm = () => {
   const location = useLocation();
     const [showSessionExpired, setShowSessionExpired] = useState(false);

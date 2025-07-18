@@ -1,32 +1,39 @@
-.datetime-picker-container {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 25px;
-    padding: 10px;
-    margin-top: 10px;
-    position: relative;
+.global-date-picker {
+  position: relative;
+  width: 100%;
 }
 
-.datetime-picker-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    color: #000; /* Adjust to your desired font color */
-    padding: 10px;
-    border-radius: 25px;
+.custom-date-input {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  padding-right: 2.5rem;
+  border-radius: 28px;
+  border: 1px solid #ced4da;
+  background: #212529;
+  color: #f8f9fa;
+  font-size: 1rem;
+  outline: none;
+  cursor: pointer;
 }
 
-.calendar-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    position: absolute;
-    right: 10px;
+.custom-date-input::placeholder {
+  color: #adb5bd;
 }
 
-.calendar-button:hover {
-    background-color: rgba(0, 0, 0, 0.1); /* Optional: Add a hover effect */
-    border-radius: 50%;
+.custom-date-input.date-picker-error {
+  border: 1px solid red;
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #adb5bd;
+  pointer-events: none;
+}
+
+.invalid-feedback {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
