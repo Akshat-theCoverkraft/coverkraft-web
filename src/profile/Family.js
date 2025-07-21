@@ -15,6 +15,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { THEME_COLOR } from "../constants";
 import SessionExpiredModal from "../utils/sessionExpireModal";
+import { capitalizeFirstLetter } from "../utils/helpers";
 
 const Family = ({ family, onfamilyclose }) => {
   const [familyData, setFamilyData] = useState([]);
@@ -45,18 +46,18 @@ const Family = ({ family, onfamilyclose }) => {
         setFamilyData([]);
       }
     } catch (error) {
-       if (error.response?.status === 401) {
-            setShowSessionExpired(true);
-          } 
+      if (error.response?.status === 401) {
+        setShowSessionExpired(true);
+      }
       console.error("Error fetching family details:", error);
       setFamilyData([]);
     }
   };
-    const handleSessionExpiredOk = () => {
+  const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
     navigate('/login');
     localStorage.clear();
-  sessionStorage.clear(); 
+    sessionStorage.clear();
   };
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const Family = ({ family, onfamilyclose }) => {
         },
       }}
     >
-        <SessionExpiredModal
+      <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
@@ -118,39 +119,30 @@ const Family = ({ family, onfamilyclose }) => {
           </Grid>
         </Grid>
 
-        <Grid container spacing={2} direction="column" style={{ padding: "0 16px" }}>
+        <Grid container spacing={2} style={{ padding: "0 16px" }}>
           {familyData?.map((profile, index) => (
-            <Grid item xs={12} key={index}>
+            <Grid item xs={6} key={index}>
               <Card style={styles.card}>
-                <div
-                  className="profile-image-container"
-                  style={styles.profileImageContainer}
-                >
+                <div style={styles.profileImageContainer}>
                   <img
-                    src={
-                      !profile.familyImg ? icDefaultProfile : profile.familyImg
-                    }
+                    src={!profile.familyImg ? icDefaultProfile : profile.familyImg}
                     alt="Profile"
-                    className="profile-image"
                     style={styles.profileImage}
                   />
                 </div>
-                <p style={{ fontSize: "16px", marginTop:'10px' }} className={styles.relationship}>
+                <p style={{ fontSize: "16px", marginTop: '0px', ...styles.relationship }}>
                   {profile.familyMember}
                 </p>
-                <p
-                  style={{ fontSize: "20px", fontWeight: "500" }}
-                  className={styles.name}
-                >
-                  {profile.fullName}
+                <p style={{ fontSize: "20px", fontWeight: "500", ...styles.name }}>
+                  {capitalizeFirstLetter(profile.fullName)}
                 </p>
                 <div style={styles.infoContainer}>
                   <EmailIcon />
-                  <span style={{ fontSize: "1.3rem", marginLeft: "8px" }}>
+                  <span style={{ fontSize: "1rem", marginLeft: "8px" }}>
                     {profile?.email}
                   </span>
                 </div>
-                <div style={{ ...styles.infoContainer, marginTop: "10px" }}>
+                <div style={{ ...styles.infoContainer, marginTop: "5px" }}>
                   <CallIcon />
                   <span style={{ fontSize: "1.2rem", marginLeft: "8px" }}>
                     {profile?.mobile}
@@ -161,22 +153,22 @@ const Family = ({ family, onfamilyclose }) => {
           ))}
         </Grid>
 
+
         <Grid
           container
           justifyContent="center"
           alignItems="center"
-          className="mt-5"
+          className="mt-2"
           onClick={handleFamilyOpen}
-          style={{ padding: "0 16px", marginTop: "20px", cursor: "pointer" }}
+          style={{ padding: "0 5px", marginTop: "10px", cursor: "pointer" }}
         >
           <Card style={{
-            ...styles.card, width: "60%",
+            ...styles.card, width: "40%",
             borderStyle: 'dashed',
             borderColor: "#8AC642",
-
             borderWidth: 1.5,
           }}>
-            <img height={70} src={addMember} alt="Add Member" />
+            <img height={40} src={addMember} alt="Add Member" />
             <h4 style={{ color: "#8AC642", marginTop: "10px" }}>Add New Member</h4>
           </Card>
         </Grid>
@@ -197,7 +189,6 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: "20px",
     textAlign: "center",
     width: "100%", // Make card take full width of container
     boxSizing: "border-box",
@@ -205,23 +196,23 @@ const styles = {
   profileImageContainer: {
     display: "flex",
     justifyContent: "center",
-    marginBottom: "10px",
+    marginBottom: "5px",
   },
   profileImage: {
-    width: "130px",
-    height: "130px",
+    width: "120px",
+    height: "120px",
     borderRadius: "50%",
     objectFit: "cover",
   },
   relationship: {
-    backgroundColor: "#FACFC6",
-    padding: "5px 10px",
+    backgroundColor: "#b1766b9c",
+    padding: "2px 5px",
     borderRadius: "5px",
-    marginBottom: "10px",
+    marginBottom: "2px",
     display: "inline-block",
   },
   name: {
-    marginBottom: "10px",
+    marginBottom: "2px",
   },
   infoContainer: {
     display: "flex",

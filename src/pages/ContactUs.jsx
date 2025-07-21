@@ -100,6 +100,7 @@ function ContactUs() {
   };
 
   const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidName =value=> /^[a-zA-Z\s]+$/.test(value);
 
   const validateForm = () => {
     const errors = {};
@@ -207,7 +208,8 @@ function ContactUs() {
                         name="message"
                         placeholder="Write your query..."
                         className="form-control bg-dark text-light border-secondary text-size-md"
-                        style={{ height: "120px", resize: "none" }}
+                        style={{ height: "120px", resize: "none", fontSize: "1.3rem",
+ }}
                         value={form.message}
                         onChange={handleChange}
                       />
@@ -368,7 +370,7 @@ function ContactUs() {
             &times;
           </span>
           <Typography variant="h5" sx={{ mb: 2, color: "#8bc642", fontWeight: 700, fontSize: 20 }}>
-            Thank You for letting us know your requirement
+            Thank you for letting us know your requirement!
           </Typography>
           <Typography variant="body1" sx={{ mb: 2, fontSize: 16 }}>
             We will get back to you with a resolution soon.
