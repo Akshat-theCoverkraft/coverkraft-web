@@ -82,12 +82,11 @@ const Footer = () => {
               <div className="row">
                 <div className="col-12 col-lg-12">
                   <div className="footer-legal-text" style={{ fontSize: "1.2rem", color: "#ccc", lineHeight: "1.5" }}>
-                    <h4><strong>Coverkraft Insurance Brokers Private Limited</strong></h4><a href="https://irdai.gov.in/"
+                    <h5><strong>Coverkraft Insurance Brokers Private Limited</strong></h5>Reg. Office – D-3-591-D, Danish Nagar, Near Central School -3, Hoshangabad Road, Bhopal (MP) - 462 026 <br /> IRDAI Direct Insurance Broker (Life & General)<br/> License No. 1078 | Valid Till - 13/07/2028 <br /> Code No. - IRDAI/INT/BRK/DB1170/2024 <br/>CIN NO. - U66220MP2024PTC071585 <br/> Reg. No. 071585  
+                    <a href="https://irdai.gov.in/"
                       target="_blank"
-                      rel="noopener noreferrer"
-                      className="footer-link lh-base"
-                      style={{ fontSize: "1.2rem", color: "inherit", textDecoration: "none" }}> Reg. Office – D-3-591-D, Danish Nagar, Near Central School -3, Hoshangabad Road, Bhopal (Madhya Pradesh) - 462 026 <br /> IRDAI Direct Insurance Broker (Life & General) | License No. 1078 | Valid Till - 13/07/2028 <br /> Code No. - IRDAI/INT/BRK/DB1170/2024 | CIN NO. - U66220MP2024PTC071585 | Reg. No. 071585
-                    </a>
+                     
+                      style={{ fontWeight:600 ,fontSize: "1.2rem", color: "inherit" }}>  IRDAI</a>
                   </div>
                 </div>
 
