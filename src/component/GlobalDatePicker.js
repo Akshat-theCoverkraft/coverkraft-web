@@ -16,6 +16,7 @@ const GlobalDatePicker = ({
   return (
     <div className="">
       <DatePicker
+        
         selected={selectedDate}
         onChange={handleDateChange}
         dateFormat="MM/dd/yyyy"

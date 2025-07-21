@@ -561,7 +561,7 @@ const MotorPolicyForm = () => {
                   />
                   <CustomInput
                     type="text"
-                    label="Tp premium"
+                    label="Tp Premium"
                     value={tpPremium}
                     inputStyle={commonInputStyle}
                     onChange={(e) => {

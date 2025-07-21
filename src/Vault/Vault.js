@@ -245,7 +245,7 @@ const Vault = () => {
       link.click();
       document.body.removeChild(link);
 
-      toast.success("Excel file downloaded from S3 successfully!");
+      toast.success("Excel file downloaded successfully!");
     } catch (error) {
       console.error("Excel export failed:", error);
       toast.error("Failed to export Excel. Please try again.");
@@ -297,7 +297,7 @@ const Vault = () => {
         document.body.removeChild(link);
       }
 
-      toast.success("PDF processed successfully!");
+      toast.success("PDF downloded successfully!");
     } catch (error) {
       console.error("Error exporting PDF:", error);
       toast.error("Unable to export PDF. Try again later.");
