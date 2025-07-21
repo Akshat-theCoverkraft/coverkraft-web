@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const Loader = ({ size = 50, message = "Content Loading..." }) => {
+const Loader = ({ size = 50, message = "Please Wait..." }) => {
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const Loader = ({ size = 50, message = "Content Loading..." }) => {
       />
 
       {showMessage && (
-        <p style={{ marginTop: "1rem", fontSize: "1rem", fontWeight: "500", color: "#fff" }}>
+        <p style={{ marginTop: "1rem", fontSize: "3rem", fontWeight: "500", color: "#fff" }}>
           {message}
         </p>
       )}

@@ -135,7 +135,7 @@ const Family = ({ family, onfamilyclose }) => {
                     style={styles.profileImage}
                   />
                 </div>
-                <p style={{ fontSize: "16px" }} className={styles.relationship}>
+                <p style={{ fontSize: "16px", marginTop:'10px' }} className={styles.relationship}>
                   {profile.familyMember}
                 </p>
                 <p
