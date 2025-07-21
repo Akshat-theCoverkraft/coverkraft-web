@@ -74,7 +74,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     paddingLeft: "10px !important",
   };
 
-  
+
   const commonInputStyle = {
     height: 48,
     fontSize: "1.222rem",
@@ -229,19 +229,19 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
     const formData = new FormData();
     formData.append("_id", sessionStorage.getItem("userId"));
-    formData.append("userName", username);
-    if (useremail) formData.append("userEmail", useremail);
-    if (userPhone) formData.append("userPhone", userPhone);
-    if (userDob) {
+    formData.append("userName", username || '');
+    formData.append("userEmail", useremail || '');
+    formData.append("userPhone", userPhone || '');
+    {
       const formattedDob = userDob.toLocaleDateString("en-GB").split("/").reverse().join("-");
       formData.append("userDob", formattedDob);
     }
     formData.append("userAddress", userAddress);
     formData.append("state", selectedStateId);
     formData.append("city", selectedCityId);
-    if (pinCode) formData.append("pinCode", pinCode);
+    formData.append("pinCode", pinCode);
     formData.append("gender", gender);
-    if (userImgFile) formData.append("userImg", userImgFile);
+    if (userImgFile) formData.append("userImg", userImgFile || null);
 
     dispatch(updateUser(API_URL, formData)).then(() => {
       setUpdate(false);
@@ -283,6 +283,9 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
   const handleDobChange = (date) => {
     setuserDob(date);
+    if (date == "") {
+      isValidDob = true
+    }
   };
 
   const handleFamilyOpen = () => setDrawerOpen(true);
@@ -371,11 +374,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           >
             <div className="profile-details">
               <div className="profile-image-container">
-                <img
+                {profileImage == null ? <img
                   src={profileImage}
                   alt="Profile"
                   className="profile-image"
-                />
+                /> : <img src={require('../Images/ic_default_profile.png')}
+                  alt="Profile"
+                  className="profile-image" />}
                 {update && (
                   <label htmlFor="profile-image-upload">
                     <img
@@ -398,10 +403,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               <h2 className="text-header text-light mt-2 text-center">
                 {capitalizeFirstLetter(username)}
               </h2>
-              {useremail && <p className="register-text text-center">{useremail}</p>}
+              {useremail != '' ? <p className="register-text text-center">{useremail}</p> : null}
 
               {!update && (
-                <div className="flex justify-center mt-4 mb-8">
+                <div className="flex justify-center mt-4 mb-10">
                   <Button
                     text={"Edit Profile"}
                     size="lg"
@@ -504,7 +509,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 />
 
               </Grid>
-                {/* Phone */}
+              {/* Phone */}
               <Grid item style={commonItemStyle}>
                 <CustomInput
                   type="tel"
@@ -530,7 +535,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                     const val = e.target.value;
                     setuserEmail(val);
                     const valid =
-                      !val || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
+                      !val || val === '' || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
                     setIsValidEmail(valid);
                   }}
                   fullWidth
@@ -542,7 +547,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
               </Grid>
 
-             
+
 
               <Grid item style={commonItemStyle}>
                 <label
@@ -551,16 +556,18 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 >
                   Date of Birth
                 </label>
-                  <GlobalDatePicker
-                    selectedDate={userDob}
-                    handleDateChange={(date) => {
-                      setuserDob(date);
-                      setIsValidDob(date ? isOldEnough(date) : false);
-                    }}
-                    placeholder="Select your date of birth"
-                    error={!isValidDob}
-                    validationMessage="You must be at least 18 years old"
-                  />
+                <GlobalDatePicker
+                  selectedDate={userDob}
+                  handleDateChange={(date) => {
+                    setuserDob(date);
+                   
+                      setIsValidDob(date ? isOldEnough(date) : false)
+                    
+                  }}
+                  placeholder="Select your date of birth"
+                  error={!isValidDob}
+                  validationMessage="You must be at least 18 years old"
+                />
 
               </Grid>
 
@@ -580,7 +587,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               {/* State */}
               <Grid item style={commonItemStyle}>
                 <GlobalDropdown
-                                    className={` ${selectedStateId === ""? 'placeholder-selected !important' : 'custom-dark-dropdown'}`}
+                  className={` ${selectedStateId === "" ? 'placeholder-selected !important' : 'custom-dark-dropdown'}`}
 
                   onStateSelect={handleStateSelect}
                   initialValue={selectedStateId}
@@ -592,7 +599,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               <Grid item style={commonItemStyle}>
                 <CityDropdown
                   label="City"
-                    className={` ${selectedCityId === ""? 'placeholder-selected' : 'custom-dark-dropdown'}`}
+                  className={` ${selectedCityId === "" ? 'placeholder-selected' : 'custom-dark-dropdown'}`}
                   selectedStateId={selectedStateId}
                   onCitySelect={handleCitySelect}
                   initialValue={selectedCityId}
@@ -634,7 +641,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   id="gender"
                   value={gender}
                   onChange={(e) => setgender(e.target.value)}
-  className={` ${gender === ''? 'placeholder-selected' : 'custom-dark-dropdown'}`}
+                  className={` ${gender === '' ? 'placeholder-selected' : 'custom-dark-dropdown'}`}
                 >
                   <option value="">Select Your Gender</option>
                   <option value="male">Male</option>
@@ -647,18 +654,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               {/* Buttons */}
               <Grid item style={commonItemStyle}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <Button
                       text="Update Profile"
                       onClick={handleUpateProfile}
-                      disabled={
-                        !username
-                      }
-                      bgcolor={
-                        !username
-                          ? "#ccc"
-                          : "#8AC642"
-                      }
+                      disabled={!username}
+                      bgcolor={!username ? "#ccc" : "#8AC642"}
                       customStyle={{
                         width: "100%",
                         height: 48,
@@ -667,7 +668,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <Button
                       text="Cancel"
                       onClick={() => setUpdate(false)}
