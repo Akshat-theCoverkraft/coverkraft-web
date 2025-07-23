@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Box, Typography } from "@mui/material";
+import { Drawer, Box, Typography, FormHelperText } from "@mui/material";
 import CustomInput from "../component/CustomInput";
 import Button from "../component/Button";
 import backArrow from "../Images/ic_back_button.png";
@@ -51,6 +51,42 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
     };
   }, [familyAdd]);
 
+  const validateField = (name, value) => {
+    let message = "";
+
+    switch (name) {
+      case "fullName":
+        if (!value.trim()) {
+          message = "Full name is required.";
+        }
+        break;
+      case "userPhone":
+        if (!/^\d{10}$/.test(value)) {
+          message = "Enter a valid 10-digit phone number.";
+        }
+        break;
+      case "useremail":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          message = "Enter a valid email address.";
+        }
+        break;
+      case "familyMember":
+        if (!value || value == "") {
+          message = "Please select relation.";
+        }
+        break;
+      default:
+        break;
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: message,
+    }));
+  };
+
+
   const validateForm = () => {
     const tempErrors = {};
     let valid = true;
@@ -61,7 +97,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
     }
 
     if (!familyMember) {
-      tempErrors.familyMember = "Please select a family member.";
+      tempErrors.familyMember = "Please select relation.";
       valid = false;
     }
 
@@ -154,22 +190,30 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
               label="Family Member"
               options={familyOption}
               value={familyMember}
-              onChange={(e) => setFamilyMember(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFamilyMember(value);
+                validateField("familyMember", value);
+              }}
               placeholder="Select"
               backgroundColor={THEME_COLOR.FADE_BACKGROUND}
               error={!!errors.familyMember}
               helperText={errors.familyMember}
               required
             />
-
+            {errors.familyMember && <div className="invalid-feedback text-danger d-block">{errors.familyMember}</div>}
           </Box>
 
           <Box sx={{ mb: 3 }}>
             <CustomInput
               label="Full Name"
-              placeholder="Enter your Full Name"
+              placeholder="Enter Full Name"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFullName(value);
+                validateField("fullName", value);
+              }}
               inputStyle={commonInputStyle}
               error={!!errors.fullName}
               validationMessage={errors.fullName}
@@ -181,10 +225,13 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
           <Box sx={{ mb: 3 }}>
             <CustomInput
               label="Phone Number"
-              placeholder="Enter your Phone Number"
+              placeholder="Enter Phone Number"
               value={userPhone}
-              onChange={(e) =>
+              onChange={(e) => {
                 setuserPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+                setuserPhone(e.target.value);
+                validateField("userPhone", e.target.value);
+              }
               }
               inputStyle={commonInputStyle}
               error={!!errors.userPhone}
@@ -199,7 +246,11 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
               label="Email"
               placeholder="Enter Email"
               value={useremail}
-              onChange={(e) => setuserEmail(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setuserEmail(value);
+                validateField("useremail", value);
+              }}
               inputStyle={commonInputStyle}
               error={!!errors.useremail}
               validationMessage={errors.useremail}

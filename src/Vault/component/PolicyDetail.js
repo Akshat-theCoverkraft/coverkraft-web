@@ -331,7 +331,7 @@ const PolicyDetail = ({ policyId }) => {
             ? "Policy archived successfully"
             : action === "unarchive"
             ? "Policy removed from archive successfully"
-            : "Feature Comming Soon";
+            : "Feature Coming Soon";
         toast.success(message);
       })
       .catch(() => {

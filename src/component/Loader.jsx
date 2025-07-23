@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const Loader = ({ size = 50, message = "Content Loading..." }) => {
+const Loader = ({ size = 50, message = "Please Wait..." }) => {
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {

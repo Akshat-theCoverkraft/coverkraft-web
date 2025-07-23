@@ -244,8 +244,9 @@ const Vault = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
       toast.success("Excel file downloaded  successfully!");
+
+      toast.success("Excel file downloaded successfully!");
     } catch (error) {
       console.error("Excel export failed:", error);
       toast.error("Failed to export Excel. Please try again.");
@@ -282,15 +283,12 @@ const exportToPDF = async () => {
     link.click();
     document.body.removeChild(link);
 
-    toast.success("PDF download  successfully!");
-  } catch (error) {
-    console.error("Error exporting PDF:", error);
-    toast.error("Unable to export PDF. Please try again.");
-  }
-};
-
-
-
+      toast.success("PDF downloded successfully!");
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+      toast.error("Unable to export PDF. Try again later.");
+    }
+  };
 
   // File upload card component
   const FileUploadCard = ({ type, files, icon, text, inputRef, onChange, onClick }) => (

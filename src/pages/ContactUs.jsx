@@ -100,6 +100,7 @@ function ContactUs() {
   };
 
   const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidName =value=> /^[a-zA-Z\s]+$/.test(value);
 
   const validateForm = () => {
     const errors = {};
@@ -158,17 +159,27 @@ function ContactUs() {
       <div className="container-fluid text-light">
         <Navbar />
 
-        <div className="text-center my-5 p-5" style={{ backgroundColor: "#212121", borderRadius: "20px", margin: "0 6%" }}>
+        <div className="text-center my-5 p-8" >
           <h1 className="fw-bold text-size-xxl" style={{ color: "#8bc642" }}>Contact Us</h1>
-          <h3 className="text-size-md" style={{ color: "#ccc" }}>We'd love to hear from you! Fill the form below.</h3>
+          <h3 className="text-size-md" style={{ color: "#ccc", alignSelf: 'center' }}>We'd love to hear from you!</h3>
 
-          <div className="containers my-5" style={{ fontSize: "1.6rem", color: "#8bc642" }}>
-            <div className="rounded-4 shadow-lg p-2">
-              <div className="row g-4" style={{ minHeight: "400px", paddingLeft: "4%" }}>
-                <div className="col-md-6">
+          <div className="d-flex justify-content-center my-5">
+            <div
+              className="rounded-4 shadow-lg p-2 w-100"
+              style={{
+                maxWidth: "1000px",
+                backgroundColor: "#1e1e1e", // optional background color
+                fontSize: "1.6rem",
+                paddingLeft:'30px',
+                color: "#8bc642"
+              }}
+            >
+              <div className="row g-4">
+
+                <div className="col-md-6" style={{padding:25}}>
                   <form onSubmit={handleSubmit} encType="multipart/form-data">
 
-                    <div className="mb-3 text-start">
+                    <div className="mb-3 ">
                       <Input
                         name="name"
                         value={form.name}
@@ -197,7 +208,8 @@ function ContactUs() {
                         name="message"
                         placeholder="Write your query..."
                         className="form-control bg-dark text-light border-secondary text-size-md"
-                        style={{ height: "120px", resize: "none" }}
+                        style={{ height: "120px", resize: "none", fontSize: "1.3rem",
+ }}
                         value={form.message}
                         onChange={handleChange}
                       />
@@ -297,7 +309,7 @@ function ContactUs() {
                 </div>
 
                 <div className="col-md-6 d-flex flex-column align-items-center justify-content-center text-light text-center">
-                  <img src={require("../Images/objects.png")} alt="Decor" className="img-fluid mb-4" style={{ maxWidth: "300px" }} />
+                  <img src={require("../Images/objects.png")} alt="Decor" className="img-fluid mb-4" style={{ maxWidth: "230px" }} />
                   <div>
                     <p className="text-size-md">
                       <a
@@ -358,7 +370,7 @@ function ContactUs() {
             &times;
           </span>
           <Typography variant="h5" sx={{ mb: 2, color: "#8bc642", fontWeight: 700, fontSize: 20 }}>
-            Thank You for letting us know your requirement
+            Thank you for letting us know your requirement!
           </Typography>
           <Typography variant="body1" sx={{ mb: 2, fontSize: 16 }}>
             We will get back to you with a resolution soon.

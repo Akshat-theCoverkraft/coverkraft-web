@@ -64,6 +64,7 @@ const BackToTop = () => {
           style={{
             position: "fixed",
             bottom: 30,
+            marginBottom:10,
             right: 30,
             width: 50,
             height: 50,

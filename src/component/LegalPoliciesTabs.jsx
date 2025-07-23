@@ -340,7 +340,7 @@ const policies = [
 
                 <ol style={{ paddingLeft: '1.5rem' }}>
                     <li>
-                        Welcome to <strong>www.thecoverkraft.com</strong> (the "Site") operated by <strong>COVERKRAFT INSURANCE BROKERS PRIVATE LIMITED</strong> ("Coverkraft Insurance"), providing an easy way to buy insurance products from multiple Insurance Companies. Coverkraft Insurance is a licensed Insurance Broking Company holding a Broking license from the Insurance Regulatory and Development Authority. The IRDAI Direct Broker (General & Life) License Code: <strong>xxx</strong>.
+                        Welcome to <strong>www.thecoverkraft.com</strong> (the "Site") operated by <strong>COVERKRAFT INSURANCE BROKERS PRIVATE LIMITED</strong> ("Coverkraft Insurance"), providing an easy way to buy insurance products from multiple Insurance Companies. Coverkraft Insurance is a licensed Insurance Broking Company holding a Broking license from the Insurance Regulatory and Development Authority. The IRDAI Direct Broker (General & Life) License Code: <strong>1078</strong>.
                     </li>
 
                     <li>

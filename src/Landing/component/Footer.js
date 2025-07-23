@@ -71,14 +71,34 @@ const Footer = () => {
             />
             <p
               className="text-color lh-base mb-0"
-              style={{ fontSize: "1.2rem", fontFamily: "DM Sans" }}
+              style={{ fontSize: "1.4rem", fontFamily: "DM Sans" }}
             >
-            </p>              CoverKraft empowers its clients with the required insurance knowledge for making proper insurance choice. Our clients can save all their policies in the Policy Vault and get timely reminders for renewal.
+            </p>CoverKraft empowers its clients with the required insurance knowledge for making proper insurance choice. Our clients can save all their policies in the Policy Vault and get timely reminders for renewal.
 
           </div>
+          <div className="col-12 col-lg-3 d-flex justify-content-lg-end justify-content-center mt-4 mt-lg-0">
+            {/* Legal & Footer Bottom Bar */}
+            <div className="container-fluid px-4 mt-4">
+              <div className="row">
+                <div className="col-12 col-lg-12">
+                  <div className="footer-legal-text" style={{ fontSize: "1.2rem", color: "#ccc", lineHeight: "1.5" }}>
+                    <h5><strong>Coverkraft Insurance Brokers Private Limited</strong></h5>Reg. Office – D-3-591-D, Danish Nagar, Near Central School -3, Hoshangabad Road, Bhopal (MP) - 462 026 <br /> IRDAI Direct Insurance Broker (Life & General)<br/> License No. 1078 | Valid Till - 13/07/2028 <br /> Code No. - IRDAI/INT/BRK/DB1170/2024 <br/>CIN NO. - U66220MP2024PTC071585 <br/> Reg. No. 071585  
+                    <a href="https://irdai.gov.in/"
+                      target="_blank"
+                     
+                      style={{ fontWeight:600 ,fontSize: "1.2rem", color: "inherit" }}>  IRDAI</a>
+                  </div>
+                </div>
 
+
+              </div>
+
+
+            </div>
+
+          </div>
           {/* Contact Info */}
-          <div className="col-12 col-sm-6 col-lg-3">
+          <div className="col-12 col-sm-6 col-lg-2" style={{ paddingLeft: '10px', }}>
             <h6 className="text-uppercase fw-bold mb-3" style={{ fontSize: "1.4rem" }}>
               Get in Touch
             </h6>
@@ -91,14 +111,13 @@ const Footer = () => {
                 className="me-3 mt-1"
               />
               <a
-                        href="https://www.google.com/maps/search/?api=1&query=16+D-1,+Danish+Nagar,+Hoshangabad+Road,+Bhopal+(M.P)"
+                href="https://www.google.com/maps/search/?api=1&query=16+D-1,+Danish+Nagar,+Hoshangabad+Road,+Bhopal+(M.P)"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-link lh-base"
                 style={{ fontSize: "1.2rem", color: "inherit", textDecoration: "none" }}
               >
                 16 D-1, Danish Nagar, Hoshangabad Road,
-                <br />
                 Bhopal, MP, 462026
               </a>
             </div>
@@ -137,7 +156,7 @@ const Footer = () => {
           </div>
 
           {/* Services */}
-          <div className="col-6 col-sm-6 col-lg-2">
+          <div className="col-6 col-sm-6 col-lg-2" style={{ paddingLeft: '35px', }}>
             <h6 className="text-uppercase fw-bold mb-3" style={{ fontSize: "1.4rem" }}>
               Services
             </h6>
@@ -158,7 +177,7 @@ const Footer = () => {
           </div>
 
           {/* Company */}
-          <div className="col-6 col-sm-6 col-lg-2">
+          <div className="col-6 col-sm-6 col-lg-2" style={{ paddingLeft: '35px', }}>
             <h6 className="text-uppercase fw-bold mb-3" style={{ fontSize: "1.4rem" }}>
               Company
             </h6>
@@ -190,37 +209,35 @@ const Footer = () => {
               )}
             </div>
           </div>
+        </div>
 
-          {/* Social Icons */}
-          <div className="col-12 col-lg-2 d-flex justify-content-lg-end justify-content-center mt-4 mt-lg-0">
-            <div className="d-flex gap-3">
-              {socialIcons.map((icon, i) => (
-                <a
-                  key={i}
-                  href={icon.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="d-inline-flex align-items-center justify-content-center"
-                  style={{
-                    borderRadius: "50%",
-                    padding: "10px",
-                    transition: "transform 0.2s ease",
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-                  onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
-                >
-                  <img
-                    src={icon.src}
-                    alt={icon.alt}
-                    style={{ height: "20px", width: "20px", objectFit: "contain" }}
-                  />
-                </a>
-              ))}
-            </div>
-          </div>
+      </div>
+      <div className="col-12 d-flex justify-content-center justify-content-center mt-lg-0">
+        <div className="d-flex gap-3">
+          {socialIcons.map((icon, i) => (
+            <a
+              key={i}
+              href={icon.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="d-inline-flex align-items-center justify-content-center"
+              style={{
+                borderRadius: "50%",
+                paddingLeft: "10px",
+                transition: "transform 0.2s ease",
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+              onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            >
+              <img
+                src={icon.src}
+                alt={icon.alt}
+                style={{ height: "20px", width: "20px", objectFit: "contain" }}
+              />
+            </a>
+          ))}
         </div>
       </div>
-
       {/* Footer Bottom Bar */}
       <div className="text-center p-3 mt-4" style={{ backgroundColor: THEME_COLOR.BACKGROUND }}>
         <div className="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-2">
@@ -228,6 +245,7 @@ const Footer = () => {
           <span className="text-color">All rights reserved</span>
         </div>
       </div>
+
     </footer>
   );
 };
