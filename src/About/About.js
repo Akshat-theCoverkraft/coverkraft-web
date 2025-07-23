@@ -32,7 +32,7 @@ const About = () => {
                 fontSize: "1.7rem",
               }}
             >
-              CoverKraft Insurance Broking  Pvt Ltd is on a mission to
+              Coverkraft Insurance Brokers Private. Limited. is on a mission to
               revolutionize the industry. <br />
               Led by a team of experts and tech enthusiasts, we have
               developed a user-friendly tech platform to make insurance easily
