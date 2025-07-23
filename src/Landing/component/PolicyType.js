@@ -48,7 +48,7 @@ const PolicyType = () => {
  
   return (
     <>
-      <Box className="policy-container" sx={{ mx: '6%', my: 4, mt: 5 }}>
+      <Box className="policy-container" sx={{ mx: '6%', my: 4, mt: 0 }}>
         <Box
           sx={{
             background: 'linear-gradient(105deg, #3E3E3E 0%, #121212 100%)',
