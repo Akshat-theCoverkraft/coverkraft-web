@@ -244,6 +244,7 @@ const Vault = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      toast.success("Excel file downloaded  successfully!");
 
       toast.success("Excel file downloaded successfully!");
     } catch (error) {
@@ -252,50 +253,35 @@ const Vault = () => {
     }
   };
 
-  const exportToPDF = async () => {
-    if (selectedPolicies.length === 0)
-      return toast.error("Please select at least one policy to export");
+const exportToPDF = async () => {
+  if (selectedPolicies.length === 0) {
+    return toast.error("Please select at least one policy to export");
+  }
 
-    try {
-      const token = sessionStorage.getItem("token");
-      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
-      const response = await axios.get(
-        `${API_URL}policy/pdfTable?${queryParams}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+  try {
+    const token = sessionStorage.getItem("token");
+    const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
 
-      const fileUrl = response?.data?.fileUrl;
-      if (!fileUrl) throw new Error("PDF file URL is missing in response.");
-
-      const filename = fileUrl.split("/").pop() || "policies.pdf";
-
-      // Use axios instead of fetch
-      const pdfResponse = await axios.get(fileUrl, { responseType: "blob" });
-      const blob = pdfResponse.data;
-
-      const file = new File([blob], filename, {
-        type: "application/pdf",
-        lastModified: new Date(),
-      });
-
-      // Only works on mobile browsers that support file sharing
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: "Policy Documents",
-          text: "Here are your policy documents.",
-          files: [file],
-        });
-      } else {
-        // fallback: download
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(file);
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    // Step 1: Get the file URL from backend
+    const response = await axios.get(
+      `${API_URL}policy/pdfTable?${queryParams}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
       }
+    );
+
+    const fileUrl = response?.data?.fileUrl;
+    if (!fileUrl) throw new Error("PDF file URL is missing in response.");
+
+    const filename = fileUrl.split("/").pop() || "policies.pdf";
+
+    // Step 2: Trigger download via anchor tag — no CORS issues here
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
       toast.success("PDF downloded successfully!");
     } catch (error) {
