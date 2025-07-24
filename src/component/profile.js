@@ -61,7 +61,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isValidPhone, setIsValidPhone] = useState(true);
   const [isValidPinCode, setIsValidPinCode] = useState(true);
-  const [isValidDob, setIsValidDob] = useState(false);
+  const [isValidDob, setIsValidDob] = useState(true);
 
   const userbyId = useSelector((state) => state.user);
   const states = useSelector((state) => state.user);
