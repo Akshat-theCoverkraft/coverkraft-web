@@ -61,7 +61,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isValidPhone, setIsValidPhone] = useState(true);
   const [isValidPinCode, setIsValidPinCode] = useState(true);
-  const [isValidDob, setIsValidDob] = useState(true);
+  const [isValidDob, setIsValidDob] = useState(false);
 
   const userbyId = useSelector((state) => state.user);
   const states = useSelector((state) => state.user);
@@ -190,7 +190,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   };
 
   const isOldEnough = (date) => {
-    if (!date) return false;
+    if (!date) return true;
 
     const today = new Date();
     const ageDiff = today.getFullYear() - date.getFullYear();
@@ -220,7 +220,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const pinValid = !pinCode || /^\d{5,6}$/.test(pinCode);
     setIsValidPinCode(pinValid);
 
-    const dobValid = userDob || isOldEnough(userDob);
+    const dobValid = !userDob || isOldEnough(userDob);
+    console.log('sdfsdf', dobValid, userDob, isOldEnough(userDob))
     setIsValidDob(dobValid);
 
     if (!nameValid) {
@@ -664,7 +665,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                     <Button
                       text="Update Profile"
                       onClick={handleUpateProfile}
-                      disabled={!username}
+                      disabled={!username || !isValidDob}
                       bgcolor={!username ? "#ccc" : "#8AC642"}
                       customStyle={{
                         width: "100%",
