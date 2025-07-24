@@ -462,7 +462,7 @@ const PolicyDetail = ({ policyId }) => {
 
   return (
     <div style={{minHeight:"620px"}}>
-      <ToastContainer position="top-center" style={{ }} />
+      <ToastContainer position="top-center"  />
         <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}

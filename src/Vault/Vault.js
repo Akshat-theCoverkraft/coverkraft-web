@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Gmail from "../Images/Group 1000001305.png";
@@ -41,9 +40,10 @@ import { THEME_COLOR } from "../constants";
 import emptyImage from "../../src/Images/NoData.png";
 
 import "./vault.css";
-import "react-toastify/dist/ReactToastify.css";
 import SessionExpiredModal from "../utils/sessionExpireModal";
 import { color } from "framer-motion";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -370,6 +370,8 @@ const Vault = () => {
         "&::-webkit-scrollbar": { display: "none" },
       }}
     >
+      <ToastContainer />
+      
       <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
