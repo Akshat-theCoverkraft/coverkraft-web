@@ -83,7 +83,7 @@ export const deleteAccount = (API_URL, userId) => {
         axios
             .post(API_URL + `user/deleteUser`, { _id: userId }, {
                 headers: {
-                    Authorization: `Bearer ${token}` 
+                    Authorization: `Bearer ${token}`
                 }
             })
             .then((response) => {
@@ -145,24 +145,39 @@ export const deleteAllNotificationsByUser = (API_URL, userId) => {
             });
     };
 };
-// register start
+
 export const registrationCustomer = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: REGISTER_DATA_REQUEST });
-        axios
+
+        return axios
             .post(API_URL + "user/createUser", data)
             .then((response) => {
-                dispatch({ type: REGISTER_DATA_SUCCESS, payload: response.data });
-                return response.data;
+                if (response.data.status === false) {
+                    dispatch({
+                        type: REGISTER_DATA_FAILURE,
+                        payload: response.data.message,
+                    });
+                    throw new Error(response.data.message); // Manually throw
+                }
 
+                dispatch({
+                    type: REGISTER_DATA_SUCCESS,
+                    payload: response.data,
+                });
+                return response.data;
             })
             .catch((error) => {
-                // Check if the error response contains a message
-
-                dispatch({ type: REGISTER_DATA_FAILURE, payload: error.message });
+                const message =
+                    error?.response?.data?.message || error.message || "Something went wrong";
+                dispatch({ type: REGISTER_DATA_FAILURE, payload: message });
+                throw new Error(message);
             });
     };
-}
+};
+
+
+
 
 //VERIFY USER
 export const verifyUser = (API_URL, data) => {
