@@ -302,23 +302,31 @@ export const getBYIDUsers = (API_URL, userId) => {
 }
 
 
-//update user 
+
 export const updateUser = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: UPDATEUSER_DATA_REQUEST });
-        const token = sessionStorage.getItem('token');
+
         return axios
             .post(API_URL + `user/updateUser`, data)
             .then((response) => {
-                dispatch({ type: UPDATEUSER_DATA_SUCCESS, payload: response.data });
-                const userId = data.get('_id');
-                return dispatch(getBYIDUsers(API_URL, userId));
+                if (response.data.status === false) {
+                    dispatch({ type: UPDATEUSER_DATA_FAILURE, payload: response.data.message });
+                } else {
+                    dispatch({ type: UPDATEUSER_DATA_SUCCESS, payload: response.data });
+
+                    const userId = data.get('_id');
+                    dispatch(getBYIDUsers(API_URL, userId));
+                }
+                return response.data; // ✅ Return response to the component
             })
             .catch((error) => {
                 dispatch({ type: UPDATEUSER_DATA_FAILURE, payload: error.message });
+                return { status: false, message: error.message }; // ✅ Return error structure
             });
     };
-}
+};
+
 
 
 // get all state data 

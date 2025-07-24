@@ -190,7 +190,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   };
 
   const isOldEnough = (date) => {
-    if (!date) return false;
+    if (!date) return true;
 
     const today = new Date();
     const ageDiff = today.getFullYear() - date.getFullYear();
@@ -220,7 +220,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const pinValid = !pinCode || /^\d{5,6}$/.test(pinCode);
     setIsValidPinCode(pinValid);
 
-    const dobValid = userDob || isOldEnough(userDob);
+    const dobValid = !userDob || isOldEnough(userDob);
+    console.log('sdfsdf', dobValid, userDob, isOldEnough(userDob))
     setIsValidDob(dobValid);
 
     if (!nameValid) {
@@ -232,9 +233,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     formData.append("userName", username || '');
     formData.append("userEmail", useremail || '');
     formData.append("userPhone", userPhone || '');
-    {
+    try{
       const formattedDob = userDob.toLocaleDateString("en-GB").split("/").reverse().join("-");
       formData.append("userDob", formattedDob);
+    }catch(e){
+      formData.append("userDob", null);
     }
     formData.append("userAddress", userAddress);
     formData.append("state", selectedStateId);
@@ -243,9 +246,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     formData.append("gender", gender);
     if (userImgFile) formData.append("userImg", userImgFile || null);
 
-    dispatch(updateUser(API_URL, formData)).then(() => {
-      setUpdate(false);
-      onClose();
+   dispatch(updateUser(API_URL, formData)).then((res) => {
+        if (res.status) {
+            toast.success("Profile updated successfully!");
+            setUpdate(false);
+        } else {
+            toast.error(res.message || "Failed to update profile");
+        }
     });
   };
 
@@ -406,7 +413,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               {useremail != '' ? <p className="register-text text-center">{useremail}</p> : null}
 
               {!update && (
-                <div className="flex justify-center mt-4 mb-10">
+                <div className="flex justify-center mt-2 mb-10">
                   <Button
                     text={"Edit Profile"}
                     size="lg"
@@ -426,7 +433,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
         {!update ? (
           <Card
-            className="main-container p-6 mt-4"
+            className="main-container p-6 mt-8"
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
@@ -561,7 +568,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   handleDateChange={(date) => {
                     setuserDob(date);
                    
-                      setIsValidDob(date ? isOldEnough(date) : false)
+                      setIsValidDob(date ? isOldEnough(date) : true)
                     
                   }}
                   placeholder="Select your date of birth"
@@ -658,7 +665,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                     <Button
                       text="Update Profile"
                       onClick={handleUpateProfile}
-                      disabled={!username}
+                      disabled={!username || !isValidDob}
                       bgcolor={!username ? "#ccc" : "#8AC642"}
                       customStyle={{
                         width: "100%",

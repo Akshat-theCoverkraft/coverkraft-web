@@ -26,7 +26,7 @@ import SessionExpiredModal from "../../utils/sessionExpireModal";
 import GlobalDatePicker from "../../component/GlobalDatePicker";
 const MotorPolicyForm = () => {
   const location = useLocation();
-    const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
 
 
   const responseData = location.state?.responseData;
@@ -57,8 +57,8 @@ const MotorPolicyForm = () => {
   );
   const [vehicleEngineNumber, setVehicleEngineNumber] = useState(
     responseData?.vehicleEngineNumber ||
-      policyDetails?.policyDetails?.vehicleEngineNumber ||
-      ""
+    policyDetails?.policyDetails?.vehicleEngineNumber ||
+    ""
   );
   const [idv, setIdv] = useState(
     responseData?.idv || policyDetails?.policyDetails?.idv || ""
@@ -72,8 +72,8 @@ const MotorPolicyForm = () => {
   );
   const [ncb, setNcb] = useState(
     responseData?.ncpPercentage ||
-      policyDetails?.policyDetails?.ncpPercentage ||
-      ""
+    policyDetails?.policyDetails?.ncpPercentage ||
+    ""
   );
   const [tpPremium, setTpPremium] = useState(
     responseData?.tpPremium || policyDetails?.policyDetails?.tpPremium || ""
@@ -84,18 +84,27 @@ const MotorPolicyForm = () => {
   const [insuredName, setInsuredName] = useState(
     responseData?.insuredName || policyDetails?.insuredName || ""
   );
+  const normalizeCompanyName = (name) => {
+    console.log('name', name ? name.replace('.', '') : 'oo', name)
+    return name ? name.replace('.', '') : "";
+  };
+
   const [insuredCompany, setInsuredCompany] = useState(
-    responseData?.insuranceCompany || policyDetails?.insuredCompany || ""
+    normalizeCompanyName(responseData?.insuredCompany) ||
+    normalizeCompanyName(policyDetails?.insuredCompany) ||
+    ""
   );
+
+  const isAlphanumeric = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d ]+$/;
   const [registrationNumber, setRegistrationNumber] = useState(
     responseData?.registrationNumber ||
-      policyDetails?.policyDetails?.registrationNumber ||
-      ""
+    policyDetails?.policyDetails?.registrationNumber ||
+    ""
   );
   const [registrationYear, setRegistrationYear] = useState(
     responseData?.registrationYear ||
-      policyDetails?.policyDetails?.registrationYear ||
-      ""
+    policyDetails?.policyDetails?.registrationYear ||
+    ""
   );
   const [make, setMake] = useState(
     responseData?.make || policyDetails?.policyDetails?.make || ""
@@ -190,6 +199,10 @@ const MotorPolicyForm = () => {
         vehicleEngineNumber,
         idv,
       };
+      if (!isAlphanumeric.test(registrationNumber)) {
+        toast.error("Registration number must contain letters and numbers.");
+        return;
+      }
 
       if (validateFields(payload)) {
         if (mode === "edit") {
@@ -210,7 +223,6 @@ const MotorPolicyForm = () => {
   };
 
   const validateFields = (payload) => {
-    // Implement your validation logic here
     return (
       payload.policyNumber &&
       payload.policyStartDate &&
@@ -218,6 +230,7 @@ const MotorPolicyForm = () => {
       payload.insuredName &&
       payload.insuredCompany &&
       payload.registrationNumber &&
+      isAlphanumeric.test(payload.registrationNumber) &&
       payload.make &&
       payload.model &&
       payload.assetType &&
@@ -237,7 +250,7 @@ const MotorPolicyForm = () => {
     formData.append("premiumPaid", premiumPaid);
     formData.append("netPremium", netPremium);
     formData.append("insuredName", insuredName);
-    formData.append("insuranceCompany", insuredCompany);
+    formData.append("insuranceCompany", normalizeCompanyName(insuredCompany));
     formData.append("registrationNumber", registrationNumber);
     formData.append("registrationYear", registrationYear);
     formData.append("assetType", assetType);
@@ -267,17 +280,17 @@ const MotorPolicyForm = () => {
       const errorMessage =
         error.response?.data?.message || "Error creating policy";
       toast.error(`Error: ${errorMessage}`);
-         if (error.response?.status === 401) {
-            setShowSessionExpired(true);
-          } 
+      if (error.response?.status === 401) {
+        setShowSessionExpired(true);
+      }
       console.error("Error:", errorMessage);
     }
   };
-      const handleSessionExpiredOk = () => {
+  const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
     navigate('/login');
     localStorage.clear();
-  sessionStorage.clear(); 
+    sessionStorage.clear();
   };
 
   const updatePolicy = (payload) => {
@@ -318,7 +331,7 @@ const MotorPolicyForm = () => {
   return (
     <div>
       <Navbar />
-        <SessionExpiredModal
+      <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
@@ -386,42 +399,42 @@ const MotorPolicyForm = () => {
                   />
 
 
-              <Grid container spacing={1} className="mb-2">
-  <Grid item xs={12} md={6} margin={0} >
-    <label
-      className="form-label fw-bold mb-0" // ensure tight spacing
-      htmlFor="start-date"
-    >
-      Start date <span className="text-danger">*</span>
-    </label>
-    <DateTimePicker
-      id="start-date"
-      type="date"
-      isIcon={false}
-      label="DD/MM/YYYY"
-      value={formatDate(policyStartDate)}
-      onChange={handleStartDateChange}
-      className="w-100" // full width and dark bg
-    />
-  </Grid>
-  <Grid item xs={12} md={6}>
-    <label
-      className="form-label fw-bold mb-0"
-      htmlFor="end-date"
-    >
-      End date <span className="text-danger">*</span>
-    </label>
-    <DateTimePicker
-      id="end-date"
-      type="date"
-      isIcon={false}
-      label="DD/MM/YYYY"
-      value={formatDate(policyEndDate)}
-      onChange={handleEndDateChange}
-      className="w-100"
-    />
-  </Grid>
-</Grid>
+                  <Grid container spacing={1} className="mb-2">
+                    <Grid item xs={12} md={6} margin={0} >
+                      <label
+                        className="form-label fw-bold mb-0" // ensure tight spacing
+                        htmlFor="start-date"
+                      >
+                        Start date <span className="text-danger">*</span>
+                      </label>
+                      <DateTimePicker
+                        id="start-date"
+                        type="date"
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyStartDate)}
+                        onChange={handleStartDateChange}
+                        className="w-100" // full width and dark bg
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <label
+                        className="form-label fw-bold mb-0"
+                        htmlFor="end-date"
+                      >
+                        End date <span className="text-danger">*</span>
+                      </label>
+                      <DateTimePicker
+                        id="end-date"
+                        type="date"
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyEndDate)}
+                        onChange={handleEndDateChange}
+                        className="w-100"
+                      />
+                    </Grid>
+                  </Grid>
 
 
                   <CustomInput
@@ -435,37 +448,34 @@ const MotorPolicyForm = () => {
                     inputStyle={commonInputStyle}
                   />
                   <Box>
-                    {policyDetails?.insuredCompany ||
-                    responseData?.insuranceCompany ? (
-                      <CustomInput
-                        type="text"
-                        label="Insurance Company"
-                        value={insuredCompany}
-                        readOnly
-                        disabled
-                        required
-                        inputStyle={commonInputStyle}
-                      />
-                    ) : (
-                      <InsuranceDropdown
-                        onCompanySelect={(companyId) =>
-                          setInsuredCompany(companyId)
-                        }
-                        initialValue={insuredCompany}
-                      />
-                    )}
+
+                    <CustomInput
+                      type="text"
+                      label="Insurance Company"
+                      value={normalizeCompanyName(insuredCompany)}
+                      readOnly
+                      disabled
+                      required
+                      inputStyle={commonInputStyle}
+                    />
+
                   </Box>
 
                   <CustomInput
                     type="text"
                     label="Registration Number"
                     value={registrationNumber}
-                    onChange={(e) => {
-                      setRegistrationNumber(e.target.value);
-                    }}
+                    onChange={(e) => setRegistrationNumber(e.target.value)}
                     required
+
                     inputStyle={commonInputStyle}
+                    validationMessage={
+                      registrationNumber && !isAlphanumeric.test(registrationNumber)
+                        ? "Registration number must contain letters and numbers (spaces allowed)"
+                        : ""
+                    }
                   />
+
                   <CustomInput
                     type="text"
                     label="Registration Year"
