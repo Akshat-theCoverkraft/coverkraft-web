@@ -461,8 +461,8 @@ const PolicyDetail = ({ policyId }) => {
   }
 
   return (
-    <>
-      <ToastContainer position="top-center" style={{ zIndex: 99999 }} />
+    <div style={{minHeight:"620px"}}>
+      <ToastContainer position="top-center" style={{ }} />
         <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
@@ -479,7 +479,7 @@ const PolicyDetail = ({ policyId }) => {
               justifyContent: "center",
               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
               //  backgroundColor:"red",
-              minHeight: "650px !important",
+              height: "680px !important",
               // marginBottom: "5vh",
               backgroundColor: "#121212",
               color: THEME_COLOR.COLOR,
@@ -611,7 +611,7 @@ const PolicyDetail = ({ policyId }) => {
                   marginTop: "48px",
                   paddingTop: "5px",
                   width: "100%",
-                  // height: "50%",
+                 height: "396px",
                   boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                   backgroundColor: "#212121",
                   color: THEME_COLOR.COLOR,
@@ -770,7 +770,7 @@ const PolicyDetail = ({ policyId }) => {
           </Card>
         );
       })}
-    </>
+    </div>
   );
 };
 
