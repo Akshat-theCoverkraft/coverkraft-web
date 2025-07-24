@@ -1,76 +1,51 @@
 import { useState, useEffect } from "react";
-import services_certificate from "../Images/CoverKraft_IRDA.png";
-import { LegalPolicyHtml, LegalPolicyId } from "./LegalPolicyHtmlData.ts";
+import API_URL from "../ServiceModule/Service";
+
+const API_URL1 = API_URL+ "legal/getAll";
 
 const policies = [
-  {
-    label: "Privacy Policy",
-    id: LegalPolicyId.PRIVACY_POLICY,
-  },
-  {
-    label: "Grievance Redress Policy",
-    id: LegalPolicyId.GRIEVANCE_POLICY,
-  },
-  {
-    label: "Terms of Use",
-    id: LegalPolicyId.TERMS_OF_USE,
-  },
-  {
-    label: "Terms & Conditions",
-    id: LegalPolicyId.TERMS_AND_CONDITIONS,
-  },
-  {
-    label: "Refund & Cancellation Policy",
-    id: LegalPolicyId.REFUND_CANCELLATION,
-  },
-  {
-    label: "ISNP",
-    id: LegalPolicyId.ISNP,
-  },
-  {
-    label: "License",
-    id: LegalPolicyId.LICENSE,
-  },
-  {
-    label: "Disclaimer",
-    id: LegalPolicyId.DISCLAIMER,
-  },
+  { label: "Privacy Policy", id: "PrivacyPolicy" },
+  { label: "Grievance Redress Policy", id: "GrievanceRedressPolicy" },
+  { label: "Terms of Use", id: "TermsOfUse" },
+  { label: "Terms & Conditions", id: "TermsAndConditions" },
+  { label: "Refund & Cancellation Policy", id: "RefundCancellationPolicy" },
+  { label: "ISNP", id: "ISNP" },
+  { label: "License", id: "License" },
+  { label: "Disclaimer", id: "disclaimer" },
 ];
 
 const LegalPoliciesTabs = () => {
   const [activeTab, setActiveTab] = useState(policies[0].label);
+  const [policyData, setPolicyData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const fetchPolicies = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(API_URL1);
+      const result = await response.json();
+
+      if (result?.status && Array.isArray(result.data)) {
+        // Convert array to object for quick access
+        const mappedData = {};
+        result.data.forEach((item) => {
+          mappedData[item.legalPolicyType] = item.description || "<p>No content available.</p>";
+        });
+        setPolicyData(mappedData);
+      }
+    } catch (error) {
+      console.error("Error fetching policies:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const hash = window.location.hash.replace("#", "");
-    if (hash) {
-      const matchedPolicy = policies.find((p) => p.id === hash);
-      if (matchedPolicy) {
-        setActiveTab(matchedPolicy.label);
-      }
-    }
+    fetchPolicies();
   }, []);
 
-  useEffect(() => {
-    const hash = location.hash.replace("#", "");
-    if (!hash) return;
-    const matchedPolicy = policies.find((p) => p.id === hash);
-    if (matchedPolicy) {
-      setActiveTab(matchedPolicy.label);
-    }
-    setTimeout(() => {
-      const el = document.getElementById(hash);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    }, 200);
-  }, [location.hash]);
-
   const activePolicy = policies.find((p) => p.label === activeTab);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activeTab]);
+  const content = activePolicy ? policyData[activePolicy.id] : "<p>No content found.</p>";
 
   return (
     <div
@@ -78,9 +53,8 @@ const LegalPoliciesTabs = () => {
         backgroundColor: "#121212",
         color: "#E0E0E0",
         padding: "3rem 1.5rem",
-        fontFamily: "DM Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        fontFamily: "DM Sans, sans-serif",
         minHeight: "100vh",
-        minWidth: "70vw",
         width: "100%",
       }}
     >
@@ -90,20 +64,14 @@ const LegalPoliciesTabs = () => {
           fontSize: "2.7rem",
           marginBottom: "4rem",
           borderBottom: "2px solid rgb(141, 227, 27)",
-          paddingBottom: "0.5rem",
-          fontWeight: "700",
           textAlign: "center",
         }}
       >
         Legal and Admin Policies
       </h1>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "2rem",
-        }}
-      >
+
+      {/* Tabs */}
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "2rem" }}>
         <div
           style={{
             backgroundColor: "#121212",
@@ -127,11 +95,9 @@ const LegalPoliciesTabs = () => {
                   borderRadius: "40px",
                   border: "2px solid #8BC642",
                   fontSize: "1.4rem",
-                  fontWeight: isActive ? "600" : "500",
                   cursor: "pointer",
                   transition: "all 0.3s ease",
                   minWidth: "120px",
-                  textAlign: "center",
                 }}
               >
                 {policy.label}
@@ -141,6 +107,7 @@ const LegalPoliciesTabs = () => {
         </div>
       </div>
 
+      {/* Content Area */}
       <div
         style={{
           backgroundColor: "#121212",
@@ -148,35 +115,19 @@ const LegalPoliciesTabs = () => {
           borderRadius: "12px",
           boxShadow: "0 0 20px rgba(139, 198, 66, 0.1), 0 8px 32px rgba(0,0,0,0.4)",
           lineHeight: "1.75",
-          fontSize: "1rem",
+          fontSize: "1.1rem",
           color: "#CCCCCC",
           maxHeight: "75vh",
-          overflowY: "scroll",
+          overflowY: "auto",
           border: "1px solid #2E2E2E",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
         }}
       >
-        <style>{`
-          div::-webkit-scrollbar {
-            width: 8px;
-          }
-          div::-webkit-scrollbar-track {
-            background: #2E2E2E;
-            border-radius: 4px;
-          }
-          div::-webkit-scrollbar-thumb {
-            background: #8BC642;
-            border-radius: 4px;
-          }
-          div::-webkit-scrollbar-thumb:hover {
-            background: #7BA538;
-          }
-        `}</style>
-        {activePolicy && (
+        {loading ? (
+          <p style={{ color: "#8BC642", textAlign: "center" }}>Loading content...</p>
+        ) : (
           <div
-            id={activePolicy.id}
-            dangerouslySetInnerHTML={{ __html: LegalPolicyHtml[activePolicy.id] }}
+            id={activePolicy?.id}
+            dangerouslySetInnerHTML={{ __html: content }}
           />
         )}
       </div>
