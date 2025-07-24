@@ -239,6 +239,7 @@ const MotorPolicyForm = () => {
       payload.idv
     );
   };
+  
   const createPolicy = async (payload) => {
     const formData = new FormData();
     formData.append("userId", userId);
@@ -250,7 +251,7 @@ const MotorPolicyForm = () => {
     formData.append("premiumPaid", premiumPaid);
     formData.append("netPremium", netPremium);
     formData.append("insuredName", insuredName);
-    formData.append("insuranceCompany", normalizeCompanyName(insuredCompany));
+    formData.append("insuredCompany", normalizeCompanyName(insuredCompany));
     formData.append("registrationNumber", registrationNumber);
     formData.append("registrationYear", registrationYear);
     formData.append("assetType", assetType);
