@@ -190,6 +190,8 @@ const styles = {
     flexDirection: "column",
     alignItems: "center",
     textAlign: "center",
+    borderColor:'#8AC642',
+    borderWidth:1,
     width: "100%", // Make card take full width of container
     boxSizing: "border-box",
   },

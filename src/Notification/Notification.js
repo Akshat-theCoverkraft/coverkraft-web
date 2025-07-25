@@ -82,97 +82,130 @@ const Notification = () => {
       ? text
       : words.slice(0, wordLimit).join(" ") + "...";
   };
+  const getTimeAgo = (dateString) => {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diffInSeconds = Math.floor((now - past) / 1000);
+
+    if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    const diffInWeeks = Math.floor(diffInDays / 7);
+    if (diffInWeeks < 4) return `${diffInWeeks} week${diffInWeeks > 1 ? 's' : ''} ago`;
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
+    const diffInYears = Math.floor(diffInDays / 365);
+    return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
+  };
 
   return (
-    <Box style={{ backgroundColor: "#121212", minHeight: "100vh", color: "#fff", display: "flex",
-      flexDirection: "column", }}>
+    <Box style={{
+      backgroundColor: "#121212", minHeight: "100vh", color: "#fff", display: "flex",
+      flexDirection: "column",
+    }}>
       <Navbar />
       <Box sx={{ flexGrow: 1 }}>
-      <SessionExpiredModal visible={showSessionExpired} onConfirm={handleSessionExpiredOk} />
+        <SessionExpiredModal visible={showSessionExpired} onConfirm={handleSessionExpiredOk} />
 
-      <Container maxWidth="lg" sx={{ py: 5 }}>
-        <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-          <Typography  fontWeight={700} color={"#8AC642"} sx={{ fontSize: "2.5rem" }}>
-            Notifications
-          </Typography>
-          {notifications.length > 0 && (
-            <Button
-              variant="contained"
-              onClick={handleDeleteAllClick}
-              sx={{
-                 backgroundColor: "transparent",
-  color: "#8AC642",
-  border: "1.5px solid #8AC642",
-  borderRadius: "20px",
-  padding: "8px 16px",
-  fontSize: "1.4rem",
-  fontWeight: "600",
-  minWidth: "100px",
-  cursor: "pointer",
-  userSelect: "none",
-  transition: "all 0.25s ease",
-  "&:hover": {
-    backgroundColor: "#8AC642",
-    color: "#000",
-  },
-              }}
-            >
-              Delete All
-            </Button>
+        <Container maxWidth="lg" sx={{ py: 5 }}>
+          <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
+            <Typography fontWeight={700} color={"#8AC642"} sx={{ fontSize: "2.5rem" }}>
+              Notifications
+            </Typography>
+            {/* {notifications.length > 0 && (
+              <Button
+                variant="contained"
+                onClick={handleDeleteAllClick}
+                sx={{
+                  backgroundColor: "transparent",
+                  color: "#8AC642",
+                  border: "1.5px solid #8AC642",
+                  borderRadius: "20px",
+                  padding: "8px 16px",
+                  fontSize: "1.4rem",
+                  fontWeight: "600",
+                  minWidth: "100px",
+                  cursor: "pointer",
+                  userSelect: "none",
+                  transition: "all 0.25s ease",
+                  "&:hover": {
+                    backgroundColor: "#8AC642",
+                    color: "#000",
+                  },
+                }}
+              >
+                Delete All
+              </Button>
+            )} */}
+          </Grid>
+
+          {loading ? (
+            <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "40vh" }}>
+              <CircularProgress style={{ color: "#8BC642" }} />
+            </Grid>
+          ) : notifications.length === 0 ? (
+            <Typography align="center" sx={{ mt: 10, fontSize: "1.6rem" }}>
+              You have no notifications.
+            </Typography>
+          ) : (
+            <Grid container direction="column" spacing={2}>
+              {notifications.map((notification) => (
+                <Grid item key={notification._id}>
+                  <Box
+                    sx={{
+                      backgroundColor: "#212121",
+                      padding: "1.5rem",
+                      color: "#ffffff",
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.5rem",
+                      fontSize: "1.5rem",
+                      lineHeight: "1.6",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="h6" fontWeight="600" sx={{ fontSize: "1.5rem" }}>
+                        {notification.title}
+                      </Typography>
+                      <Typography sx={{ fontSize: "1.2rem", color: "#8BC642" }}>
+                        {getTimeAgo(notification.createdAt)}
+                      </Typography>
+                    </Box>
+
+                    <Typography sx={{ fontSize: "1.5rem", color: "#cccccc" }}>
+                      {truncateText(notification.description)}
+                      {notification.description.split(" ").length > 20 && (
+                        <span
+                          onClick={() => handleReadMore(notification)}
+                          style={{
+                            color: "#8BC642",
+                            cursor: "pointer",
+                            fontWeight: 500,
+                            marginLeft: "10px",
+                          }}
+                        >
+                          Read more
+                        </span>
+                      )}
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
           )}
-        </Grid>
-
-        {loading ? (
-          <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "40vh" }}>
-            <CircularProgress style={{ color: "#8BC642" }} />
-          </Grid>
-        ) : notifications.length === 0 ? (
-          <Typography align="center" sx={{ mt: 10, fontSize: "1.6rem" }}>
-            You have no notifications.
-          </Typography>
-        ) : (
-          <Grid container direction="column" spacing={2}>
-            {notifications.map((notification) => (
-              <Grid item key={notification._id}>
-                <Box
-                  sx={{
-                    backgroundColor: "#212121",
-                    padding: "1.5rem",
-                    color: "#ffffff",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.5rem",
-                    fontSize: "1.5rem",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  <Typography variant="h6" fontWeight="600" sx={{ fontSize: "1.5rem" }}>
-                    {notification.title}
-                  </Typography>
-                  <Typography sx={{ fontSize: "1.5rem", color: "#cccccc" }}>
-                    {truncateText(notification.description)}
-                    {notification.description.split(" ").length > 20 && (
-                      <span
-                        onClick={() => handleReadMore(notification)}
-                        style={{
-                          color: "#8BC642",
-                          cursor: "pointer",
-                          fontWeight: 500,
-                          marginLeft: "10px",
-                        }}
-                      >
-                        Read more
-                      </span>
-                    )}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Container>
-</Box>
+        </Container>
+      </Box>
       <Footer />
 
       {/* Read More Modal */}

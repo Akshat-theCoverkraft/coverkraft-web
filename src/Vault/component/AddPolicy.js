@@ -439,7 +439,7 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
         formData.append('tpPremium', tpPremium);
         formData.append('odPremium', odPremium);
         formData.append('totalPremium', totalPremium);
-        formData.append('insuranceCompany', insuranceCompany);
+        formData.append('insuredCompany', insuranceCompany);
         formData.append('assetType', assetType);
         formData.append('make_Model', model);
         formData.append('registrationYear', registrationYear);

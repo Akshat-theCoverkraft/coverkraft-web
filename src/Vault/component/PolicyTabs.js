@@ -727,6 +727,7 @@ export default function PolicyTabs({
           zIndex: 1,
           position: "relative  !important",
           paddingTop: 2,
+          width:'100%',
           minHeight:'600px'
         }}
       >
@@ -794,7 +795,7 @@ export default function PolicyTabs({
   ).length;
 
   return (
-    <Box sx={{ px: { xs: 2, sm: 5 }, height: "100%" }}>
+    <Box sx={{ px: { xs: 2, sm: 2 }, height: "100%" }}>
         <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
@@ -824,7 +825,7 @@ export default function PolicyTabs({
 
             <Box
               sx={{
-                width: { xs: "100%", sm: "70%" },
+                width: { xs: "100%", sm: "100%" },
                 backgroundColor: "#929292",
                 mx: "auto",
                 mt: 1,

@@ -39,7 +39,7 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const SESSION_DURATION = 48 * 60 * 60 * 1000; 
+    const SESSION_DURATION = 48 * 60 * 60 * 1000;
     const excludedPages = ["", "/login", "/register"];
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
@@ -48,10 +48,10 @@ function App() {
     const loginTime = sessionStorage.getItem("loginTime");
 
     const handleLogout = () => {
-      sessionStorage.clear(); // Kill session
+      sessionStorage.clear();
       setLogout(true);
       setIsLoggedIn(false);
-      navigate("/login");
+      navigate("/");
     };
 
     if (!excludedPages.includes(window.location.pathname)) {

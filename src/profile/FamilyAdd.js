@@ -6,7 +6,7 @@ import backArrow from "../Images/ic_back_button.png";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
 import Dropdown from "../component/Dropdown";
-import { toast } from "react-toastify"; // Only used for API success/failure
+import { toast, ToastContainer } from "react-toastify"; 
 import { THEME_COLOR } from "../constants";
 
 const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
@@ -167,6 +167,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
         },
       }}
     >
+      <ToastContainer />
       <Box
         sx={{
           height: "100%",
@@ -174,11 +175,10 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          padding: "20px",
         }}
       >
         <Box sx={{ width: "100%", maxWidth: "400px" }}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 5 }}>
+          <Box sx={{ display: "flex", alignItems: "center",}}>
             <Box sx={{ cursor: "pointer", mr: 2 }}>
               <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
             </Box>
