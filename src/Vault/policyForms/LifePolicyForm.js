@@ -25,6 +25,8 @@ import dayjs from "dayjs";
 import ProgressBarCircle from "../../component/ProgressBarCircle";
 import DateTimePicker from "../../component/DateTimePicker";
 import { formatDate } from "../../utils/dateUtils";
+import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const LifePolicyForm = () => {
   const location = useLocation();
@@ -67,18 +69,18 @@ const LifePolicyForm = () => {
   );
   const [criticalIllness, setCriticalIllness] = useState(
     responseData?.criticalIllness ||
-    policyDetails?.policyDetails?.criticalIllness ||
-    ""
+      policyDetails?.policyDetails?.criticalIllness ||
+      ""
   );
   const [accidentalDisability, setAccidentalDisability] = useState(
     responseData?.accidentalDisability ||
-    policyDetails?.policyDetails?.accidentalDisability ||
-    ""
+      policyDetails?.policyDetails?.accidentalDisability ||
+      ""
   );
   const [terminalIllness, setTerminalIllness] = useState(
     responseData?.terminalIllness ||
-    policyDetails?.policyDetails?.terminalIllness ||
-    ""
+      policyDetails?.policyDetails?.terminalIllness ||
+      ""
   );
   const [pa, setPa] = useState(responseData?.pa || "");
   const [policyRenewalDate, setPolicyRenewalDate] = useState(
@@ -103,6 +105,20 @@ const LifePolicyForm = () => {
   const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const commonItemStyle = {
+    maxWidth: 900,
+    width: "100%",
+    paddingLeft: "10px !important",
+  };
+  const commonInputStyle = {
+    height: 48,
+    fontSize: "1.222rem",
+    borderRadius: 42,
+    paddingLeft: "20px",
+    width: "100%",
+    color: "white",
+    borderColor: "grey",
+  };
 
   const inputFields = [
     policyNumber,
@@ -260,8 +276,8 @@ const LifePolicyForm = () => {
   };
 
   const handleCancel = () => {
-    navigate('/vault')
-  }
+    navigate("/vault");
+  };
 
   return (
     <Box sx={{ backgroundColor: "#000", minHeight: "100vh" }}>
@@ -281,29 +297,31 @@ const LifePolicyForm = () => {
               }}
             >
               {/* Header Section */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 4,
-                  flexWrap: "wrap",
-                  gap: 2
-                }}
-              >
+              <div className="d-flex justify-content-between">
                 <Typography
+                  onClick={() => navigate(-1)}
                   variant="h4"
-                  component="h1"
-                  sx={{
-                    fontWeight: 700,
-                    color: "#fff",
-                    fontSize: { xs: "1.5rem", sm: "2rem", md: "2.125rem" }
-                  }}
+                  component="h2"
+                  className="fw-bold d-flex align-items-center gap-2"
                 >
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <ArrowBackIcon
+                      style={{ color: "#fff", fontSize: "28px" }}
+                    />
+                  </span>
                   {headingText}
                 </Typography>
-                <ProgressBarCircle progress={calculateProgress()} />
-              </Box>
+                <ProgressBarCircle
+                  progress={calculateProgress()}
+                  color="#8AC642"
+                />{" "}
+              </div>
 
               {/* Section Title */}
               <Typography
@@ -313,7 +331,7 @@ const LifePolicyForm = () => {
                   fontSize: "1.25rem",
                   fontWeight: 600,
                   marginBottom: 3,
-                  letterSpacing: "0.5px"
+                  letterSpacing: "0.5px",
                 }}
               >
                 Policy Details
@@ -323,7 +341,9 @@ const LifePolicyForm = () => {
               <Grid container spacing={4}>
                 {/* Left Column */}
                 <Grid item xs={12} lg={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+                  >
                     {/* Policy Number */}
                     <Box>
                       <CustomInput
@@ -332,175 +352,148 @@ const LifePolicyForm = () => {
                         value={policyNumber}
                         disabled={true}
                         required
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
                     {/* Date Fields Row */}
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            sx={{
-                              display: "block",
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 1,
-                              fontSize: "0.95rem"
-                            }}
-                          >
-                            Start Date <span style={{ color: "#f44336" }}>*</span>
-                          </Typography>
-                          <DateTimePicker
-                            height={50}
-                            isIcon={false}
-                            label="DD/MM/YYYY"
-                            value={formatDate(policyStartDate)}
-                            onChange={handleStartDateChange}
-                          />
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            sx={{
-                              display: "block",
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 1,
-                              fontSize: "0.95rem"
-                            }}
-                          >
-                            End Date <span style={{ color: "#f44336" }}>*</span>
-                          </Typography>
-                          <DateTimePicker
-                            height={50}
-                            isIcon={false}
-                            label="DD/MM/YYYY"
-                            value={formatDate(policyEndDate)}
-                            onChange={handleEndDateChange}
-                          />
-                        </Box>
-                      </Grid>
+                    <Grid container spacing={10}>
+                       <Grid item xs={12} md={6} margin={0} >
+    <label
+      className="form-label fw-bold mb-2 text-white fs-6" // ensure tight spacing
+      htmlFor="start-date"
+    >
+      Start date <span className="text-danger">*</span>
+    </label>
+    <DateTimePicker
+      id="start-date"
+      type="date"
+      isIcon={false}
+      label="DD/MM/YYYY"
+      value={formatDate(policyStartDate)}
+      onChange={handleStartDateChange}
+      className="w-100" // full width and dark bg
+    />
+  </Grid>
+                       <Grid item xs={12} md={6}>
+    <label
+      className="form-label fw-bold mb-2 text-white fs-6"
+      htmlFor="end-date"
+    >
+      End date <span className="text-danger">*</span>
+    </label>
+    <DateTimePicker
+      id="end-date"
+      type="date"
+      isIcon={false}
+      label="DD/MM/YYYY"
+      value={formatDate(policyEndDate)}
+      onChange={handleEndDateChange}
+      className="w-100"
+    />
+  </Grid>
                     </Grid>
 
-                    {/* Renewal and Maturity Date Row */}
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            sx={{
-                              display: "block",
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 1,
-                              fontSize: "0.95rem"
-                            }}
-                          >
-                            Policy Renewal Date
-                          </Typography>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={["DatePicker"]}>
-                              <DatePicker
-                                defaultValue={dayjs(policyRenewalDate)}
-                                selected={policyRenewalDate}
-                                onChange={(newValue) => {
-                                  setPolicyRenewalDate(newValue);
-                                }}
-                                selectsStart
-                                startDate={policyRenewalDate}
-                                placeholderText="MM/DD/YYYY"
-                                sx={{ width: "100%" }}
-                              />
-                            </DemoContainer>
-                          </LocalizationProvider>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            sx={{
-                              display: "block",
-                              fontWeight: 600,
-                              color: "#fff",
-                              marginBottom: 1,
-                              fontSize: "0.95rem"
-                            }}
-                          >
-                            Maturity Date
-                          </Typography>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={["DatePicker"]}>
-                              <DatePicker
-                                defaultValue={dayjs(maturityDate)}
-                                selected={maturityDate}
-                                onChange={(newValue) => {
-                                  setMaturityDate(newValue);
-                                }}
-                                selectsStart
-                                startDate={maturityDate}
-                                placeholderText="MM/DD/YYYY"
-                                sx={{ width: "100%" }}
-                              />
-                            </DemoContainer>
-                          </LocalizationProvider>
-                        </Box>
-                      </Grid>
-                    </Grid>
+                    
+                    <Grid container spacing={4}>
+  <Grid item xs={12} sm={6}>
+    <Box>
+      <Typography
+        component="label"
+        className="fw-bold mb-2 text-white fs-6" 
+      >
+        Policy Renewal Date <span style={{ color: "#f44336" }}>*</span>
+      </Typography>
+      <DateTimePicker
+      id="policy-renewal-date"
+        type="date"
+        value={policyRenewalDate}
+        onChange={(value) => setPolicyRenewalDate(value)}
+        label="DD/MM/YYYY"
+        isIcon={false}
+        className="w-100"
+      />
+    </Box>
+  </Grid>
+
+  <Grid item xs={12} sm={6}>
+    <Box>
+      <Typography
+        component="label"
+        className="fw-bold mb-2 text-white font-size-16 ml-4"
+      >
+       Policy Maturity Date <span style={{ color: "#f44336" }}>*</span>
+      </Typography>
+      <DateTimePicker
+      id="maturity-date"
+        type="date"
+        value={maturityDate}
+        onChange={(value) => setMaturityDate(value)}
+        label="DD/MM/YYYY"
+        isIcon={false}
+        className="w-100 ml-4"
+      />
+    </Box>
+  </Grid>
+</Grid>
 
                     {/* DOB Field */}
-                    <Box>
-                      <Typography
-                        component="label"
-                        sx={{
-                          display: "block",
-                          fontWeight: 600,
-                          color: "#fff",
-                          marginBottom: 1,
-                          fontSize: "0.95rem"
-                        }}
-                      >
-                        Date of Birth
-                      </Typography>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={["DatePicker"]}>
-                          <DatePicker
-                            defaultValue={dayjs(dob)}
-                            selected={dob}
-                            onChange={(newValue) => {
-                              setDob(newValue);
-                            }}
-                            selectsStart
-                            startDate={dob}
-                            placeholderText="MM/DD/YYYY"
-                            sx={{ width: "100%" }}
-                          />
-                        </DemoContainer>
-                      </LocalizationProvider>
-                    </Box>
+                   <Box sx={{ mt: 2 }}>
+  <Typography
+    component="label"
+    sx={{
+      display: "block",
+      fontWeight: 600,
+      color: "#fff",
+      marginBottom: 1,
+      fontSize: "0.95rem",
+    }}
+  >
+    Date of Birth
+  </Typography>
+  <DateTimePicker
+    value={dob}
+    onChange={(val) => setDob(val)}
+    label="MM/DD/YYYY"
+    isIcon={false}
+    className="w-100"
+    error={false} 
+    validationMessage="Invalid date"
+  />
+</Box>
 
                     {/* Personal Details */}
-                    <Box>
+                    <Box className="mt-4">
                       <CustomInput
                         type="text"
                         label="Insured Name"
                         value={insuredName}
                         onChange={(e) => setInsuredName(e.target.value)}
                         required
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
                     <Box>
-                      <CustomInput
-                        type="text"
-                        label="Insurance Company"
-                        value={insuredCompany}
-                        onChange={(e) => setInsuredCompany(e.target.value)}
-                        required
-                      />
+                      {policyDetails?.insuredCompany ||
+                      responseData?.insuranceCompany ? (
+                        <CustomInput
+                          type="text"
+                          label="Insurance Company"
+                          value={insuredCompany}
+                          readOnly
+                          disabled
+                          required
+                          inputStyle={commonInputStyle}
+                        />
+                      ) : (
+                        <InsuranceDropdown
+                          onCompanySelect={(companyId) =>
+                            setInsuredCompany(companyId)
+                          }
+                          initialValue={insuredCompany}
+                        />
+                      )}
                     </Box>
 
                     {/* Coverage Details */}
@@ -510,6 +503,7 @@ const LifePolicyForm = () => {
                         label="Critical Illness Coverage"
                         value={criticalIllness}
                         onChange={(e) => setCriticalIllness(e.target.value)}
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -518,18 +512,10 @@ const LifePolicyForm = () => {
                         type="text"
                         label="Accidental Disability Coverage"
                         value={accidentalDisability}
-                        onChange={(e) => setAccidentalDisability(e.target.value)}
-                      />
-                    </Box>
-
-                    {/* Action Buttons - Left Column */}
-                    <Box sx={{ marginTop: 4 }}>
-                      <Button
-                        text={mode === "edit" ? "Update Policy" : "Save Policy"}
-                        size="lg"
-                        block={true}
-                        onClick={handleSubmit}
-                        disabled={loading}
+                        onChange={(e) =>
+                          setAccidentalDisability(e.target.value)
+                        }
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
                   </Box>
@@ -537,7 +523,9 @@ const LifePolicyForm = () => {
 
                 {/* Right Column */}
                 <Grid item xs={12} lg={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+                  >
                     {/* Premium Details */}
                     <Box>
                       <CustomInput
@@ -545,6 +533,7 @@ const LifePolicyForm = () => {
                         label="Net Premium"
                         value={netPremium}
                         onChange={(e) => setNetPremium(e.target.value)}
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -554,6 +543,7 @@ const LifePolicyForm = () => {
                         label="Total Premium"
                         value={premiumPaid}
                         onChange={(e) => setPremiumPaid(e.target.value)}
+                        inputStyle={commonInputStyle}
                         required
                       />
                     </Box>
@@ -563,6 +553,7 @@ const LifePolicyForm = () => {
                         type="text"
                         label="Sum Assured"
                         value={sumAssured}
+                        inputStyle={commonInputStyle}
                         onChange={(e) => setSumAssured(e.target.value)}
                         required
                       />
@@ -575,6 +566,7 @@ const LifePolicyForm = () => {
                         label="Personal Accident Coverage"
                         value={pa}
                         onChange={(e) => setPa(e.target.value)}
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -584,6 +576,7 @@ const LifePolicyForm = () => {
                         label="Terminal Illness Coverage"
                         value={terminalIllness}
                         onChange={(e) => setTerminalIllness(e.target.value)}
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
 
@@ -593,6 +586,7 @@ const LifePolicyForm = () => {
                         type="text"
                         label="Policy Name"
                         value={policyName}
+                        inputStyle={commonInputStyle}
                         onChange={(e) => setPolicyName(e.target.value)}
                         required
                       />
@@ -604,23 +598,49 @@ const LifePolicyForm = () => {
                         label="Additional Notes"
                         value={others}
                         onChange={(e) => setOthers(e.target.value)}
+                        inputStyle={commonInputStyle}
                       />
                     </Box>
-
-                    {/* Action Buttons - Right Column */}
-                    <Box sx={{ marginTop: 9 }}>
-                      <Button
-                        text="Cancel"
-                        size="lg"
-                        block={true}
-                        onClick={handleCancel}
-                        style={{
-                          backgroundColor: "transparent",
-                          border: "2px solid #666",
-                          color: "#fff"
-                        }}
-                      />
-                    </Box>
+                  </Box>
+                  <Box
+                    flex={1}
+                    display="flex"
+                    justifyContent="center"
+                    gap={2}
+                    mt={2}
+                    width="100%"
+                  >
+                    <Button
+                      text={mode === "edit" ? "Update" : "Save"}
+                      size="lg"
+                      onClick={handleSubmit}
+                      style={{
+                        backgroundColor: "#8AC642",
+                        color: "#fff !important",
+                        padding: "10px 40px",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        fontSize: "16px",
+                        textTransform: "none",
+                        
+                      }}
+                    />
+                    <Button
+                      text="Cancel"
+                      size="lg"
+                      onClick={handleCancel}
+                      style={{
+                        width: "500px",
+                        backgroundColor: "transparent",
+                        color: "#8AC642",
+                        border: "2px solid #8AC642",
+                        padding: "10px 40px",
+                        fontWeight: 600,
+                        borderRadius: "8px",
+                        fontSize: "16px",
+                        textTransform: "none",
+                      }}
+                    />
                   </Box>
                 </Grid>
               </Grid>

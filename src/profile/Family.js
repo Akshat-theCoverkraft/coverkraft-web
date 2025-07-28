@@ -14,11 +14,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { THEME_COLOR } from "../constants";
+import SessionExpiredModal from "../utils/sessionExpireModal";
+import { capitalizeFirstLetter } from "../utils/helpers";
+
 const Family = ({ family, onfamilyclose }) => {
   const [familyData, setFamilyData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const navigate = useNavigate();
   const userId = sessionStorage.getItem("userId");
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   const fetchFamilyDetails = async () => {
     try {
@@ -42,9 +46,18 @@ const Family = ({ family, onfamilyclose }) => {
         setFamilyData([]);
       }
     } catch (error) {
+      if (error.response?.status === 401) {
+        setShowSessionExpired(true);
+      }
       console.error("Error fetching family details:", error);
       setFamilyData([]);
     }
+  };
+  const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+    sessionStorage.clear();
   };
 
   useEffect(() => {
@@ -62,7 +75,7 @@ const Family = ({ family, onfamilyclose }) => {
   const handleFamilyAddSuccess = () => {
     // Refresh the family details when a new member is added
     fetchFamilyDetails();
-    setDrawerOpen(false); // Close the add family drawer
+    setDrawerOpen(false);
   };
 
   return (
@@ -74,72 +87,69 @@ const Family = ({ family, onfamilyclose }) => {
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
           color: THEME_COLOR.COLOR,
-          width: "25vw",
+          width: "35vw",
+          maxWidth: "400px",
+          padding: "10px",
         },
       }}
     >
-      <ToastContainer />
+      <FamilyAdd
+        familyAdd={drawerOpen}
+        onfamilyAddClose={handleFamilyClose}
+        onSuccess={handleFamilyAddSuccess}
+      />
+      <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
+      <ToastContainer position="top-left" style={{ zIndex: 99999 }} />
       <Box
-        sx={{ width: "25vw", padding: 0 }}
+        sx={{ width: "100%", padding: 0 }}
         role="presentation"
         style={{ overflowX: "hidden" }}
       >
-        <Grid container spacing={2} className="d-flex m-3">
+        <Grid container spacing={2} className="d-flex m-3" alignItems="center">
           <Grid item>
-            <img src={backArrow} alt="Back" onClick={onfamilyclose} />
+            <img
+              src={backArrow}
+              alt="Back"
+              onClick={onfamilyclose}
+              style={{ cursor: "pointer" }}
+            />
           </Grid>
-          <Grid item>
-            <Typography variant="h4">Plans for your family</Typography>
+          <Grid item xs>
+            <Typography variant="h5" noWrap>
+              Manage Your Family Members
+            </Typography>
           </Grid>
         </Grid>
-        <Grid container xs={12} spacing={2}>
+
+        <Grid container spacing={2} style={{ padding: "0 16px" }}>
           {familyData?.map((profile, index) => (
             <Grid item xs={6} key={index}>
               <Card style={styles.card}>
-                <div
-                  className="profile-image-container"
-                  style={styles.profileImageContainer}
-                >
+                <div style={styles.profileImageContainer}>
                   <img
-                    src={
-                      !profile.familyImg ? icDefaultProfile : profile.familyImg
-                    }
+                    src={!profile.familyImg ? icDefaultProfile : profile.familyImg}
                     alt="Profile"
-                    className="profile-image"
                     style={styles.profileImage}
                   />
                 </div>
-                <p style={{ fontSize: "16px" }} className={styles.relationship}>
+                <p style={{ fontSize: "16px", marginTop: '0px', ...styles.relationship }}>
                   {profile.familyMember}
                 </p>
-                <p
-                  style={{ fontSize: "20px", fontWeight: "500" }}
-                  className={styles.name}
-                >
-                  {profile.fullName}
+                <p style={{ fontSize: "20px", fontWeight: "500", ...styles.name }}>
+                  {capitalizeFirstLetter(profile.fullName)}
                 </p>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                <div style={styles.infoContainer}>
                   <EmailIcon />
-                  <span style={{ fontSize: "1.3rem" }} className="ml-2">
+                  <span style={{ fontSize: "1rem", marginLeft: "8px" }}>
                     {profile?.email}
                   </span>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "10px",
-                  }}
-                >
+                <div style={{ ...styles.infoContainer, marginTop: "5px" }}>
                   <CallIcon />
-                  <span style={{ fontSize: "1.2rem" }} className="ml-2">
+                  <span style={{ fontSize: "1.2rem", marginLeft: "8px" }}>
                     {profile?.mobile}
                   </span>
                 </div>
@@ -147,20 +157,30 @@ const Family = ({ family, onfamilyclose }) => {
             </Grid>
           ))}
         </Grid>
+
+
         <Grid
           container
-          xs={12}
           justifyContent="center"
           alignItems="center"
-          className="mt-5"
+          className="mt-2"
           onClick={handleFamilyOpen}
+          style={{ padding: "0 5px", marginTop: "10px", cursor: "pointer" }}
         >
-          <Card style={styles.card}>
-            <img height={70} src={addMember} />
-            <h4 style={{ color: "#0098DB" }}>Add member</h4>
+          <Card style={{
+            ...styles.card, width: "40%",
+            borderStyle: 'dashed',
+            borderColor: "#8AC642",
+            borderWidth: 1.5,
+            marginTop: "30px",
+          }}>
+            <img height={40} src={addMember} alt="Add Member" />
+            <h4 style={{ color: "#8AC642", marginTop: "10px" }}>Add New Member</h4>
           </Card>
         </Grid>
       </Box>
+
+      {/* Pass drawerOpen as prop to FamilyAdd */}
       <FamilyAdd
         familyAdd={drawerOpen}
         onfamilyAddClose={handleFamilyClose}
@@ -175,37 +195,37 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: "30px",
-    margin: "0 20px",
     textAlign: "center",
+    borderColor:'#8AC642',
+    borderWidth:1,
+    width: "100%", 
+    boxSizing: "border-box",
   },
   profileImageContainer: {
     display: "flex",
     justifyContent: "center",
-    marginBottom: "0px",
+    marginBottom: "5px",
   },
   profileImage: {
-    width: "130px",
-    height: "130px",
+    width: "120px",
+    height: "120px",
     borderRadius: "50%",
+    objectFit: "cover",
   },
   relationship: {
-    backgroundColor: "#FACFC6",
-    padding: "5px 5px",
+    backgroundColor: "#b1766b9c",
+    padding: "2px 5px",
     borderRadius: "5px",
-    marginBottom: "0px 0px",
+    marginBottom: "2px",
+    display: "inline-block",
   },
   name: {
-    marginBottom: "10px",
+    marginBottom: "2px",
   },
   infoContainer: {
     display: "flex",
     alignItems: "center",
-    marginBottom: "0px",
-    padding: "5px 0",
-  },
-  infoText: {
-    // marginLeft: '10px',
+    justifyContent: "center",
   },
 };
 

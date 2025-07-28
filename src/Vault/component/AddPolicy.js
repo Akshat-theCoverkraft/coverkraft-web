@@ -119,6 +119,8 @@ const AddPolicy = () => {
     const [totalSumInsured, setTotalSumInsured] = useState(ocrTextObject.totalSumInsured);
     // const [registration, setregistration] = useState(ocrTextObject.registration);
     const [registration, setRegistration] = useState(ocrTextObject.registration);
+const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !important" };
+  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white" , borderColor: "grey"};
 
     const [consumables, setConsumables] = useState(ocrTextObject.consumables);
     const [coPayment, setCoPayment] = useState(ocrTextObject.coPayment);
@@ -437,7 +439,7 @@ const AddPolicy = () => {
         formData.append('tpPremium', tpPremium);
         formData.append('odPremium', odPremium);
         formData.append('totalPremium', totalPremium);
-        formData.append('insuranceCompany', insuranceCompany);
+        formData.append('insuredCompany', insuranceCompany);
         formData.append('assetType', assetType);
         formData.append('make_Model', model);
         formData.append('registrationYear', registrationYear);
@@ -496,6 +498,8 @@ const AddPolicy = () => {
                                                     setPolicyNumber(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
 
@@ -573,6 +577,8 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
+                                                      inputStyle={commonInputStyle}
+
                                             />
                                             <CustomInput
                                                 type="number"
@@ -583,6 +589,8 @@ const AddPolicy = () => {
                                                     handleInputChange(e);
                                                 }}
                                                 required
+                                                      inputStyle={commonInputStyle}
+
                                             />
                                             <CustomInput
                                                 type="number"
@@ -592,6 +600,8 @@ const AddPolicy = () => {
                                                     setNcb(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -602,6 +612,8 @@ const AddPolicy = () => {
                                                     setTpPremium(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -612,6 +624,8 @@ const AddPolicy = () => {
                                                     setOdPremium(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -622,6 +636,8 @@ const AddPolicy = () => {
                                                     setTotalPremium(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <Button
@@ -645,6 +661,8 @@ const AddPolicy = () => {
                                                     setInsuranceCompany(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -655,6 +673,8 @@ const AddPolicy = () => {
                                                     setAssetType(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -665,6 +685,8 @@ const AddPolicy = () => {
                                                     setModel(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -675,6 +697,8 @@ const AddPolicy = () => {
                                                     setRegistrationYear(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -685,6 +709,8 @@ const AddPolicy = () => {
                                                     setRegistrationNumber(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -695,6 +721,8 @@ const AddPolicy = () => {
                                                     setEngineCC(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -705,6 +733,8 @@ const AddPolicy = () => {
                                                     setIdv(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -715,6 +745,8 @@ const AddPolicy = () => {
                                                     setVehicleType(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
 
@@ -738,6 +770,8 @@ const AddPolicy = () => {
                                                     setPolicyNumber(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             {/* <CustomInput
@@ -841,6 +875,8 @@ const AddPolicy = () => {
                                                     setInsuredName(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -851,6 +887,8 @@ const AddPolicy = () => {
                                                     setInsuranceCompany(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -861,6 +899,8 @@ const AddPolicy = () => {
                                                     setPolicyName(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -871,6 +911,8 @@ const AddPolicy = () => {
                                                     setSumInsured(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -881,6 +923,8 @@ const AddPolicy = () => {
                                                     setTotalSumInsured(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
 
@@ -905,6 +949,8 @@ const AddPolicy = () => {
                                                     setType(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
 
@@ -917,6 +963,8 @@ const AddPolicy = () => {
                                                     setIdv(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -927,6 +975,8 @@ const AddPolicy = () => {
                                                     setNetPremium(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -937,6 +987,8 @@ const AddPolicy = () => {
                                                     setTotalPremium(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -947,6 +999,8 @@ const AddPolicy = () => {
                                                     setPremiumPaid(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             {/* <CustomInput
@@ -1075,6 +1129,8 @@ const AddPolicy = () => {
                                                     setPolicyName(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <Grid container spacing={3}>
@@ -1178,6 +1234,8 @@ const AddPolicy = () => {
                                                     setDayRenewal(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -1188,6 +1246,8 @@ const AddPolicy = () => {
                                                     setInsuredName(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -1198,6 +1258,8 @@ const AddPolicy = () => {
                                                     setInsuranceCompany(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             {/* <CustomInput
@@ -1237,6 +1299,8 @@ const AddPolicy = () => {
                                                     setSumInsured(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
 
@@ -1248,6 +1312,8 @@ const AddPolicy = () => {
                                                     setOthers(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <Button
@@ -1270,6 +1336,8 @@ const AddPolicy = () => {
                                                     setType(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
 
@@ -1314,6 +1382,8 @@ const AddPolicy = () => {
                                                     setNetPremium(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             <CustomInput
@@ -1324,6 +1394,8 @@ const AddPolicy = () => {
                                                     setTotalPremium(e.target.value);
                                                     handleInputChange(e);
                                                 }}
+                                                      inputStyle={commonInputStyle}
+
                                                 required
                                             />
                                             {/* <CustomInput

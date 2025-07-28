@@ -16,7 +16,21 @@ import Testimonials from "./component/Testimonials";
 import Service from "./component/service";
 import { ToastContainer } from "react-toastify";
 import BlogSection from "./component/NewsBlogs";
+import { useEffect } from "react";
 const Landing = () => {
+  useEffect(() => {
+    const scrollY = sessionStorage.getItem("scroll-position");
+    if (scrollY) {
+      window.scrollTo(0, parseInt(scrollY, 10));
+    }
+    const handleScroll = () => {
+      sessionStorage.setItem("scroll-position", window.scrollY);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
     <div className="overflow-hidden">
       <ToastContainer />
@@ -25,19 +39,16 @@ const Landing = () => {
       <Afterglow />
       <PolicyType />
       <Cards3d />
-      <BlogSection/>
+      <BlogSection />
       {/* <About /> */}
-      
       {/* <Card/> */}
       {/* <Blog /> */}
       {/* <Count /> */}
       <Coverkraft />
       <Testimonials />
       <Faq />
-
       {/* <Carousel/> */}
-
-      <Service />
+      {/* <Service /> */}
       <Footer />
     </div>
   );

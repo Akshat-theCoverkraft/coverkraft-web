@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Dropdown.css'; // Import the CSS file
+import './Dropdown.css';
 import API_URL from '../ServiceModule/Service';
+import { useNavigate } from 'react-router-dom';
+import SessionExpiredModal from '../utils/sessionExpireModal';
 
-const CityDropdown = ({ selectedStateId,onCitySelect,initialValue }) => {
+const CityDropdown = ({
+  selectedStateId,
+  onCitySelect,
+  initialValue,
+  className = '',
+  style = {},
+}) => {
   const [options, setOptions] = useState([]);
   const [selectedValue, setSelectedValue] = useState(initialValue);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const navigate = useNavigate(); // navigation hook
 
   useEffect(() => {
     if (selectedStateId) {
@@ -24,8 +34,12 @@ const CityDropdown = ({ selectedStateId,onCitySelect,initialValue }) => {
           setOptions(optionsData);
         } catch (error) {
           console.error('Error fetching options:', error);
-          setError('Failed to load options');
-        } finally {
+          if (error.response?.status === 401) {
+            setShowSessionExpired(true);
+          } else {
+            setError('Failed to load options');
+          }
+        }  finally {
           setLoading(false);
         }
       };
@@ -34,39 +48,64 @@ const CityDropdown = ({ selectedStateId,onCitySelect,initialValue }) => {
     }
   }, [selectedStateId]);
 
+    const handleSessionExpiredOk = () => {
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+  sessionStorage.clear(); 
+  };
+
   useEffect(() => {
     setSelectedValue(initialValue);
   }, [initialValue]);
 
-
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
-    onCitySelect(event.target.value)
-    // You can handle city selection here if needed
+    onCitySelect(event.target.value);
   };
+
+  // Fallback default inline style if none is passed
+  const defaultStyle = {
+    padding: '0.5rem',
+    backgroundColor: '#2c2c2c',
+    borderRadius: '1rem',
+    color: '#fff',
+    border: '2px solid #ccc',
+    minHeight: '2.5rem',
+  };
+
+  const finalStyle = Object.keys(style).length > 0 ? style : defaultStyle;
 
   return (
     <div className="dropdown-container">
-      <label className="dropdown-label" htmlFor="cityDropdown">Select City<span className='text-danger'>*</span></label>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p className="dropdown-error">{error}</p>
       ) : (
-        <select
+        
+        <>
+         <SessionExpiredModal
+        visible={showSessionExpired}
+        onConfirm={handleSessionExpiredOk}
+      />
+        <label class="form-label fw-bold text-light mb-2 d-block" for="inputField-">Select City</label><select
           id="cityDropdown"
-          className="dropdown-select  rounded-5 bg-dark rounded-5 text-light border-2 border-dark rounded-xl shadow-md focus:border-primary focus:ring-2 focus:ring-primary transition duration-300"
+          className={`dropdown-select ${className}`}
           value={selectedValue}
           onChange={handleChange}
           disabled={!selectedStateId}
+          style={finalStyle}
         >
-          <option value="" disabled>Select a city</option>
+          <option value="" disabled>
+            Select a city
+          </option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
-        </select>
+        </select></>
       )}
     </div>
   );

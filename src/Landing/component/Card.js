@@ -242,7 +242,7 @@ const Job = () => {
 
 export default Job;
 
-// 💡 Read More Component
+//  Read More Component
 const MAX_LENGTH = 100;
 
 const CardDescription = ({ text, onReadMore }) => {

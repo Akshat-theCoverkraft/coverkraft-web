@@ -3,18 +3,17 @@ import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
 import vision from "../Images/ic_vision.png";
 import mission from "../Images/ic_mission.png";
-import { Card, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import "../profile/about.css";
 import { THEME_COLOR } from "../constants";
 
 const About = () => {
   return (
-    <div
-      id="about"
-      className="overflow-hidden">
+    <div className="d-flex flex-column min-vh-100">
       <Navbar />
-      <div className="content">
-        <div className="padding-container">
+
+      <main className="flex-grow-1">
+        <div className="content py-5 px-3">
           <div
             style={{
               display: "flex",
@@ -22,81 +21,87 @@ const About = () => {
               flexDirection: "column",
             }}
           >
-            <h1 className="text-center">About CoverKraft</h1>
+            <h1 className="text-center" style={{fontSize: "3.5rem", fontWeight:  800, color:  "#8BC642"}}>About CoverKraft</h1>
             <p
-              className="text-center m-5 fs-3 "
+              className="text-center my-4"
               style={{
                 color: THEME_COLOR.SECONDARY_TEXT,
-                width: "70%",
-                alignSelf: "center",
+                maxWidth: "800px",
+                fontWeight: 500,
+                lineHeight: "1.6",
+                fontSize: "1.7rem",
               }}
             >
-              CoverKraft  Pvt Ltd is on a mission to
+              Coverkraft Insurance Brokers Private. Limited. is on a mission to
               revolutionize the industry. <br />
               Led by a team of experts and tech enthusiasts, we have
               developed a user-friendly tech platform to make insurance easily
               understandable and accessible for all.
             </p>
-            <div className="spacer"></div>
           </div>
-          {/* <div className="spacer"></div> */}
+
           <Grid
             container
             spacing={4}
-            xs={12}
             justifyContent="center"
-            alignItems="center"
-            className=""
+            alignItems="stretch"
           >
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={6} md={4}>
               <div
-                className="card card-container"
+                className="card card-container h-100"
                 style={{
                   backgroundColor: THEME_COLOR.FADE_BACKGROUND,
                   color: THEME_COLOR.COLOR,
-                  maxHeight: "500px",
                 }}
               >
-                <img src={mission} alt="Mission" className="image" />
-                <h2 className="header mb-3">Mission</h2>
+                <img
+                  src={mission}
+                  alt="Mission"
+                  className="image"
+                  style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }}
+                />
+                <h2 className="header mb-3 text-center" style={{color: "#8BC642", fontWeight: 600}}>Mission</h2>
                 <p
-                  className="text px-5"
-                  style={{ color: THEME_COLOR.SECONDARY_TEXT }}
+                  className="text px-4 pb-4"
+                  style={{ color: THEME_COLOR.SECONDARY_TEXT, textAlign: "center" }}
                 >
-                  To educate customers about various risks of fake
+                  To educate customers about various risks and insurance
                   products, equip them with tools for accessing and sharing
                   their policies, and empower them with technology to purchase
                   the most suitable products.
                 </p>
               </div>
-              {/* <div className="spacer"></div> */}
             </Grid>
-            {/* <div className="spacer"></div> */}
-            <Grid item xs={4}>
+
+            <Grid item xs={12} sm={6} md={4}>
               <div
-                className="card card-container"
+                className="card card-container h-100"
                 style={{
                   backgroundColor: THEME_COLOR.FADE_BACKGROUND,
                   color: THEME_COLOR.COLOR,
-                  minHeight: "310px",
                 }}
               >
-                <img src={vision} alt="Vision" className="image" />
-                <h2 className="header ">Vision</h2>
+                <img
+                  src={vision}
+                  alt="Vision"
+                  className="image"
+                  style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }}
+                />
+                <h2 className="header mb-3 text-center" style={{color: "#8BC642", fontWeight: 600}}> Vision</h2>
                 <p
-                  className="text px-5"
-                  style={{ color: THEME_COLOR.SECONDARY_TEXT }}
+                  className="text px-4 pb-4"
+                  style={{ color: THEME_COLOR.SECONDARY_TEXT, textAlign: "center" }}
                 >
                   To be the preferred distribution partner for customers,
                   recognized for our innovation, transparent advice, and
                   integrity.
                 </p>
-                {/* <div className="spacer"></div> */}
               </div>
             </Grid>
           </Grid>
         </div>
-      </div>
+      </main>
+
       <Footer />
     </div>
   );

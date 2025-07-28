@@ -1,21 +1,23 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   Modal,
   IconButton,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { Carousel } from 'react-responsive-carousel';
+import { motion, AnimatePresence } from 'framer-motion';
 import API_URL from '../../ServiceModule/Service';
-import "./CSS/3dCard.css";
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import Loader from '../../component/Loader';
+import { headingStyle } from '../../theme/themeStyles';
+import ellipse from '../../Images/Ellipse12.png';
+import cardBG from '../../Images/tip2.png';
 
-const CARD_WIDTH = 450;
-const CARD_GAP = 28;
-const AUTO_SLIDE_INTERVAL = 5000;
-const CARD_HEIGHT = 240;
+const CARD_WIDTH = 420;
+const CARD_HEIGHT = 180;
 
 const truncateText = (text, maxLength = 100) =>
   text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
@@ -25,79 +27,109 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
 
   return (
     <Box
-      position="relative"
       sx={{
-        width: CARD_WIDTH,
-        flexShrink: 0,
-        height: CARD_HEIGHT,
+        position: 'relative',
+        width: 'fit-content',
+        maxWidth: CARD_WIDTH,
+        height: CARD_HEIGHT + 40,
+        mx: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'visible',
+        flex: '1 1 auto',
       }}
     >
-      <Typography
-        component="div"
+      <Box
+        component="img"
+        src={ellipse}
+        alt="ellipse"
         sx={{
           position: 'absolute',
-          top: '-10px',
-          left: '-20px',
-          fontSize: '60px',
-          fontWeight: '900',
+          top: '3px',
+          left: '0px',
+          width: '200px !important',
+          height: '215px',
+          zIndex: 0,
+        }}
+      />
+
+      <Typography
+        sx={{
+          position: 'absolute',
+          top: 15,
+          left: 42,
+          fontFamily: 'DM Sans, sans-serif',
+          fontSize: 36,
           color: 'transparent',
           WebkitTextStroke: '2px white',
-          fontFamily: 'Bungee, sans-serif',
-          zIndex: 2,
+          fontWeight: 900,
+          zIndex: 3,
         }}
       >
         {number < 10 ? `0${number}` : number}
       </Typography>
 
-      <Box id='card' className="policy-container" sx={{ height: '100%' }}>
-        <Card
-          className="text-white"
+      <Box
+        sx={{
+          backgroundImage: `url(${cardBG})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          borderRadius: '20px',
+          padding: 2,
+          width: '100%',
+          height: CARD_HEIGHT,
+          zIndex: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          marginLeft: 4.5,
+          backdropFilter: 'blur(8px)',
+          color: '#121212',
+        }}
+      >
+
+        <Typography
+          variant="h5"
+          pl={2}
+          sx={{ color: 'white', fontWeight: 600, textAlign: 'left' }}
+        >
+          {title}
+        </Typography>
+
+        <Typography
+          variant="body2"
           sx={{
-            background: 'linear-gradient(to right, #212121, #121212)',
-            borderRadius: '25px',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            p: 3,
-            position: 'relative',
+            color: '#fff',
+            mt: 1,
+            lineHeight: 1.4,
+            textAlign: 'left',
+            pl: 2,
+            fontSize: 14,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}
         >
-          <CardContent sx={{ flexGrow: 1 }}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#fff', paddingLeft: "20px" }}>
-              {title}
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: '16px',
-                color: '#ccc',
-                lineHeight: '1.5',
-                mt: 1,
-                paddingLeft: "20px"
-              }}
-            >
-              {truncateText(description, 120)}
-            </Typography>
+          {description}
+        </Typography>
 
-            {isTruncated && (
-              <Typography
-                onClick={onSeeMore}
-                sx={{
-                  color: '#5A9F1D',
-                  cursor: 'pointer',
-                  mt: 1,
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  textAlign: 'right',
-                  pr: '20px',
-                }}
-              >
-                See More...
-              </Typography>
-            )}
-          </CardContent>
-        </Card>
+        <Typography
+          onClick={onSeeMore}
+          sx={{
+            color: '#5A9F1D',
+            cursor: 'pointer',
+            mt: 1,
+            fontWeight: 'bold',
+            fontSize: 13,
+            textAlign: 'right',
+            paddingLeft: '70%',
+          }}
+        >
+          {isTruncated ? 'Read More' : ''}
+        </Typography>
       </Box>
     </Box>
   );
@@ -107,14 +139,12 @@ const WhyCoverKraft = () => {
   const [cardData, setCardData] = useState([]);
   const [popupContent, setPopupContent] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const scrollRef = useRef(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const isSmall = useMediaQuery('(max-width:600px)');
-  const isMedium = useMediaQuery('(max-width:960px)');
-  const CARDS_VISIBLE = isSmall ? 1 : isMedium ? 2 : 3;
-
-  const totalPages = Math.ceil(cardData.length / CARDS_VISIBLE);
+  const isMedium = useMediaQuery('(max-width:1024px)');
+  const groupSize = isSmall ? 1 : isMedium ? 2 : 3;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,11 +154,11 @@ const WhyCoverKraft = () => {
         if (result.status) {
           const activeCards = result.data.filter(card => card.status === 'active');
           setCardData(activeCards);
-        } else {
-          console.error('Error: Data not retrieved');
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -147,138 +177,152 @@ const WhyCoverKraft = () => {
     setPopupContent(null);
   };
 
-  const handleDotClick = (page) => {
-    setCurrentPage(page);
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        left: page * (CARD_WIDTH + CARD_GAP) * CARDS_VISIBLE,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const nextPage = (currentPage + 1) % totalPages;
-      handleDotClick(nextPage);
-    }, AUTO_SLIDE_INTERVAL);
-
-    return () => clearInterval(interval);
-  }, [currentPage, totalPages, CARDS_VISIBLE]);
+  const groupedData = [];
+  for (let i = 0; i < cardData.length; i += groupSize) {
+    groupedData.push(cardData.slice(i, i + groupSize));
+  }
 
   return (
-    <Box sx={{ backgroundColor: '#121212', p: '60px 6%', marginLeft: '2%' }}>
-      {/* Header */}
-      <Box textAlign="center ">
-        <Typography variant="subtitle1" sx={{ color: '#f39c12', fontSize: '2.7rem', fontWeight: 600 }}>
-          TIPS & TRICKS
-        </Typography>
+    <Box id="card" sx={{ backgroundColor: '#121212', px: 2, py: 6, scrollMarginTop: '100px' }}>
+      <Box textAlign="center" mb={4}>
         <Typography
-          variant="body1"
-          sx={{
-            color: '#ccc',
-            maxWidth: '800px',
-            mx: 'auto',
-            fontSize: '18px',
-          }}
+          variant="subtitle1"
+          sx={headingStyle}
         >
-          Choose us for personalized solutions, exceptional customer care,
-          and unwavering commitment to protecting what matters most to you.
+          Tips & Tricks
         </Typography>
       </Box>
 
-      {/* Card carousel */}
-      <Box
-        ref={scrollRef}
-        sx={{
-          display: 'flex',
-          overflowX: 'auto',
-          gap: `${CARD_GAP}px`,
-          mt: 6,
-          px: 2,
-          scrollBehavior: 'smooth',
-          mx: 'auto',
-          scrollbarWidth: 'none',
-          '&::-webkit-scrollbar': { display: 'none' },
-        }}
-      >
-        {cardData.map((card, index) => (
-          <PolicyCard
-            key={index}
-            number={index + 1}
-            title={card.subtitle}
-            description={card.description}
-            onSeeMore={() => openPopup(card)}
-          />
-        ))}
-      </Box>
-
-      {/* Pagination Dots */}
-      <Box display="flex" justifyContent="center" mt={3}>
-        {Array.from({ length: totalPages }).map((_, i) => (
-          <Box
-            key={i}
-            onClick={() => handleDotClick(i)}
-            sx={{
-              width: 12,
-              height: 12,
-              borderRadius: '50%',
-              mx: 1,
-              cursor: 'pointer',
-              backgroundColor: currentPage === i ? '#f39c12' : '#555',
-              transition: '0.3s',
-            }}
-          />
-        ))}
-      </Box>
-
-      {/* Popup */}
-      <Modal open={showPopup} onClose={closePopup}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: '#212121',
-            color: '#fff',
-            p: 4,
-            borderRadius: 2,
-            width: 600,
-            height: 400,
-            boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.6)',
-            overflow: 'hidden',
-          }}
-        >
-          <IconButton
-            onClick={closePopup}
-            sx={{ position: 'absolute', top: 8, right: 8, color: '#fff' }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Typography variant="h5" mb={2} sx={{ paddingLeft: "50px" }}>
-            {popupContent?.title}
-          </Typography>
-          <Box
-            sx={{
-              maxHeight: '300px',
-              overflowY: 'auto',
-              pr: 1,
-              '&::-webkit-scrollbar': {
-                width: 0,
-              },
-              scrollbarWidth: 'none',
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{ fontSize: '16px', color: '#ccc', whiteSpace: 'pre-line' }}
-            >
-              {popupContent?.description}
-            </Typography>
-          </Box>
+      {/* Loader or No Data */}
+      {loading ? (
+        <Box display="flex" justifyContent="center" gap={3} flexWrap="wrap">
+          {[...Array(groupSize)].map((_, idx) => (
+            <Loader key={idx} />
+          ))}
         </Box>
-      </Modal>
+      ) : cardData.length === 0 ? (
+        <Box textAlign="center" color="#aaa" mt={4}>
+          <Typography variant="h6" color="white">
+            No tips & tricks available right now.
+          </Typography>
+        </Box>
+      ) : (
+        <>
+          <Carousel
+            selectedItem={currentSlide}
+            onChange={(index) => setCurrentSlide(index)}
+            showThumbs={false}
+            showStatus={false}
+            infiniteLoop
+            autoPlay={false}
+            showArrows={false}
+            swipeable
+
+          >
+            {groupedData.map((group, i) => (
+              <Box
+                key={i}
+                display="flex"
+                justifyContent="center"
+              // flexWrap="nowrap"
+              // gap={3}
+              // sx={{ py: 2 }}
+              >
+                {group.map((card, j) => (
+                  <PolicyCard
+                    key={`${i}-${j}`}
+                    number={i * groupSize + j + 1}
+                    title={card.subtitle}
+                    description={card.description}
+                    onSeeMore={() => openPopup(card)}
+                  />
+                ))}
+              </Box>
+            ))}
+          </Carousel>
+
+          {/* Pagination Dots */}
+          <Box display="flex" justifyContent="center" mt={3}>
+            {groupedData.map((_, index) => (
+              <Box
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                sx={{
+                  width: 12,
+                  height: 12,
+                  borderRadius: '50%',
+                  mx: 1,
+                  cursor: 'pointer',
+                  backgroundColor: currentSlide === index ? '#f39c12' : '#888',
+                  transition: 'all 0.3s ease',
+                }}
+              />
+            ))}
+          </Box>
+        </>
+      )}
+
+      {/* Modal with Thanos Snap Effect */}
+      <AnimatePresence>
+        {showPopup && (
+          <Modal open={true} onClose={closePopup}>
+            <Box
+              component={motion.div}
+              initial={{ opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' }}
+              exit={{ opacity: 0, clipPath: 'inset(0% 100% 0% 0%)' }}
+              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'rgba(33, 33, 33, 0.75)',
+                backdropFilter: 'blur(12px)',
+                borderRadius: 3,
+                color: '#fff',
+                p: 3,
+                width: '90%',
+                maxWidth: 600,
+                maxHeight: 600,
+                boxShadow: '0px 0px 30px rgba(0, 0, 0, 0.6)',
+                overflow: 'hidden',
+              }}
+            >
+              <IconButton
+                onClick={closePopup}
+                sx={{ position: 'absolute', top: 8, right: 8, color: '#fff' }}
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="h5" mb={2} sx={{ pl: 2 }}>
+                {popupContent?.title}
+              </Typography>
+
+              <Box
+                sx={{
+                  maxHeight: 350,
+                  overflowY: 'auto',
+                  pr: 1,
+                  '&::-webkit-scrollbar': { width: 0 },
+                  scrollbarWidth: 'none',
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: 16,
+                    color: '#ccc',
+                    whiteSpace: 'pre-line',
+                    pl: 2,
+                  }}
+                >
+                  {popupContent?.description}
+                </Typography>
+              </Box>
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
     </Box>
   );
 };

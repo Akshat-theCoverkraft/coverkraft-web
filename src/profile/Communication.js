@@ -7,12 +7,10 @@ import {
   Card,
   CircularProgress,
   useMediaQuery,
+  Stack,
+  IconButton,
 } from "@mui/material";
-import backArrow from "../Images/ic_back_button.png";
-import sms from "../Images/ic-sms.png";
-import call from "../Images/ic-call.png";
-import wtsp from "../Images/ic-wtsp.png";
-import { alpha, styled, useTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import Radio from "@mui/material/Radio";
 import { getBYIDUsers, updateUser } from "../store/action/action";
@@ -20,21 +18,39 @@ import { useDispatch, useSelector } from "react-redux";
 import API_URL from "../ServiceModule/Service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { THEME_COLOR } from "../constants";
+
+
+import backArrow from "../Images/ic_back_button.png";
+import sms from "../Images/ic-sms.png";
+import call from "../Images/ic-call.png";
+import wtsp from "../Images/ic-wtsp.png";
+import email from "../Images/ic-mail.png";
 
 const PinkSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#8AC642",
     "&:hover": {
-      backgroundColor: alpha("#8AC642", theme.palette.action.hoverOpacity),
+      backgroundColor: "rgba(138, 198, 66, 0.1)",
     },
   },
+
   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
     backgroundColor: "#8AC642",
   },
+
+  "& .MuiSwitch-switchBase": {
+    color: "#888888",
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.08)",
+    },
+  },
+
+  "& .MuiSwitch-track": {
+    backgroundColor: "#555555",
+    opacity: 1,
+  },
 }));
 
-const label = { inputProps: { "aria-label": "Color switch demo" } };
 
 const Communication = ({ communication, onCommunicationClose }) => {
   const [selectedValue, setSelectedValue] = useState("a");
@@ -56,8 +72,8 @@ const Communication = ({ communication, onCommunicationClose }) => {
   }, [dispatch, userId]);
 
   useEffect(() => {
-    if (userbyId.getUserById && userbyId.getUserById.data) {
-      const data = userbyId.getUserById.data;
+    const data = userbyId.getUserById?.data;
+    if (data) {
       setSwitchStates({
         userSms: data.userSms,
         userCall: data.userCall,
@@ -68,54 +84,52 @@ const Communication = ({ communication, onCommunicationClose }) => {
     }
   }, [userbyId]);
 
-  const handleSwitchUpdate = (switchName) => async (event) => {
-    const newChecked = event.target.checked;
-    setSwitchStates((prevStates) => ({
-      ...prevStates,
-      [switchName]: newChecked,
-    }));
+  const handleSwitchUpdate = (key) => async (event) => {
+    const checked = event.target.checked;
+    setSwitchStates((prev) => ({ ...prev, [key]: checked }));
     setLoading(true);
 
     const formData = new FormData();
     formData.append("_id", userId);
-    formData.append(switchName, newChecked);
+    formData.append(key, checked);
 
     try {
       await dispatch(updateUser(API_URL, formData));
-    } catch (error) {
-      console.error("Error updating the switch state", error);
+    } catch {
+      toast.error("Error updating preference");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRadioChange = (event) => {
-    const newValue = event.target.value;
-    setSelectedValue(newValue);
+  const handleRadioChange = (e) => {
+    const value = e.target.value;
+    setSelectedValue(value);
     setLoading(true);
 
     const formData = new FormData();
     formData.append("_id", userId);
-    formData.append("userFrequent", newValue);
+    formData.append("userFrequent", value);
 
-    try {
-      dispatch(updateUser(API_URL, formData))
-        .then(() => toast.success("Successfully Updated"))
-        .catch(() => toast.error("Error in updating"));
-    } catch (error) {
-      console.error("Error updating the radio button state", error);
-    } finally {
-      setLoading(false);
-    }
+    dispatch(updateUser(API_URL, formData))
+      .then(() => toast.success("Successfully Updated"))
+      .catch(() => toast.error("Error in updating"))
+      .finally(() => setLoading(false));
   };
 
-  const controlProps = (item) => ({
-    checked: selectedValue === item,
-    onChange: handleRadioChange,
-    value: item,
-    name: "color-radio-button-demo",
-    inputProps: { "aria-label": item },
-  });
+  const contactMethods = [
+    { icon: sms, label: "SMS", key: "userSms" },
+    { icon: call, label: "Call", key: "userCall" },
+    { icon: wtsp, label: "WhatsApp", key: "userWhatsapp" },
+    { icon: email, label: "Email", key: "userEmail" },
+  ];
+
+  const frequencyOptions = [
+    { value: "1", label: "Monthly" },
+    { value: "2", label: "Yearly" },
+    { value: "3", label: "Never" },
+  ];
+
 
   return (
     <Drawer
@@ -123,108 +137,94 @@ const Communication = ({ communication, onCommunicationClose }) => {
       open={communication}
       onClose={onCommunicationClose}
       sx={{
-        "& .MuiPaper-root": {
-          backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-          color: THEME_COLOR.COLOR,
-          width: isMobile ? "100vw" : "30vw",
+        "& .MuiDrawer-paper": {
+          width: "35vw",
+          maxWidth: "400px",
+          backgroundColor: "#212121",
+          color: "#fff",
+          padding: theme.spacing(4),
         },
       }}
     >
-      <ToastContainer />
-      <Box
-        sx={{
-          height: "100vh",
-          overflowY: "hidden",
-          overflowX: "hidden",
-          paddingBottom: 3,
-          paddingX: isMobile ? 2 : 5,
+      <ToastContainer position="top-center" />
+      <Box>
+        <Stack direction="row" alignItems="center" spacing={2} mb={4}>
+          <IconButton onClick={onCommunicationClose}>
+            <img src={backArrow} alt="Back" style={{ width: 24 }} />
+          </IconButton>
+          <Typography variant="h5" fontWeight={600}>
+            Communication Preferences
+          </Typography>
+        </Stack>
 
-        }}
-        role="presentation"
-      >
-        <Grid container spacing={2} className="d-flex my-3" alignItems="center">
-          <Grid item>
-            <img src={backArrow} alt="Back" onClick={onCommunicationClose} style={{ cursor: "pointer" }} />
-          </Grid>
-          <Grid item>
-            <Typography variant={isMobile ? "h6" : "h4"}>Communication Preferences</Typography>
-          </Grid>
-        </Grid>
+        <Box mb={5}>
+          <Typography variant="h5" fontWeight={600} gutterBottom>
+            Policy Updates
+          </Typography>
+          <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
+            Receive important updates for your policies — payments, renewals, and more.
+          </Typography>
 
-        <Card className="p-3 rounded-5 shadow mb-5 pr-5">
-          <h3>Policy Updates</h3>
-          <p style={{ color: "#7A7878" }}>
-            Policy Updates: Important updates for your purchased policies — payment, issuance, renewal, and reminders.
-          </p>
+          <Stack spacing={2}>
+            {contactMethods.map(({ icon, label, key }) => (
+              <Stack key={key} direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <img src={icon} alt={label} width={24} />
+                  <Typography variant="body1">{label}</Typography>
+                </Stack>
+                <PinkSwitch checked={switchStates[key]} onChange={handleSwitchUpdate(key)} />
+              </Stack>
+            ))}
+          </Stack>
+        </Box>
 
-          {[{ icon: sms, label: "SMS", key: "userSms" }, { icon: call, label: "Call", key: "userCall" }, { icon: wtsp, label: "Whatsapp", key: "userWhatsapp" }].map((item) => (
-            <Grid
-              container
-              key={item.key}
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ my: 2, paddingRight: " 20%" }}
-            >
-              <Grid item display="flex" alignItems="center">
-                <img src={item.icon} height={30} alt={`${item.label} icon`} style={{ marginRight: "16px" }} />
-                <Typography>{item.label}</Typography>
-              </Grid>
-              <Grid item>
+        <Box>
+          <Typography variant="h4" fontWeight={600} gutterBottom>
+            Communication Frequency
+          </Typography>
+          <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
+            How often would you like to hear from us?
+          </Typography>
+
+          <Stack spacing={2}>
+            {frequencyOptions.map(({ value, label }) => (
+              <Stack key={value} direction="row" justifyContent="space-between" alignItems="center">
+                <Typography variant="body1">{label}</Typography>
                 <PinkSwitch
-                  {...label}
-                  checked={switchStates[item.key]}
-                  onChange={handleSwitchUpdate(item.key)}
-                />
-              </Grid>
-            </Grid>
-          ))}
-        </Card>
-
-        <Card className="p-3 rounded-5 shadow" sx={{ p: "20%" }}>
-          <h3>Frequent Communication</h3>
-          <p style={{ color: "#7A7878", paddingRight: "20%" }}>
-            Manage your communication preferences easily and stay informed your way.
-          </p>
-          {[{ value: "1", label: "Monthly" }, { value: "2", label: "Yearly" }, { value: "3", label: "Never" }].map((option) => (
-            <Grid container key={option.value} alignItems="center" justifyContent="space-between" className="mb-2  mr-5" style={{ paddingRight: "20%" }}>
-              <Grid item>
-                <Typography fontWeight={500}>{option.label}</Typography>
-              </Grid>
-              <Grid item>
-                <Radio
-                  {...controlProps(option.value)}
+                  checked={selectedValue === value}
+                  onChange={handleRadioChange}
+                  value={value}
                   sx={{
                     color: "#8AC642",
                     "&.Mui-checked": {
                       color: "#8AC642",
-                      paddingRight: "50%",
                     },
                   }}
                 />
-              </Grid>
-            </Grid>
-          ))}
-        </Card>
-
-        {loading && (
-          <Box
-            sx={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              zIndex: 1300,
-            }}
-          >
-            <CircularProgress color="primary" />
-          </Box>
-        )}
+              </Stack>
+            ))}
+          </Stack>
+        </Box>
       </Box>
+
+      {loading && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backdropFilter: "blur(2px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 999,
+          }}
+        >
+          <CircularProgress color="inherit" />
+        </Box>
+      )}
     </Drawer>
   );
 };

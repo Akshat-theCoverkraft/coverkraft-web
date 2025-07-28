@@ -1,10 +1,25 @@
+
+.dm-sans {
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'DM Sans'-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+.Toastify__toast-container {
+  z-index: 99999 !important;
 }
 
 code {
@@ -53,7 +68,7 @@ animate-style{
 }
 .custom-datepicker {
  
-  max-width: 200%; /* Ensure it doesn't exceed the parent's width */
+  max-width: 200% !important; /* Ensure it doesn't exceed the parent's width */
 }
 
 .primary-color{
@@ -67,4 +82,9 @@ animate-style{
     width: 100%;
     font-size: 0.875rem;
   }
+}
+@keyframes sway-thread {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(2deg); }
+  100% { transform: rotate(0deg); }
 }

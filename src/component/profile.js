@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Box, Typography, TextField } from "@mui/material";
+import { Drawer, Box, Typography, IconButton } from "@mui/material";
 import Button from "../component/Button";
 import CustomInput from "../component/CustomInput";
-import icProfileBg from "../Images/ic_profile_bg.png";
 import icDefaultProfile from "../Images/ic_default_profile.png";
 import editIcon from "../Images/edit-icon.png";
 import { getBYIDUsers, updateUser } from "../store/action/action";
 import API_URL from "../ServiceModule/Service";
 import IMAGE_PATH from "../ServiceModule/imagePath";
-import { getAllState } from "../store/action/action";
+import { getAllState, deleteAccount } from "../store/action/action";
 import GlobalDropdown from "./StateDropdown";
 import { Card, Grid } from "@material-ui/core";
 import family from "../Images/ic_family_member.png";
@@ -27,49 +26,63 @@ import GlobalDatePicker from "./GlobalDatePicker";
 import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 import ContactUs from "../profile/ContactUs";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CloseIcon from "@mui/icons-material/Close";
+import { BorderColor, Padding } from "@mui/icons-material";
+import backArrow from "../Images/ic_back_button.png";
+import { capitalizeFirstLetter } from "../utils/helpers";
+import { color } from "framer-motion";
 
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [communicationDrawerOpen, setCommunicationDrawerOpen] = useState(false);
-  const [aboutDrawerOpen, setAboutDrawerOpen] = useState(false);
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
-  const userEmail = sessionStorage.getItem("userEmail");
   const [profileImage, setProfileImage] = useState(icDefaultProfile);
-  // console.log("profileImage", profileImage);
   const [showImageInput, setShowImageInput] = useState(false);
-  const [username, setuserName] = useState();
-  const [useremail, setuserEmail] = useState();
-  const [userDob, setuserDob] = useState();
-  const [userAddress, setuserAddress] = useState();
+  const [username, setuserName] = useState("");
+  const [useremail, setuserEmail] = useState("");
+  const [userDob, setuserDob] = useState(null);
+  const [userAddress, setuserAddress] = useState("");
   const [state, setstate] = useState("");
-  // console.log("state", state);
   const [city, setCity] = useState("");
-  // console.log("city", city);
-  const [userPhone, setuserPhone] = useState();
-  const [pinCode, setpinCode] = useState();
-  const [gender, setgender] = useState();
+  const [userPhone, setuserPhone] = useState("");
+  const [pinCode, setpinCode] = useState("");
+  const [gender, setgender] = useState("");
   const [userImgFile, setuserImgFile] = useState(null);
-  // console.log("userImgFile", userImgFile);
-  const userbyId = useSelector((state) => state.user);
-  const states = useSelector((state) => state.user);
   const [update, setUpdate] = useState(false);
-  const navigate = useNavigate();
   const [selectedStateId, setSelectedStateId] = useState("");
   const [selectedCityId, setSelectedCityId] = useState("");
-  const [isValidPinCode, setIsValidPinCode] = useState(true);
   const [valid, setValid] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [profileCompletion, setProfileCompletion] = useState(0);
+
+  const [nameError, setNameError] = useState("");
+  const [isValidName, setIsValidName] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidPhone, setIsValidPhone] = useState(true);
+  const [isValidPinCode, setIsValidPinCode] = useState(true);
+  const [isValidDob, setIsValidDob] = useState(true);
+
+  const userbyId = useSelector((state) => state.user);
+  const states = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const location = useLocation();
   const [returnPath, setReturnPath] = useState("/");
-  const handleCitySelect = (cityId) => {
-    setSelectedCityId(cityId);
+  const commonItemStyle = {
+    maxWidth: 900,
+    width: "100%",
+    paddingLeft: "10px !important",
   };
-  //useeffect
-  useEffect(() => {
-    dispatch(getAllState(API_URL));
-  }, [dispatch]);
+
+
+  const commonInputStyle = {
+    height: 48,
+    fontSize: "1.222rem",
+    borderRadius: 42,
+    paddingLeft: "20px",
+    width: "100%",
+    color: "#fff",
+  };
 
   const LOCAL_STORAGE_KEYS = [
     "loggedIn",
@@ -80,71 +93,74 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     "token",
   ];
 
-  useEffect(() => {
-    if (states !== null && states !== undefined) {
-      if (states.getAllState !== null && states.getAllState !== undefined) {
-        if (
-          states.getAllState.data !== null &&
-          states.getAllState.data !== undefined
-        ) {
-          setstate(states.getAllState.data);
-        }
+  const calculateProfileCompletion = (data) => {
+    const requiredFields = ["userName", "userEmail", "userPhone", "userImg"];
+
+    const totalFields = requiredFields.length;
+    let completedFields = 0;
+
+    requiredFields.forEach((field) => {
+      const value = data?.[field];
+      if (value !== undefined && value !== null && value !== "") {
+        completedFields++;
       }
+    });
+
+    return Math.floor((completedFields / totalFields) * 100);
+  };
+  useEffect(() => {
+    setUpdate(false);
+  }, []);
+
+  useEffect(() => {
+    dispatch(getAllState(API_URL));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (states?.getAllState?.data) {
+      setstate(states.getAllState.data);
     }
   }, [states]);
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
-    dispatch(getBYIDUsers(API_URL, userId));
+    if (userId) {
+      dispatch(getBYIDUsers(API_URL, userId));
+    }
   }, [dispatch]);
 
   useEffect(() => {
-    // Save the path only when the drawer opens
     if (open) {
       setReturnPath(location.pathname);
     }
   }, [open, location.pathname]);
-  // useEffect(() => {
-  //   if (userbyId.getUserById && userbyId.getUserById.data) {
-  //     const data = userbyId.getUserById.data;
-  //     console.log("data", data);
-  //     setuserName(data.userName);
-  //     setuserEmail(data.userEmail);
-  //     setuserPhone(data.userPhone);
-  //     setuserDob(new Date(data?.userDob?.split("/")?.reverse()?.join("-")));
-  //     setuserAddress(data.userAddress);
-  //     setstate(data.state === null ? null : data.state._id);
-  //     setCity(data.city === null ? null : data.city._id);
-  //     setpinCode(data.pinCode);
-  //     setgender(data.gender);
-  //     setProfileImage(
-  //       data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
-  //     );
-  //   }
-  // }, [userbyId]);
-  // console.log("userimg kya h", profileImage);
 
   useEffect(() => {
-    if (userbyId.getUserById && userbyId.getUserById.data) {
+    if (userbyId.getUserById?.data) {
       const data = userbyId.getUserById.data;
+      const percentage = calculateProfileCompletion(data);
+      setProfileCompletion(percentage);
 
-      setuserName(data.userName);
-      setuserEmail(data.userEmail);
-      setuserPhone(data.userPhone);
-      setuserDob(new Date(data?.userDob?.split("/")?.reverse()?.join("-")));
-      setuserAddress(data.userAddress);
+      setuserName(data.userName || "");
+      setuserEmail(data.userEmail || "");
+      setuserPhone(data.userPhone || "");
+
+      if (data.userDob) {
+        setuserDob(new Date(data.userDob.split("/").reverse().join("-")));
+      }
+
+      setuserAddress(data.userAddress || "");
 
       const stateId = data?.state?._id || "";
       const cityId = data?.city?._id || "";
 
       setstate(stateId);
       setSelectedStateId(stateId);
-
       setCity(cityId);
       setSelectedCityId(cityId);
 
-      setpinCode(data.pinCode);
-      setgender(data.gender);
+      setpinCode(data.pinCode || "");
+      setgender(data.gender || "");
 
       setProfileImage(
         data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
@@ -152,100 +168,114 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   }, [userbyId]);
 
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setuserName(value);
+
+    if (!value.trim()) {
+      setNameError("Full name is required");
+    } else if (value.trim().length < 3) {
+      setNameError("Full name must be at least 3 characters");
+    } else {
+      setNameError("");
+    }
+  };
+
   const handleStateSelect = (stateId) => {
     setSelectedStateId(stateId);
   };
-  //function to check user is above 18 or not
-  const isOldEnough = (dob) => {
-    const today = new Date(); // Get today's date
-    const birthDate = new Date(dob); // Convert dob to a Date object
-    let age = today.getFullYear() - birthDate.getFullYear(); // Calculate age
 
-    // Calculate the month difference
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-
-    // If the birth month hasn't occurred yet this year, or it's the birth month but the birth day hasn't occurred yet, subtract one year from age
-    if (
-      monthDifference < 0 ||
-      (monthDifference === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    // Return true if age is 18 or older
-    return age >= 18;
+  const handleCitySelect = (cityId) => {
+    setSelectedCityId(cityId);
   };
 
-  function handleUpateProfile() {
-    const formData = new FormData();
-    // console.log("FormData values before appending:", formData);
+  const isOldEnough = (date) => {
+    if (!date) return true;
 
+    const today = new Date();
+    const ageDiff = today.getFullYear() - date.getFullYear();
+
+    // Account for month/day
+    const hasHadBirthdayThisYear =
+      today.getMonth() > date.getMonth() ||
+      (today.getMonth() === date.getMonth() && today.getDate() >= date.getDate());
+
+    const actualAge = hasHadBirthdayThisYear ? ageDiff : ageDiff - 1;
+
+    return actualAge >= 18;
+  };
+
+
+  const handleUpateProfile = () => {
+    const nameValid = username.trim().length >= 3;
+    setIsValidName(nameValid);
+
+    const emailValid =
+    !useremail ||
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(useremail.trim());
+      setIsValidEmail(emailValid);
+
+
+    const phoneValid = !userPhone || /^\d{10}$/.test(userPhone);
+    setIsValidPhone(phoneValid);
+
+    const pinValid = !pinCode || /^\d{5,6}$/.test(pinCode);
+    setIsValidPinCode(pinValid);
+
+    const dobValid = !userDob || isOldEnough(userDob);
+    console.log('sdfsdf', dobValid, userDob, isOldEnough(userDob))
+    setIsValidDob(dobValid);
+
+    if (!nameValid) {
+      return;
+    }
+
+    const formData = new FormData();
     formData.append("_id", sessionStorage.getItem("userId"));
-    formData.append("userName", username);
-    formData.append("userEmail", useremail);
-    formData.append("userPhone", userPhone);
-    formData.append("userDob", userDob);
+    formData.append("userName", username || '');
+    formData.append("userEmail", useremail || '');
+    formData.append("userPhone", userPhone || '');
+    try{
+      const formattedDob = userDob.toLocaleDateString("en-GB").split("/").reverse().join("-");
+      formData.append("userDob", formattedDob);
+    }catch(e){
+      formData.append("userDob", null);
+    }
     formData.append("userAddress", userAddress);
     formData.append("state", selectedStateId);
     formData.append("city", selectedCityId);
     formData.append("pinCode", pinCode);
     formData.append("gender", gender);
-    if (userImgFile) {
-      formData.append("userImg", userImgFile);
-    }
+    if (userImgFile) formData.append("userImg", userImgFile || null);
 
-    console.log(
-      username,
-      useremail,
-      userPhone,
-      userDob,
-      userAddress,
-      selectedStateId,
-      selectedCityId,
-      pinCode,
-      gender,
-      userImgFile
-    );
-    if (
-      (username &&
-        useremail &&
-        userPhone &&
-        userDob &&
-        userAddress &&
-        selectedStateId &&
-        selectedCityId &&
-        pinCode &&
-        gender) ||
-      userImgFile
-    ) {
-      if (!isOldEnough(userDob)) {
-        toast.error("You must be at least 18 years old to register.", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
+   dispatch(updateUser(API_URL, formData)).then((res) => {
+        if (res.status) {
+            toast.success("Profile updated successfully!");
+            setUpdate(false);
+        } else {
+            toast.error(res.message || "Failed to update profile");
+        }
+    });
+  };
+
+
+
+  const handleDeleteAccount = () => {
+    const userId = sessionStorage.getItem("userId");
+    if (userId) {
+      dispatch(deleteAccount(API_URL, userId))
+        .then(() => {
+          toast.success("Account deleted successfully");
+          sessionStorage.clear();
+          navigate("/login");
+        })
+        .catch(() => {
+          toast.error("Error deleting account");
         });
-        return;
-      }
-
-      dispatch(updateUser(API_URL, formData));
-      // .then(() => {
-      //     toast.success('Updated successfully')
-      // }).catch((error) => {
-      //     toast.error('Error in updating')
-      // })
-      toast.success("Updated successfully");
-      setTimeout(() => {
-        onClose();
-      }, 1000);
-      // onClose();
-    } else {
-      toast.error("Please fill all required fields!");
-      // console.log("No fields are being updated");
     }
-  }
+  };
+
+
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -259,40 +289,23 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   };
 
-  const toggleImageInput = () => {
-    setShowImageInput(!showImageInput);
+
+  const handleDobChange = (date) => {
+    setuserDob(date);
+    if (date == "") {
+      isValidDob = true
+    }
   };
 
-  const handleEdit = () => {
-    setUpdate(!update);
-  };
-
-  const handleFamilyClose = () => {
-    setDrawerOpen(false);
-  };
-  const handleCommunicationclose = () => {
-    setCommunicationDrawerOpen(false);
-  };
-  const handleHelpclose = () => {
-    setHelpDrawerOpen(false);
-  };
-  const handleAboutClose = () => {
-    setAboutDrawerOpen(false);
-  };
-  const handleFamilyOpen = () => {
-    setDrawerOpen(true);
-  };
-  const handleCommunicationOpen = () => {
-    setCommunicationDrawerOpen(true);
-  };
+  const handleFamilyOpen = () => setDrawerOpen(true);
+  const handleFamilyClose = () => setDrawerOpen(false);
+  const handleCommunicationOpen = () => setCommunicationDrawerOpen(true);
+  const handleCommunicationclose = () => setCommunicationDrawerOpen(false);
+  const handleHelpOpen = () => navigate("/contactus");
+  const handleHelpclose = () => setHelpDrawerOpen(false);
   const handleAboutOpen = () => {
-    // setAboutDrawerOpen(true);
     onClose();
     navigate("/about");
-  };
-  const handleHelpOpen = () => {
-    // alert("Coming soon !");
-    navigate("/contactus");
   };
   const handleLogout = () => {
     LOCAL_STORAGE_KEYS.forEach((key) => sessionStorage.removeItem(key));
@@ -300,47 +313,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     setTimeout(() => window.location.reload(), 100);
   };
 
-  const handlePinCodeChange = (e) => {
-    let pin = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
-    pin = pin.slice(0, 6); // Limit to 6 digits
-    setpinCode(pin);
-    const isValidPin = /^\d{5,6}$/.test(pin); // Check if it's 5 or 6 digits
-    setIsValidPinCode(isValidPin);
-  };
-  //function to handle email input field start
-  const handleEmailChange = (e) => {
-    const emailId = e.target.value;
-
-    // Regular expression to validate the email
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    // Regex to check for exactly one @ symbol and at least two dots after @
-    const validEmail =
-      emailRegex.test(emailId) &&
-      emailId.split("@").length === 2 &&
-      emailId.split("@")[1].split(".").length <= 3;
-    setuserEmail(emailId);
-    setIsValidEmail(validEmail);
-  };
-  //function to handle email input field start
-  //function to handle phone number input field start
-  const handlephonechange = (e) => {
-    let number = e.target.value.replace(/\D/g, "");
-    number = number.slice(0, 10);
-    setuserPhone(number);
-    const isValid = /^\d{10}$/.test(number.replace("+91", ""));
-    setValid(isValid);
-  };
-  //function to handle phone number input field end
-  const handleDobChange = (date) => {
-    setuserDob(date);
-  };
-
-  const headerStyle = {
-    wordWrap: "break-word", // Ensures long words break onto the next line
-    overflowWrap: "break-word", // Alternative property to ensure wrapping
-    maxWidth: "25%", // Ensures the element respects the container's width
-    whiteSpace: "normal", // Ensures that text can wrap and does not stay in a single line
-  };
+  const fetchUserProfile = () => {
+    const userId = sessionStorage.getItem("userId");
+    if (userId) {
+      dispatch(getBYIDUsers(API_URL, userId));
+    }
+  }
 
   return (
     <Drawer
@@ -350,8 +328,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       sx={{
         "& .MuiPaper-root": {
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-          width: "35vw", // ✅ Consistent width across the drawer
-          maxWidth: "400px", // Optional: limit max width for responsiveness
+          width: "35vw",
+          maxWidth: "400px",
         },
       }}
     >
@@ -359,69 +337,94 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       <Box
         sx={{
           width: "100%",
-          padding: 0,
+          padding: 1,
           overflowX: "hidden",
           backgroundColor: THEME_COLOR.FADE_BACKGROUND,
         }}
         role="presentation"
       >
-        <div className="flex items-center px-4 py-2">
-          <ArrowBackIcon
-            style={{ cursor: "pointer", color: "#fff", fontSize: "2rem" }}
+        {update ? (<>
+          <IconButton
             onClick={() => {
-              onClose(); // Close the drawer first
-              setTimeout(() => {
-                navigate(returnPath); // Go back to the stored path
-              }, 100); // Slight delay to let the drawer close smoothly
+              fetchUserProfile();
+              setUpdate(false);
             }}
-          />
-        </div>
+          >
+            <img src={backArrow} alt="Back" style={{ width: 24 }} />
+          </IconButton>
+        </>) : (
+          <div className="flex items-center justify-end px-4">
+            <CloseIcon
+              onClick={() => {
+                onClose();
+                setUpdate(false);
+                setTimeout(() => navigate(returnPath), 150);
+              }}
+              style={{
+                cursor: "pointer",
+                color: "#fff",
+                fontSize: "2rem",
+                transition: "transform 0.2s ease, color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.2)";
+                e.target.style.color = "#8AC642";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)";
+                e.target.style.color = "#fff";
+              }}
+            />
+          </div>)}
+
         <div className="main-container">
-          {/* Profile Header Section */}
           <div
             className="background-image-container1"
-            style={{ height: "30vh", padding: "0 2rem" }}
           >
             <div className="profile-details">
-              <div className="profile-image-container bg-red-600">
-                <img src={profileImage} alt="Profile" className="profile-image" />
+              <div className="profile-image-container">
+                {profileImage == null ? <img
+                  src={profileImage}
+                  alt="Profile"
+                  className="profile-image"
+                /> : <img src={require('../Images/ic_default_profile.png')}
+                  alt="Profile"
+                  className="profile-image" />}
                 {update && (
                   <label htmlFor="profile-image-upload">
                     <img
                       src={editIcon}
                       alt="Edit"
                       className="edit-icon"
-                      onClick={toggleImageInput}
+                      onClick={() => setShowImageInput(true)}
                     />
                   </label>
                 )}
-                {showImageInput && (
-                  <input
-                    id="profile-image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    style={{ display: "none" }}
-                  />
-                )}
+                <input
+                  id="profile-image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ display: "none" }}
+                />
               </div>
 
               <h2 className="text-header text-light mt-2 text-center">
-                {username}
+                {capitalizeFirstLetter(username)}
               </h2>
-              <p className="register-text text-center">{useremail}</p>
+              {useremail != '' ? <p className="register-text text-center">{useremail}</p> : null}
 
               {!update && (
-                <div className="flex justify-center mt-3">
+                <div className="flex justify-center mt-2 mb-10">
                   <Button
                     text={"Edit Profile"}
                     size="lg"
-                    onClick={handleEdit}
+                    onClick={() => setUpdate(true)}
                     customStyle={{
                       width: "100%",
                       height: "5vh",
                       borderRadius: "3rem",
-                      fontSize: "1rem",
+                      fontSize: "1.5rem",
                     }}
                   />
                 </div>
@@ -430,16 +433,15 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           </div>
         </div>
 
-        {/* Profile Options */}
         {!update ? (
           <Card
-            className="main-container m-3 p-4 my-4"
+            className="main-container p-6 mt-8"
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
+              marginTop: "30px",
             }}
           >
-            {/* REUSABLE LIST ITEM COMPONENT RECOMMENDED HERE */}
             {[
               {
                 label: "Family Member",
@@ -451,20 +453,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 icon: communication,
                 onClick: handleCommunicationOpen,
               },
+              { label: "Contact Us", icon: help, onClick: handleHelpOpen },
+              { label: "About", icon: about, onClick: handleAboutOpen },
+              { label: "Logout", icon: logout, onClick: handleLogout },
               {
-                label: "Contact Us",
-                icon: help,
-                onClick: handleHelpOpen,
-              },
-              {
-                label: "About",
-                icon: about,
-                onClick: handleAboutOpen,
-              },
-              {
-                label: "Logout",
+                label: "Delete Account",
                 icon: logout,
-                onClick: handleLogout,
+                onClick: () => setShowDeleteModal(true),
               },
             ].map((item, idx) => (
               <Grid
@@ -476,125 +471,344 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 style={{
                   cursor: "pointer",
                   borderBottom: "0.5px solid #fff",
-                  marginBottom: "1rem",
+                  marginBottom: "1.2rem",
+                  marginTop: "0.02rem",
                 }}
               >
                 <Grid item xs={2}>
-                  <img src={item.icon} style={{ maxHeight: "2.5rem" }} />
+                  <img
+                    src={item.icon}
+                    style={{ maxHeight: "2.5rem" }}
+                    alt={item.label}
+                  />
                 </Grid>
                 <Grid item xs={8}>
                   <span>{item.label}</span>
                 </Grid>
-                <Grid item xs={2}>
-                  <img src={rightArrow} style={{ maxHeight: "2rem" }} />
-                </Grid>
+                {/* <Grid item xs={2}>
+                  <img
+                    src={rightArrow}
+                    style={{ maxHeight: "2rem" }}
+                    alt="arrow"
+                  />
+                </Grid> */}
               </Grid>
             ))}
           </Card>
         ) : (
-          // --------------------------
-          // Edit Mode
-          // --------------------------
-          <div className="main-container mt-3 p-4">
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
+          <div className="main-container p-4">
+            <Grid container spacing={2} direction="column" alignItems="center">
+              {/* Full Name */}
+              <Grid item style={commonItemStyle}>
                 <CustomInput
-                  label="Name"
+                  label="Full Name"
                   placeholder="Enter your name"
                   value={username}
-                  onChange={(e) => setuserName(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setuserName(val);
+                    setIsValidName(val.trim().length >= 3);
+                  }}
+                  required
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                  validationMessage={
+                    !isValidName ? "Full name must be at least 3 characters" : ""
+                  }
+                />
+
+              </Grid>
+              {/* Phone */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  type="tel"
+                  label="Mobile Number"
+                  placeholder="Enter your mobile number"
+                  value={userPhone}
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                  disabled
                   required
                 />
+
+
               </Grid>
-              <Grid item xs={12}>
+              {/* Email */}
+              <Grid item style={commonItemStyle}>
                 <CustomInput
                   type="email"
                   label="Email Address"
-                  value={useremail}
-                  onChange={handleEmailChange}
                   placeholder="Enter your email"
-                  className={!isValidEmail ? "is-invalid" : ""}
+                  value={useremail}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setuserEmail(val);
+                    const valid =
+                      !val || val === '' || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
+                    setIsValidEmail(valid);
+                  }}
+                  fullWidth
+                  inputStyle={commonInputStyle}
                   validationMessage={
-                    !isValidEmail
-                      ? "Please enter a valid email address containing @."
-                      : ""
+                    useremail && !isValidEmail ? "Please enter a valid email" : ""
                   }
-                  required
                 />
+
               </Grid>
-              <Grid item xs={12}>
-                <CustomInput
-                  type="text"
-                  label="Mobile Number"
-                  value={userPhone}
-                  onChange={handlephonechange}
-                  placeholder="Enter your mobile number"
-                  className={!valid ? "is-invalid" : ""}
-                  validationMessage={
-                    !valid
-                      ? "Please enter a valid 10-digit mobile number."
-                      : ""
-                  }
-                  required
+
+
+
+              <Grid item style={commonItemStyle}>
+                <label
+                  htmlFor="dob"
+                  className="form-label text-light mb-2 d-block"
+                >
+                  Date of Birth
+                </label>
+                <GlobalDatePicker
+                  selectedDate={userDob}
+                  handleDateChange={(date) => {
+                    setuserDob(date);
+                   
+                      setIsValidDob(date ? isOldEnough(date) : true)
+                    
+                  }}
+                  placeholder="Select your date of birth"
+                  error={!isValidDob}
+                  validationMessage="You must be at least 18 years old"
+                 
                 />
               </Grid>
 
-              {/* Gender dropdown (optional) */}
-              <Grid item xs={12}>
+
+              {/* Address */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  label="Address"
+                  placeholder="Enter your address"
+                  value={userAddress}
+                  onChange={(e) => setuserAddress(e.target.value)}
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                />
+              </Grid>
+
+              {/* State */}
+              <Grid item style={commonItemStyle}>
+                <GlobalDropdown
+                  className={` ${selectedStateId === "" ? 'placeholder-selected !important' : 'custom-dark-dropdown'}`}
+
+                  onStateSelect={handleStateSelect}
+                  initialValue={selectedStateId}
+                  style={{ ...commonInputStyle, width: "100%" }}
+                />
+              </Grid>
+
+              {/* City */}
+              <Grid item style={commonItemStyle}>
+                <CityDropdown
+                  label="City"
+                  className={` ${selectedCityId === "" ? 'placeholder-selected' : 'custom-dark-dropdown'}`}
+                  selectedStateId={selectedStateId}
+                  onCitySelect={handleCitySelect}
+                  initialValue={selectedCityId}
+                  style={{ ...commonInputStyle, width: "100%" }}
+                />
+              </Grid>
+
+              {/* Pincode */}
+              <Grid item style={commonItemStyle}>
+                <CustomInput
+                  label="Pincode"
+                  placeholder="Enter your pincode"
+                  value={pinCode}
+                  onChange={(e) => {
+                    const pin = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setpinCode(pin);
+                    setIsValidPinCode(!pin || /^\d{5,6}$/.test(pin));
+                  }}
+                  fullWidth
+                  inputStyle={commonInputStyle}
+                  validationMessage={
+                    pinCode && !isValidPinCode
+                      ? "Please enter a valid pin code (5 or 6 digits)"
+                      : ""
+                  }
+                />
+
+              </Grid>
+
+              {/* Gender */}
+              <Grid item style={commonItemStyle}>
                 <label
-                  className="form-label fw-bold text-light"
                   htmlFor="gender"
+                  className="form-label fw-bold text-light mb-2 d-block"
                 >
                   Gender
                 </label>
                 <select
                   id="gender"
-                  className="dropdown-select w-full bg-dark text-light border rounded-lg py-2 px-4"
                   value={gender}
                   onChange={(e) => setgender(e.target.value)}
+                  className={` ${gender === '' ? 'placeholder-selected' : 'custom-dark-dropdown'}`}
                 >
-                  <option disabled value="">
-                    Select Your Gender
-                  </option>
+                  <option value="">Select Your Gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
+
+              </Grid>
+
+              {/* Buttons */}
+              <Grid item style={commonItemStyle}>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Button
+                      text="Update Profile"
+                      onClick={handleUpateProfile}
+                      disabled={!username || !isValidDob}
+                      bgcolor={!username ? "#ccc" : "#8AC642"}
+                      customStyle={{
+                        width: "100%",
+                        height: 48,
+                        borderRadius: 24,
+                        fontSize: "1.4rem",
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Button
+                      text="Cancel"
+                      onClick={() => setUpdate(false)}
+                      customStyle={{
+                        width: "100%",
+                        height: 48,
+                        borderRadius: 24,
+                        fontSize: "1.4rem",
+                        backgroundColor: "#444",
+                        color: "#fff",
+                      }}
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
+          </div>
+        )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-3 mt-5 justify-center">
-              <Button
-                size="lg"
-                text="Update"
-                onClick={handleUpateProfile}
-                disabled={!isValidEmail}
-                bgcolor={!isValidEmail ? "#d3d3d3" : "#8AC642"}
-                customStyle={{
-                  width: "100%",
-                  height: "6vh",
-                  borderRadius: "3rem",
-                  fontSize: "1rem",
+        {showDeleteModal && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(0, 0, 0, 0.6)",
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "20px",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "#1c1c1c",
+                borderRadius: "16px",
+                padding: "2rem",
+                maxWidth: "500px",
+                width: "100%",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                textAlign: "center",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{
+                  mb: 1,
+                  color: "#fff",
+                  fontWeight: 800,
+                  fontSize: "1.8rem",
                 }}
-              />
-              <Button
-                size="lg"
-                text="Cancel"
-                onClick={handleEdit}
-                customStyle={{
-                  width: "100%",
-                  height: "6vh",
-                  borderRadius: "3rem",
-                  fontSize: "1rem",
+              >
+                Delete Account
+              </Typography>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  mb: 3,
+                  color: "#ccc",
+                  fontSize: "1.3rem",
+                  lineHeight: 1.6,
                 }}
-              />
+              >
+                Are you sure you want to delete your account? All your data will be permanently lost.
+
+              </Typography>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  gap: "1rem",
+                  justifyContent: "center",
+                }}
+              >
+                <button
+                  style={{
+                    flex: 1,
+                    minWidth: "120px",
+                    backgroundColor: "#e53935",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "30px",
+                    padding: "14px 0",
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "background 0.3s",
+                  }}
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    handleDeleteAccount();
+                  }}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = "#e53935")}
+                >
+                  Delete
+                </button>
+
+                <button
+                  style={{
+                    flex: 1,
+                    minWidth: "120px",
+                    backgroundColor: "#8AC642",
+                    color: "#000",
+                    border: "none",
+                    borderRadius: "30px",
+                    padding: "14px 0",
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "background 0.3s",
+                  }}
+                  onClick={() => setShowDeleteModal(false)}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = "#7ab634")}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = "#8AC642")}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         )}
-      </Box>
 
-      {/* DRAWER MODALS */}
+      </Box>
       <Family family={drawerOpen} onfamilyclose={handleFamilyClose} />
       <Communication
         communication={communicationDrawerOpen}
@@ -602,7 +816,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       />
       <ContactUs help={helpDrawerOpen} onHelpClose={handleHelpclose} />
     </Drawer>
-
   );
 };
 

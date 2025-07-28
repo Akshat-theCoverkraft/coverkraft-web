@@ -44,7 +44,7 @@ const Coverkraft = () => {
             gutterBottom
             sx={{ fontSize: { xs: "22px", sm: "26px", md: "29px" } }}
           >
-            DOWNLOAD APP <span style={{ color: "#8BC642", fontWeight:"6rem", fontSize: "50px" }}>Coming Soon...</span>
+            DOWNLOAD APP <span style={{ color: "#8BC642", fontWeight:"6rem", fontSize: "50px" }}></span>
           </Typography>
           <Typography
             variant="h3"
@@ -57,20 +57,30 @@ const Coverkraft = () => {
         </Box>
 
         <Box my={4}>
-          {features.map((item, index) => (
-            <Box key={index} display="flex" alignItems="flex-start" mb={2}>
-              <Box
-                component="img"
-                src={checkicon}
-                alt="Check Icon"
-                sx={{ height: 26, mt: "4px" }}
-              />
-              <Typography variant="body1" sx={{ ml: 2, fontSize: "1.1rem" }}>
-                {item}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
+  {features.map((item, index) => (
+    <Box key={index} display="flex" alignItems="center" mb={2}>
+      <Box
+        component="img"
+        src={checkicon}
+        alt="Check Icon"
+        sx={{ height: 28, mt: "1px", flexShrink: 0 }}
+      />
+      <Typography
+        variant="body1"
+        sx={{
+          ml: 2,
+          fontSize: "1.7rem",
+          lineHeight: 1.5,
+          fontWeight: 500,
+          fontFamily: "DM Sans, sans-serif",
+        }}
+      >
+        {item}
+      </Typography>
+    </Box>
+  ))}
+</Box>
+
 
         <Box
           display="flex"

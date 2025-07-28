@@ -70,6 +70,35 @@ export const GETALLFAQ_DATA_REQUEST = "GETALLFAQ_DATA_REQUEST";
 export const GETALLFAQ_DATA_SUCCESS = "GETALLFAQ_DATA_SUCCESS";
 export const GETALLFAQ_DATA_FAILURE = "GETALLFAQ_DATA_FAILURE";
 
+// Delete account
+export const DELETE_ACCOUNT_REQUEST = "DELETE_ACCOUNT_REQUEST";
+export const DELETE_ACCOUNT_SUCCESS = "DELETE_ACCOUNT_SUCCESS";
+export const DELETE_ACCOUNT_FAILURE = "DELETE_ACCOUNT_FAILURE";
+
+// delete account api
+export const deleteAccount = (API_URL, userId) => {
+    return (dispatch) => {
+        dispatch({ type: DELETE_ACCOUNT_REQUEST });
+        const token = sessionStorage.getItem('token');
+        axios
+            .post(API_URL + `user/deleteUser`, { _id: userId }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then((response) => {
+                dispatch({ type: DELETE_ACCOUNT_SUCCESS, payload: response.data });
+                // Optionally, you can clear the session storage or redirect the user
+                sessionStorage.clear();
+            })
+            .catch((error) => {
+                const errorMessage = error.response?.data?.message || "Error deleting account";
+                dispatch({ type: DELETE_ACCOUNT_FAILURE, payload: errorMessage });
+                toast.error(errorMessage);
+            });
+    };
+}
+
 
 // get all NOTIFICATION data 
 export const getAllNotification = (API_URL, data) => {
@@ -116,24 +145,39 @@ export const deleteAllNotificationsByUser = (API_URL, userId) => {
             });
     };
 };
-// register start
+
 export const registrationCustomer = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: REGISTER_DATA_REQUEST });
-        axios
+
+        return axios
             .post(API_URL + "user/createUser", data)
             .then((response) => {
-                dispatch({ type: REGISTER_DATA_SUCCESS, payload: response.data });
-                return response.data;
+                if (response.data.status === false) {
+                    dispatch({
+                        type: REGISTER_DATA_FAILURE,
+                        payload: response.data.message,
+                    });
+                    throw new Error(response.data.message); // Manually throw
+                }
 
+                dispatch({
+                    type: REGISTER_DATA_SUCCESS,
+                    payload: response.data,
+                });
+                return response.data;
             })
             .catch((error) => {
-                // Check if the error response contains a message
-
-                dispatch({ type: REGISTER_DATA_FAILURE, payload: error.message });
+                const message =
+                    error?.response?.data?.message || error.message || "Something went wrong";
+                dispatch({ type: REGISTER_DATA_FAILURE, payload: message });
+                throw new Error(message);
             });
     };
-}
+};
+
+
+
 
 //VERIFY USER
 export const verifyUser = (API_URL, data) => {
@@ -273,23 +317,31 @@ export const getBYIDUsers = (API_URL, userId) => {
 }
 
 
-//update user 
+
 export const updateUser = (API_URL, data) => {
     return (dispatch) => {
         dispatch({ type: UPDATEUSER_DATA_REQUEST });
-        const token = sessionStorage.getItem('token');
+
         return axios
             .post(API_URL + `user/updateUser`, data)
             .then((response) => {
-                dispatch({ type: UPDATEUSER_DATA_SUCCESS, payload: response.data });
-                const userId = data.get('_id');
-                return dispatch(getBYIDUsers(API_URL, userId));
+                if (response.data.status === false) {
+                    dispatch({ type: UPDATEUSER_DATA_FAILURE, payload: response.data.message });
+                } else {
+                    dispatch({ type: UPDATEUSER_DATA_SUCCESS, payload: response.data });
+
+                    const userId = data.get('_id');
+                    dispatch(getBYIDUsers(API_URL, userId));
+                }
+                return response.data; // ✅ Return response to the component
             })
             .catch((error) => {
                 dispatch({ type: UPDATEUSER_DATA_FAILURE, payload: error.message });
+                return { status: false, message: error.message }; // ✅ Return error structure
             });
     };
-}
+};
+
 
 
 // get all state data 

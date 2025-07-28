@@ -1,55 +1,140 @@
-import React, {useEffect} from "react";
-import Navbar from "../../../component/Navbar";
+import React, { useEffect, useState, useRef } from "react";
+import Navbar, { StyledButton } from "../../../component/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios'
-import { Button as MuiButton } from '@mui/material';
+import { Box, IconButton, Button as MuiButton } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import API_URL from "../../../ServiceModule/Service";
-import moment from 'moment-timezone'
+import moment from "moment-timezone";
 import { capitalizeFirstLetter, truncateString } from "../../../utils/helpers";
-import arrow from '../../../Images/Symbol.png'
+import arrow from "../../../Images/Symbol.png";
 import { THEME_COLOR } from "../../../constants";
+import Footer from "../Footer";
+import backArrow from "../../../Images/ic_back_button.png";
+import SessionExpiredModal from "../../../utils/sessionExpireModal";
 
 const NewsBlog = () => {
   const navigate = useNavigate();
-  const {type, id} = useParams();
+  const { type, id } = useParams();
   const [blog, setBlog] = React.useState({});
   const [moreBlogs, setMoreBlogs] = React.useState([]);
+  const [error, setError] = useState(null);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
   
-console.log(type, id, "<===type")
+  // Refs to store video elements
+  const videoRefs = useRef([]);
+  const mainVideoRef = useRef(null);
+  
+  console.log(type, id, "<===type");
+  
   const fetchBlogDetails = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}news/get-blog-details?blogId=${id}`);
+      const { data } = await axios.get(
+        `${API_URL}news/get-blog-details?blogId=${id}`
+      );
+
       if (data?.success) {
         setBlog(data?.blog);
+
         // Only set moreBlogs with status 'active' and exclude current blog
-        const activeBlogs = (data?.moreBlogs || []).filter(blog => blog.status === 'active' && blog._id !== id);
+        const activeBlogs = (data?.moreBlogs || []).filter(
+          (blog) => blog.status === "active" && blog._id !== id
+        );
         setMoreBlogs(activeBlogs);
       } else {
-        toast.error("Error fetching blog data:", data?.message);
+        toast.error(data?.message || "Failed to load blog details.");
       }
     } catch (error) {
-      toast.error("Error fetching blog data:", error);
+      console.error("Error fetching options:", error);
+      if (error.response?.status === 401) {
+        setShowSessionExpired(true);
+      } else {
+        setError('Failed to load options');
+        toast.error(
+          error?.response?.data?.message || // from backend
+            error?.message || // fallback message
+            "Something went wrong while loading the blog."
+        );
+      }
     }
-  }
+  };
+
+  // Function to pause all videos
+  const pauseAllVideos = () => {
+    // Pause main video
+    if (mainVideoRef.current) {
+      mainVideoRef.current.pause();
+    }
+    
+    // Pause all other videos
+    videoRefs.current.forEach(video => {
+      if (video) {
+        video.pause();
+      }
+    });
+  };
+
+  // Function to handle video play - pause others when one starts
+  const handleVideoPlay = (playingVideo) => {
+    // Pause main video if it's not the one playing
+    if (mainVideoRef.current && mainVideoRef.current !== playingVideo) {
+      mainVideoRef.current.pause();
+    }
+    
+    // Pause all other videos except the one playing
+    videoRefs.current.forEach(video => {
+      if (video && video !== playingVideo) {
+        video.pause();
+      }
+    });
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchBlogDetails();
-  },[id])
+  }, [id]);
+
+  // Cleanup effect to pause all videos when component unmounts or route changes
+  useEffect(() => {
+    return () => {
+      pauseAllVideos();
+    };
+  }, []);
+
+  // Also pause videos when navigating away (additional safety)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      pauseAllVideos();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      pauseAllVideos();
+    };
+  }, []);
 
   // Function to render media content (image or video)
-  const renderMediaContent = (mediaUrl, altText, isMainBlog = false) => {
+  const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null) => {
     if (!mediaUrl) return null;
-    
+
     const isVideo = mediaUrl.match(/\.(mp4|mov|avi|mkv|webm)$/i);
-    
+
     if (isVideo) {
       return (
-        <video 
-          controls 
-          style={isMainBlog ? { maxWidth: "80%", maxHeight: '80vh', margin: "auto" } : { width: "100%", height: "200px", objectFit: "cover" }}
+        <video
+          ref={isMainBlog ? mainVideoRef : (el) => {
+            if (index !== null) {
+              videoRefs.current[index] = el;
+            }
+          }}
+          controls
+          controlsList="nodownload"
+          style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
           className={isMainBlog ? "" : "card-img-top"}
+          onPlay={(e) => handleVideoPlay(e.target)}
+          preload="metadata" // Only load metadata initially to improve performance
         >
           <source src={mediaUrl} type="video/mp4" />
           Your browser does not support the video tag.
@@ -59,7 +144,7 @@ console.log(type, id, "<===type")
       return (
         <img
           src={mediaUrl}
-          style={isMainBlog ? { maxWidth: "80%", maxHeight: '80vh', margin: "auto" } : { width: "100%", height: "200px", objectFit: "cover" }}
+          style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
           className={isMainBlog ? "" : "card-img-top"}
           alt={altText}
         />
@@ -68,119 +153,177 @@ console.log(type, id, "<===type")
   };
 
   const handleCardClick = (blogId) => {
+    // Pause all videos before navigating
+    pauseAllVideos();
     navigate(`/feed/blog/${blogId}`);
+  };
+  
+  const handleSessionExpiredOk = () => {
+    pauseAllVideos();
+    setShowSessionExpired(false);
+    navigate('/login');
+    localStorage.clear();
+    sessionStorage.clear(); 
+  };
+
+  // Handle navigation back
+  const handleBackClick = () => {
+    pauseAllVideos();
+    navigate(`/feed/${type}`);
   };
 
   return (
     <>
-    <ToastContainer />
-    <div className="overflow-hidden">
+      <ToastContainer />
+      <div className="overflow-hidden">
         <Navbar />
-        
-      <div
-        className="container my-4"
-        style={{ marginTop: "100px", width: "80%" }}
-      >
-        <p
-          className="text-white mb-4 d-inline-block"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate(-1)}
+        <SessionExpiredModal
+          visible={showSessionExpired}
+          onConfirm={handleSessionExpiredOk}
+        />
+        <div
+          className="container my-4"
+          style={{ marginTop: "100px", width: "90%" }}
         >
-          <i className="fas fa-arrow-left color-white"></i> Back
-        </p>
-        <h1 className="text-center mb-5 ml-5">{capitalizeFirstLetter(type) === "News" ? 'News' : capitalizeFirstLetter(type) + 's'}</h1>
-        
-        <div className="card mb-4" style={{backgroundColor: THEME_COLOR.FADE_BACKGROUND, color: THEME_COLOR.SECONDARY_TEXT}}>
-          {renderMediaContent(blog?.newsImg, blog?.subtitle, true)}
-          <div className="card-body">
-            <h2 className="text-center">
-              <strong>
-                {blog?.subtitle}
-              </strong>
-            </h2>
-            <div className="text-muted mb-3">
-              <span className="mr-3" style={{color: THEME_COLOR.SECONDARY_TEXT}}>
-                <i className="fas fa-user" style={{color: 'rgb(138, 198, 66)'}}></i> {blog?.createdBy}
-              </span>
-              <span style={{color: THEME_COLOR.SECONDARY_TEXT}}>
-                <i className="fas fa-calendar-alt primary-color" style={{color: 'rgb(138, 198, 66)'}}></i> {moment(blog?.createdAt).format("MMM DD, YYYY")}
-              </span>
-            </div>
-            <p className="text-left">
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 1,
+              px: 2,
+            }}
+          >
+            <IconButton onClick={handleBackClick}>
+              <img src={backArrow} alt="Back" style={{ width: 24 }} />
+            </IconButton>
+            <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+              <h1 className="mb-0 text-center">
+                {capitalizeFirstLetter(type) === "News"
+                  ? "News"
+                  : capitalizeFirstLetter(type) + "s"}
+              </h1>
+            </Box>
+
+            <Box sx={{ width: "85px" }} />
+          </Box>
+
+          <div
+            className={`card d-flex ${["short", "video", "featured"].includes(type) ? "flex-column" : "flex-row"} gap-4 mb-4`}
+            style={{
+              backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+              color: THEME_COLOR.SECONDARY_TEXT
+            }}
+          >
+            {renderMediaContent(blog?.newsImg, blog?.subtitle, true)}
+            <div className="card-body">
+              <h2 className="text-center">
+                <strong>{blog?.subtitle}</strong>
+              </h2>
+              <div className="text-muted mb-5">
+                <span className="mr-3 mt-5" style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
+                  <i className="fas fa-user" style={{ color: 'rgb(138, 198, 66)' }}></i> {capitalizeFirstLetter(blog?.createdBy)}
+                </span>
+                <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
+                  <i
+                    className="fas fa-calendar-alt primary-color"
+                    style={{ color: "rgb(138, 198, 66)" }}
+                  ></i>{" "}
+                  {moment(blog?.createdAt).format("MMM DD, YYYY")}
+                </span>
+              </div>
+              <p className="text-left mt-2">
                 {blog?.description}
-            </p>
+              </p>
+            </div>
           </div>
-        </div>
-        
-        {moreBlogs?.length > 0 && <>
-        <h2 className="text-center mb-4">
-          <strong>More From Blogs And News</strong>
-        </h2>
-        <div className="row">
-          {moreBlogs?.map((mBlog, index) => (
-              <div className="col-md-4 mb-4" key={index}>
-                <div 
-                  className="card text-left h-100" 
-                  style={{
-                    backgroundColor: THEME_COLOR.FADE_BACKGROUND, 
-                    color: THEME_COLOR.SECONDARY_TEXT,
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s ease-in-out'
-                  }}
-                  onClick={() => handleCardClick(mBlog?._id)}
-                  onMouseEnter={(e) => e.target.style.transform = 'translateY(-5px)'}
-                  onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                >
-                  {renderMediaContent(mBlog?.newsImg, mBlog?.subtitle)}
-                  <div className="card-body d-flex flex-column">
-                    <h3 className="card-title h5">
-                      {mBlog?.subtitle}
-                    </h3>
-                    <div className="text-muted mb-2">
-                      <span className="mr-3" style={{color: THEME_COLOR.SECONDARY_TEXT}}>
-                        <i className="fas fa-user" style={{color: 'rgb(138, 198, 66)'}}></i> {mBlog?.createdBy}
-                      </span>
-                      <span style={{color: THEME_COLOR.SECONDARY_TEXT}}>
-                        <i className="fas fa-calendar-alt" style={{color: 'rgb(138, 198, 66)'}}></i> {moment(mBlog?.createdAt).format("MMM DD, YYYY")}
-                      </span>
-                    </div>
-                    <p className="card-text flex-grow-1">
-                        {truncateString(mBlog?.description)}
-                    </p>
-                    <div className="mt-auto">
-                      <MuiButton 
-                        variant="text" 
-                      className="text-light p-0"
-                      onClick={() => { 
-                        handleCardClick(mBlog?._id)
+
+          {moreBlogs?.length > 0 && (
+            <>
+              <h2 className="text-center mb-4">
+                <strong>More From Blogs And News</strong>
+              </h2>
+              <div className="row">
+                {moreBlogs?.map((mBlog, index) => (
+                  <div className="col-md-4 mb-4" key={index}>
+                    <div
+                      className="card text-left h-100"
+                      style={{
+                        backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+                        color: THEME_COLOR.SECONDARY_TEXT,
+                        cursor: "pointer",
+                        transition: "transform 0.2s ease-in-out",
                       }}
-                        style={{
-                          color: 'rgb(138, 198, 66)',
-                          textTransform: 'none',
-                          fontSize: '14px'
-                        }}
-                      >
-                        Read More 
-                        <img 
-                          src={arrow} 
-                          style={{
-                            height: '16px', 
-                            marginLeft: '8px',
-                            filter: 'brightness(0) saturate(100%) invert(69%) sepia(45%) saturate(425%) hue-rotate(54deg) brightness(94%) contrast(89%)'
-                          }} 
-                          alt="arrow-right" 
-                        />
-                      </MuiButton>
+                      onClick={() => handleCardClick(mBlog?._id)}
+                      onMouseEnter={(e) =>
+                        (e.target.style.transform = "translateY(-5px)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.target.style.transform = "translateY(0)")
+                      }
+                    >
+                      {renderMediaContent(mBlog?.newsImg, mBlog?.subtitle, false, index)}
+                      <div className="card-body d-flex flex-column">
+                        <h3 className="card-title h5">{mBlog?.subtitle}</h3>
+                        <div className="text-muted mb-2">
+                          <span
+                            className="mr-3"
+                            style={{ color: THEME_COLOR.SECONDARY_TEXT }}
+                          >
+                            <i
+                              className="fas fa-user"
+                              style={{ color: "rgb(138, 198, 66)" }}
+                            ></i>{" "}
+                            {capitalizeFirstLetter(mBlog?.createdBy)}
+                          </span>
+                          <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
+                            <i
+                              className="fas fa-calendar-alt"
+                              style={{ color: "rgb(138, 198, 66)" }}
+                            ></i>{" "}
+                            {moment(mBlog?.createdAt).format("MMM DD, YYYY")}
+                          </span>
+                        </div>
+                        <p className="card-text flex-grow-1">
+                          {truncateString(mBlog?.description)}
+                        </p>
+                        <div className="mt-auto">
+                          <MuiButton
+                            variant="text"
+                            className="text-light p-0"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent card click
+                              handleCardClick(mBlog?._id);
+                            }}
+                            style={{
+                              color: "rgb(138, 198, 66)",
+                              textTransform: "none",
+                              fontSize: "14px",
+                            }}
+                          >
+                            Read More
+                            <img
+                              src={arrow}
+                              style={{
+                                height: "16px",
+                                marginLeft: "8px",
+                                filter:
+                                  "brightness(0) saturate(100%) invert(69%) sepia(45%) saturate(425%) hue-rotate(54deg) brightness(94%) contrast(89%)",
+                              }}
+                              alt="arrow-right"
+                            />
+                          </MuiButton>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            </>
+          )}
         </div>
-        </>
-        }
       </div>
-    </div>
+      <Footer />
     </>
   );
 };

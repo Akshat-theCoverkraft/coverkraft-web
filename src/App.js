@@ -15,7 +15,6 @@ import { ToastContainer } from "react-toastify";
 import Landing from "./Landing/Landing";
 import Vault from "./Vault/Vault";
 import AddPolicy from "./Vault/component/AddPolicy";
-import EditPolicy from "./Vault/component/EditPolicy";
 import ProfileDrawer from "./component/profile";
 import MotorPolicyForm from "./Vault/policyForms/MotorPolicyForm";
 import HealthPolicyForm from "./Vault/policyForms/HealthPolicyForm";
@@ -26,52 +25,32 @@ import NotificationPage from "./Notification/Notification";
 import BlogDetails from "./Landing/component/blogs/BlogDetails";
 import Feeds from "./Landing/component/blogs/Feeds";
 import PrivacyPolicy from "./PrivacyPolicy";
-import BackToTop from "./component/BackToTop";
-import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx"; // adjust path
+import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import PolicyType from './Landing/component/PolicyType';
 import PolicyDetails from './pages/PolicyDetails';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
+import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
+import BackToTop from "./component/BackToTop.js";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
-  // Removed top-level await; handled in useEffect below
-
-
-  // useEffect(() => {
-  //   setupOnMessageListener();
-  // }, []);
-
-  // useEffect(() => {
-  //   const setupFCM = async () => {
-  //     try {
-  //       const registration = await registerFirebaseSW();
-  //       const token = await requestFCMPermission(registration);
-
-  //       if (!token) {
-  //         console.warn("❌ No FCM token received.");
-  //       }
-  //       // TODO: send token to your backend if needed
-  //     } catch (err) {
-  //       console.error("💥 FCM Init Error:", err);
-  //     }
-  //   };
-
-  //   setupFCM();
-  // }, []);
 
   useEffect(() => {
-    const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
+    const SESSION_DURATION = 48 * 60 * 60 * 1000;
     const excludedPages = ["", "/login", "/register"];
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
 
     const loginTime = sessionStorage.getItem("loginTime");
 
     const handleLogout = () => {
-      sessionStorage.clear(); // 💥 Kill session
+      sessionStorage.clear();
       setLogout(true);
       setIsLoggedIn(false);
-      navigate("/login");
+      navigate("/");
     };
 
     if (!excludedPages.includes(window.location.pathname)) {
@@ -80,7 +59,7 @@ function App() {
         const now = Date.now();
 
         if (now - loginTimestamp > SESSION_DURATION) {
-          console.log("⚠️ Session expired.");
+          // console.log("⚠️ Session expired.");
           handleLogout();
         } else {
           setIsLoggedIn(true);
@@ -88,20 +67,18 @@ function App() {
           const remainingTime = SESSION_DURATION - (now - loginTimestamp);
 
           const logoutTimer = setTimeout(() => {
-            console.log("⏰ Auto-logout: session expired.");
+            // console.log("⏰ Auto-logout: session expired.");
             handleLogout();
           }, remainingTime);
 
           return () => clearTimeout(logoutTimer);
         }
       } else {
-        // No login time found → force logout
-        console.log("🚫 No session found.");
+        // console.log("🚫 No session found.");
         handleLogout();
       }
     }
   }, []);
-
 
   const handleRefresh = () => {
     const excludedPages = ["", "/login"];
@@ -111,27 +88,33 @@ function App() {
     }
   };
 
+  // 👇 Inserted scroll-to-top behavior
+  const ScrollToTop = () => {
+    const { pathname } = window.location;
+
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
+  };
+
   return (
     <>
-      <ToastContainer />
+      <ToastContainer position="top-center" />
       <Toaster position="top-right" reverseOrder={false} />
-      {/* This stuff can go wherever appropriate in layout */}
-      <BackToTop />
       <UniversalHomeButton />
-
+      <ScrollToTop />
+      <BackToTop />
       <Routes>
         <Route path="" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/vault" element={<Vault />} />
         <Route path="/motor-policy" element={<MotorPolicyForm />} />
-        <Route
-          path="/health-policy"
-          element={<HealthPolicyForm />}
-        />
+        <Route path="/health-policy" element={<HealthPolicyForm />} />
         <Route path="/life-policy" element={<LifePolicyForm />} />
         <Route path="/add-policy" element={<AddPolicy />} />
-        <Route path="/edit-policy" element={<EditPolicy />} />
         <Route path="/profile" element={<ProfileDrawer />} />
         <Route path="/family" element={<Family />} />
         <Route path="/about" element={<About />} />
@@ -144,6 +127,8 @@ function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/policy-type" element={<PolicyType />} />
         <Route path="/policy-details/:id" element={<PolicyDetails />} />
+        <Route path="/gmail-sync" element={<GmailSyncPage />} />
+
         {/* Add more routes as needed */}
       </Routes>
     </>

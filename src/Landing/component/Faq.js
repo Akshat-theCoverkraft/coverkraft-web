@@ -10,6 +10,7 @@ import plus from "../../Images/plus2.png";
 import { THEME_COLOR } from "../../constants";
 import API_URL from "../../ServiceModule/Service";
 import { Typography } from "@mui/material";
+import { headingStyle } from "../../theme/themeStyles";
 
 // 🔒 Fallback FAQs (shown if API fails or returns empty)
 const placeholderFAQs = [
@@ -34,18 +35,18 @@ const placeholderFAQs = [
 
 // Styled Components
 const StyledAccordion = styled(Accordion)({
-  margin: "0",
   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
   backgroundColor: THEME_COLOR.FADE_BACKGROUND,
   color: THEME_COLOR.COLOR,
   transition: "all 0.3s ease",
+
 });
 
 const StyledAccordionSummary = styled(AccordionSummary)({
   "& .MuiAccordionSummary-content": {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
+    gap: "5px",
   },
 });
 
@@ -91,18 +92,20 @@ export default function Faq() {
   };
 
   return (
-    <div id="faq" style={{ backgroundColor: THEME_COLOR.BACKGROUND, padding: "20px 30px" }}>
+    <div id="faq" style={{
+      backgroundColor: THEME_COLOR.BACKGROUND, padding: "10px 20px", scrollMarginTop: '100px'
+    }}>
       <div className="text-center p-3">
-        <Typography variant="h3" sx={{ color: '#FF9906', fontWeight: 700, mb: 1, textAlign: 'center', fontSize: { xs: '24px', sm: '28px', md: '30px' } }}>
-            FAQs
-       </Typography>     
-      <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, mb: 4, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
-            Frequently Asked Questions
-      </Typography>
+        <Typography variant="h3" sx={headingStyle}>
+          FAQs
+        </Typography>
+        <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, mb: 3, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
+          Frequently Asked Questions
+        </Typography>
 
       </div>
 
-      <div style={{ padding: "20px 0" }}>
+      <div style={{ padding: "10px 0" }}>
         <div
           style={{
             width: isMobile ? "90%" : "95%",
@@ -120,7 +123,7 @@ export default function Faq() {
                 key={item._id || index}
                 expanded={expanded === item._id}
                 onChange={() => handleChange(item._id)}
-                className="p-3"
+                className="p-1"
                 style={{
                   borderTopLeftRadius: index === 0 ? "20px" : "0px",
                   borderTopRightRadius: index === 0 ? "20px" : "0px",

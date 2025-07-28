@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
- 
+
 <head>
   <meta charset="utf-8" />
   <link rel="icon" href="/favicon-32x32.png" />
@@ -9,42 +9,40 @@
   <meta name="description" content="Web site created using create-react-app" />
   <link rel="apple-touch-icon" href="/favicon-32x32.png" />
   <link rel="manifest" href="/coverkraft/manifest.json" />
+
+  <!-- Stylesheets & Fonts -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
   <title>Cover Kraft</title>
+
   <style>
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px
+    /* Hide scrollbar but allow scrolling - stealth mode */
+    html,
+    body {
+      overflow-y: scroll;             /* allow vertical scroll */
+      overflow-x: hidden;             /* prevent horizontal scroll */
+      scrollbar-width: none;          /* Firefox */
+      -ms-overflow-style: none;       /* Internet Explorer 10+ */
     }
- 
-    ::-webkit-scrollbar-track {
-      background: #121212;
-      border-radius: 10px
-    }
- 
-    ::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 10px
-    }
- 
-    ::-webkit-scrollbar-thumb:hover {
-      background: #555
-    }
- 
-    html {
-      scrollbar-width: thin;
-      scrollbar-color: #888 #121212;
-      overflow-x: hidden
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;                  /* Chrome, Safari */
     }
   </style>
+
   <script defer="defer" src="/static/js/main.129dbbd0.js"></script>
   <link href="/static/css/main.8bf00418.css" rel="stylesheet">
 </head>
- 
-<body><noscript>You need to enable JavaScript to run this app.</noscript>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
 </body>
- 
+
 </html>
