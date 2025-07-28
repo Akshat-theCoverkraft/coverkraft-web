@@ -83,9 +83,11 @@
     "html-webpack-plugin": "^5.6.3",
     "react-refresh": "^0.17.0",
     "react-scripts": "^5.0.1",
+    "source-map-explorer": "^2.5.3",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
     "webpack": "^5.99.9",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   }
