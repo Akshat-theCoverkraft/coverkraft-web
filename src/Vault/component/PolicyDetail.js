@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-
+import CSS from "./PolicyDetail.css"
 import Button from "../../component/Button";
 import GradientButton from "../../component/GradientButton";
 import { updateDocument } from "../../store/action/action";
@@ -154,9 +154,6 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   const handleDocument = async (documentPath, action) => {
-    console.log("=== DOCUMENT HANDLER ===");
-    console.log("Document Path:", documentPath);
-    console.log("Action:", action);
 
     if (!documentPath) {
       console.error("Document path is missing");
@@ -164,7 +161,6 @@ const PolicyDetail = ({ policyId }) => {
       return;
     }
 
-    // Check if it's a Gmail-synced policy (S3 URL) or manual upload
     const isGmailSync =
       documentPath.startsWith("https://") || documentPath.startsWith("http://");
     console.log("Is Gmail Sync:", isGmailSync);
@@ -334,35 +330,27 @@ const PolicyDetail = ({ policyId }) => {
     }
   };
 
-  const handlePolicyAction = (action) => {
-    const userId = sessionStorage.getItem("userId");
-    const formData = new FormData();
-    formData.append("_id", policyId);
-    formData.append("userId", userId);
-    formData.append("status", action);
+const handlePolicyAction = (action) => {
+  const userId = sessionStorage.getItem("userId");
+  const formData = new FormData();
+  formData.append("_id", policyId);
+  formData.append("userId", userId);
+  formData.append("status", action);
 
-    dispatch(updateDocument(API_URL, formData))
-      .then(() => {
-        const message =
-          action === "archive"
-            ? "Policy archived successfully"
-            : action === "unarchive"
-            ? "Policy removed from archive successfully"
-            : "Feature Coming Soon";
-        showToastOnce(message, 'success');
-      })
-      .catch((err) => {
-  const status = err?.response?.status;
-
-  // Only log if it's not the "known 500" issue
-  if (status !== 500) {
-    console.error("Unhandled error in updateDocument:", err);
-  }
-
-  showToastOnce("Some error occurred", 'error');
-});
-
-  };
+  dispatch(updateDocument(API_URL, formData))
+    .then(() => {
+      const message =
+        action === "archive"
+          ? "Policy archived successfully"
+          : action === "unarchive"
+          ? "Policy removed from archive successfully"
+          : "Feature Coming Soon";
+      showToastOnce(message, 'success');
+    })
+    .catch(() => {
+      showToastOnce("Some error occurred", 'error');
+    });
+};
 
   const renderPolicyActions = (policy) => {
     const isArchived = policy?.status === "archive";
@@ -456,7 +444,7 @@ const PolicyDetail = ({ policyId }) => {
       <>
         <ToastContainer 
           position="top-center" 
-          style={{ zIndex: 999999 }}
+          style={{ zIndex: 999999  }}
           toastClassName="custom-toast"
         />
         <Card
@@ -601,7 +589,7 @@ const PolicyDetail = ({ policyId }) => {
                 <img
                   src={getPolicyImage(policy?.policyType)}
                   alt="Policy Type"
-                  style={{ maxWidth: "70px", height: "auto" }} // Optional: constrain image size
+                  style={{ maxWidth: "70px", height: "auto" }} 
                 />
               </div>
             </div>
