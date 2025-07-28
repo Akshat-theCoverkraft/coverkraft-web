@@ -168,7 +168,7 @@ function ContactUs() {
               className="rounded-4 shadow-lg p-2 w-100"
               style={{
                 maxWidth: "1000px",
-                backgroundColor: "#1e1e1e", // optional background color
+                backgroundColor: "#212121", 
                 fontSize: "1.6rem",
                 paddingLeft:'30px',
                 color: "#8bc642"
@@ -179,36 +179,39 @@ function ContactUs() {
                 <div className="col-md-6" style={{padding:25}}>
                   <form onSubmit={handleSubmit} encType="multipart/form-data">
 
-                    <div className="mb-3 ">
+                    <div className="mb-3 rounded-5">
                       <Input
+                        
                         name="name"
                         value={form.name}
                         onChange={handleChange}
                         placeholder="Your name"
+                        style={{ height: "40px", fontSize: "1.25rem", borderRadius: "20px" }}
                       />
                       {formErrors.name && (
                         <small className="text-danger d-block mt-1">{formErrors.name}</small>
                       )}
                     </div>
 
-                    <div className="mb-3 text-start">
+                    <div className="mb-3 text-start rounded-5">
                       <Input
                         name="email"
                         value={form.email}
                         onChange={handleChange}
                         placeholder="Your email"
+                        style={{ height: "40px", fontSize: "1.25rem", borderRadius: "20px" }}
                       />
                       {formErrors.email && (
                         <small className="text-danger d-block mt-1">{formErrors.email}</small>
                       )}
                     </div>
 
-                    <div className="mb-3 text-start">
+                    <div className="mb-3 text-start rounded-5">
                       <textarea
                         name="message"
                         placeholder="Write your query..."
                         className="form-control bg-dark text-light border-secondary text-size-md"
-                        style={{ height: "120px", resize: "none", fontSize: "1.3rem",
+                        style={{ height: "150px", resize: "none", fontSize: "1.3rem", borderRadius: "20px"
  }}
                         value={form.message}
                         onChange={handleChange}
@@ -218,7 +221,7 @@ function ContactUs() {
                       )}
                     </div>
 
-                    <div className="mb-3 text-start">
+                    <div className="mb-3 text-start rounded-5">
                       <label
                         htmlFor="file-upload"
                         className="form-label text-light fw-semibold text-size-md mb-2"
@@ -235,6 +238,7 @@ function ContactUs() {
                           onChange={handleFileChange}
                           multiple
                           className="d-none"
+                          style={{ height: "40px", fontSize: "1.25rem", borderRadius: "20px" }}
                         />
 
                         <input
@@ -250,8 +254,9 @@ function ContactUs() {
                           onClick={() => document.getElementById("file-upload").click()}
                           style={{
                             cursor: "pointer",
-                            height: "35px",
+                            height: "40px",
                             fontSize: "1.25rem",
+                            borderRadius: "20px",
                           }}
                         />
                       </div>
@@ -277,7 +282,7 @@ function ContactUs() {
                                   fontSize: "1rem",
                                   width: "24px",
                                   height: "24px",
-                                  borderRadius: "50%",
+                                  borderRadius: "20px",
                                   padding: "0",
                                   lineHeight: "1",
                                   textAlign: "center",

@@ -246,3 +246,10 @@
 .text-size-xxl::placeholder {
   font-size: 4rem;
 }
+body::-webkit-scrollbar {
+  display: none !important;
+}
+body {
+  -ms-overflow-style: none !important; 
+  scrollbar-width: none !important;
+}

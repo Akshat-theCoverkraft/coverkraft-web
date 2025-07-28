@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Grid from "@mui/material/Grid";
 import { useNavigate } from "react-router-dom";
-import family from "../../Images/family-home.png";
+import hero from "../../Images/Hero.png";
 import { Button } from "@mui/material";
 import { styled } from "@mui/system";
 import { motion, useReducedMotion, useInView, useMotionValue, useTransform } from "framer-motion";
@@ -243,8 +243,8 @@ const HeroSection = () => {
             // style={{ translateX, translateY }}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 1, duration: 0.6, ease: "easeOut" }}
-            src={family}
+            transition={{ delay: 1, duration: 0.6, ease: "easeIn" }}
+            src={hero}
             alt="Family Home"
             loading="lazy"
             draggable={false}
@@ -257,6 +257,7 @@ const HeroSection = () => {
               pointerEvents: "none",
               borderRadius: "12px",
               boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+              marginRight: { xs: 0, md: "5rem" },
             }}
           />
         </Grid>

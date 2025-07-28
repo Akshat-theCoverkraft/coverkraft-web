@@ -220,7 +220,7 @@ const Feeds = () => {
                     <Box sx={{ position: "relative" }}>
                       {isVideo ? (
                         <CardMedia
-                          component="video" src={item.video || item.videoUrl || item.newsImg} controls height="220"
+                          component="video" src={item.video || item.videoUrl || item.newsImg} controls controlsList="nodownload" height="220"
                           ref={el => videoRefs.current[index] = el}
                           onClick={e => e.stopPropagation()}
                           onPlay={() => handleVideoClick(index)}

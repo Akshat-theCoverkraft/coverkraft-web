@@ -211,8 +211,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     setIsValidName(nameValid);
 
     const emailValid =
-      !useremail || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(useremail);
-    setIsValidEmail(emailValid);
+    !useremail ||
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(useremail.trim());
+      setIsValidEmail(emailValid);
+
 
     const phoneValid = !userPhone || /^\d{10}$/.test(userPhone);
     setIsValidPhone(phoneValid);
@@ -574,8 +576,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                   placeholder="Select your date of birth"
                   error={!isValidDob}
                   validationMessage="You must be at least 18 years old"
+                 
                 />
-
               </Grid>
 
 

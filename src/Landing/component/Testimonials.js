@@ -127,7 +127,7 @@ export default function Testimonials() {
 
   return (
     <>
-      <div className="testimonials-container px-3">
+      <div id="testimonials" className="testimonials-container px-3">
         <div className="text-center">
           <Typography variant="h3" sx={headingStyle}>
             Testimonials

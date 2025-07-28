@@ -46,7 +46,6 @@ const BackToTop = () => {
     window.requestAnimationFrame(step);
   };
 
-  // For progress ring (circular stroke)
   const radius = 20;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - scrollPercent);
@@ -64,7 +63,6 @@ const BackToTop = () => {
           style={{
             position: "fixed",
             bottom: 30,
-            marginBottom:10,
             right: 30,
             width: 50,
             height: 50,
@@ -75,13 +73,31 @@ const BackToTop = () => {
             padding: 0,
             boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
             outline: "none",
+            zIndex: 1000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
+          {/* Transparent clickable background */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              backgroundColor: "rgba(255,255,255,0.01)", // invisible hitbox
+            }}
+          />
+
+          {/* Circular Progress SVG */}
           <svg
-            style={{ position: "absolute", top: 0, left: 0 }}
             width={50}
             height={50}
             viewBox="0 0 50 50"
+            style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none" }}
           >
             <circle
               cx="25"
@@ -106,6 +122,7 @@ const BackToTop = () => {
             />
           </svg>
 
+          {/* Icon (Flying animation) */}
           <motion.div
             style={{
               position: "relative",
@@ -118,7 +135,11 @@ const BackToTop = () => {
               color: "#4caf50",
             }}
             animate={isFlying ? { rotate: 360 } : { rotate: 0 }}
-            transition={{ duration: 0.6, repeat: isFlying ? Infinity : 0, ease: "linear" }}
+            transition={{
+              duration: 0.6,
+              repeat: isFlying ? Infinity : 0,
+              ease: "linear",
+            }}
           >
             <FaArrowUp size={20} />
           </motion.div>

@@ -140,7 +140,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
         "& .MuiDrawer-paper": {
           width: "35vw",
           maxWidth: "400px",
-          backgroundColor: "#111",
+          backgroundColor: "#212121",
           color: "#fff",
           padding: theme.spacing(4),
         },
