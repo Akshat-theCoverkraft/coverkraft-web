@@ -86,7 +86,6 @@ const Notification = () => {
     const now = new Date();
     const past = new Date(dateString);
     const diffInSeconds = Math.floor((now - past) / 1000);
-
     if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
@@ -110,7 +109,6 @@ const Notification = () => {
       <Navbar />
       <Box sx={{ flexGrow: 1 }}>
         <SessionExpiredModal visible={showSessionExpired} onConfirm={handleSessionExpiredOk} />
-
         <Container maxWidth="lg" sx={{ py: 5 }}>
           <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
             <Typography fontWeight={700} color={"#8AC642"} sx={{ fontSize: "2.5rem" }}>

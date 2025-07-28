@@ -12,34 +12,12 @@ import API_URL from "../../ServiceModule/Service";
 import { Typography } from "@mui/material";
 import { headingStyle } from "../../theme/themeStyles";
 
-// 🔒 Fallback FAQs (shown if API fails or returns empty)
-const placeholderFAQs = [
-  {
-    _id: "fallback1",
-    question: "How can I get a quote?",
-    answer: "Visit our Get a Quote page or call 1-800-123-4567.",
-  },
-  {
-    _id: "fallback2",
-    question: "What does home protection cover?",
-    answer:
-      "Damage to your home, personal belongings, liability, and temporary living expenses.",
-  },
-  {
-    _id: "fallback3",
-    question: "What is covered under my auto policy?",
-    answer:
-      "Liability, collision, comprehensive, medical payments, and uninsured motorist coverage.",
-  },
-];
-
 // Styled Components
 const StyledAccordion = styled(Accordion)({
   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
   backgroundColor: THEME_COLOR.FADE_BACKGROUND,
   color: THEME_COLOR.COLOR,
   transition: "all 0.3s ease",
-
 });
 
 const StyledAccordionSummary = styled(AccordionSummary)({
@@ -63,24 +41,14 @@ export default function Faq() {
       try {
         const res = await fetch(`${API_URL}faq/all`);
         const data = await res.json();
-        console.log("📦 FAQ Response:", data);
+        console.log(" FAQ Response:", data);
 
         if (data?.data && Array.isArray(data.data)) {
-          // Only include FAQs with status 'active'
           const activeFaqs = data.data.filter(faq => faq.status === "active");
-          if (activeFaqs.length > 0) {
-            setFaqList(activeFaqs);
-          } else {
-            console.warn("⚠️ No active FAQs found. Showing placeholder.");
-            setFaqList(placeholderFAQs);
-          }
-        } else {
-          console.warn("⚠️ No FAQs found. Showing placeholder.");
-          setFaqList(placeholderFAQs);
+          setFaqList(activeFaqs);
         }
       } catch (err) {
-        console.error("🔥 FAQ Fetch Error:", err);
-        setFaqList(placeholderFAQs);
+        console.error("No FAQ Fetch Error:", err);
       } finally {
         setLoading(false);
       }
@@ -91,18 +59,33 @@ export default function Faq() {
     setExpanded(expanded === panelId ? null : panelId);
   };
 
+  if (!loading && faqList.length === 0) return null;
+
   return (
-    <div id="faq" style={{
-      backgroundColor: THEME_COLOR.BACKGROUND, padding: "10px 20px", scrollMarginTop: '100px'
-    }}>
+    <div
+      id="faq"
+      style={{
+        backgroundColor: THEME_COLOR.BACKGROUND,
+        padding: "10px 20px",
+        scrollMarginTop: "100px",
+      }}
+    >
       <div className="text-center p-3">
         <Typography variant="h3" sx={headingStyle}>
           FAQs
         </Typography>
-        <Typography variant="h4" sx={{ color: '#FFF', fontWeight: 700, mb: 3, textAlign: 'center', fontSize: { xs: '26px', sm: '30px', md: '32px' } }}>
+        <Typography
+          variant="h4"
+          sx={{
+            color: "#FFF",
+            fontWeight: 700,
+            mb: 3,
+            textAlign: "center",
+            fontSize: { xs: "26px", sm: "30px", md: "32px" },
+          }}
+        >
           Frequently Asked Questions
         </Typography>
-
       </div>
 
       <div style={{ padding: "10px 0" }}>
@@ -115,8 +98,6 @@ export default function Faq() {
         >
           {loading ? (
             <p style={{ textAlign: "center" }}>Loading FAQs...</p>
-          ) : faqList.length === 0 ? (
-            <p style={{ textAlign: "center" }}>No FAQs available at the moment.</p>
           ) : (
             faqList.map((item, index) => (
               <StyledAccordion
@@ -146,10 +127,15 @@ export default function Faq() {
                   className="fw-bold"
                   style={{ fontSize: "1.6rem" }}
                 >
-                  <span className="mr-3 fw-bold" style={{ fontSize: "3rem" }}>{`0${index + 1}`}</span>
+                  <span
+                    className="mr-3 fw-bold"
+                    style={{ fontSize: "3rem" }}
+                  >{`0${index + 1}`}</span>
                   {item.question}
                 </StyledAccordionSummary>
-                <AccordionDetails style={{ fontSize: "1.5rem" }}>{item.answer}</AccordionDetails>
+                <AccordionDetails style={{ fontSize: "1.5rem" }}>
+                  {item.answer}
+                </AccordionDetails>
               </StyledAccordion>
             ))
           )}
