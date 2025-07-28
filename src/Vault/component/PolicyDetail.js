@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
@@ -35,9 +35,10 @@ import SessionExpiredModal from "../../utils/sessionExpireModal";
 
 const PolicyDetail = ({ policyId }) => {
   const [policyDetails, setPolicyDetails] = useState([]);
-   const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
   const navigate = useNavigate(); // navigation hook
   const dispatch = useDispatch();
+  const toastShownRef = useRef(new Set()); // Track shown toasts to prevent duplicates
 
   useEffect(() => {
     const fetchPolicyDetails = async () => {
@@ -65,11 +66,29 @@ const PolicyDetail = ({ policyId }) => {
     fetchPolicyDetails();
   }, [policyId]);
 
-      const handleSessionExpiredOk = () => {
+  const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
     navigate('/login');
     localStorage.clear();
-  sessionStorage.clear(); 
+    sessionStorage.clear(); 
+  };
+
+  // Helper function to show toast only once
+  const showToastOnce = (message, type = 'success') => {
+    const toastKey = `${type}-${message}`;
+    if (!toastShownRef.current.has(toastKey)) {
+      toastShownRef.current.add(toastKey);
+      if (type === 'success') {
+        toast.success(message);
+      } else if (type === 'error') {
+        toast.error(message);
+      } else if (type === 'info') {
+        toast.info(message);
+      }
+            setTimeout(() => {
+        toastShownRef.current.delete(toastKey);
+      }, 3000);
+    }
   };
 
   const getPolicyImage = (policyType) => {
@@ -141,7 +160,7 @@ const PolicyDetail = ({ policyId }) => {
 
     if (!documentPath) {
       console.error("Document path is missing");
-      toast.error("Document not available");
+      showToastOnce("Document not available", 'error');
       return;
     }
 
@@ -175,7 +194,7 @@ const PolicyDetail = ({ policyId }) => {
         }
       } catch (error) {
         console.error("Error opening document for viewing:", error);
-        toast.error("Unable to open document for viewing");
+        showToastOnce("Unable to open document for viewing", 'error');
       }
       return;
     }
@@ -189,9 +208,7 @@ const PolicyDetail = ({ policyId }) => {
             documentPath
           );
           window.open(documentPath, "_blank");
-          toast.success(
-            "Document opened in new tab. You can download it from there."
-          );
+          showToastOnce("Document opened in new tab. You can download it from there.", 'success');
         } else {
           // For manual uploads, use fetch to download
           const fullPath = documentPath.startsWith("/")
@@ -219,11 +236,11 @@ const PolicyDetail = ({ policyId }) => {
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
 
-          toast.success("Document downloaded successfully");
+          showToastOnce("Document downloaded successfully", 'success');
         }
       } catch (error) {
         console.error("Error downloading document:", error);
-        toast.error("Unable to download document. Please try again.");
+        showToastOnce("Unable to download document. Please try again.", 'error');
       }
       return;
     }
@@ -241,28 +258,28 @@ const PolicyDetail = ({ policyId }) => {
                 text: "Here is your policy document.",
                 url: documentPath,
               });
-              toast.success("Document shared successfully");
+              showToastOnce("Document shared successfully", 'success');
             } catch (shareError) {
               console.log("Native sharing failed, trying clipboard");
               // Fallback to clipboard
               if (navigator.clipboard) {
                 await navigator.clipboard.writeText(documentPath);
-                toast.success("Document link copied to clipboard");
+                showToastOnce("Document link copied to clipboard", 'success');
               } else {
                 // Final fallback - open in new tab
                 window.open(documentPath, "_blank");
-                toast.info("Document opened in new tab");
+                showToastOnce("Document opened in new tab", 'info');
               }
             }
           } else {
             // No native share support
             if (navigator.clipboard) {
               await navigator.clipboard.writeText(documentPath);
-              toast.success("Document link copied to clipboard");
+              showToastOnce("Document link copied to clipboard", 'success');
             } else {
               // Final fallback - open in new tab
               window.open(documentPath, "_blank");
-              toast.info("Document opened in new tab");
+              showToastOnce("Document opened in new tab", 'info');
             }
           }
         } else {
@@ -289,13 +306,13 @@ const PolicyDetail = ({ policyId }) => {
               text: "Here is your policy document.",
               files: [file],
             });
-            toast.success("Document shared successfully");
+            showToastOnce("Document shared successfully", 'success');
           } else {
             // Fallback: save file and copy URL to clipboard
             const blobUrl = window.URL.createObjectURL(blob);
             if (navigator.clipboard) {
               await navigator.clipboard.writeText(shareUrl);
-              toast.success("Document link copied to clipboard");
+              showToastOnce("Document link copied to clipboard", 'success');
             } else {
               // Final fallback - trigger download
               const link = document.createElement("a");
@@ -304,14 +321,14 @@ const PolicyDetail = ({ policyId }) => {
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
-              toast.info("Document downloaded (sharing not supported)");
+              showToastOnce("Document downloaded (sharing not supported)", 'info');
             }
             window.URL.revokeObjectURL(blobUrl);
           }
         }
       } catch (error) {
         console.error("Error sharing document:", error);
-        toast.error("Unable to share document. Please try again.");
+        showToastOnce("Unable to share document. Please try again.", 'error');
       }
       return;
     }
@@ -332,11 +349,19 @@ const PolicyDetail = ({ policyId }) => {
             : action === "unarchive"
             ? "Policy removed from archive successfully"
             : "Feature Coming Soon";
-        toast.success(message);
+        showToastOnce(message, 'success');
       })
-      .catch(() => {
-        toast.error("Some error occurred");
-      });
+      .catch((err) => {
+  const status = err?.response?.status;
+
+  // Only log if it's not the "known 500" issue
+  if (status !== 500) {
+    console.error("Unhandled error in updateDocument:", err);
+  }
+
+  showToastOnce("Some error occurred", 'error');
+});
+
   };
 
   const renderPolicyActions = (policy) => {
@@ -429,7 +454,11 @@ const PolicyDetail = ({ policyId }) => {
   if (policyDetails.length === 0) {
     return (
       <>
-        <ToastContainer position="top-center" style={{ zIndex: 99999 }} />
+        <ToastContainer 
+          position="top-center" 
+          style={{ zIndex: 999999 }}
+          toastClassName="custom-toast"
+        />
         <Card
           // key={index}
           className="p-5 rounded-5"
@@ -462,8 +491,12 @@ const PolicyDetail = ({ policyId }) => {
 
   return (
     <div style={{minHeight:"620px"}}>
-      <ToastContainer position="top-center"  />
-        <SessionExpiredModal
+      <ToastContainer 
+        position="top-center" 
+        style={{ zIndex: 999999 }}
+        toastClassName="custom-toast"
+      />
+      <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />

@@ -154,7 +154,7 @@ const Login = () => {
   };
 
   return (
-    <div className="overflow-hidden" style={{ backgroundColor: '#313131' }}>
+    <div className="overflow-hidden" style={{ backgroundColor: '#121212' }}>
       <ToastContainer />
 
       <div className="container-fluid">
@@ -279,8 +279,7 @@ const Login = () => {
             className="col-md-6 d-none d-md-block position-relative p-0"
             style={{
               height: '100%',
-              maxHeight: '630px',
-              overflow: 'hidden',
+              maxHeight: '100vh',
             }}
           >
             <img
@@ -289,7 +288,6 @@ const Login = () => {
               className="w-100"
               style={{
                 height: '100%',
-                objectFit: 'contain',
                 opacity: 0.95,
               }}
             />

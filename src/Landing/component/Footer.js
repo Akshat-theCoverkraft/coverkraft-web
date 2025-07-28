@@ -4,15 +4,18 @@ import logo from "../../Images/CKbig.png";
 import twitter from "../../Images/twitter.png";
 import facebook from "../../Images/facebook.png";
 import instagram from "../../Images/social.png";
+import linkedin from "../../Images/linkedin.png"
 import location from "../../Images/location_on.png";
 import call from "../../Images/call.png";
 import email from "../../Images/email.png";
 import "./CSS/footer.css";
 import { THEME_COLOR } from "../../constants";
 import moment from "moment";
-
+import { useEffect, useState } from "react";
+import IRDA from "../../Images/IRDA.png"
 const Footer = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(null);
 
   const handleStaticNav = (route) => () => {
     const [pathname, hash] = route.split("#");
@@ -32,6 +35,17 @@ const Footer = () => {
     }
   };
 
+const policies = [
+  { label: "Privacy Policy", id: "PrivacyPolicy" },
+  { label: "Grievance Redress Policy", id: "GrievanceRedressPolicy" },
+  { label: "Terms of Use", id: "TermsOfUse" },
+  { label: "Terms & Conditions", id: "TermsAndConditions" },
+  { label: "Refund & Cancellation Policy", id: "RefundCancellationPolicy" },
+  { label: "ISNP", id: "ISNP" },
+  { label: "License", id: "License" },
+  { label: "Disclaimer", id: "disclaimer" },
+];
+
   const servicesLinks = [
     { to: "/", label: "Home" },
     { to: "/vault", label: "Policy Vault" },
@@ -45,14 +59,33 @@ const Footer = () => {
     { label: "Legal And Admin Policies", to: "/legal" },
     { label: "Disclaimer", to: "/legal#disclaimer" },
     { label: "Terms of Use", to: "/legal#TermsOfUse" },
-    { label: "IRDA", to: "https://irdai.gov.in/", external: true },
   ];
 
   const socialIcons = [
-    { src: twitter, alt: "Twitter", href: "#" },
-    { src: facebook, alt: "Facebook", href: "#" },
-    { src: instagram, alt: "Instagram", href: "#" },
+    { src: twitter, alt: "Twitter", href: "https://x.com/thecoverkraft/status/1947877105259409817", target: "_blank" },
+    { src: facebook, alt: "Facebook", href: "https://www.facebook.com/share/v/176VaFS9Dt/" },
+    { src: instagram, alt: "Instagram", href: "" },
+    { src: linkedin, alt: "LinkedIn", href: "https://www.linkedin.com/feed/update/urn:li:activity:7353642804960444416" },
   ];
+
+
+useEffect(() => {
+  const hash = window.location.hash?.substring(1); 
+  if (!hash) return;
+
+  const match = policies.find(p => p.id === hash);
+  if (!match) return;
+
+  setActiveTab(match.label);
+
+
+  setTimeout(() => {
+    const el = document.getElementById(hash);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 200); 
+}, []);
 
   return (
     <footer
@@ -87,7 +120,18 @@ const Footer = () => {
                       target="_blank"
                      
                       style={{ fontWeight:600 ,fontSize: "1.2rem", color: "inherit" }}>  IRDAI</a>
+                     
                   </div>
+                  <div style={{ display: "flex", justifyContent: "flex-start", marginRight: "60px", marginTop: "10px" }}>
+  <a href="https://irdai.gov.in/" target="_blank" rel="noopener noreferrer">
+    <img
+      src={IRDA}
+      alt="IRDAI Logo"
+      style={{ height: "40px", width: "auto", marginRight: "50px" }}
+    />
+  </a>
+</div>
+
                 </div>
 
 

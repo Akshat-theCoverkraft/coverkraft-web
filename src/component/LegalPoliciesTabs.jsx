@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import API_URL from "../ServiceModule/Service";
-
-const API_URL1 = API_URL+ "legal/getAll";
+import CoverKraft_IRDA from "../Images/CoverKraft_IRDA.png"
+const API_URL1 = API_URL + "legal/getAll";
 
 const policies = [
   { label: "Privacy Policy", id: "PrivacyPolicy" },
@@ -26,7 +26,6 @@ const LegalPoliciesTabs = () => {
       const result = await response.json();
 
       if (result?.status && Array.isArray(result.data)) {
-        // Convert array to object for quick access
         const mappedData = {};
         result.data.forEach((item) => {
           mappedData[item.legalPolicyType] = item.description || "<p>No content available.</p>";
@@ -43,6 +42,28 @@ const LegalPoliciesTabs = () => {
   useEffect(() => {
     fetchPolicies();
   }, []);
+
+useEffect(() => {
+  const handleHashChange = () => {
+    const hash = window.location.hash?.substring(1);
+    if (hash) {
+      const found = policies.find((p) => p.id === hash);
+      if (found) setActiveTab(found.label);
+    }
+  };
+
+  // Run once on mount
+  handleHashChange();
+
+  // Listen for hash changes
+  window.addEventListener("hashchange", handleHashChange);
+
+  // Cleanup
+  return () => {
+    window.removeEventListener("hashchange", handleHashChange);
+  };
+}, []);
+
 
   const activePolicy = policies.find((p) => p.label === activeTab);
   const content = activePolicy ? policyData[activePolicy.id] : "<p>No content found.</p>";
@@ -80,6 +101,7 @@ const LegalPoliciesTabs = () => {
             display: "flex",
             gap: "0.5rem",
             boxShadow: "0 0 10px rgba(139, 198, 66, 0.15)",
+            flexWrap: "wrap",
           }}
         >
           {policies.map((policy) => {
@@ -114,21 +136,49 @@ const LegalPoliciesTabs = () => {
           padding: "2.5rem",
           borderRadius: "12px",
           boxShadow: "0 0 20px rgba(139, 198, 66, 0.1), 0 8px 32px rgba(0,0,0,0.4)",
-          lineHeight: "1.75",
           fontSize: "1.1rem",
           color: "#CCCCCC",
-          maxHeight: "75vh",
-          overflowY: "auto",
           border: "1px solid #2E2E2E",
+          display: activePolicy?.id === "License" ? "flex" : "block",
+          gap: "2rem",
+          flexWrap: "wrap",
         }}
       >
         {loading ? (
-          <p style={{ color: "#8BC642", textAlign: "center" }}>Loading content...</p>
+          <p style={{ color: "#8BC642", textAlign: "center", width: "100%" }}>
+            Loading content...
+          </p>
         ) : (
-          <div
-            id={activePolicy?.id}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+          <>
+            <div
+              id={activePolicy?.id}
+              dangerouslySetInnerHTML={{ __html: content }}
+              style={{
+                flex: "1",
+                lineHeight: "1.75",
+              }}
+            />
+            {activePolicy?.id === "License" && (
+              <div
+                style={{
+                  flex: "1",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={CoverKraft_IRDA}
+                  alt="License Illustration"
+                  style={{
+                    maxWidth: "100%",
+                    borderRadius: "10px",
+                    boxShadow: "0 0 12px rgba(0, 0, 0, 0.3)",
+                  }}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

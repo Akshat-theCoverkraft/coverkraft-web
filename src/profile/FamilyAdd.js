@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Box, Typography, FormHelperText } from "@mui/material";
+import { Drawer, Box, Typography } from "@mui/material";
 import CustomInput from "../component/CustomInput";
 import Button from "../component/Button";
 import backArrow from "../Images/ic_back_button.png";
@@ -66,13 +66,13 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
         }
         break;
       case "useremail":
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(value)) {
           message = "Enter a valid email address.";
         }
         break;
       case "familyMember":
-        if (!value || value == "") {
+        if (!value || value === "") {
           message = "Please select relation.";
         }
         break;
@@ -85,7 +85,6 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
       [name]: message,
     }));
   };
-
 
   const validateForm = () => {
     const tempErrors = {};
@@ -170,37 +169,40 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
       <ToastContainer />
       <Box
         sx={{
+          marginTop: "20px", 
           height: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start", 
         }}
       >
         <Box sx={{ width: "100%", maxWidth: "400px" }}>
-          <Box sx={{ display: "flex", alignItems: "center",}}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ cursor: "pointer", mr: 2 }}>
               <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
             </Box>
             <Typography variant="h4">Add New Member</Typography>
           </Box>
 
-          <Box sx={{ mb: 3 }}>
-            <Dropdown
-              label="Family Member"
-              options={familyOption}
-              value={familyMember}
-              onChange={(e) => {
-                const value = e.target.value;
-                setFamilyMember(value);
-                validateField("familyMember", value);
-              }}
-              placeholder="Select"
-              backgroundColor={THEME_COLOR.FADE_BACKGROUND}
-              error={!!errors.familyMember}
-              helperText={errors.familyMember}
-              required
-            />
+          <Box sx={{  mb: 3, mt: 5}}>
+           <Dropdown
+  label="Family Member"
+  options={familyOption}
+  value={familyMember}
+  onChange={(e) => {
+    const value = e.target.value;
+    setFamilyMember(value);
+    validateField("familyMember", value);
+  }}
+  placeholder="Select"
+  backgroundColor={THEME_COLOR.FADE_BACKGROUND}
+  error={!!errors.familyMember}
+  helperText={errors.familyMember}
+  required
+  style={{ margin: 0 }} // Adjust margin here
+/>
+
             {errors.familyMember && <div className="invalid-feedback text-danger d-block">{errors.familyMember}</div>}
           </Box>
 
@@ -228,11 +230,10 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
               placeholder="Enter Phone Number"
               value={userPhone}
               onChange={(e) => {
-                setuserPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+                setuserPhone(e.target.value.replace(/\D/g, "").slice(0, 10));
                 setuserPhone(e.target.value);
                 validateField("userPhone", e.target.value);
-              }
-              }
+              }}
               inputStyle={commonInputStyle}
               error={!!errors.userPhone}
               validationMessage={errors.userPhone}

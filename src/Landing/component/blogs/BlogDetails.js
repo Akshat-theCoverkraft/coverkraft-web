@@ -130,6 +130,7 @@ const NewsBlog = () => {
             }
           }}
           controls
+          controlsList="nodownload"
           style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
           className={isMainBlog ? "" : "card-img-top"}
           onPlay={(e) => handleVideoPlay(e.target)}

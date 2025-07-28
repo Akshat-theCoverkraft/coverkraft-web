@@ -93,6 +93,11 @@ const Family = ({ family, onfamilyclose }) => {
         },
       }}
     >
+      <FamilyAdd
+        familyAdd={drawerOpen}
+        onfamilyAddClose={handleFamilyClose}
+        onSuccess={handleFamilyAddSuccess}
+      />
       <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
@@ -167,6 +172,7 @@ const Family = ({ family, onfamilyclose }) => {
             borderStyle: 'dashed',
             borderColor: "#8AC642",
             borderWidth: 1.5,
+            marginTop: "30px",
           }}>
             <img height={40} src={addMember} alt="Add Member" />
             <h4 style={{ color: "#8AC642", marginTop: "10px" }}>Add New Member</h4>
@@ -192,7 +198,7 @@ const styles = {
     textAlign: "center",
     borderColor:'#8AC642',
     borderWidth:1,
-    width: "100%", // Make card take full width of container
+    width: "100%", 
     boxSizing: "border-box",
   },
   profileImageContainer: {

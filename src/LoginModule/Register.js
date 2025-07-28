@@ -113,7 +113,7 @@ const Register = () => {
     };
 
     return (
-        <div className="overflow-hidden" style={{ backgroundColor: '#313131' }}>
+        <div className="overflow-hidden" style={{ backgroundColor: '#121212' }}>
             <ToastContainer />
 
             <div className="container-fluid">
@@ -210,7 +210,7 @@ const Register = () => {
                         className="col-md-6 d-none d-md-block position-relative p-0"
                         style={{
                             height: '100%',
-                            maxHeight: '630px',
+                            maxHeight: '100vh',
                             overflow: 'hidden',
                         }}
                     >
