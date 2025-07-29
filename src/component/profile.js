@@ -497,7 +497,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         </Grid>
 
         {/* Date of Birth */}
-        {/* <div style={{width: "20%", display: "flex", marginRight: "100px"}}>
+        {/* <div style={{width: "1%", marginRight: "10%"}}>
         <Grid item style={commonItemStyle}>
           <label className="form-label text-light mb-2 d-block">Date of Birth</label>
           <GlobalDatePicker
