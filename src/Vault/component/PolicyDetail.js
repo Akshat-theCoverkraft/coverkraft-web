@@ -124,7 +124,7 @@ const PolicyDetail = ({ policyId }) => {
         new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
       const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-      if (diffInDays <= 0) return "Expired";
+      if (diffInDays < 0) return "Expired";
       if (diffInDays <= 60) return `${diffInDays} days left`;
       return null;
     } catch (error) {
