@@ -8,6 +8,7 @@ import linkedin from "../../Images/linkedin.png"
 import location from "../../Images/location_on.png";
 import call from "../../Images/call.png";
 import email from "../../Images/email.png";
+import clock from "../../Images/ic-clock.png";
 import "./CSS/footer.css";
 import { THEME_COLOR } from "../../constants";
 import moment from "moment";
@@ -116,10 +117,7 @@ useEffect(() => {
                 <div className="col-12 col-lg-12">
                   <div className="footer-legal-text" style={{ fontSize: "1.2rem", color: "#ccc", lineHeight: "1.5" }}>
                     <h5><strong>Coverkraft Insurance Brokers Private Limited</strong></h5>Reg. Office – D-3-591-D, Danish Nagar, Near Central School -3, Hoshangabad Road, Bhopal (MP) - 462 026 <br /> IRDAI Direct Insurance Broker (Life & General)<br/> License No. 1078 | Valid Till - 13/07/2028 <br /> Code No. - IRDAI/INT/BRK/DB1170/2024 <br/>CIN NO. - U66220MP2024PTC071585 <br/> Reg. No. 071585  
-                    <a href="https://irdai.gov.in/"
-                      target="_blank"
-                     
-                      style={{ fontWeight:600 ,fontSize: "1.2rem", color: "inherit" }}>  IRDAI</a>
+                    
                      
                   </div>
                   <div style={{ display: "flex", justifyContent: "flex-start", marginRight: "60px", marginTop: "10px" }}>
@@ -196,6 +194,18 @@ useEffect(() => {
               >
                 +91 7247724735
               </a>
+            </div>
+
+            <div className="d-flex align-items-center mt-2">
+              <img 
+              src={clock}
+              alt="Clock"
+              style={{ height: "25px", width: "25px", objectFit: "contain" }}
+              className="me-3 mt-1"
+                />
+              <span style={{ fontSize: "1.2rem" }}>
+                Monday–Saturday | 9:30 AM – 6:30 PM
+              </span>
             </div>
           </div>
 

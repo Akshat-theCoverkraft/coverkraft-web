@@ -175,6 +175,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "flex-start", 
+          marginLeft: "25px",
         }}
       >
         <Box sx={{ width: "100%", maxWidth: "400px" }}>
@@ -185,7 +186,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             <Typography variant="h4">Add New Member</Typography>
           </Box>
 
-          <Box sx={{  mb: 3, mt: 5}}>
+          <Box sx={{  mb: 3, mt: 5, width: "80%" }}>
            <Dropdown
   label="Family Member"
   options={familyOption}
@@ -206,7 +207,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             {errors.familyMember && <div className="invalid-feedback text-danger d-block">{errors.familyMember}</div>}
           </Box>
 
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{ mb: 3, width: "80%"}}>
             <CustomInput
               label="Full Name"
               placeholder="Enter Full Name"
@@ -224,7 +225,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             />
           </Box>
 
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{ mb: 3, width: "80%" }}>
             <CustomInput
               label="Phone Number"
               placeholder="Enter Phone Number"
@@ -242,7 +243,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             />
           </Box>
 
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{ mb: 3, width: "80%" }}>
             <CustomInput
               label="Email"
               placeholder="Enter Email"
@@ -260,7 +261,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
             />
           </Box>
 
-          <Box>
+          <Box sx={{ mb: 3, width: "80%" }} >
             <Button text="Continue" size="sm" block={true} onClick={handleSubmit} />
           </Box>
         </Box>
