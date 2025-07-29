@@ -118,7 +118,7 @@ const Family = ({ family, onfamilyclose }) => {
             />
           </Grid>
           <Grid item xs>
-            <Typography variant="h5" noWrap>
+            <Typography variant="h4" noWrap>
               Manage Your Family Members
             </Typography>
           </Grid>
@@ -129,12 +129,20 @@ const Family = ({ family, onfamilyclose }) => {
             <Grid item xs={6} key={index}>
               <Card style={styles.card}>
                 <div style={styles.profileImageContainer}>
-                  <img
-                    src={!profile.familyImg ? icDefaultProfile : profile.familyImg}
-                    alt="Profile"
-                    style={styles.profileImage}
-                  />
+                  {profile.familyImg ? (
+  <img
+    src={profile.familyImg}
+    alt="Profile"
+    style={styles.profileImage}
+  />
+) : (
+  <div style={styles.initialCircle}>
+    {profile.fullName?.charAt(0)?.toUpperCase() || "U"}
+  </div>
+)}
+
                 </div>
+                
                 <p style={{ fontSize: "16px", marginTop: '0px', ...styles.relationship }}>
                   {profile.familyMember}
                 </p>
@@ -200,6 +208,8 @@ const styles = {
     borderWidth:1,
     width: "100%", 
     boxSizing: "border-box",
+    backgroundColor: "#1c1c1c",
+    marginTop: "10px",
   },
   profileImageContainer: {
     display: "flex",
@@ -213,7 +223,7 @@ const styles = {
     objectFit: "cover",
   },
   relationship: {
-    backgroundColor: "#b1766b9c",
+    backgroundColor: "#304715",
     padding: "2px 5px",
     borderRadius: "5px",
     marginBottom: "2px",
@@ -227,6 +237,21 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
   },
+  initialCircle: {
+  width: "90px",
+  height: "90px",
+  borderRadius: "50%",
+  backgroundColor: "#87C63F",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  color: "#fff",
+  fontSize: "48px",
+  fontWeight: "bold",
+  textTransform: "uppercase",
+  marginBottom: "5px",
+},
+
 };
 
 export default Family;
