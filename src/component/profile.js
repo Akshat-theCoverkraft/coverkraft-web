@@ -48,61 +48,6 @@ const MENU_ITEMS = [
   { label: "Delete Account", icon: logout, action: "delete" }
 ];
 
-const FORM_FIELDS = {
-  username: { required: true, minLength: 3 },
-  useremail: { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/ },
-  userPhone: { pattern: /^\d{10}$/ },
-  pinCode: { pattern: /^\d{5,6}$/ },
-  userDob: { validator: 'isOldEnough' }
-};
-
-// Custom hooks
-const useFormValidation = () => {
-  const [errors, setErrors] = useState({});
-
-  const isOldEnough = useCallback((date) => {
-    if (!date) return true;
-    const today = new Date();
-    const ageDiff = today.getFullYear() - date.getFullYear();
-    const hasHadBirthdayThisYear = 
-      today.getMonth() > date.getMonth() || 
-      (today.getMonth() === date.getMonth() && today.getDate() >= date.getDate());
-    return hasHadBirthdayThisYear ? ageDiff >= 18 : ageDiff - 1 >= 18;
-  }, []);
-
-  const validateField = useCallback((fieldName, value) => {
-    const field = FORM_FIELDS[fieldName];
-    if (!field) return true;
-
-    if (field.required && (!value || !value.toString().trim())) {
-      return false;
-    }
-    if (field.minLength && value.toString().trim().length < field.minLength) {
-      return false;
-    }
-    if (field.pattern && value && !field.pattern.test(value)) {
-      return false;
-    }
-    if (field.validator === 'isOldEnough') {
-      return isOldEnough(value);
-    }
-    return true;
-  }, [isOldEnough]);
-
-  const validateAllFields = useCallback((formData) => {
-    const newErrors = {};
-    Object.keys(FORM_FIELDS).forEach(fieldName => {
-      if (!validateField(fieldName, formData[fieldName])) {
-        newErrors[fieldName] = true;
-      }
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [validateField]);
-
-  return { errors, validateField, validateAllFields, setErrors };
-};
-
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -111,9 +56,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   // Redux selectors
   const userbyId = useSelector(state => state.user);
   const states = useSelector(state => state.user);
-  
-  // Custom hooks
-  const { errors, validateField, validateAllFields } = useFormValidation();
   
   // State management
   const [drawers, setDrawers] = useState({
@@ -130,7 +72,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     update: false,
     profileImage: icDefaultProfile,
     showImageInput: false,
-    profileCompletion: 0
+    profileCompletion: 0,
+    isUpdating: false
   });
   
   const [formData, setFormData] = useState({
@@ -148,6 +91,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     selectedCityId: ""
   });
   
+  const [validationErrors, setValidationErrors] = useState({});
   const [returnPath, setReturnPath] = useState("/");
 
   // Memoized values
@@ -178,6 +122,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
   const getUserId = useCallback(() => sessionStorage.getItem("userId"), []);
 
+  const isOldEnough = useCallback((date) => {
+    if (!date) return true;
+    const today = new Date();
+    const ageDiff = today.getFullYear() - date.getFullYear();
+    const hasHadBirthdayThisYear = 
+      today.getMonth() > date.getMonth() || 
+      (today.getMonth() === date.getMonth() && today.getDate() >= date.getDate());
+    return hasHadBirthdayThisYear ? ageDiff >= 18 : ageDiff - 1 >= 18;
+  }, []);
+
   // Event handlers
   const handleDrawerToggle = useCallback((drawerName, isOpen) => {
     setDrawers(prev => ({ ...prev, [drawerName]: isOpen }));
@@ -189,7 +143,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
   const handleFormChange = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  }, []);
+    // Clear validation error when user starts typing
+    if (validationErrors[field]) {
+      setValidationErrors(prev => ({ ...prev, [field]: null }));
+    }
+  }, [validationErrors]);
 
   const handleProfileStateChange = useCallback((field, value) => {
     setProfileState(prev => ({ ...prev, [field]: value }));
@@ -223,39 +181,118 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   }, [handleFormChange, handleProfileStateChange]);
 
-  const handleUpdateProfile = useCallback(() => {
-    if (!validateAllFields(formData)) return;
+  // Validation function
+  const validateForm = useCallback(() => {
+    const errors = {};
+
+    // Name validation
+    if (!formData.username || formData.username.trim().length < 3) {
+      errors.username = "Full name must be at least 3 characters";
+    }
+
+    // Email validation
+    if (formData.useremail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.useremail)) {
+      errors.useremail = "Please enter a valid email address";
+    }
+
+    // Phone validation
+    if (formData.userPhone && !/^\d{10}$/.test(formData.userPhone)) {
+      errors.userPhone = "Please enter a valid 10-digit phone number";
+    }
+
+    // Pin code validation
+    if (formData.pinCode && !/^\d{5,6}$/.test(formData.pinCode)) {
+      errors.pinCode = "Please enter a valid pin code (5 or 6 digits)";
+    }
+
+    // Date of birth validation
+    if (formData.userDob && !isOldEnough(formData.userDob)) {
+      errors.userDob = "You must be at least 18 years old";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  }, [formData, isOldEnough]);
+
+  // Fixed update profile function
+  const handleUpdateProfile = useCallback(async () => {
+    if (!validateForm()) {
+      toast.error("Please fix the validation errors");
+      return;
+    }
 
     const userId = getUserId();
-    const formDataToSend = new FormData();
-    
-    formDataToSend.append("_id", userId);
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key === 'userDob' && value) {
-        try {
-          const formattedDob = value.toLocaleDateString("en-GB").split("/").reverse().join("-");
-          formDataToSend.append(key, formattedDob);
-        } catch (e) {
-          formDataToSend.append(key, null);
-        }
-      } else if (key === 'selectedStateId') {
-        formDataToSend.append('state', value);
-      } else if (key === 'selectedCityId') {
-        formDataToSend.append('city', value);
-      } else if (value !== null && value !== undefined) {
-        formDataToSend.append(key, value);
-      }
-    });
+    if (!userId) {
+      toast.error("User ID not found");
+      return;
+    }
 
-    dispatch(updateUser(API_URL, formDataToSend)).then((res) => {
-      if (res.status) {
+    handleProfileStateChange('isUpdating', true);
+
+    try {
+      const formDataToSend = new FormData();
+      
+      // Add user ID
+      formDataToSend.append("_id", userId);
+      
+      // Add form fields with proper mapping
+      formDataToSend.append("userName", formData.username || '');
+      formDataToSend.append("userEmail", formData.useremail || '');
+      formDataToSend.append("userPhone", formData.userPhone || '');
+      formDataToSend.append("userAddress", formData.userAddress || '');
+      formDataToSend.append("pinCode", formData.pinCode || '');
+      formDataToSend.append("gender", formData.gender || '');
+      
+      // Handle date of birth
+      if (formData.userDob) {
+        try {
+          const formattedDob = formData.userDob.toLocaleDateString("en-GB");
+          formDataToSend.append("userDob", formattedDob);
+        } catch (e) {
+          console.error("Date formatting error:", e);
+          formDataToSend.append("userDob", '');
+        }
+      } else {
+        formDataToSend.append("userDob", '');
+      }
+      
+      // Handle state and city
+      formDataToSend.append("state", formData.selectedStateId || '');
+      formDataToSend.append("city", formData.selectedCityId || '');
+      
+      // Handle image file
+      if (formData.userImgFile) {
+        formDataToSend.append("userImg", formData.userImgFile);
+      }
+
+      // Debug: Log form data (remove in production)
+      console.log("Sending form data:");
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
+      }
+
+      const response = await dispatch(updateUser(API_URL, formDataToSend));
+      
+      if (response && response.status) {
         toast.success("Profile updated successfully!");
         handleProfileStateChange('update', false);
+        
+        // CRITICAL: Refresh user data after successful update
+        await fetchUserProfile();
+        
       } else {
-        toast.error(res.message || "Failed to update profile");
+        const errorMessage = response?.message || response?.error || "Failed to update profile";
+        toast.error(errorMessage);
+        console.error("Update failed:", response);
       }
-    });
-  }, [formData, validateAllFields, getUserId, dispatch, handleProfileStateChange]);
+      
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error("An error occurred while updating profile");
+    } finally {
+      handleProfileStateChange('isUpdating', false);
+    }
+  }, [formData, validateForm, getUserId, dispatch, handleProfileStateChange]);
 
   const handleDeleteAccount = useCallback(() => {
     const userId = getUserId();
@@ -272,10 +309,14 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   }, [getUserId, dispatch, navigate]);
 
-  const fetchUserProfile = useCallback(() => {
+  const fetchUserProfile = useCallback(async () => {
     const userId = getUserId();
     if (userId) {
-      dispatch(getBYIDUsers(API_URL, userId));
+      try {
+        await dispatch(getBYIDUsers(API_URL, userId));
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
     }
   }, [getUserId, dispatch]);
 
@@ -298,13 +339,17 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   }, [open, location.pathname]);
 
-  // Populate form data when user data is loaded
+  // CRITICAL: Populate form data when user data is loaded
   useEffect(() => {
     if (userbyId.getUserById?.data) {
       const data = userbyId.getUserById.data;
       const percentage = calculateProfileCompletion(data);
       
-      setFormData({
+      console.log("Populating form with user data:", data); // Debug log
+      
+      // Update form data with fresh API data
+      setFormData(prevFormData => ({
+        ...prevFormData,
         username: data.userName || "",
         useremail: data.userEmail || "",
         userPhone: data.userPhone || "",
@@ -314,15 +359,15 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         gender: data.gender || "",
         selectedStateId: data?.state?._id || "",
         selectedCityId: data?.city?._id || "",
-        userImgFile: null
-      });
+        userImgFile: null // Reset file input
+      }));
       
       handleProfileStateChange('profileCompletion', percentage);
       handleProfileStateChange('profileImage', 
         data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
       );
     }
-  }, [userbyId, calculateProfileCompletion, handleFormChange, handleProfileStateChange]);
+  }, [userbyId.getUserById?.data, calculateProfileCompletion, handleProfileStateChange]);
 
   // Render functions
   const renderProfileHeader = () => (
@@ -402,52 +447,81 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     </Grid>
   );
 
-  const renderFormField = (fieldConfig) => {
-    const { type, field, label, placeholder, disabled, component: Component = CustomInput } = fieldConfig;
-    
-    return (
-      <Grid item style={commonItemStyle}>
-        <Component
-          type={type}
-          label={label}
-          placeholder={placeholder}
-          value={formData[field]}
-          onChange={(e) => {
-            const value = type === 'tel' ? e.target.value.replace(/\D/g, "").slice(0, 10) : e.target.value;
-            handleFormChange(field, value);
-          }}
-          disabled={disabled}
-          fullWidth
-          inputStyle={commonInputStyle}
-          validationMessage={errors[field] ? `Please enter a valid ${label.toLowerCase()}` : ""}
-        />
-      </Grid>
-    );
-  };
-
   const renderUpdateForm = () => (
     <div className="main-container p-4">
       <Grid container spacing={2} direction="column" alignItems="center">
-        {/* Form fields */}
-        {renderFormField({ field: 'username', label: 'Full Name', placeholder: 'Enter your name' })}
-        {renderFormField({ field: 'userPhone', label: 'Mobile Number', placeholder: 'Enter your mobile number', type: 'tel', disabled: true })}
-        {renderFormField({ field: 'useremail', label: 'Email Address', placeholder: 'Enter your email', type: 'email' })}
-        
-        {/* Date picker */}
+        {/* Full Name */}
+        <Grid item style={commonItemStyle}>
+          <CustomInput
+            label="Full Name"
+            placeholder="Enter your name"
+            value={formData.username}
+            onChange={(e) => handleFormChange('username', e.target.value)}
+            required
+            fullWidth
+            inputStyle={commonInputStyle}
+            validationMessage={validationErrors.username}
+          />
+        </Grid>
+
+        {/* Phone */}
+        <Grid item style={commonItemStyle}>
+          <CustomInput
+            type="tel"
+            label="Mobile Number"
+            placeholder="Enter your mobile number"
+            value={formData.userPhone}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+              handleFormChange('userPhone', value);
+            }}
+            disabled
+            fullWidth
+            inputStyle={commonInputStyle}
+            validationMessage={validationErrors.userPhone}
+          />
+        </Grid>
+
+        {/* Email */}
+        <Grid item style={commonItemStyle}>
+          <CustomInput
+            type="email"
+            label="Email Address"
+            placeholder="Enter your email"
+            value={formData.useremail}
+            onChange={(e) => handleFormChange('useremail', e.target.value)}
+            fullWidth
+            inputStyle={commonInputStyle}
+            validationMessage={validationErrors.useremail}
+          />
+        </Grid>
+
+        {/* Date of Birth */}
+        {/* <div style={{width: "20%", display: "flex", marginRight: "100px"}}>
         <Grid item style={commonItemStyle}>
           <label className="form-label text-light mb-2 d-block">Date of Birth</label>
           <GlobalDatePicker
             selectedDate={formData.userDob}
             handleDateChange={(date) => handleFormChange('userDob', date)}
             placeholder="Select your date of birth"
-            error={errors.userDob}
-            validationMessage="You must be at least 18 years old"
+            error={!!validationErrors.userDob}
+            validationMessage={validationErrors.userDob}
+          />
+        </Grid>
+      </div > */}
+        {/* Address */}
+        <Grid item style={commonItemStyle}>
+          <CustomInput
+            label="Address"
+            placeholder="Enter your address"
+            value={formData.userAddress}
+            onChange={(e) => handleFormChange('userAddress', e.target.value)}
+            fullWidth
+            inputStyle={commonInputStyle}
           />
         </Grid>
 
-        {renderFormField({ field: 'userAddress', label: 'Address', placeholder: 'Enter your address' })}
-
-        {/* Dropdowns */}
+        {/* State */}
         <Grid item style={commonItemStyle}>
           <GlobalDropdown
             className={formData.selectedStateId === "" ? 'placeholder-selected' : 'custom-dark-dropdown'}
@@ -457,6 +531,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           />
         </Grid>
 
+        {/* City */}
         <Grid item style={commonItemStyle}>
           <CityDropdown
             label="City"
@@ -468,7 +543,21 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           />
         </Grid>
 
-        {renderFormField({ field: 'pinCode', label: 'Pincode', placeholder: 'Enter your pincode' })}
+        {/* Pincode */}
+        <Grid item style={commonItemStyle}>
+          <CustomInput
+            label="Pincode"
+            placeholder="Enter your pincode"
+            value={formData.pinCode}
+            onChange={(e) => {
+              const pin = e.target.value.replace(/\D/g, "").slice(0, 6);
+              handleFormChange('pinCode', pin);
+            }}
+            fullWidth
+            inputStyle={commonInputStyle}
+            validationMessage={validationErrors.pinCode}
+          />
+        </Grid>
 
         {/* Gender */}
         <Grid item style={commonItemStyle}>
@@ -490,10 +579,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <Button
-                text="Update Profile"
+                text={profileState.isUpdating ? "Updating..." : "Update Profile"}
                 onClick={handleUpdateProfile}
-                disabled={!formData.username || errors.userDob}
-                bgcolor={!formData.username ? "#ccc" : "#8AC642"}
+                disabled={profileState.isUpdating || !formData.username}
+                bgcolor={profileState.isUpdating || !formData.username ? "#ccc" : "#8AC642"}
                 customStyle={{
                   width: "100%",
                   height: 48,
@@ -505,7 +594,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             <Grid item xs={6}>
               <Button
                 text="Cancel"
-                onClick={() => handleProfileStateChange('update', false)}
+                onClick={() => {
+                  handleProfileStateChange('update', false);
+                  fetchUserProfile(); // Reset form data
+                }}
+                disabled={profileState.isUpdating}
                 customStyle={{
                   width: "100%",
                   height: 48,
