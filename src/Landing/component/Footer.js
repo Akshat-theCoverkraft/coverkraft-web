@@ -63,9 +63,9 @@ const policies = [
 
   const socialIcons = [
     { src: twitter, alt: "Twitter", href: "https://x.com/thecoverkraft/status/1947877105259409817", target: "_blank" },
-    { src: facebook, alt: "Facebook", href: "https://www.facebook.com/share/v/176VaFS9Dt/" },
-    { src: instagram, alt: "Instagram", href: "" },
-    { src: linkedin, alt: "LinkedIn", href: "https://www.linkedin.com/feed/update/urn:li:activity:7353642804960444416" },
+    { src: facebook, alt: "Facebook", href: "https://www.facebook.com/profile.php?id=61578344134818" },
+    { src: instagram, alt: "Instagram", href: "https://www.instagram.com/thecoverkraft/" },
+    { src: linkedin, alt: "LinkedIn", href: "https://www.linkedin.com/company/thecoverkraft/" },
   ];
 
 
@@ -190,11 +190,11 @@ useEffect(() => {
                 className="me-3"
               />
               <a
-                href="tel:+91XXXXXXXXXX"
+                href="tel:+917247724735"
                 className="footer-link text-decoration-none"
                 style={{ fontSize: "1.2rem" }}
               >
-                +91 XXXX-XXXXX
+                +91 7247724735
               </a>
             </div>
           </div>

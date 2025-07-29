@@ -329,8 +329,11 @@ function ContactUs() {
                     </p>
 
 
-                    <p><CallIcon className="me-2 text-success text-size-md" />+91-xxx-xxxx-xxxx</p>
+                    <p><CallIcon className="me-2 text-success text-size-md" />+91 7247724735</p>
                     <p><MailIcon className="me-2 text-success" /><a href="mailto:contact@thecoverkraft.com" className="text-decoration-underline text-light text-size-md">contact@thecoverkraft.com</a></p>
+                                        <h3 style={{ color: "#8bc642", fontWeight: "600"}}>Hours of Operation</h3>
+<p>Monday–Saturday | 9:30 AM – 6:30 PM</p>
+
                   </div>
                 </div>
               </div>
