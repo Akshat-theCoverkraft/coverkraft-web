@@ -10,7 +10,7 @@ import { motion, useReducedMotion, useInView, useMotionValue, useTransform } fro
 // Section wrapper with padding
 const SectionWrapper = styled("div")(({ theme }) => ({
   paddingTop: "2rem",
-  paddingBottom: "1rem",
+  paddingBottom: "0rem",
   [theme.breakpoints.down("sm")]: {
     paddingTop: "1rem",
   },
@@ -151,7 +151,6 @@ const HeroSection = () => {
               style={{
                 fontSize: "clamp(1.5rem, 6vw, 3.2rem)",
                 fontWeight: 700,
-                marginBottom: "1rem",
                 lineHeight: 1.3,
                 whiteSpace: "pre-wrap",
               }}
@@ -170,7 +169,6 @@ const HeroSection = () => {
               color: "#eaeaea",
               fontSize: "clamp(1rem, 4vw, 1.5rem)",
               lineHeight: 1.6,
-              marginBottom: "2rem",
             }}
           >
             Choose us for tailored coverage, exceptional customer service,
@@ -257,7 +255,7 @@ const HeroSection = () => {
               pointerEvents: "none",
               borderRadius: "12px",
               boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-              marginRight: { xs: 0, md: "5rem" },
+              marginRight: { xs: 0, md: "10rem" },
             }}
           />
         </Grid>

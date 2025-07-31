@@ -32,16 +32,18 @@ const Notification = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const userId = sessionStorage.getItem("userId");
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
     try {
       const params = {
         status: "active",
+        userId: userId,
         page: pagination.currentPage,
         limit: pagination.limit
       };
-      if (activeTab === 1) params.type = "policy";
+      if (activeTab === 0) params.type = "policy";
 
       const res = await axios.get(`${API_URL}notification/getAll`, { params });
 
@@ -104,21 +106,26 @@ const Notification = () => {
 
   const updateNotificationStatus = async (id) => {
     try {
-      await axios.put(
-        `${API_URL}notification/update-status/${id}`,
-        { notificationStatus: "seen" }
-      );
+      await axios.put(`${API_URL}notification/update-status/${id}`, {
+        notificationStatus: "seen"
+      });
 
       // Optimistic UI update
-      setNotifications((prev) =>
-        prev.map((item) =>
+      setNotifications(prev =>
+        prev.map(item =>
           item._id === id ? { ...item, notificationStatus: "seen" } : item
         )
       );
+
+      // Refresh navbar count
+      if (typeof window.refreshPolicyCount === "function") {
+        window.refreshPolicyCount();
+      }
     } catch (error) {
       console.error("Failed to update notification status:", error);
     }
   };
+
 
 
   return (
