@@ -6,21 +6,16 @@ import backArrow from "../Images/ic_back_button.png";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
 import Dropdown from "../component/Dropdown";
-import { toast, ToastContainer } from "react-toastify"; 
+import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 
-const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
+const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editData = null }) => {
   const [familyMember, setFamilyMember] = useState("");
   const [fullName, setFullName] = useState("");
   const [userPhone, setuserPhone] = useState("");
   const [useremail, setuserEmail] = useState("");
 
-  const [errors, setErrors] = useState({
-    fullName: "",
-    userPhone: "",
-    useremail: "",
-    familyMember: "",
-  });
+  const [errors, setErrors] = useState({});
 
   const familyOption = [
     { value: "Spouse", label: "Spouse" },
@@ -41,49 +36,46 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
   };
 
   useEffect(() => {
-    if (familyAdd) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
+    if (familyAdd && mode === "edit" && editData) {
+      setFamilyMember(editData.familyMember || "");
+      setFullName(editData.fullName || "");
+      setuserPhone(editData.mobile || "");
+      setuserEmail(editData.email || "");
+    } else if (mode === "add") {
+      resetForm();
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [familyAdd]);
+  }, [familyAdd, mode, editData]);
+
+  const resetForm = () => {
+    setFamilyMember("");
+    setFullName("");
+    setuserPhone("");
+    setuserEmail("");
+    setErrors({});
+  };
 
   const validateField = (name, value) => {
     let message = "";
 
     switch (name) {
       case "fullName":
-        if (!value.trim()) {
-          message = "Full name is required.";
-        }
+        if (!value.trim()) message = "Full name is required.";
         break;
       case "userPhone":
-        if (!/^\d{10}$/.test(value)) {
-          message = "Enter a valid 10-digit phone number.";
-        }
+        if (!/^\d{10}$/.test(value)) message = "Enter a valid 10-digit phone number.";
         break;
       case "useremail":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(value)) {
-          message = "Enter a valid email address.";
-        }
+        if (!emailRegex.test(value)) message = "Enter a valid email address.";
         break;
       case "familyMember":
-        if (!value || value === "") {
-          message = "Please select relation.";
-        }
+        if (familyMember!=='') message = "Please select relation.";
         break;
       default:
         break;
     }
 
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: message,
-    }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: message }));
   };
 
   const validateForm = () => {
@@ -94,17 +86,14 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
       tempErrors.fullName = "Full name is required.";
       valid = false;
     }
-
     if (!familyMember) {
       tempErrors.familyMember = "Please select relation.";
       valid = false;
     }
-
     if (!/^\d{10}$/.test(userPhone)) {
       tempErrors.userPhone = "Enter a valid 10-digit phone number.";
       valid = false;
     }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(useremail)) {
       tempErrors.useremail = "Enter a valid email address.";
@@ -121,34 +110,46 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
     const token = sessionStorage.getItem("token");
     const userId = sessionStorage.getItem("userId");
 
-    const formData = new FormData();
-    formData.append("userId", userId);
-    formData.append("fullName", fullName);
-    formData.append("familyMember", familyMember);
-    formData.append("mobile", userPhone);
-    formData.append("email", useremail);
+    const formData = {
+      userId,
+      fullName,
+      familyMember,
+      mobile: userPhone,
+      email: useremail,
+    };
+
+    const formDataEdit = {
+      userId,
+      fullName,
+      familyMember,
+      mobile: userPhone,
+      email: useremail,
+      _id: editData?._id,
+    };
+
 
     try {
-      const response = await axios.post(`${API_URL}family/create`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      let response;
+      if (mode === "edit" && editData?._id) {
+        response = await axios.post(`${API_URL}family/update`, formDataEdit, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        response = await axios.post(`${API_URL}family/create`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
 
       if (response.status === 200) {
-        toast.success("Successfully Created");
+        toast.success(mode === "edit" ? "Member updated successfully" : "Member added successfully");
         onSuccess();
         onfamilyAddClose();
-        setFullName("");
-        setFamilyMember("");
-        setuserPhone("");
-        setuserEmail("");
-        setErrors({});
+        resetForm();
       } else {
-        toast.error(response.message || "Something went wrong.");
+        toast.error("Something went wrong.");
       }
     } catch (err) {
-      toast.error("Failed to add member.");
+      toast.error(mode === "edit" ?"Failed to update member.":'Failed to save member.');
     }
   };
 
@@ -169,100 +170,102 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess }) => {
       <ToastContainer />
       <Box
         sx={{
-          marginTop: "20px", 
+          marginTop: "20px",
           height: "100%",
           display: "flex",
+          width: "100%",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "flex-start", 
+          justifyContent: "flex-start",
           marginLeft: "25px",
         }}
       >
-        <Box sx={{ width: "100%", maxWidth: "400px" }}>
+        <Box sx={{ width: "100%", maxWidth: "450px" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ cursor: "pointer", mr: 2 }}>
               <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
             </Box>
-            <Typography variant="h4">Add New Member</Typography>
+            <Typography variant="h4">{mode === "edit" ? "Edit Member" : "Add New Member"}</Typography>
           </Box>
 
-          <Box sx={{  mb: 3, mt: 5, width: "80%" }}>
-           <Dropdown
-  label="Family Member"
-  options={familyOption}
-  value={familyMember}
-  onChange={(e) => {
-    const value = e.target.value;
-    setFamilyMember(value);
-    validateField("familyMember", value);
-  }}
-  placeholder="Select"
-  backgroundColor={THEME_COLOR.FADE_BACKGROUND}
-  error={!!errors.familyMember}
-  helperText={errors.familyMember}
-  required
-  style={{ margin: 0 }} // Adjust margin here
-/>
-
-            {errors.familyMember && <div className="invalid-feedback text-danger d-block">{errors.familyMember}</div>}
+          <Box sx={{ mb: 3, mt: 5, width: "90%" }}>
+            <Dropdown
+              label="Family Member"
+              options={familyOption}
+              value={familyMember}
+              onChange={(e) => {
+                const value = e.target.value;
+                
+                setFamilyMember(value);
+                validateField("familyMember", value);
+              }}
+              placeholder="Select"
+              backgroundColor={THEME_COLOR.FADE_BACKGROUND}
+              error={!!errors.familyMember}
+              helperText={errors.familyMember}
+              required
+            />
+            {errors.familyMember && (
+              <div className="invalid-feedback text-danger d-block">{errors.familyMember}</div>
+            )}
           </Box>
 
-          <Box sx={{ mb: 3, width: "80%"}}>
+          <Box sx={{ mb: 3, width: "90%" }}>
             <CustomInput
               label="Full Name"
               placeholder="Enter Full Name"
               value={fullName}
               onChange={(e) => {
-                const value = e.target.value;
-                setFullName(value);
-                validateField("fullName", value);
+                setFullName(e.target.value);
+                validateField("fullName", e.target.value);
               }}
               inputStyle={commonInputStyle}
               error={!!errors.fullName}
               validationMessage={errors.fullName}
               required
-              padding="2rem"
             />
           </Box>
 
-          <Box sx={{ mb: 3, width: "80%" }}>
+          <Box sx={{ mb: 3, width: "90%" }}>
             <CustomInput
               label="Phone Number"
               placeholder="Enter Phone Number"
               value={userPhone}
               onChange={(e) => {
-                setuserPhone(e.target.value.replace(/\D/g, "").slice(0, 10));
-                setuserPhone(e.target.value);
-                validateField("userPhone", e.target.value);
+                const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                setuserPhone(value);
+                validateField("userPhone", value);
               }}
               inputStyle={commonInputStyle}
               error={!!errors.userPhone}
               validationMessage={errors.userPhone}
               required
-              padding="2rem"
             />
           </Box>
 
-          <Box sx={{ mb: 3, width: "80%" }}>
+          <Box sx={{ mb: 3, width: "90%" }}>
             <CustomInput
               label="Email"
               placeholder="Enter Email"
               value={useremail}
               onChange={(e) => {
-                const value = e.target.value;
-                setuserEmail(value);
-                validateField("useremail", value);
+                setuserEmail(e.target.value);
+                validateField("useremail", e.target.value);
               }}
               inputStyle={commonInputStyle}
               error={!!errors.useremail}
               validationMessage={errors.useremail}
               required
-              padding="2rem"
             />
           </Box>
 
-          <Box sx={{ mb: 3, width: "80%" }} >
-            <Button text="Continue" size="sm" block={true} onClick={handleSubmit} />
+          <Box sx={{ mb: 3, width: "90%" }}>
+            <Button
+              text={mode === "edit" ? "Update" : "Save"}
+              size="sm"
+              block={true}
+              onClick={handleSubmit}
+            />
           </Box>
         </Box>
       </Box>
