@@ -118,10 +118,10 @@ const Communication = ({ communication, onCommunicationClose }) => {
   };
 
   const contactMethods = [
-    { icon: sms, label: "SMS", key: "userSms" },
-    { icon: call, label: "Call", key: "userCall" },
-    { icon: wtsp, label: "WhatsApp", key: "userWhatsapp" },
-    { icon: email, label: "Email", key: "userEmail" },
+    { icon: sms, label: "Reach out for personalized policy options tailored to my family's needs.", key: "userSms" },
+    { icon: call, label: "Limit communication to once a month.", key: "userCall" },
+    { icon: wtsp, label: "Kindly avoid phone calls — I prefer communication via email or WhatsApp.", key: "userWhatsapp" },
+
   ];
 
   const frequencyOptions = [
@@ -158,11 +158,16 @@ const Communication = ({ communication, onCommunicationClose }) => {
         </Stack>
 
         <Box mb={5}>
-          <Typography variant="h5" fontWeight={600} gutterBottom>
-            Policy Updates
-          </Typography>
-          <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
-            Receive important updates for your policies — payments, renewals, and more.
+
+          <Typography sx={{
+            height: 48,
+            fontSize: "1.3rem",
+            justifyContent: "center",
+            borderRadius: 42,
+            width: "100%",
+            color: "#fff",
+          }} color="white" mb={1}>
+            Please contact me around the time of my policy renewal.
           </Typography>
 
           <Stack spacing={2}>
@@ -170,7 +175,14 @@ const Communication = ({ communication, onCommunicationClose }) => {
               <Stack key={key} direction="row" justifyContent="space-between" alignItems="center">
                 <Stack direction="row" alignItems="center" spacing={2}>
                   <img src={icon} alt={label} width={24} />
-                  <Typography variant="body1">{label}</Typography>
+                  <Typography style={{
+                    height: 48,
+                    fontSize: "1.3rem",
+                    paddingTop: 5,
+                    borderRadius: 42,
+                    width: "100%",
+                    color: "#fff",
+                  }}>{label}</Typography>
                 </Stack>
                 <PinkSwitch checked={switchStates[key]} onChange={handleSwitchUpdate(key)} />
               </Stack>
@@ -178,33 +190,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
           </Stack>
         </Box>
 
-        <Box>
-          <Typography variant="h4" fontWeight={600} gutterBottom>
-            Communication Frequency
-          </Typography>
-          <Typography sx={{ fontSize: "1.3rem" }} color="white" mb={3}>
-            How often would you like to hear from us?
-          </Typography>
 
-          <Stack spacing={2}>
-            {frequencyOptions.map(({ value, label }) => (
-              <Stack key={value} direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="body1">{label}</Typography>
-                <PinkSwitch
-                  checked={selectedValue === value}
-                  onChange={handleRadioChange}
-                  value={value}
-                  sx={{
-                    color: "#8AC642",
-                    "&.Mui-checked": {
-                      color: "#8AC642",
-                    },
-                  }}
-                />
-              </Stack>
-            ))}
-          </Stack>
-        </Box>
       </Box>
 
       {loading && (

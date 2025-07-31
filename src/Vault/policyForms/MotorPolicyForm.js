@@ -95,7 +95,7 @@ const MotorPolicyForm = () => {
     ""
   );
 
-  const isAlphanumeric = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d ]+$/;
+  const isAlphanumeric = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d -]+$/;
   const [registrationNumber, setRegistrationNumber] = useState(
     responseData?.registrationNumber ||
     policyDetails?.policyDetails?.registrationNumber ||
@@ -239,7 +239,7 @@ const MotorPolicyForm = () => {
       payload.idv
     );
   };
-  
+
   const createPolicy = async (payload) => {
     const formData = new FormData();
     formData.append("userId", userId);
@@ -472,7 +472,7 @@ const MotorPolicyForm = () => {
                     inputStyle={commonInputStyle}
                     validationMessage={
                       registrationNumber && !isAlphanumeric.test(registrationNumber)
-                        ? "Registration number must contain letters and numbers (spaces allowed)"
+                        ? "Registration number must contain letters and numbers. No special characters other than - and space allowed."
                         : ""
                     }
                   />
@@ -572,7 +572,7 @@ const MotorPolicyForm = () => {
                   />
                   <CustomInput
                     type="text"
-                    label="Tp Premium"
+                    label="Liability Premium"
                     value={tpPremium}
                     inputStyle={commonInputStyle}
                     onChange={(e) => {

@@ -18,6 +18,11 @@ import profileIcon from "../Images/ic-profile.png";
 import notificationIcon from "../Images/ic-notification.png";
 import ProfileDrawer from "../component/profile";
 import { THEME_COLOR } from "../constants";
+import { Badge } from "@mui/material";
+import axios from "axios";
+import API_URL from "../ServiceModule/Service";
+import { useEffect } from "react";
+
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/" },
@@ -74,9 +79,44 @@ function Navbar({ scrollToContactBottom }) {
   const [mobileAnchor, setMobileAnchor] = useState(null);
   const [moreAnchor, setMoreAnchor] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const userId = useMemo(() => sessionStorage.getItem("userId"), []);
 
   const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", []);
   const isHomePage = useMemo(() => location.pathname === "/", [location.pathname]);
+  const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
+  useEffect(() => {
+    if (loggedIn) {
+      fetchUnreadPolicyCount(); // Initial load
+
+      // Real-time update every 30 seconds
+      const interval = setInterval(() => {
+        fetchUnreadPolicyCount();
+      }, 3000);
+
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [loggedIn]);
+
+  const fetchUnreadPolicyCount = async () => {
+    try {
+      const res = await axios.get(`${API_URL}notification/getAll`, {
+        params: { userId: userId, type: "policy", status: "active" }
+      });
+
+      if (res.data?.data) {
+        const count = res.data.data.filter(n => n.notificationStatus !== "seen").length;
+        setUnreadPolicyCount(count);
+      }
+    } catch (error) {
+      console.error("Failed to fetch unread notifications:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (loggedIn) {
+      fetchUnreadPolicyCount();
+    }
+  }, [loggedIn]);
 
   const visibleNavItems = useMemo(() => {
     return NAV_ITEMS.filter((item) => {
@@ -100,7 +140,7 @@ function Navbar({ scrollToContactBottom }) {
   };
 
   const handleLogout = () => {
-sessionStorage.clear(); 
+    sessionStorage.clear();
 
     setProfileAnchor(null);
     navigate("/");
@@ -169,7 +209,7 @@ sessionStorage.clear();
                         navigate("/notification");
                         setMobileAnchor(null);
                       }}
-                      sx={{ fontSize: "1.3rem" }} 
+                      sx={{ fontSize: "1.3rem" }}
                     >
                       Notification
                     </MenuItem>,
@@ -209,12 +249,27 @@ sessionStorage.clear();
               ))}
               {loggedIn ? (
                 <>
-                  <img
-                    src={notificationIcon}
-                    alt="notification"
-                    style={{ height: 28, width: 28, cursor: "pointer" }} 
-                    onClick={() => navigate("/notification")}
-                  />
+                  <Badge
+                    badgeContent={unreadPolicyCount}
+                    color="success"
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        backgroundColor: "#8AC642",
+                        color: "black",
+                        fontSize: "0.8rem",
+                        fontWeight: "bold"
+                      }
+                    }}
+                  >
+                    <img
+                      src={notificationIcon}
+                      alt="notification"
+                      style={{ height: 28, width: 28, cursor: "pointer" }}
+                      onClick={() => navigate("/notification")}
+                    />
+                  </Badge>
+
+
                   <img
                     src={profileIcon}
                     alt="profile"
