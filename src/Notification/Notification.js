@@ -4,12 +4,15 @@ import {
   Typography,
   Grid,
   Box,
-  Button,
+  CircularProgress,
+  Tabs,
+  Tab,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  CircularProgress,
+  Button,
+  Pagination
 } from "@mui/material";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
@@ -19,69 +22,68 @@ import SessionExpiredModal from "../utils/sessionExpireModal";
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    limit: 10
+  });
+  const [activeTab, setActiveTab] = useState(0); // 0=General, 1=Policy
+  const [loading, setLoading] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
-  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}notification/getAll`, {
-        params: { status: "active" },
-      });
+      const params = {
+        status: "active",
+        page: pagination.currentPage,
+        limit: pagination.limit
+      };
+      if (activeTab === 1) params.type = "policy";
+
+      const res = await axios.get(`${API_URL}notification/getAll`, { params });
+
+      const { data, pagination: pageInfo } = res.data;
       const deletedIds = JSON.parse(localStorage.getItem("deletedNotifications") || "[]");
-      const validNotifications = response.data.data.filter(n => !deletedIds.includes(n._id));
-      setNotifications(validNotifications);
+
+      const filteredNotifications = data.filter((n) => !deletedIds.includes(n._id));
+
+      setNotifications(filteredNotifications);
+      setPagination((prev) => ({
+        ...prev,
+        totalPages: pageInfo.totalPages || 1,
+        currentPage: pageInfo.currentPage || 1
+      }));
     } catch (err) {
       if (err.response?.status === 401) {
         setShowSessionExpired(true);
       }
-      console.error("Failed to fetch notifications:", err);
+      console.error("Error fetching notifications:", err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [pagination.currentPage, activeTab]);
 
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  const handleSessionExpiredOk = () => {
-    setShowSessionExpired(false);
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.href = "/login";
+  const handleTabChange = (e, newTab) => {
+    setActiveTab(newTab);
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
-  const handleReadMore = (notification) => {
-    setSelectedNotification(notification);
-    setShowDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setSelectedNotification(null);
-    setShowDialog(false);
-  };
-
-  const handleDeleteAllClick = () => {
-    setConfirmDeleteAll(true);
-  };
-
-  const handleConfirmDeleteAll = () => {
-    const allIds = notifications.map(n => n._id);
-    localStorage.setItem("deletedNotifications", JSON.stringify(allIds));
-    setNotifications([]);
-    setConfirmDeleteAll(false);
+  const handlePageChange = (e, page) => {
+    setPagination((prev) => ({ ...prev, currentPage: page }));
   };
 
   const truncateText = (text, wordLimit = 40) => {
     const words = text.split(" ");
-    return words.length <= wordLimit
-      ? text
-      : words.slice(0, wordLimit).join(" ") + "...";
+    return words.length <= wordLimit ? text : words.slice(0, wordLimit).join(" ") + "...";
   };
+
   const getTimeAgo = (dateString) => {
     const now = new Date();
     const past = new Date(dateString);
@@ -90,168 +92,288 @@ const Notification = () => {
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    if (diffInHours < 24) return `${diffInHours} hr${diffInHours > 1 ? "s" : ""} ago`;
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
     const diffInWeeks = Math.floor(diffInDays / 7);
-    if (diffInWeeks < 4) return `${diffInWeeks} week${diffInWeeks > 1 ? 's' : ''} ago`;
+    if (diffInWeeks < 4) return `${diffInWeeks} wk${diffInWeeks > 1 ? "s" : ""} ago`;
     const diffInMonths = Math.floor(diffInDays / 30);
-    if (diffInMonths < 12) return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
-    const diffInYears = Math.floor(diffInDays / 365);
-    return `${diffInYears} year${diffInYears > 1 ? 's' : ''} ago`;
+    if (diffInMonths < 12) return `${diffInMonths} mo${diffInMonths > 1 ? "s" : ""} ago`;
+    return `${Math.floor(diffInDays / 365)} yr ago`;
   };
 
-  return (
-    <Box style={{
-      backgroundColor: "#121212", minHeight: "100vh", color: "#fff", display: "flex",
-      flexDirection: "column",
-    }}>
-      <Navbar />
-      <Box sx={{ flexGrow: 1 }}>
-        <SessionExpiredModal visible={showSessionExpired} onConfirm={handleSessionExpiredOk} />
-        <Container maxWidth="lg" sx={{ py: 5 }}>
-          <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-            <Typography fontWeight={700} color={"#8AC642"} sx={{ fontSize: "2.5rem" }}>
-              Notifications
-            </Typography>
-            {/* {notifications.length > 0 && (
-              <Button
-                variant="contained"
-                onClick={handleDeleteAllClick}
-                sx={{
-                  backgroundColor: "transparent",
-                  color: "#8AC642",
-                  border: "1.5px solid #8AC642",
-                  borderRadius: "20px",
-                  padding: "8px 16px",
-                  fontSize: "1.4rem",
-                  fontWeight: "600",
-                  minWidth: "100px",
-                  cursor: "pointer",
-                  userSelect: "none",
-                  transition: "all 0.25s ease",
-                  "&:hover": {
-                    backgroundColor: "#8AC642",
-                    color: "#000",
-                  },
-                }}
-              >
-                Delete All
-              </Button>
-            )} */}
-          </Grid>
+  const updateNotificationStatus = async (id) => {
+    try {
+      await axios.put(
+        `${API_URL}notification/update-status/${id}`,
+        { notificationStatus: "seen" }
+      );
 
-          {loading ? (
-            <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "40vh" }}>
-              <CircularProgress style={{ color: "#8BC642" }} />
-            </Grid>
-          ) : notifications.length === 0 ? (
-            <Typography align="center" sx={{ mt: 10, fontSize: "1.6rem" }}>
-              You have no notifications.
-            </Typography>
-          ) : (
-            <Grid container direction="column" spacing={2}>
-              {notifications.map((notification) => (
-                <Grid item key={notification._id}>
-                  <Box
-                    sx={{
-                      backgroundColor: "#212121",
-                      padding: "1.5rem",
-                      color: "#ffffff",
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.5rem",
-                      fontSize: "1.5rem",
-                      lineHeight: "1.6",
-                    }}
-                  >
+      // Optimistic UI update
+      setNotifications((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, notificationStatus: "seen" } : item
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update notification status:", error);
+    }
+  };
+
+
+  return (
+    <Box sx={{ backgroundColor: "#121212", minHeight: "100vh", color: "#fff", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+      <Container maxWidth="lg" sx={{ flexGrow: 1 }}>
+        <Typography fontWeight={700} color="#8AC642" sx={{ fontSize: "2.5rem", mb: 1 }}>
+          Notifications
+        </Typography>
+
+        {/* Tabs */}
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          textColor="inherit"
+          TabIndicatorProps={{ style: { backgroundColor: "#8AC642" } }}
+          sx={{ mb: 3 }}
+        >
+          <Tab label="Policy" sx={{ color: "#fff", fontSize: "1.4rem" }} />
+          <Tab label="General" sx={{ color: "#fff", fontSize: "1.4rem" }} />
+        </Tabs>
+
+
+        {/* Loader */}
+        {loading ? (
+          <Grid container justifyContent="center" sx={{ minHeight: "40vh" }}>
+            <CircularProgress style={{ color: "#8BC642" }} />
+          </Grid>
+        ) : notifications.length === 0 ? (
+          <Typography align="center" sx={{ mt: 6, fontSize: "1.6rem" }}>
+            No notifications found.
+          </Typography>
+        ) : (
+          <>
+            {/* Scrollable List Container */}
+            <Box
+              sx={{
+                maxHeight: "60vh", // Adjust height if needed
+                overflowY: "auto",
+                pr: 1, // padding for scrollbar
+                mb: 2
+              }}
+            >
+              <Grid container direction="column" spacing={2}>
+                {notifications.map((n) => (
+                  <Grid item key={n._id}>
                     <Box
                       sx={{
+                        backgroundColor: "#212121",
+                        p: 2,
+                        borderRadius: 2,
                         display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        alignItems: "flex-start",
+                        gap: 2,
+                        cursor: "pointer"
                       }}
-                    >
-                      <Typography variant="h6" fontWeight="600" sx={{ fontSize: "1.5rem" }}>
-                        {notification.title}
-                      </Typography>
-                      <Typography sx={{ fontSize: "1.2rem", color: "#8BC642" }}>
-                        {getTimeAgo(notification.createdAt)}
-                      </Typography>
-                    </Box>
+                      onClick={() => {
+                        setSelectedNotification(n);
+                        setShowDialog(true);
 
-                    <Typography sx={{ fontSize: "1.5rem", color: "#cccccc" }}>
-                      {truncateText(notification.description)}
-                      {notification.description.split(" ").length > 20 && (
-                        <span
-                          onClick={() => handleReadMore(notification)}
+                        if (activeTab === 0 && n.notificationStatus !== "seen") {
+                          updateNotificationStatus(n._id);
+                        }
+                      }}
+
+                    >
+                      {/* Left Image */}
+                      {n.imagePath && n.imagePath !== "null" ? (
+                        <img
+                          src={n.imagePath}
+                          alt="Notification"
                           style={{
-                            color: "#8BC642",
-                            cursor: "pointer",
-                            fontWeight: 500,
-                            marginLeft: "10px",
+                            width: "80px",
+                            height: "80px",
+                            borderRadius: "8px",
+                            objectFit: "contain"
                           }}
-                        >
-                          Read more
-                        </span>
+                        />
+                      ) : (
+                        <img
+                          src={require("../Images/CoverKraft-Logo-6.png")}
+                          alt="Notification"
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            borderRadius: "8px",
+                            objectFit: "contain"
+                          }}
+                        />
                       )}
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Container>
-      </Box>
+
+                      {/* Right Content */}
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <Typography fontWeight={600} sx={{ fontSize: "1.4rem", color: "#fff" }}>
+                              {n.title}
+                            </Typography>
+
+                            {n.notificationStatus !== "seen" && activeTab === 0 && (
+                              <Box
+                                sx={{
+                                  width: 10,
+                                  height: 10,
+                                  borderRadius: "50%",
+                                  backgroundColor: "#8BC642"
+                                }}
+                              />
+                            )}
+                          </Box>
+                          <Typography sx={{ fontSize: "1rem", color: "#8BC642" }}>
+                            {getTimeAgo(n.createdAt)}
+                          </Typography>
+                        </Box>
+
+                        <Typography sx={{ mt: 0.5, fontSize: "1.2rem", color: "#ccc" }}>
+                          {truncateText(n.description, 15)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                ))}
+
+              </Grid>
+            </Box>
+
+            {/* Fixed Pagination */}
+            <Box display="flex" justifyContent="center" mb={2}>
+              <Pagination
+                count={pagination.totalPages}
+                page={pagination.currentPage}
+                onChange={handlePageChange}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#8AC642",
+                    fontSize: "1.2rem"
+                  }
+                }}
+              />
+            </Box>
+
+          </>
+        )}
+      </Container>
+
       <Footer />
 
       {/* Read More Modal */}
       <Dialog
         open={showDialog}
-        onClose={handleCloseDialog}
+        onClose={() => setShowDialog(false)}
         PaperProps={{
           style: {
-            backgroundColor: "#212121",
+            backgroundColor: "#1E1E1E",
             color: "#fff",
-            maxWidth: "600px",
-          },
+            width: "80%",
+            height: "80%",
+            borderRadius: "12px",
+            display: "flex",
+            flexDirection: "column",
+            padding: "16px"
+          }
         }}
       >
-        <DialogTitle sx={{ color: "#8BC642", fontSize: "2rem", fontWeight: "700" }}>
+        {/* Image Section */}
+        {selectedNotification?.imagePath && selectedNotification?.imagePath !== "null" ? (
+          <img
+            src={selectedNotification.imagePath}
+            alt="Notification"
+            style={{
+              width: "100%",
+              height: "250px",
+              objectFit: "cover",
+              borderRadius: "8px",
+              marginBottom: "16px"
+            }}
+          />
+        ) : (
+          <img
+            src={require("../Images/CoverKraft-Logo-6.png")}
+            alt="Notification"
+            style={{
+              width: "100%",
+              height: "250px",
+              objectFit: "cover",
+              borderRadius: "8px",
+              marginBottom: "16px"
+            }}
+          />
+        )}
+
+        {/* Title */}
+        <DialogTitle
+          sx={{
+            color: "#8BC642",
+            fontSize: "2rem",
+            fontWeight: "bold",
+            padding: 0,
+            marginBottom: "12px"
+          }}
+        >
           {selectedNotification?.title}
         </DialogTitle>
-        <DialogContent dividers sx={{ whiteSpace: "pre-line", fontSize: "1.5rem" }}>
+
+        {/* Description with custom scrollbar */}
+        <DialogContent
+          dividers
+          sx={{
+            flex: 1,
+            overflowY: "auto", // vertical scroll
+            overflowX: "hidden", // disable horizontal scroll
+            fontSize: "1.4rem",
+            lineHeight: "1.8rem",
+            color: "#ccc",
+            whiteSpace: "pre-line",
+            "&::-webkit-scrollbar": {
+              width: "8px"
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#444", // Dark scrollbar
+              borderRadius: "4px"
+            },
+            "&::-webkit-scrollbar-thumb:hover": {
+              backgroundColor: "#666"
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "#1E1E1E"
+            }
+          }}
+        >
           {selectedNotification?.description}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} sx={{ color: "#8BC642", fontSize: "1.5rem" }}>
+
+        {/* Footer Actions */}
+        <DialogActions sx={{ justifyContent: "flex-end", padding: "12px 0 0" }}>
+          <Button
+            onClick={() => setShowDialog(false)}
+            sx={{
+              color: "#fff",
+              backgroundColor: "#8BC642",
+              fontSize: "1.3rem",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "#76A932"
+              }
+            }}
+          >
             Close
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Delete All Confirmation */}
-      <Dialog
-        open={confirmDeleteAll}
-        onClose={() => setConfirmDeleteAll(false)}
-        PaperProps={{ style: { backgroundColor: "#212121", color: "#fff" } }}
-      >
-        <DialogTitle sx={{ fontWeight: "bold", fontSize: "1.6rem" }}>
-          Delete All Notifications?
-        </DialogTitle>
-        <DialogContent sx={{ fontSize: "1.5rem" }}>
-          This will permanently remove all your notifications. This cannot be undone.
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmDeleteAll(false)} sx={{ color: "#8BC642", fontSize: "1.5rem" }}>
-            Cancel
-          </Button>
-          <Button onClick={handleConfirmDeleteAll} sx={{ color: "#8BC642", fontSize: "1.5rem" }}>
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+
+
+      <SessionExpiredModal visible={showSessionExpired} onConfirm={() => window.location.href = "/login"} />
     </Box>
   );
 };
