@@ -606,14 +606,13 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                             />
                                             <CustomInput
                                                 type="number"
-                                                label="TP Premium"
+                                                label="Liability Premium"
                                                 value={tpPremium}
                                                 onChange={(e) => {
                                                     setTpPremium(e.target.value);
                                                     handleInputChange(e);
                                                 }}
                                                       inputStyle={commonInputStyle}
-
                                                 required
                                             />
                                             <CustomInput
