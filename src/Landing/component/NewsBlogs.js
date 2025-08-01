@@ -117,7 +117,7 @@ const BlogSection = () => {
     color: '#8AC642',
     border: '2px solid #8AC642',
     borderRadius: '40px',
-    padding: '12px 32px',
+    padding: '2px 32px',
     fontSize: '1.3rem',
     fontWeight: '800',
     minWidth: '120px',
