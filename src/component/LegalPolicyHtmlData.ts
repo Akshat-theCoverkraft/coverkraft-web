@@ -13,10 +13,10 @@ export enum LegalPolicyId {
 export const LegalPolicyHtml: Record<LegalPolicyId, string> = {
     [LegalPolicyId.PRIVACY_POLICY]: `<div style="max-width: 1500px; margin: 2rem auto; color: #E0E0E0; line-height: 1.8; font-size: 1.7rem; border-radius: 10px; font-family: DM Sans;">
       <h2 style="color: #8BC642; border-bottom: 1px solid #333; padding-bottom: 0.5rem;">
-        Privacy Policy for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style="color: #8BC642; text-decoration: underline;">www.TheCoverKraft.com</a> and “CoverKraft” App
+        Privacy Policy for <a href="https://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style="color: #8BC642; text-decoration: underline;">www.TheCoverKraft.com</a> and “CoverKraft” App
       </h2>
       <p>
-        This Privacy Policy describes how <strong>CoverKraft Insurance Brokers Private Limited</strong> ("we", "our", or "us") collects, uses, shares, and protects your information through our website <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style="color: #8BC642;">www.TheCoverKraft.com</a> and the “CoverKraft” mobile application.
+        This Privacy Policy describes how <strong>CoverKraft Insurance Brokers Private Limited</strong> ("we", "our", or "us") collects, uses, shares, and protects your information through our website <a href="https://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style="color: #8BC642;">www.TheCoverKraft.com</a> and the “CoverKraft” mobile application.
       </p>
 
       <h2 style="color: #8BC642;">Legal Compliance</h2>
@@ -136,7 +136,7 @@ export const LegalPolicyHtml: Record<LegalPolicyId, string> = {
   <h2 style="color:#8BC642; border-bottom:1px solid #333; padding-bottom:0.5rem;">
                     Terms of Use for
                     <a
-                        href="http://www.TheCoverKraft.com"
+                        href="https://www.TheCoverKraft.com"
                         target="_blank"
                         rel="noopener noreferrer"
                         style=" color: #8BC642; textDecoration: underline"
@@ -258,7 +258,7 @@ export const LegalPolicyHtml: Record<LegalPolicyId, string> = {
 
     [LegalPolicyId.TERMS_AND_CONDITIONS]: `<div style="max-width: 1500px; margin: 2rem auto; color: #E0E0E0; line-height: 1.8; font-size: 1.7rem; border-radius: 10px; font-family: DM Sans;">
 <h2 style=" color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' ">
-                    Terms & Conditions for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style=" color: '#8BC642', textDecoration: 'underline' ">www.TheCoverKraft.com</a> and “CoverKraft” App
+                    Terms & Conditions for <a href="https://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style=" color: '#8BC642', textDecoration: 'underline' ">www.TheCoverKraft.com</a> and “CoverKraft” App
                 </h2>
 
                 <ol style=" paddingLeft: '1.5rem' ">
@@ -317,7 +317,7 @@ export const LegalPolicyHtml: Record<LegalPolicyId, string> = {
                     </li>
 
                     <li>
-                        All content and materials on <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style="color: #8BC642;">www.TheCoverKraft.com</a>, including but not limited to text, graphics, code, images, and logos, are the intellectual property of Coverkraft Insurance Brokers Private Limited and protected under copyright and trademark law. Unauthorized use is prohibited unless explicitly authorized.
+                        All content and materials on <a href="https://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style="color: #8BC642;">www.TheCoverKraft.com</a>, including but not limited to text, graphics, code, images, and logos, are the intellectual property of Coverkraft Insurance Brokers Private Limited and protected under copyright and trademark law. Unauthorized use is prohibited unless explicitly authorized.
                     </li>
 
                     <li>
@@ -602,7 +602,7 @@ export const LegalPolicyHtml: Record<LegalPolicyId, string> = {
                 fontFamily: 'DM Sans, sans-serif'
             ">
                 <h2 style=" color: '#8BC642', borderBottom: '1px solid #333', paddingBottom: '0.5rem' ">
-                    Disclaimer for <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style="color: #8BC642; textDecoration: 'underline'" ">www.TheCoverKraft.com</a> and “CoverKraft” App
+                    Disclaimer for <a href="https://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" style="color: #8BC642; textDecoration: 'underline'" ">www.TheCoverKraft.com</a> and “CoverKraft” App
                 </h2>
 
                 <h3 style="color: #8BC642;">General Information</h3>
