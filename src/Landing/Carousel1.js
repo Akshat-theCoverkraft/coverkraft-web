@@ -79,7 +79,7 @@ const Carousel1 = () => {
               <Loader size={100} message="Loading video..." />
             </div>
           ) : items.length === 0 ? (
-            <div className="carousel__no-data">No featured videos available.</div>
+            <div className="carousel__loader-wrap">No featured videos available.</div>
           ) : (
             <Carousel
               showThumbs={false}
