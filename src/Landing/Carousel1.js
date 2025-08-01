@@ -118,8 +118,17 @@ const Carousel1 = () => {
                     />
                   ) : (
                     <img
-                      src={item.video}
+                      src={require('../Images/CKanimation.gif')}
                       alt={item.subtitle}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        objectPosition: 'center',
+                        background: "black",
+                        borderRadius: '12px',
+                        padding:"0px !important"
+                      }}
                       className="carousel__slide-item-media"
                     />
                   )}
