@@ -52,7 +52,7 @@ const Register = () => {
     };
 
     const handleRegister = async () => {
-        const roleID = '4';
+        const roleID = 4;
 
         if (!fullName || !mobileNumber || !email) {
             toast.error("Please fill all required fields");
