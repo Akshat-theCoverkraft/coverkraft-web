@@ -363,9 +363,12 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       }));
       
       handleProfileStateChange('profileCompletion', percentage);
-      handleProfileStateChange('profileImage', 
-        data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
-      );
+      const profileImageUrl = data.userImg || icDefaultProfile;
+          handleProfileStateChange('profileImage', profileImageUrl);
+
+      // handleProfileStateChange('profileImage', 
+      //   data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
+      // );
     }
   }, [userbyId.getUserById?.data, calculateProfileCompletion, handleProfileStateChange]);
 

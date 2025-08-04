@@ -79,7 +79,7 @@ const Carousel1 = () => {
               <Loader size={100} message="Loading video..." />
             </div>
           ) : items.length === 0 ? (
-            <div className="carousel__no-data">No featured videos available.</div>
+            <div className="carousel__loader-wrap">No featured videos available.</div>
           ) : (
             <Carousel
               showThumbs={false}
@@ -118,8 +118,17 @@ const Carousel1 = () => {
                     />
                   ) : (
                     <img
-                      src={item.video}
+                      src={require('../Images/CKanimation.gif')}
                       alt={item.subtitle}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        objectPosition: 'center',
+                        background: "black",
+                        borderRadius: '12px',
+                        padding:"0px !important"
+                      }}
                       className="carousel__slide-item-media"
                     />
                   )}

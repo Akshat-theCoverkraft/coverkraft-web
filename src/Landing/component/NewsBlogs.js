@@ -16,6 +16,7 @@ import moment from 'moment';
 import bgImage from '../../Images/bg.png';
 import { headingStyle } from '../../theme/themeStyles';
 import SessionExpiredModal from '../../utils/sessionExpireModal';
+import API_URL from '../../ServiceModule/Service';
 
 const typeLabels = {
   blog: 'Blogs',
@@ -49,8 +50,8 @@ const BlogSection = () => {
     const fetchData = async () => {
       try {
         const [newsRes, featuredRes] = await Promise.all([
-          axios.get('http://52.52.154.65:5242/news/getAll?isActive=true'),
-          fetch('http://52.52.154.65:5242/featureVideo/getAll'),
+          axios.get(`${API_URL}news/getAll?isActive=true`),
+          fetch(`${API_URL}featureVideo/getAll`),
         ]);
 
         const sortedNews = (newsRes.data?.data || [])
@@ -106,17 +107,17 @@ const BlogSection = () => {
     post.videoUrl
       ? post.videoUrl.startsWith('http')
         ? post.videoUrl
-        : `http://52.52.154.65:5242/${post.videoUrl}`
+        : `${API_URL}${post.videoUrl}`
       : post.newsImg?.startsWith('http')
         ? post.newsImg
-        : `http://52.52.154.65:5242/${post.newsImg}`;
+        : `${API_URL}${post.newsImg}`;
 
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
     color: '#8AC642',
     border: '2px solid #8AC642',
     borderRadius: '40px',
-    padding: '12px 32px',
+    padding: '2px 32px',
     fontSize: '1.3rem',
     fontWeight: '800',
     minWidth: '120px',

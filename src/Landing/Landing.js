@@ -38,8 +38,9 @@ const Landing = () => {
       <HeroSection />
       <Afterglow />
       <PolicyType />
-      <Cards3d />
+     
       <BlogSection />
+      <Cards3d />
       {/* <About /> */}
       {/* <Card/> */}
       {/* <Blog /> */}
