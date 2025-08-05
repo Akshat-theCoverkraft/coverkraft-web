@@ -32,7 +32,7 @@ export default function Faq() {
   const [faqList, setFaqList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
-  const [showAll, setShowAll] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(3); // Track how many FAQs to show
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -60,9 +60,19 @@ export default function Faq() {
     setExpanded(expanded === panelId ? null : panelId);
   };
 
+  const handleSeeMore = () => {
+    setVisibleCount(prev => Math.min(prev + 3, faqList.length));
+  };
+
+  const handleSeeLess = () => {
+    setVisibleCount(prev => Math.max(prev - 3, 3));
+  };
+
   if (!loading && faqList.length === 0) return null;
 
-  const visibleFaqs = showAll ? faqList : faqList.slice(0, 3);
+  const visibleFaqs = faqList.slice(0, visibleCount);
+  const canShowMore = visibleCount < faqList.length;
+  const canShowLess = visibleCount > 3;
 
   return (
     <div
@@ -91,22 +101,47 @@ export default function Faq() {
         </Typography>
 
         {faqList.length > 3 && (
-          <Typography
-            onClick={() => setShowAll(!showAll)}
-            sx={{
-              color: "#5A9E1E",
-              fontWeight: 600,
-              cursor: "pointer",
-              fontSize: "1.2rem",
-              textTransform: "uppercase",
+          <div
+            style={{
               position: "absolute",
               right: "15px",
               top: "15px",
-              '&:hover': { textDecoration: "underline" }
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
             }}
           >
-            {showAll ? "See Less" : "See More"}
-          </Typography>
+            {canShowMore && (
+              <Typography
+                onClick={handleSeeMore}
+                sx={{
+                  color: "#5A9E1E",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontSize: "1.2rem",
+                  textTransform: "uppercase",
+                  '&:hover': { textDecoration: "underline" }
+                }}
+              >
+                See More
+              </Typography>
+            )}
+            {canShowLess && (
+              <Typography
+                onClick={handleSeeLess}
+                sx={{
+                  color: "#5A9E1E",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontSize: "1.2rem",
+                  textTransform: "uppercase",
+                  '&:hover': { textDecoration: "underline" }
+                }}
+              >
+                See Less
+              </Typography>
+            )}
+          </div>
         )}
       </div>
 
