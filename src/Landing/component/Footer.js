@@ -157,7 +157,7 @@ useEffect(() => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-link lh-base"
-                style={{ fontSize: "1.2rem", color: "inherit", textDecoration: "none" }}
+                style={{ fontSize: "1.3rem", color: "inherit", textDecoration: "none" }}
               >
                 16 D-1, Danish Nagar, Hoshangabad Road,
                 Bhopal, MP, 462026
@@ -174,7 +174,7 @@ useEffect(() => {
               <a
                 href="mailto:contact@thecoverkraft.com"
                 className="footer-link text-decoration-none"
-                style={{ fontSize: "1.2rem" }}
+                style={{ fontSize: "1.4rem" }}
               >
                 contact@thecoverkraft.com
               </a>
@@ -190,7 +190,7 @@ useEffect(() => {
               <a
                 href="tel:+917247724735"
                 className="footer-link text-decoration-none"
-                style={{ fontSize: "1.2rem" }}
+                style={{ fontSize: "1.3rem" }}
               >
                 +91 7247724735
               </a>
