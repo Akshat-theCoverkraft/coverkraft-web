@@ -5,9 +5,9 @@ import twitter from "../../Images/twitter.png";
 import facebook from "../../Images/facebook.png";
 import instagram from "../../Images/social.png";
 import linkedin from "../../Images/linkedin.png"
-import location from "../../Images/location_on.png";
-import call from "../../Images/call.png";
-import email from "../../Images/email.png";
+import location from "../../Images/ic-location_on.png";
+import call from "../../Images/ic-call.png";
+import email from "../../Images/ic-email.png";
 import clock from "../../Images/ic-clock.png";
 import "./CSS/footer.css";
 import { THEME_COLOR } from "../../constants";
