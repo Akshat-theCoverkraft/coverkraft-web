@@ -60,7 +60,7 @@ const PolicyType = () => {
         >
           {/* Heading and Buttons in one row */}
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant="h4" fontWeight="bold" fontcolor="#FF9906">
               Let's get you & your family insured
             </Typography>
  
