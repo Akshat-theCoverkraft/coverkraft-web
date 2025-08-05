@@ -15,6 +15,8 @@ import Loader from '../../component/Loader';
 import { headingStyle } from '../../theme/themeStyles';
 import ellipse from '../../Images/Ellipse12.png';
 import cardBG from '../../Images/tip2.png';
+import TLeft from '../../Images/TLeft.png';
+import TRight from '../../Images/TRight.png';
 
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 180;
@@ -32,7 +34,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         width: 'fit-content',
         maxWidth: CARD_WIDTH,
         height: CARD_HEIGHT + 40,
-        mx: 'auto',
+        mx: '10px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -65,6 +67,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           WebkitTextStroke: '2px white',
           fontWeight: 900,
           zIndex: 3,
+      
         }}
       >
         {number < 10 ? `0${number}` : number}
@@ -83,12 +86,11 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          marginLeft: 4.5,
+          marginLeft: 3.8,
           backdropFilter: 'blur(8px)',
           color: '#121212',
         }}
       >
-
         <Typography
           variant="h5"
           pl={2}
@@ -182,13 +184,18 @@ const WhyCoverKraft = () => {
     groupedData.push(cardData.slice(i, i + groupSize));
   }
 
+  const handlePrev = () => {
+    setCurrentSlide(prev => (prev === 0 ? groupedData.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentSlide(prev => (prev === groupedData.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <Box id="card" sx={{ backgroundColor: '#121212', px: 2, py: 6, scrollMarginTop: '100px' }}>
       <Box textAlign="center" mb={4}>
-        <Typography
-          variant="subtitle1"
-          sx={headingStyle}
-        >
+        <Typography variant="subtitle1" sx={headingStyle}>
           Tips & Tricks
         </Typography>
       </Box>
@@ -208,38 +215,65 @@ const WhyCoverKraft = () => {
         </Box>
       ) : (
         <>
-          <Carousel
-            selectedItem={currentSlide}
-            onChange={(index) => setCurrentSlide(index)}
-            showThumbs={false}
-            showStatus={false}
-            infiniteLoop
-            autoPlay={false}
-            showArrows={false}
-            swipeable
+          <Box display="flex" alignItems="center" justifyContent="center" position="relative">
+            {/* Left Arrow */}
+            <button
+              className="card-arrow-btn left-arrow"
+              onClick={handlePrev}
+              style={{
+                position: 'absolute',
+                left: '10px',
+                zIndex: 5,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <img src={TLeft} alt="Left" width={35} />
+            </button>
 
-          >
-            {groupedData.map((group, i) => (
-              <Box
-                key={i}
-                display="flex"
-                justifyContent="center"
-              // flexWrap="nowrap"
-              // gap={3}
-              // sx={{ py: 2 }}
-              >
-                {group.map((card, j) => (
-                  <PolicyCard
-                    key={`${i}-${j}`}
-                    number={i * groupSize + j + 1}
-                    title={card.subtitle}
-                    description={card.description}
-                    onSeeMore={() => openPopup(card)}
-                  />
-                ))}
-              </Box>
-            ))}
-          </Carousel>
+            {/* Carousel */}
+            <Carousel
+              selectedItem={currentSlide}
+              onChange={(index) => setCurrentSlide(index)}
+              showThumbs={false}
+              showStatus={false}
+              infiniteLoop
+              autoPlay={false}
+              showArrows={false}
+              swipeable
+            >
+              {groupedData.map((group, i) => (
+                <Box key={i} display="flex" justifyContent="center" flexWrap="nowrap">
+                  {group.map((card, j) => (
+                    <PolicyCard
+                      key={`${i}-${j}`}
+                      number={i * groupSize + j + 1}
+                      title={card.subtitle}
+                      description={card.description}
+                      onSeeMore={() => openPopup(card)}
+                    />
+                  ))}
+                </Box>
+              ))}
+            </Carousel>
+
+            {/* Right Arrow */}
+            <button
+              className="card-arrow-btn right-arrow"
+              onClick={handleNext}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                zIndex: 5,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <img src={TRight} alt="Right" width={35} />
+            </button>
+          </Box>
 
           {/* Pagination Dots */}
           <Box display="flex" justifyContent="center" mt={3}>
@@ -262,7 +296,7 @@ const WhyCoverKraft = () => {
         </>
       )}
 
-      {/* Modal with Thanos Snap Effect */}
+      {/* Modal */}
       <AnimatePresence>
         {showPopup && (
           <Modal open={true} onClose={closePopup}>
@@ -323,6 +357,28 @@ const WhyCoverKraft = () => {
           </Modal>
         )}
       </AnimatePresence>
+
+      {/* CSS for Arrows */}
+      <style jsx>{`
+        .card-arrow-btn {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .card-arrow-btn:hover {
+          box-shadow: 0 4px 16px 0 #212121;
+          transform: scale(1.13);
+        }
+        @media screen and (max-width: 620px) {
+          .card-arrow-btn {
+            width: 30px;
+            height: 30px;
+          }
+        }
+      `}</style>
     </Box>
   );
 };

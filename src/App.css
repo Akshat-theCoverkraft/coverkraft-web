@@ -249,6 +249,30 @@
 body::-webkit-scrollbar {
   display: none !important;
 }
+/* Dark Theme Scrollbar - Global */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1E1E1E; /* Dark track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #444; /* Dark thumb */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #444 #1E1E1E;
+}
+
 body {
   -ms-overflow-style: none !important; 
   scrollbar-width: none !important;

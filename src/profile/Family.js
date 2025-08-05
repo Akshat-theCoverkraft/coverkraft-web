@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Box } from "@mui/material";
+import { Drawer, Box, Button } from "@mui/material";
 import { Card, Grid, Typography } from "@material-ui/core";
 import { Link, useNavigate } from "react-router-dom";
 import backArrow from "../Images/ic_back_button.png";
@@ -10,52 +10,42 @@ import axios from "axios";
 import API_URL from "../ServiceModule/Service";
 import addMember from "../Images/add-member.png";
 import FamilyAdd from "./FamilyAdd";
-import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { THEME_COLOR } from "../constants";
 import SessionExpiredModal from "../utils/sessionExpireModal";
 import { capitalizeFirstLetter } from "../utils/helpers";
+import "react-toastify/dist/ReactToastify.css";
 
 const Family = ({ family, onfamilyclose }) => {
   const [familyData, setFamilyData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const userId = sessionStorage.getItem("userId");
+  const [mode, setMode] = useState("add");
+  const [editData, setEditData] = useState(null);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
-  const navigate = useNavigate(); // navigation hook
+  const navigate = useNavigate();
+  const userId = sessionStorage.getItem("userId");
 
   const fetchFamilyDetails = async () => {
     try {
       const token = sessionStorage.getItem("token");
       const response = await axios.get(
         `${API_URL}family/getById?userId=${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      if (
-        response.data &&
-        response.data.data &&
-        Array.isArray(response.data.data)
-      ) {
+      if (response.data?.data && Array.isArray(response.data.data)) {
         setFamilyData(response.data.data);
       } else {
-        console.error("Expected an array but got:", response.data);
         setFamilyData([]);
       }
     } catch (error) {
-      if (error.response?.status === 401) {
-        setShowSessionExpired(true);
-      }
-      console.error("Error fetching family details:", error);
+      if (error.response?.status === 401) setShowSessionExpired(true);
       setFamilyData([]);
     }
   };
+
   const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
-    navigate('/login');
+    navigate("/login");
     localStorage.clear();
     sessionStorage.clear();
   };
@@ -64,16 +54,34 @@ const Family = ({ family, onfamilyclose }) => {
     fetchFamilyDetails();
   }, [userId]);
 
-  const handleFamilyOpen = () => {
+  const handleAdd = () => {
+    setMode("add");
+    setEditData(null);
     setDrawerOpen(true);
   };
 
-  const handleFamilyClose = () => {
-    setDrawerOpen(false);
+  const handleEdit = (member) => {
+    setMode("edit");
+    setEditData(member);
+    setDrawerOpen(true);
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this member?")) return;
+    try {
+      const token = sessionStorage.getItem("token");
+      await axios.post(`${API_URL}family/delete`, { _id: id }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Member deleted successfully");
+      fetchFamilyDetails();
+    } catch (error) {
+      toast.error("Failed to delete member");
+    }
+  };
+
+  const handleFamilyAddClose = () => setDrawerOpen(false);
   const handleFamilyAddSuccess = () => {
-    // Refresh the family details when a new member is added
     fetchFamilyDetails();
     setDrawerOpen(false);
   };
@@ -93,21 +101,14 @@ const Family = ({ family, onfamilyclose }) => {
         },
       }}
     >
-      <FamilyAdd
-        familyAdd={drawerOpen}
-        onfamilyAddClose={handleFamilyClose}
-        onSuccess={handleFamilyAddSuccess}
-      />
       <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
       <ToastContainer position="top-left" style={{ zIndex: 99999 }} />
-      <Box
-        sx={{ width: "100%", padding: 0 }}
-        role="presentation"
-        style={{ overflowX: "hidden" }}
-      >
+
+      <Box sx={{ width: "100%", padding: 0 }}>
+        {/* Header */}
         <Grid container spacing={2} className="d-flex m-3" alignItems="center">
           <Grid item>
             <img
@@ -118,80 +119,101 @@ const Family = ({ family, onfamilyclose }) => {
             />
           </Grid>
           <Grid item xs>
-            <Typography variant="h4" noWrap>
-              Manage Your Family Members
-            </Typography>
+            <Typography variant="h4">Manage Your Family Members</Typography>
           </Grid>
         </Grid>
 
-        <Grid container spacing={2} style={{ padding: "0 16px" }}>
-          {familyData?.map((profile, index) => (
-            <Grid item xs={6} key={index}>
-              <Card style={styles.card}>
+        {/* Family List */}
+        <Grid container xs={12} style={{ padding: "0 15px" , justifyContent: "center" }}>
+          {familyData.map((profile, index) => (
+            <Grid container xs={6} gap={2} key={index} style={styles.card}>
+
+              <Grid container style={styles.profileImageContainer}>
                 <div style={styles.profileImageContainer}>
                   {profile.familyImg ? (
-  <img
-    src={profile.familyImg}
-    alt="Profile"
-    style={styles.profileImage}
-  />
-) : (
-  <div style={styles.initialCircle}>
-    {profile.fullName?.charAt(0)?.toUpperCase() || "U"}
-  </div>
-)}
-
+                    <img
+                      src={profile.familyImg}
+                      alt="Profile"
+                      style={styles.profileImage}
+                    />
+                  ) : (
+                    <div style={styles.initialCircle}>
+                      {profile.fullName?.charAt(0)?.toUpperCase() || "U"}
+                    </div>
+                  )}
                 </div>
-                
-                <p style={{ fontSize: "16px", marginTop: '0px', ...styles.relationship }}>
-                  {profile.familyMember}
-                </p>
-                <p style={{ fontSize: "20px", fontWeight: "500", ...styles.name }}>
+                <Grid item><Typography variant="h6" style={{ fontWeight: "bold", maxWidth:'80px' , maxLines:1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {capitalizeFirstLetter(profile.fullName)}
-                </p>
-                <div style={styles.infoContainer}>
-                  <EmailIcon />
-                  <span style={{ fontSize: "1rem", marginLeft: "8px" }}>
-                    {profile?.email}
-                  </span>
+                </Typography>
+                  <Typography variant="body2" style={styles.relationship}>
+                    {profile.familyMember}
+                  </Typography></Grid>
+              </Grid>
+
+
+              <div style={styles.detailsContainer}>
+
+                <div style={styles.infoRow}>
+                  <EmailIcon fontSize="small" />
+                  <span style={{ marginLeft: "8px" }}>{profile?.email}</span>
                 </div>
-                <div style={{ ...styles.infoContainer, marginTop: "5px" }}>
-                  <CallIcon />
-                  <span style={{ fontSize: "1.2rem", marginLeft: "8px" }}>
-                    {profile?.mobile}
-                  </span>
+                <div style={styles.infoRow}>
+                  <CallIcon fontSize="small" />
+                  <span style={{ marginLeft: "8px" }}>{profile?.mobile}</span>
                 </div>
-              </Card>
+
+                <div style={styles.buttonRow}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+
+                    style={{ borderColor: "#8AC642", color: "#8AC642" }}
+                    onClick={() => handleEdit(profile)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    color="error"
+                    onClick={() => handleDelete(profile._id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+
             </Grid>
           ))}
         </Grid>
 
-
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          className="mt-2"
-          onClick={handleFamilyOpen}
-          style={{ padding: "0 5px", marginTop: "10px", cursor: "pointer" }}
-        >
-          <Card style={{
-            ...styles.card, width: "40%",
-            borderStyle: 'dashed',
-            borderColor: "#8AC642",
-            borderWidth: 1.5,
-            marginTop: "30px",
-          }}>
-            <img height={40} src={addMember} alt="Add Member" />
-            <h4 style={{ color: "#8AC642", marginTop: "10px" }}>Add New Member</h4>
+        {/* Add Button */}
+        <Grid container justifyContent="center" style={{ marginTop: "20px" }}>
+          <Card
+            style={{
+              ...styles.card,
+              justifyContent: "center",
+              borderStyle: "dashed",
+              borderColor: "#8AC642",
+              borderWidth: 1.5,
+              cursor: "pointer",
+            }}
+            onClick={handleAdd}
+          >
+            <img height={40} src={addMember} alt="Add Member" style={{ marginRight: '16px' }} />
+            <h4 style={{ color: "#8AC642", marginTop: "10px" }}>
+              Add New Member
+            </h4>
           </Card>
         </Grid>
       </Box>
 
-      {/* Pass drawerOpen as prop to FamilyAdd */}
+      {/* Family Add/Edit Drawer */}
       <FamilyAdd
         familyAdd={drawerOpen}
-        onfamilyAddClose={handleFamilyClose}
+        mode={mode}
+        editData={editData}
+        onfamilyAddClose={handleFamilyAddClose}
         onSuccess={handleFamilyAddSuccess}
       />
     </Drawer>
@@ -201,57 +223,58 @@ const Family = ({ family, onfamilyclose }) => {
 const styles = {
   card: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    textAlign: "center",
-    borderColor:'#8AC642',
-    borderWidth:1,
-    width: "100%", 
-    boxSizing: "border-box",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    padding: "15px",
+    paddingBottom: "16px",
+    borderRadius: "12px",
+    width: "50%",
     backgroundColor: "#1c1c1c",
-    marginTop: "10px",
   },
-  profileImageContainer: {
-    display: "flex",
-    justifyContent: "center",
-    marginBottom: "5px",
-  },
+  profileImageContainer: { marginRight: "5px" },
   profileImage: {
-    width: "120px",
-    height: "120px",
+    width: "40px",
+    height: "40px",
     borderRadius: "50%",
     objectFit: "cover",
   },
+  initialCircle: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+    backgroundColor: "#87C63F",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#fff",
+    fontSize: "24px",
+    fontWeight: "bold",
+  },
+  detailsContainer: {
+    display: "flex",
+    flexDirection: "column",
+    textAlign: "left",
+    flex: 1,
+  },
   relationship: {
     backgroundColor: "#304715",
-    padding: "2px 5px",
+    color: "#fff",
+    padding: "2px 8px",
     borderRadius: "5px",
-    marginBottom: "2px",
+    marginTop: "4px",
+    fontSize: "12px",
     display: "inline-block",
   },
-  name: {
-    marginBottom: "2px",
-  },
-  infoContainer: {
+  infoRow: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    marginTop: "6px",
   },
-  initialCircle: {
-  width: "90px",
-  height: "90px",
-  borderRadius: "50%",
-  backgroundColor: "#87C63F",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  color: "#fff",
-  fontSize: "48px",
-  fontWeight: "bold",
-  textTransform: "uppercase",
-  marginBottom: "5px",
-},
-
+  buttonRow: {
+    display: "flex",
+    gap: "12px",
+    marginTop: "12px",
+  },
 };
 
 export default Family;
