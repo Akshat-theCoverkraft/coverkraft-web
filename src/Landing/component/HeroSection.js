@@ -185,6 +185,7 @@ const HeroSection = () => {
             <Button
               onClick={handleVault}
               sx={{
+                marginBottom: "1rem",
                 color: "#fff",
                 backgroundColor: "#5A9E1E",
                 borderRadius: "50px",
@@ -214,51 +215,53 @@ const HeroSection = () => {
         </Grid>
 
         {/* IMAGE SIDE */}
-        <Grid
-          item
-          xs={12}
-          md={5}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            cursor: "grab",
-            userSelect: "none",
-          }}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          onTouchMove={(e) => {
-            // Basic touch support for parallax
-            const touch = e.touches[0];
-            const bounds = e.currentTarget.getBoundingClientRect();
-            const posX = touch.clientX - bounds.left - bounds.width / 2;
-            const posY = touch.clientY - bounds.top - bounds.height / 2;
-            x.set(posX);
-            y.set(posY);
-          }}
-          onTouchEnd={handleMouseLeave}
-        >
-          <motion.img
-            // style={{ translateX, translateY }}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 1, duration: 0.6, ease: "easeIn" }}
-            src={hero}
-            alt="Family Home"
-            loading="lazy"
-            draggable={false}
-            sx={{
-              width: "100%",
-              maxWidth: "400px",
-              height: "auto",
-              objectFit: "contain",
-              userSelect: "none",
-              pointerEvents: "none",
-              borderRadius: "12px",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-              marginRight: { xs: 0, md: "10rem" },
-            }}
-          />
-        </Grid>
+       <Grid
+  item
+  xs={12}
+  md={5}
+  sx={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "visible", // <-- Important fix for visibility
+    width: "100%",
+    maxWidth: "100%",
+    position: "relative",
+    zIndex: 1,
+  }}
+  onMouseMove={handleMouseMove}
+  onMouseLeave={handleMouseLeave}
+  onTouchMove={(e) => {
+    const touch = e.touches[0];
+    const bounds = e.currentTarget.getBoundingClientRect();
+    const posX = touch.clientX - bounds.left - bounds.width / 2;
+    const posY = touch.clientY - bounds.top - bounds.height / 2;
+    x.set(posX);
+    y.set(posY);
+  }}
+  onTouchEnd={handleMouseLeave}
+>
+  <motion.img
+    initial={{ opacity: 0, scale: 0.95 }}
+    animate={isInView ? { opacity: 1, scale: 1 } : {}}
+    transition={{ delay: 1, duration: 0.6, ease: "easeIn" }}
+    src={hero}
+    alt="Family Home"
+    loading="lazy"
+    draggable={false}
+    style={{
+      width: "200%",
+      maxWidth: "130%",
+      height: "auto",
+      objectFit: "cover",
+      userSelect: "none",
+      pointerEvents: "none",
+      borderRadius: "12px",
+      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+    }}
+  />
+</Grid>
+
       </Grid>
     </SectionWrapper>
   );
