@@ -296,17 +296,59 @@ const GmailSyncPage = () => {
 
       const query = `(${domainQuery}) (label:spam OR label:inbox OR label:junk) ${dateQuery}`;
 
-      const gmailUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(
-        query
-      )}`;
+      // Function to fetch all messages with pagination
+      const fetchAllMessages = async () => {
+        let allMessages = [];
+        let nextPageToken = null;
+        let pageCount = 0;
+        const maxResults = 500; // Maximum allowed by Gmail API
 
-      const response = await fetch(gmailUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+        do {
+          pageCount++;
+          console.log(`Fetching page ${pageCount}...`);
 
-      const data = await response.json();
+          let gmailUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=${maxResults}&q=${encodeURIComponent(query)}`;
+          
+          if (nextPageToken) {
+            gmailUrl += `&pageToken=${nextPageToken}`;
+          }
+
+          const response = await fetch(gmailUrl, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Gmail API request failed: ${response.status}`);
+          }
+
+          const data = await response.json();
+          
+          if (data.messages && data.messages.length > 0) {
+            allMessages = allMessages.concat(data.messages);
+            console.log(`Page ${pageCount}: Found ${data.messages.length} messages (Total: ${allMessages.length})`);
+          }
+
+          nextPageToken = data.nextPageToken;
+
+          // Add a small delay to avoid rate limiting
+          if (nextPageToken) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+
+        } while (nextPageToken);
+
+        console.log(`✅ Pagination complete. Total messages fetched: ${allMessages.length} across ${pageCount} pages`);
+        
+        return {
+          messages: allMessages,
+          resultSizeEstimate: allMessages.length
+        };
+      };
+
+      // Fetch all messages using pagination
+      const data = await fetchAllMessages();
 
       if (
         !data.messages ||
@@ -321,8 +363,8 @@ const GmailSyncPage = () => {
         return;
       }
 
-      console.log("response", data);
-      console.log(`Found ${data.messages.length} messages to process`);
+      console.log("📧 Gmail fetch complete");
+      console.log(`📊 Total messages to process: ${data.messages.length}`);
 
       const domainHitCount = {};
 
@@ -341,81 +383,114 @@ const GmailSyncPage = () => {
       const emailsWithPriority = [];
 
       // Process all emails from target domains, only excluding marketing ones
-      for (let index = 0; index < data.messages.length; index++) {
-        const msg = data.messages[index];
+      const processingBatchSize = 50; // Process emails in batches to avoid overwhelming the API
+      
+      for (let batchStart = 0; batchStart < data.messages.length; batchStart += processingBatchSize) {
+        const batchEnd = Math.min(batchStart + processingBatchSize, data.messages.length);
+        const currentBatch = data.messages.slice(batchStart, batchEnd);
+        
+        console.log(`🔄 Processing batch ${Math.floor(batchStart / processingBatchSize) + 1}: emails ${batchStart + 1}-${batchEnd} of ${data.messages.length}`);
 
-        try {
-          const emailData = await fetch(
-            `https://www.googleapis.com/gmail/v1/users/me/messages/${msg.id}`,
-            {
-              headers: { Authorization: `Bearer ${accessToken}` },
+        // Process current batch
+        const batchPromises = currentBatch.map(async (msg, batchIndex) => {
+          const globalIndex = batchStart + batchIndex;
+          
+          try {
+            const emailData = await fetch(
+              `https://www.googleapis.com/gmail/v1/users/me/messages/${msg.id}`,
+              {
+                headers: { Authorization: `Bearer ${accessToken}` },
+              }
+            );
+
+            if (!emailData.ok) {
+              throw new Error(`Failed to fetch email ${msg.id}: ${emailData.status}`);
             }
-          );
 
-          const emailResponse = await emailData.json();
-          console.log("this is emailData", emailResponse);
+            const emailResponse = await emailData.json();
 
-          const headers = emailResponse.payload.headers;
-          const fromHeader =
-            headers.find((h) => h.name === "From")?.value || "";
+            const headers = emailResponse.payload.headers;
+            const fromHeader =
+              headers.find((h) => h.name === "From")?.value || "";
 
-          const subject =
-            headers.find((h) => h.name === "Subject")?.value || "";
+            const subject =
+              headers.find((h) => h.name === "Subject")?.value || "";
 
-          const emailMatch = fromHeader.match(/<([^>]+)>/);
-          const senderEmail = emailMatch ? emailMatch[1] : fromHeader;
-          const senderDomain = senderEmail.split("@")[1];
+            const emailMatch = fromHeader.match(/<([^>]+)>/);
+            const senderEmail = emailMatch ? emailMatch[1] : fromHeader;
+            const senderDomain = senderEmail.split("@")[1];
 
-          // Check if domain is in our whitelist
-          if (!senderDomains.includes(senderDomain)) {
-            skippedReasons.wrongDomain++;
-            skippedSubjects.wrongDomain.push({
+            // Check if domain is in our whitelist
+            if (!senderDomains.includes(senderDomain)) {
+              skippedReasons.wrongDomain++;
+              skippedSubjects.wrongDomain.push({
+                subject: subject,
+                domain: senderDomain,
+              });
+              return null;
+            }
+
+            // Only exclude marketing emails - include all other subjects
+            const isMarketing = isMarketingEmail(subject);
+            if (isMarketing) {
+              skippedReasons.marketing++;
+              skippedSubjects.marketing.push({
+                subject: subject,
+                domain: senderDomain,
+              });
+              return null;
+            }
+
+            // Check for attachments
+            const parts = emailResponse.payload?.parts || [];
+            const hasAttachment = parts.some((part) => part.body?.attachmentId);
+
+            if (!hasAttachment) {
+              skippedReasons.noAttachment++;
+              skippedSubjects.noAttachment.push({
+                subject: subject,
+                domain: senderDomain,
+              });
+              return null;
+            }
+
+            // All non-marketing emails from whitelisted domains with attachments get priority 1
+            const subjectPriority = 1;
+
+            domainHitCount[senderDomain] =
+              (domainHitCount[senderDomain] || 0) + 1;
+
+            const emailData_processed = {
+              id: msg.id,
               subject: subject,
               domain: senderDomain,
-            });
-            continue;
+              priority: subjectPriority,
+            };
+
+            if (globalIndex % 10 === 0) {
+              console.log(`✅ Processed ${globalIndex + 1}/${data.messages.length}: "${subject}" from ${senderDomain}`);
+            }
+
+            return emailData_processed;
+          } catch (err) {
+            console.error(`❌ Error processing email ${msg.id} (${globalIndex + 1}/${data.messages.length}):`, err.message);
+            return null;
           }
+        });
 
-          // Only exclude marketing emails - include all other subjects
-          const isMarketing = isMarketingEmail(subject);
-          if (isMarketing) {
-            skippedReasons.marketing++;
-            skippedSubjects.marketing.push({
-              subject: subject,
-              domain: senderDomain,
-            });
-            continue;
+        // Wait for current batch to complete
+        const batchResults = await Promise.allSettled(batchPromises);
+        
+        // Add successful results to emailsWithPriority
+        batchResults.forEach((result) => {
+          if (result.status === 'fulfilled' && result.value) {
+            emailsWithPriority.push(result.value);
           }
+        });
 
-          // Check for attachments
-          const parts = emailResponse.payload?.parts || [];
-          const hasAttachment = parts.some((part) => part.body?.attachmentId);
-
-          if (!hasAttachment) {
-            skippedReasons.noAttachment++;
-            skippedSubjects.noAttachment.push({
-              subject: subject,
-              domain: senderDomain,
-            });
-            continue;
-          }
-
-          // All non-marketing emails from whitelisted domains with attachments get priority 1
-          const subjectPriority = 1;
-
-          domainHitCount[senderDomain] =
-            (domainHitCount[senderDomain] || 0) + 1;
-
-          emailsWithPriority.push({
-            id: msg.id,
-            subject: subject,
-            domain: senderDomain,
-            priority: subjectPriority,
-          });
-
-          console.log(`✅ Included: "${subject}" from ${senderDomain}`);
-        } catch (err) {
-          console.error(`Error filtering email ${msg.id}:`, err);
+        // Add delay between batches to avoid rate limiting
+        if (batchEnd < data.messages.length) {
+          await new Promise(resolve => setTimeout(resolve, 500));
         }
       }
 
