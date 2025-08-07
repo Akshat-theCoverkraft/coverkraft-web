@@ -132,6 +132,7 @@ const TAB_CONFIGS = [
   { label: "Active", value: 0, key: "active" },
   { label: "Expired", value: 1, key: "expired" },
   { label: "Archive", value: 2, key: "archive" },
+  { label: "Pending", value: 3, key: "pending" },
 ];
 
 const POLICY_TYPE_FILTERS = [
@@ -759,8 +760,9 @@ export default function PolicyTabs({
   useEffect(() => {
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
-    } else {
-    
+    } else if(value===3){
+      fetchData("policy/getById", { policyType: "uncompleted" })
+    }else {    
       fetchData("policy/getById", { policyType: activeTab });
     }
   }, [value, activeTab]);
@@ -1003,6 +1005,7 @@ export default function PolicyTabs({
               {renderTabContent(0, policyList, "active", true, false)}
               {renderTabContent(1, policyList, "expired", false, true)}
               {renderTabContent(2, archieveList, "archive", false, false)}
+              {renderTabContent(3, policyList, "pending", true, false)}
             </div>
           )}
         </TabContext>

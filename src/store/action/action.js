@@ -181,9 +181,9 @@ export const registrationCustomer = (API_URL, data) => {
 
 //VERIFY USER
 export const verifyUser = (API_URL, data) => {
-    return (dispatch) => {
+    return async(dispatch) => {
         dispatch({ type: VERIFY_DATA_REQUEST });
-        axios
+        const response = await axios
             .post(API_URL + `user/loginUser`, data)
             .then((response) => {
                 dispatch({ type: VERIFY_DATA_SUCCESS, payload: response.data });
@@ -192,6 +192,9 @@ export const verifyUser = (API_URL, data) => {
             .catch((error) => {
                 dispatch({ type: VERIFY_DATA_FAILURE, payload: error.message });
             });
+        if(response?.user?.token){
+            sessionStorage.setItem("token",response?.user?.token)
+        }
     };
 }
 
