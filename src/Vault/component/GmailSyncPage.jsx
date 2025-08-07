@@ -128,7 +128,8 @@ const GmailSyncPage = () => {
       const tomorrowDate = new Date(currentDate);
       tomorrowDate.setDate(currentDate.getDate() + 1);
 
-      if (!lastFetchData || !lastFetchData.lastSyncedAt) {
+     // -------commented out the below code to fetch all emails from the last 3 years------------------
+      //if (!lastFetchData || !lastFetchData.lastSyncedAt) {
         const threeYearsAgo = new Date();
         threeYearsAgo.setFullYear(currentDate.getFullYear() - 3);
 
@@ -139,16 +140,16 @@ const GmailSyncPage = () => {
         console.log(
           `3 years fetch: Getting data from ${fromDate} to ${toDate}`
         );
-      } else {
-        const lastFetchDate = new Date(lastFetchData.lastSyncedAt);
-        const fromDate = formatDateForGmail(lastFetchDate);
-        const toDate = formatDateForGmail(currentDate);
+    //  } else {
+    //     const lastFetchDate = new Date(lastFetchData.lastSyncedAt);
+    //     const fromDate = formatDateForGmail(lastFetchDate);
+    //     const toDate = formatDateForGmail(currentDate);
 
-        dateQuery = `after:${fromDate} before:${toDate}`;
-        console.log(
-          `Incremental fetch: Getting data from ${fromDate} to ${toDate}`
-        );
-      }
+    //     dateQuery = `after:${fromDate} before:${toDate}`;
+    //     console.log(
+    //       `Incremental fetch: Getting data from ${fromDate} to ${toDate}`
+    //     );
+    //   }
 
       const senderDomains = [
         "bytesfarms.com",
