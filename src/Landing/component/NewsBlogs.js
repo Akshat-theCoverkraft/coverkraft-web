@@ -291,8 +291,6 @@ const BlogSection = () => {
         color: '#fff',
         px: 4,
         py: 6,
-        pl: 12,
-        pr: 12,
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -393,14 +391,7 @@ const BlogSection = () => {
       <Box textAlign="center" mt={4}>
         <StyledButton onClick={() => navigate('/feed/blog')}>VIEW ALL</StyledButton>
       </Box>
-      // <Box
-      //   height="70vh"
-      //   display="flex"
-      //   alignItems="center"
-      //   justifyContent="center"
-      // >
-      //   <InsuranceCard />
-      // </Box>
+        <InsuranceCard />
     </Box>
   );
 };
