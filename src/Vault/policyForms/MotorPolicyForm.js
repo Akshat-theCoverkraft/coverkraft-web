@@ -581,7 +581,7 @@ const MotorPolicyForm = () => {
                   />
                   <CustomInput
                     type="text"
-                    label="Od Premium"
+                    label="OD Premium"
                     value={odPremium}
                     onChange={(e) => {
                       setOdpremium(e.target.value);
