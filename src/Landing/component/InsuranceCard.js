@@ -22,8 +22,6 @@ const InsuranceCard = () => {
                 },
                 headers: { Authorization: `Bearer ${token}` }
             });
-            // setApiResponse(response.data);
-            console.log(response.data.data,"response.data")
         } catch (error) {
             console.error('Error fetching uncompleted policy:', error);
             throw error;
@@ -103,8 +101,6 @@ const InsuranceCard = () => {
                             </Box>
                         </Box>
                     </Box>
-
-                    {/* Offer image to the right */}
                     {value?.offerImg && (
                         <Box
                             sx={{
