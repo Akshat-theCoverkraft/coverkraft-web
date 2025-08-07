@@ -17,6 +17,7 @@ import bgImage from '../../Images/bg.png';
 import { headingStyle } from '../../theme/themeStyles';
 import SessionExpiredModal from '../../utils/sessionExpireModal';
 import API_URL from '../../ServiceModule/Service';
+import InsuranceCard from './InsuranceCard';
 
 const typeLabels = {
   blog: 'Blogs',
@@ -72,14 +73,14 @@ const BlogSection = () => {
         setFeaturedVideo(activeFeatured[0] || null);
 
         setLatestPosts(latestByType);
-      }catch (error) {
-          console.error('Error fetching options:', error);
-          if (error.response?.status === 401) {
-            setShowSessionExpired(true);
-          } else {
-            setError('Failed to load options');
-          }
-        }  finally {
+      } catch (error) {
+        console.error('Error fetching options:', error);
+        if (error.response?.status === 401) {
+          setShowSessionExpired(true);
+        } else {
+          setError('Failed to load options');
+        }
+      } finally {
         setLoading(false);
       }
     };
@@ -96,11 +97,11 @@ const BlogSection = () => {
     return () => window.removeEventListener('scroll', pauseAllVideos);
   }, []);
 
-      const handleSessionExpiredOk = () => {
+  const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
     navigate('/login');
     localStorage.clear();
-  sessionStorage.clear(); 
+    sessionStorage.clear();
   };
 
   const getUrl = (post) =>
@@ -298,7 +299,7 @@ const BlogSection = () => {
         scrollMarginTop: '100px',
       }}
     >
-       <SessionExpiredModal
+      <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
@@ -391,6 +392,14 @@ const BlogSection = () => {
 
       <Box textAlign="center" mt={4}>
         <StyledButton onClick={() => navigate('/feed/blog')}>VIEW ALL</StyledButton>
+      </Box>
+      <Box
+        height="70vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <InsuranceCard />
       </Box>
     </Box>
   );
