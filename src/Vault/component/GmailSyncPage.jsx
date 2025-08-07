@@ -995,6 +995,7 @@ const GmailSyncPage = () => {
         "orientalinsurance.co.in",
         "uiic.co.in",
         "universalsompo.com",
+        "universalsompo.co.in",
         "hizuno.com",
         "careinsurance.com",
         "galaxyhealth.com",
