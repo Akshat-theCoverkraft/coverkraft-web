@@ -393,14 +393,14 @@ const BlogSection = () => {
       <Box textAlign="center" mt={4}>
         <StyledButton onClick={() => navigate('/feed/blog')}>VIEW ALL</StyledButton>
       </Box>
-      <Box
-        height="70vh"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <InsuranceCard />
-      </Box>
+      // <Box
+      //   height="70vh"
+      //   display="flex"
+      //   alignItems="center"
+      //   justifyContent="center"
+      // >
+      //   <InsuranceCard />
+      // </Box>
     </Box>
   );
 };
