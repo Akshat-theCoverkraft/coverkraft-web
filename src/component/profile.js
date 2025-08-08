@@ -48,6 +48,87 @@ const MENU_ITEMS = [
   { label: "Delete Account", icon: logout, action: "delete" }
 ];
 
+// Circular Progress Component
+const CircularProgress = ({ percentage, size = 120, strokeWidth = 6, showPercentage = true }) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (percentage / 100) * circumference;
+
+  // Dynamic color based on percentage
+  const getProgressColor = (percent) => {
+    if (percent >= 80) return "#4CAF50"; // Green
+    if (percent >= 60) return "#FF9800"; // Orange
+    if (percent >= 40) return "#FFC107"; // Yellow
+    return "#F44336"; // Red
+  };
+
+  return (
+    <div style={{ 
+      position: 'relative', 
+      width: size, 
+      height: size,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      <svg
+        width={size}
+        height={size}
+        style={{ 
+          position: 'absolute', 
+          transform: 'rotate(-90deg)',
+          zIndex: 1
+        }}
+      >
+        {/* Background circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="rgba(255, 255, 255, 0.2)"
+          strokeWidth={strokeWidth}
+          fill="transparent"
+        />
+        {/* Progress circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={getProgressColor(percentage)}
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          style={{
+            transition: 'stroke-dashoffset 0.5s ease-in-out',
+            filter: 'drop-shadow(0 0 6px rgba(138, 198, 66, 0.3))'
+          }}
+        />
+      </svg>
+      
+      {/* Percentage text */}
+      {showPercentage && (
+        <div style={{
+          position: 'absolute',
+          bottom: -8,
+          right: -8,
+          backgroundColor: getProgressColor(percentage),
+          color: '#fff',
+          borderRadius: '12px',
+          padding: '2px 6px',
+          fontSize: '10px',
+          fontWeight: 'bold',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          zIndex: 2
+        }}>
+          {percentage}%
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -112,12 +193,28 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
   // Utility functions
   const calculateProfileCompletion = useCallback((data) => {
-    const requiredFields = ["userName", "userEmail", "userPhone", "userImg"];
-    const completedFields = requiredFields.filter(field => {
+    const requiredFields = [
+      { field: "userName", weight: 20 },
+      { field: "userEmail", weight: 15 },
+      { field: "userPhone", weight: 15 },
+      { field: "userImg", weight: 10 },
+      { field: "userAddress", weight: 10 },
+      { field: "state", weight: 10 },
+      { field: "city", weight: 10 },
+      { field: "pinCode", weight: 5 },
+      { field: "gender", weight: 5 }
+    ];
+    
+    let totalScore = 0;
+    requiredFields.forEach(({ field, weight }) => {
       const value = data?.[field];
-      return value !== undefined && value !== null && value !== "";
-    }).length;
-    return Math.floor((completedFields / requiredFields.length) * 100);
+      if (value !== undefined && value !== null && value !== "" && 
+          !(typeof value === 'object' && Object.keys(value).length === 0)) {
+        totalScore += weight;
+      }
+    });
+    
+    return Math.min(100, totalScore);
   }, []);
 
   const getUserId = useCallback(() => sessionStorage.getItem("userId"), []);
@@ -186,14 +283,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const errors = {};
 
     // Name validation
-  if (
-  !formData.username ||
-  formData.username.trim().length < 3 ||
-  !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(formData.username.trim())
-) {
-  errors.username = "Full name must be in Title Case and at least 3 characters long";
-}
-
+    if (
+      !formData.username ||
+      formData.username.trim().length < 3 ||
+      !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(formData.username.trim())
+    ) {
+      errors.username = "Full name must be in Title Case and at least 3 characters long";
+    }
 
     // Email validation
     if (formData.useremail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.useremail)) {
@@ -369,11 +465,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       
       handleProfileStateChange('profileCompletion', percentage);
       const profileImageUrl = data.userImg || icDefaultProfile;
-          handleProfileStateChange('profileImage', profileImageUrl);
-
-      // handleProfileStateChange('profileImage', 
-      //   data.userImg ? IMAGE_PATH + data.userImg : icDefaultProfile
-      // );
+      handleProfileStateChange('profileImage', profileImageUrl);
     }
   }, [userbyId.getUserById?.data, calculateProfileCompletion, handleProfileStateChange]);
 
@@ -382,18 +474,54 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     <div className="main-container">
       <div className="background-image-container1">
         <div className="profile-details">
-          <div className="profile-image-container">
-            <img
-              src={profileState.profileImage || icDefaultProfile}
-              alt="Profile"
-              className="profile-image"
+          <div className="profile-image-container" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <CircularProgress 
+              percentage={profileState.profileCompletion} 
+              size={profileState.update ? 100 : 120}
+              strokeWidth={4}
+              showPercentage={true}
             />
+            <div style={{ 
+              position: 'absolute',
+              width: profileState.update ? '70px' : '85px',
+              height: profileState.update ? '70px' : '85px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '3px solid rgba(255, 255, 255, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <img
+                src={profileState.profileImage || icDefaultProfile}
+                alt="Profile"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+              />
+            </div>
             {profileState.update && (
-              <label htmlFor="profile-image-upload">
+              <label htmlFor="profile-image-upload" style={{
+                position: 'absolute',
+                bottom: '10px',
+                right: '10px',
+                cursor: 'pointer',
+                zIndex: 10
+              }}>
                 <img
                   src={editIcon}
                   alt="Edit"
-                  className="edit-icon"
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    backgroundColor: '#8AC642',
+                    borderRadius: '50%',
+                    padding: '4px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }}
                   onClick={() => handleProfileStateChange('showImageInput', true)}
                 />
               </label>
@@ -406,6 +534,23 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               style={{ display: "none" }}
             />
           </div>
+          
+          {!profileState.update && (
+            <div style={{ textAlign: 'center', marginTop: '8px' }}>
+              <Typography 
+                variant="caption" 
+                style={{ 
+                  color: 'rgba(255, 255, 255, 0.7)', 
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  marginTop: "30px"
+                }}
+              >
+                Profile Complete
+              </Typography>
+            </div>
+          )}
+          
           <h2 className="text-header text-light mt-2 text-center">
             {capitalizeFirstLetter(formData.username)}
           </h2>
@@ -504,19 +649,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
           />
         </Grid>
 
-        {/* Date of Birth */}
-        {/* <div style={{width: "1%", marginRight: "10%"}}>
-        <Grid item style={commonItemStyle}>
-          <label className="form-label text-light mb-2 d-block">Date of Birth</label>
-          <GlobalDatePicker
-            selectedDate={formData.userDob}
-            handleDateChange={(date) => handleFormChange('userDob', date)}
-            placeholder="Select your date of birth"
-            error={!!validationErrors.userDob}
-            validationMessage={validationErrors.userDob}
-          />
-        </Grid>
-      </div > */}
         {/* Address */}
         <Grid item style={commonItemStyle}>
           <CustomInput
@@ -737,8 +869,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
         {renderDeleteModal()}
       </Box>
-
-      {/* Sub-drawers */}
+ {/* Sub-drawers */}
       <Family family={drawers.family} onfamilyclose={() => handleDrawerToggle('family', false)} />
       <Communication
         communication={drawers.communication}
