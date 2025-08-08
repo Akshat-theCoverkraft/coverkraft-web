@@ -95,62 +95,78 @@ const NewsBlog = () => {
   }, [id]);
 
   // Cleanup effect to pause all videos when component unmounts or route changes
-  useEffect(() => {
-    return () => {
-      pauseAllVideos();
-    };
-  }, []);
+useEffect(() => {
+  const handleBeforeUnload = () => {
+    pauseAllVideos();
+  };
 
-  // Also pause videos when navigating away (additional safety)
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      pauseAllVideos();
-    };
+  window.addEventListener('beforeunload', handleBeforeUnload);
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      pauseAllVideos();
-    };
-  }, []);
+  return () => {
+    pauseAllVideos(); // On unmount or route change
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  };
+}, []);
+
 
   // Function to render media content (image or video)
-  const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null) => {
-    if (!mediaUrl) return null;
+const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null) => {
+  if (!mediaUrl) return null;
 
-    const isVideo = mediaUrl.match(/\.(mp4|mov|avi|mkv|webm)$/i);
+  const isVideo = mediaUrl.match(/\.(mp4|mov|avi|mkv|webm)$/i);
+  const isYouTube = isYouTubeLink(mediaUrl);
 
-    if (isVideo) {
-      return (
-        <video
-          ref={isMainBlog ? mainVideoRef : (el) => {
-            if (index !== null) {
-              videoRefs.current[index] = el;
-            }
-          }}
-          controls
-          controlsList="nodownload"
-          style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
-          className={isMainBlog ? "" : "card-img-top"}
-          onPlay={(e) => handleVideoPlay(e.target)}
-          preload="metadata" // Only load metadata initially to improve performance
-        >
-          <source src={mediaUrl} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      );
-    } else {
-      return (
-        <img
-          src={mediaUrl}
-          style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
-          className={isMainBlog ? "" : "card-img-top"}
-          alt={altText}
-        />
-      );
-    }
-  };
+  // 🎯 Case 1: YouTube video
+  if (isYouTube) {
+    const embedUrl = getYouTubeEmbedUrl(mediaUrl);
+    return (
+      <div style={isMainBlog ? { maxWidth: "80%", height: "auto", margin: "auto" } : { width: "100%", height: "180px" }}>
+        <iframe
+          width="100%"
+          height={isMainBlog ? "400px" : "180px"}
+          src={embedUrl}
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ borderRadius: "10px", objectFit: "cover" }}
+        ></iframe>
+      </div>
+    );
+  }
+
+  // 🎯 Case 2: Uploaded video file (backend)
+  if (isVideo) {
+    return (
+      <video
+        ref={isMainBlog ? mainVideoRef : (el) => {
+          if (index !== null) {
+            videoRefs.current[index] = el;
+          }
+        }}
+        controls
+        controlsList="nodownload"
+        style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
+        className={isMainBlog ? "" : "card-img-top"}
+        onPlay={(e) => handleVideoPlay(e.target)}
+        preload="metadata"
+      >
+        <source src={mediaUrl} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    );
+  }
+
+  // 🎯 Case 3: Just an image
+  return (
+    <img
+      src={mediaUrl}
+      style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
+      className={isMainBlog ? "" : "card-img-top"}
+      alt={altText}
+    />
+  );
+};
 
   const handleCardClick = (blogId) => {
     // Pause all videos before navigating

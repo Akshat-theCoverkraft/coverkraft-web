@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import API_URL from "../ServiceModule/Service";
-import CoverKraft_IRDA from "../Images/CoverKraft_IRDA.png"
+import CoverKraft_IRDA from "../Images/CoverKraft_IRDA.png";
+
 const API_URL1 = API_URL + "legal/getAll";
 
 const policies = [
@@ -24,7 +26,6 @@ const LegalPoliciesTabs = () => {
       setLoading(true);
       const response = await fetch(API_URL1);
       const result = await response.json();
-
       if (result?.status && Array.isArray(result.data)) {
         const mappedData = {};
         result.data.forEach((item) => {
@@ -43,27 +44,19 @@ const LegalPoliciesTabs = () => {
     fetchPolicies();
   }, []);
 
-useEffect(() => {
-  const handleHashChange = () => {
-    const hash = window.location.hash?.substring(1);
-    if (hash) {
-      const found = policies.find((p) => p.id === hash);
-      if (found) setActiveTab(found.label);
-    }
-  };
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash?.substring(1);
+      if (hash) {
+        const found = policies.find((p) => p.id === hash);
+        if (found) setActiveTab(found.label);
+      }
+    };
 
-  // Run once on mount
-  handleHashChange();
-
-  // Listen for hash changes
-  window.addEventListener("hashchange", handleHashChange);
-
-  // Cleanup
-  return () => {
-    window.removeEventListener("hashchange", handleHashChange);
-  };
-}, []);
-
+    handleHashChange();
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
   const activePolicy = policies.find((p) => p.label === activeTab);
   const content = activePolicy ? policyData[activePolicy.id] : "<p>No content found.</p>";
@@ -79,7 +72,10 @@ useEffect(() => {
         width: "100%",
       }}
     >
-      <h1
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
         style={{
           color: "#8BC642",
           fontSize: "2.7rem",
@@ -89,7 +85,7 @@ useEffect(() => {
         }}
       >
         Legal and Admin Policies
-      </h1>
+      </motion.h1>
 
       {/* Tabs */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "2rem" }}>
@@ -107,30 +103,37 @@ useEffect(() => {
           {policies.map((policy) => {
             const isActive = activeTab === policy.label;
             return (
-              <button
+              <motion.button
                 key={policy.label}
                 onClick={() => setActiveTab(policy.label)}
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
                 style={{
                   backgroundColor: isActive ? "#8BC642" : "transparent",
                   color: isActive ? "#121212" : "#E0E0E0",
                   padding: "0.75rem 1.5rem",
                   borderRadius: "40px",
                   border: "2px solid #8BC642",
-                  fontSize: "1.4rem",
+                  fontSize: "1.2rem",
                   cursor: "pointer",
                   transition: "all 0.3s ease",
                   minWidth: "120px",
                 }}
               >
                 {policy.label}
-              </button>
+              </motion.button>
             );
           })}
         </div>
       </div>
 
       {/* Content Area */}
-      <div
+      <motion.div
+        key={activePolicy?.id}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
         style={{
           backgroundColor: "#121212",
           padding: "2.5rem",
@@ -145,21 +148,28 @@ useEffect(() => {
         }}
       >
         {loading ? (
-          <p style={{ color: "#8BC642", textAlign: "center", width: "100%" }}>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{ color: "#8BC642", textAlign: "center", width: "100%" }}
+          >
             Loading content...
-          </p>
+          </motion.p>
         ) : (
           <>
-            <div
+            <motion.div
               id={activePolicy?.id}
               dangerouslySetInnerHTML={{ __html: content }}
-              style={{
-                flex: "1",
-                lineHeight: "1.75",
-              }}
+              style={{ flex: "1", lineHeight: "1.75" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
             />
             {activePolicy?.id === "License" && (
-              <div
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.6 }}
                 style={{
                   flex: "1",
                   display: "flex",
@@ -176,11 +186,11 @@ useEffect(() => {
                     boxShadow: "0 0 12px rgba(0, 0, 0, 0.3)",
                   }}
                 />
-              </div>
+              </motion.div>
             )}
           </>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

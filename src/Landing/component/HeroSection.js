@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Grid from "@mui/material/Grid";
 import { useNavigate } from "react-router-dom";
-import hero from "../../Images/Hero.png";
+import hero from "../../Images/Hero1.png";
 import { Button } from "@mui/material";
 import { styled } from "@mui/system";
 import { motion, useReducedMotion, useInView, useMotionValue, useTransform } from "framer-motion";
@@ -251,13 +251,14 @@ const HeroSection = () => {
     draggable={false}
     style={{
       width: "200%",
-      maxWidth: "130%",
-      height: "auto",
+      maxWidth: "170%",
+      height: "500px",
       objectFit: "cover",
       userSelect: "none",
       pointerEvents: "none",
       borderRadius: "12px",
       boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+      marginTop: "90px"
     }}
   />
 </Grid>

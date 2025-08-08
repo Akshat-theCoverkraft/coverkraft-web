@@ -37,48 +37,50 @@ function App() {
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const SESSION_DURATION = 48 * 60 * 60 * 1000;
-    const excludedPages = ["", "/login", "/register"];
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
-    }
+useEffect(() => {
+  const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
+  const excludedPages = ["", "/login", "/register"];
 
-    const loginTime = sessionStorage.getItem("loginTime");
+  if ('scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual';
+  }
 
-    const handleLogout = () => {
-      sessionStorage.clear();
-      setLogout(true);
-      setIsLoggedIn(false);
-      navigate("/");
-    };
+  const loginTime = sessionStorage.getItem("loginTime");
 
-    if (!excludedPages.includes(window.location.pathname)) {
-      if (loginTime) {
-        const loginTimestamp = parseInt(loginTime, 10);
-        const now = Date.now();
+  const handleLogout = () => {
+    sessionStorage.clear();
+    setLogout(true);
+    setIsLoggedIn(false);
+    navigate("/");
+  };
 
-        if (now - loginTimestamp > SESSION_DURATION) {
-          // console.log("⚠️ Session expired.");
-          handleLogout();
-        } else {
-          setIsLoggedIn(true);
+  const now = Date.now();
 
-          const remainingTime = SESSION_DURATION - (now - loginTimestamp);
+  if (!excludedPages.includes(window.location.pathname)) {
+    if (loginTime) {
+      const loginTimestamp = parseInt(loginTime, 10);
+      const timeElapsed = now - loginTimestamp;
 
-          const logoutTimer = setTimeout(() => {
-            // console.log("⏰ Auto-logout: session expired.");
-            handleLogout();
-          }, remainingTime);
-
-          return () => clearTimeout(logoutTimer);
-        }
-      } else {
-        // console.log("🚫 No session found.");
+      if (timeElapsed > SESSION_DURATION) {
+        console.warn("⏰ Session expired.");
         handleLogout();
+      } else {
+        setIsLoggedIn(true);
+        const remainingTime = SESSION_DURATION - timeElapsed;
+
+        const logoutTimer = setTimeout(() => {
+          console.warn("⏰ Auto-logout due to session expiry.");
+          handleLogout();
+        }, remainingTime);
+
+        return () => clearTimeout(logoutTimer);
       }
+    } else {
+      console.warn("🚫 loginTime not found. Assuming not logged in.");
     }
-  }, []);
+  }
+}, []);
+
 
   const handleRefresh = () => {
     const excludedPages = ["", "/login"];

@@ -116,10 +116,11 @@ const BlogSection = () => {
   const StyledButton = styled('button')(() => ({
     backgroundColor: 'transparent',
     color: '#8AC642',
+    minHeight: "40px",
     border: '2px solid #8AC642',
     borderRadius: '40px',
     padding: '2px 32px',
-    fontSize: '1.3rem',
+    fontSize: '1.6rem',
     fontWeight: '800',
     minWidth: '120px',
     cursor: 'pointer',
@@ -132,155 +133,199 @@ const BlogSection = () => {
     },
   }));
 
-  const renderCard = (post, type, isLarge = false) => {
-    if (loading) {
-      return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: '20px' }} />;
-    }
-    if (!post) {
-      return (
-        <Card
-          sx={{
-            bgcolor: '#212121',
-            borderRadius: '20px',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#888',
-          }}
-        >
-          <Typography>No {type} available.</Typography>
-        </Card>
-      );
-    }
-
-    const url = getUrl(post);
-    const isVideo =
-      /\.(mp4|mov|avi|mkv|webm)$/i.test(url) ||
-      post.video ||
-      post.videoUrl ||
-      post.type === 'video' ||
-      post.type === 'featured';
-
-    const mediaStyle = {
-      width: '100%',
-      height: '100%',
-      objectFit: 'cover',
-      borderRadius: '20px',
-    };
-
+ const renderCard = (post, type, isLarge = false) => {
+  if (loading) {
+    return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: '20px' }} />;
+  }
+  if (!post) {
     return (
       <Card
-        onClick={() => navigate(`/feed/${post.type}/${post._id}`)}
         sx={{
-          position: 'relative',
-          height: '100%',
+          bgcolor: '#212121',
           borderRadius: '20px',
-          overflow: 'hidden',
-          cursor: 'pointer',
-          transition: 'transform 0.3s ease',
-          '&:hover': { transform: 'scale(1.02)' },
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#888',
         }}
       >
-        <Box sx={{ position: 'relative', height: '100%' }}>
-          <Chip
-            icon={<TravelExploreIcon />}
-            label={
-              (() => {
-                const type = post.type?.toLowerCase();
-                const exceptions = {
-                  news: 'News',
-                  blog: 'Blogs',
-                  video: 'Videos',
-                  featured: 'Featureds',
-                  short: 'Shorts',
-                };
-                return type
-                  ? exceptions[type] || (type.charAt(0).toUpperCase() + type.slice(1) + 's')
-                  : 'Featureds';
-              })()
-            }
-            size="small"
-            sx={{
-              position: 'absolute',
-              top: 10,
-              left: 10,
-              zIndex: 2,
-              bgcolor: '#8AC642',
-              color: '#000',
-              fontWeight: 600,
-              fontSize: '1.1rem',
-            }}
-          />
-
-          {isVideo ? (
-            <video
-              ref={(el) => registerVideo(el, post._id)}
-              controls
-              controlsList="nodownload"
-              preload="metadata"
-              style={{ ...mediaStyle, objectFit: 'contain', backgroundColor: '#000' }}
-              onClick={(e) => e.stopPropagation()}
-              onPlay={(e) => {
-                Object.entries(videoRefs.current).forEach(([id, video]) => {
-                  if (id !== post._id && video && !video.paused) {
-                    video.pause();
-                  }
-                });
-              }}
-            >
-              <source src={url} type={getVideoType(url)} />
-              Your browser does not support the video tag.
-            </video>
-          ) : (
-            <img src={url} alt={post.subtitle} style={mediaStyle} />
-          )}
-
-          {(type === 'blog' || type === 'news') && (
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                p: 2,
-                background: 'rgba(0, 0, 0, 0.65)',
-                color: '#fff',
-              }}
-            >
-              <Typography sx={{ fontSize: '1.4rem' }} fontWeight={300}>
-                {post.subtitle}
-              </Typography>
-              <Typography variant="caption" display="block" sx={{ mb: 1, fontSize: '1.3rem' }}>
-                {moment(post.createdAt).format('MMM DD, YYYY')}
-              </Typography>
-              <Button
-                size="small"
-                variant="text"
-                sx={{
-                  color: '#8AC642',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  padding: 0,
-                  fontSize: '1.2rem',
-                  minWidth: 'auto',
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                    textDecoration: 'underline',
-                  },
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/feed/${post.type}/${post._id}`);
-                }}
-              >
-                Read More →
-              </Button>
-            </Box>
-          )}
-        </Box>
+        <Typography>No {type} available.</Typography>
       </Card>
     );
+  }
+
+  const url = getUrl(post);
+  const isYouTubeUrl = (url) =>
+    url.includes("youtube.com/watch") || url.includes("youtu.be");
+
+  const convertToEmbedUrl = (url) => {
+    if (url.includes("youtube.com/watch")) {
+      return url.replace("watch?v=", "embed/");
+    } else if (url.includes("youtu.be")) {
+      const videoId = url.split("youtu.be/")[1].split(/[?&]/)[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+    return url;
+  };
+
+  const isVideo =
+    /\.(mp4|mov|avi|mkv|webm)$/i.test(url) ||
+    post.video ||
+    post.videoUrl ||
+    post.type === 'video' ||
+    post.type === 'featured' ||
+    isYouTubeUrl(url);
+
+  const mediaStyle = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    borderRadius: '20px',
+  };
+
+return (
+    <Card
+      onClick={() => navigate(`/feed/${post.type}/${post._id}`)}
+      sx={{
+        position: 'relative',
+        height: '100%',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'transform 0.3s ease',
+        '&:hover': { transform: 'scale(1.02)' },
+      }}
+    >
+      <Box sx={{ position: 'relative', height: '100%' }}>
+        <Chip
+          icon={<TravelExploreIcon />}
+          label={
+            (() => {
+              const type = post.type?.toLowerCase();
+              const exceptions = {
+                news: 'News',
+                blog: 'Blogs',
+                video: 'Videos',
+                featured: 'Featureds',
+                short: 'Shorts',
+              };
+              return type
+                ? exceptions[type] || (type.charAt(0).toUpperCase() + type.slice(1) + 's')
+                : 'Featureds';
+            })()
+          }
+          size="small"
+          sx={{
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            zIndex: 2,
+            bgcolor: '#8AC642',
+            color: '#000',
+            fontWeight: 600,
+            fontSize: '1.1rem',
+          }}
+        />
+
+        {isYouTubeUrl(url) ? (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              background: '#000',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <iframe
+              src={convertToEmbedUrl(url)}
+              title="YouTube video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                objectFit: 'contain',
+              }}
+            />
+          </div>
+        ) : isVideo ? (
+          <video
+            ref={(el) => registerVideo(el, post._id)}
+            controls
+            controlsList="nodownload"
+            preload="metadata"
+            style={{ ...mediaStyle, objectFit: 'contain', backgroundColor: '#000' }}
+            onClick={(e) => e.stopPropagation()}
+            onPlay={() => {
+              Object.entries(videoRefs.current).forEach(([id, video]) => {
+                if (id !== post._id && video && !video.paused) {
+                  video.pause();
+                }
+              });
+            }}
+          >
+            <source src={url} type={getVideoType(url)} />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <img src={url} alt={post.subtitle} style={mediaStyle} />
+        )}
+
+        {(type === 'blog' || type === 'news') && (
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              p: 2,
+              background: 'rgba(0, 0, 0, 0.65)',
+              color: '#fff',
+            }}
+          >
+            <Typography sx={{ fontSize: '1.4rem' }} fontWeight={300}>
+              {post.subtitle}
+            </Typography>
+            <Typography variant="caption" display="block" sx={{ mb: 1, fontSize: '1.3rem' }}>
+              {moment(post.createdAt).format('MMM DD, YYYY')}
+            </Typography>
+            <Button
+              size="small"
+              variant="text"
+              sx={{
+                color: '#8AC642',
+                textTransform: 'none',
+                fontWeight: 500,
+                padding: 0,
+                fontSize: '1.2rem',
+                minWidth: 'auto',
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                  textDecoration: 'underline',
+                },
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/feed/${post.type}/${post._id}`);
+              }}
+            >
+              Read More →
+            </Button>
+          </Box>
+        )}
+      </Box>
+    </Card>
+  );
+
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import parse from "html-react-parser";
@@ -35,8 +35,10 @@ const PolicyDetails = () => {
   const { id } = useParams();
   const [policy, setPolicy] = useState(null);
   const [loading, setLoading] = useState(true);
- const [showSessionExpired, setShowSessionExpired] = useState(false);
-  const navigate = useNavigate(); // navigation hook
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
+  const [isFooterVisible, setIsFooterVisible] = useState(false);
+  const footerRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -48,17 +50,41 @@ const PolicyDetails = () => {
         setLoading(false);
       })
       .catch((error) => {
-           if (error.response?.status === 401) {
-            setShowSessionExpired(true);
-          } 
-        setLoading(false)});
+        if (error.response?.status === 401) {
+          setShowSessionExpired(true);
+        }
+        setLoading(false);
+      });
   }, [id]);
 
-      const handleSessionExpiredOk = () => {
+useEffect(() => {
+  const footerEl = footerRef.current;
+  if (!footerEl) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      console.log("Footer visible:", entry.isIntersecting);
+      setIsFooterVisible(entry.isIntersecting);
+    },
+    {
+      root: null,
+      threshold: 0.1,
+    }
+  );
+
+  observer.observe(footerEl);
+
+  return () => {
+    observer.disconnect();
+  };
+}, [footerRef.current]); // ✅ yes, we re-run when it changes
+
+
+  const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
-    navigate('/login');
+    navigate("/login");
     localStorage.clear();
-  sessionStorage.clear(); 
+    sessionStorage.clear();
   };
 
   if (loading)
@@ -71,10 +97,11 @@ const PolicyDetails = () => {
   return (
     <>
       <Navbar />
-        <SessionExpiredModal
+      <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
+
       <div
         style={{
           minHeight: "100vh",
@@ -84,7 +111,7 @@ const PolicyDetails = () => {
           background: "linear-gradient(135deg, #1e1e1e, #2c2c2c)",
         }}
       >
-        {/* Content Section */}
+        {/* Content */}
         <div style={{ flex: 1, overflowY: "auto" }}>
           <div
             style={{
@@ -95,7 +122,6 @@ const PolicyDetails = () => {
               color: "#ccc",
               borderRadius: "12px",
               boxShadow: "0 0 20px rgba(0,0,0,0.5)",
-              justifyContent: "center",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -161,32 +187,37 @@ const PolicyDetails = () => {
           </div>
         </div>
 
-        {/* Sticky Buy Button */}
-        <div
-          style={{
-            position: "sticky",
-            bottom: 0,
-            background: "transparent",
-            padding: "1em 0",
-            zIndex: 10,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <div style={{ width: "50%", maxWidth: "400px", padding: "0 2em" }}>
-            <Button
-              text={"Buy Now"}
-              size="lg"
-              block={true}
-              onClick={() => {
-                toast.info("Feature coming soon!");
-              }}
-            />
-          </div>
-        </div>
+        {/* Sticky Smart Button */}
+<div
+  style={{
+    position: "fixed",
+    bottom: "20px",
+    left: "50%",
+    transform: `translate(-50%, ${isFooterVisible ? "-330px" : "0"})`,
+    zIndex: 9999,
+    width: "100%",
+    maxWidth: "400px",
+    padding: "0 2em",
+    transition: "transform 0.3s ease-in-out",
+  }}
+>
+  <Button
+    text={"Buy Now"}
+    size="lg"
+    block={true}
+    onClick={() => {
+      toast.info("Feature coming soon!");
+    }}
+  />
+</div>
 
       </div>
-      <Footer />
+
+      {/* Footer with ref */}
+      <footer ref={footerRef}>
+  <Footer />
+</footer>
+
     </>
   );
 };

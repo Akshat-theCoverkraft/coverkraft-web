@@ -89,7 +89,7 @@ const CityDropdown = ({
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
-        <label class="form-label fw-bold text-light mb-2 d-block" for="inputField-">Select City</label><select
+        <label class="form-label fw-bold text-light mb-2 d-block" for="inputField-">Select District</label><select
           id="cityDropdown"
           className={`dropdown-select ${className}`}
           value={selectedValue}
@@ -98,7 +98,7 @@ const CityDropdown = ({
           style={finalStyle}
         >
           <option value="" disabled>
-            Select a city
+            Select a District
           </option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>

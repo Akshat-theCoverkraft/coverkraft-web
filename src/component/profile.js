@@ -186,9 +186,14 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     const errors = {};
 
     // Name validation
-    if (!formData.username || formData.username.trim().length < 3) {
-      errors.username = "Full name must be at least 3 characters";
-    }
+  if (
+  !formData.username ||
+  formData.username.trim().length < 3 ||
+  !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(formData.username.trim())
+) {
+  errors.username = "Full name must be in Title Case and at least 3 characters long";
+}
+
 
     // Email validation
     if (formData.useremail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.useremail)) {
@@ -537,7 +542,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         {/* City */}
         <Grid item style={commonItemStyle}>
           <CityDropdown
-            label="City"
+            label="District"
             className={formData.selectedCityId === "" ? 'placeholder-selected' : 'custom-dark-dropdown'}
             selectedStateId={formData.selectedStateId}
             onCitySelect={(cityId) => handleFormChange('selectedCityId', cityId)}

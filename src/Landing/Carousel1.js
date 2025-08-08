@@ -5,12 +5,15 @@ import "./component/CSS/carousel1.css";
 import API_URL from "../ServiceModule/Service";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Loader from "../component/Loader";
+
 const Carousel1 = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [autoScrollPaused, setAutoScrollPaused] = useState(false);
   const slidesPerPage = 3;
   const videoRefs = useRef([]);
+  const autoScrollRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,12 +37,24 @@ const Carousel1 = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (!loading && items.length > slidesPerPage && !autoScrollPaused) {
+      autoScrollRef.current = setInterval(() => {
+        setCurrentSlide((prevSlide) => {
+          const nextSlide = prevSlide + slidesPerPage;
+          return nextSlide >= items.length ? 0 : nextSlide;
+        });
+      }, 3000);
+    }
+
+    return () => clearInterval(autoScrollRef.current);
+  }, [loading, items.length, autoScrollPaused]);
+
   const totalPages = Math.ceil(items.length / slidesPerPage);
   const getCurrentPage = () => Math.floor(currentSlide / slidesPerPage);
 
   const handleDotClick = (pageIndex) => {
-    const slideIndex = pageIndex * slidesPerPage;
-    setCurrentSlide(slideIndex);
+    setCurrentSlide(pageIndex * slidesPerPage);
   };
 
   const goToPrev = () => setCurrentSlide(Math.max(currentSlide - slidesPerPage, 0));
@@ -54,12 +69,39 @@ const Carousel1 = () => {
   };
 
   const handleVideoPlay = (playingIndex) => {
+    setAutoScrollPaused(true);
     videoRefs.current.forEach((video, idx) => {
       if (video && idx !== playingIndex) {
         video.pause();
         video.currentTime = 0;
       }
     });
+  };
+
+  const handleVideoPause = () => {
+    const isAnyPlaying = videoRefs.current.some(video => video && !video.paused && !video.ended);
+    if (!isAnyPlaying) {
+      setAutoScrollPaused(false);
+    }
+  };
+
+  const isYouTubeUrl = (url) => {
+    return url.includes("youtube.com") || url.includes("youtu.be");
+  };
+
+  const convertToEmbedUrl = (url) => {
+    try {
+      if (url.includes("youtu.be")) {
+        const videoId = url.split("/").pop();
+        return `https://www.youtube.com/embed/${videoId}`;
+      } else if (url.includes("youtube.com/watch?v=")) {
+        const videoId = new URL(url).searchParams.get("v");
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+    } catch (err) {
+      console.error("Error converting YouTube URL:", err);
+    }
+    return url;
   };
 
   return (
@@ -72,6 +114,7 @@ const Carousel1 = () => {
       >
         <FaChevronLeft />
       </button>
+
       <div className="carousel__wrap">
         <div className="carousel__inner">
           {loading ? (
@@ -98,14 +141,46 @@ const Carousel1 = () => {
             >
               {items.map((item, idx) => (
                 <div className="carousel__slide-item" key={idx}>
-                  {item.video.endsWith(".mp4") ? (
+                  {isYouTubeUrl(item.video) ? (
+  <div
+    className="carousel__slide-item-media"
+    style={{
+      width: '100%',
+      height: '100%',
+      borderRadius: '12px',
+      overflow: 'hidden',
+      background: 'black',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 0,
+    }}
+  >
+    <iframe
+      src={convertToEmbedUrl(item.video)}
+      title={`YouTube video player ${idx}`}
+      frameBorder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      style={{
+        width: '100%',
+        height: '100%',
+        border: 'none',
+        objectFit: 'contain',
+      }}
+    />
+  </div>
+) : item.video.endsWith(".mp4") ? (
+
                     <video
                       ref={(el) => (videoRefs.current[idx] = el)}
                       src={item.video}
                       controls
-                      controlsList="nodownload" 
+                      controlsList="nodownload"
                       className="carousel__slide-item-media"
                       onPlay={() => handleVideoPlay(idx)}
+                      onPause={handleVideoPause}
+                      onEnded={handleVideoPause}
                       style={{
                         width: '100%',
                         height: '100%',
@@ -113,7 +188,7 @@ const Carousel1 = () => {
                         objectPosition: 'center',
                         background: "black",
                         borderRadius: '12px',
-                        padding:"0px !important"
+                        padding: "0px"
                       }}
                     />
                   ) : (
@@ -127,7 +202,7 @@ const Carousel1 = () => {
                         objectPosition: 'center',
                         background: "black",
                         borderRadius: '12px',
-                        padding:"0px !important"
+                        padding: "0px"
                       }}
                       className="carousel__slide-item-media"
                     />

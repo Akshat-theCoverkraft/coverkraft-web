@@ -51,56 +51,66 @@ const Register = () => {
         setIsValidEmail(isValid);
     };
 
-    const handleRegister = async () => {
-        const roleID = 4;
+   const handleRegister = async () => {
+  const roleID = 4;
 
-        if (!fullName || !mobileNumber || !email) {
-            toast.error("Please fill all required fields");
-            return;
-        }
+  if (!fullName || !mobileNumber || !email) {
+    toast.error("Please fill all required fields");
+    return;
+  }
 
-        if (!valid) {
-            toast.error("Please enter a valid 10-digit mobile number");
-            return;
-        }
+  // 🔍 Full name must be at least 3 characters & in Title Case
+  if (
+    fullName.trim().length < 3 ||
+    !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(fullName.trim())
+  ) {
+    toast.error("Full name must be in Title Case and at least 3 characters long");
+    return;
+  }
 
-        if (!isValidEmail) {
-            toast.error("Please enter a valid email address");
-            return;
-        }
+  if (!valid) {
+    toast.error("Please enter a valid 10-digit mobile number");
+    return;
+  }
 
-        setIsSubmitting(true);
-        setEmailError('');
-        setPhoneError('');
+  if (!isValidEmail) {
+    toast.error("Please enter a valid email address");
+    return;
+  }
 
-        const formData = new FormData();
-        formData.append('userName', fullName);
-        formData.append('userPhone', mobileNumber);
-        formData.append('userEmail', email);
-        formData.append('roleId', roleID);
+  setIsSubmitting(true);
+  setEmailError('');
+  setPhoneError('');
 
-        try {
-            const response = await dispatch(registrationCustomer(API_URL, formData));
-            toast.success(response.message);
-            navigate("/login");
-        } catch (error) {
-            const errorMsg = error.message.toLowerCase();
+  const formData = new FormData();
+  formData.append('userName', fullName);
+  formData.append('userPhone', mobileNumber);
+  formData.append('userEmail', email);
+  formData.append('roleId', roleID);
 
-            if (errorMsg.includes('email')) {
-                setEmailError(error.message);
-            }
+  try {
+    const response = await dispatch(registrationCustomer(API_URL, formData));
+    toast.success(response.message);
+    navigate("/login");
+  } catch (error) {
+    const errorMsg = error.message.toLowerCase();
 
-            if (errorMsg.includes('phone')) {
-                setPhoneError(error.message);
-            }
+    if (errorMsg.includes('email')) {
+      setEmailError(error.message);
+    }
 
-            if (!errorMsg.includes('email') && !errorMsg.includes('phone')) {
-                toast.error('Registration failed');
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    if (errorMsg.includes('phone')) {
+      setPhoneError(error.message);
+    }
+
+    if (!errorMsg.includes('email') && !errorMsg.includes('phone')) {
+      toast.error('Registration failed');
+    }
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
     const handleCancel = () => {
         navigate("/");
