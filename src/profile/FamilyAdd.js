@@ -59,7 +59,14 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
 
     switch (name) {
       case "fullName":
-        if (!value.trim()) message = "Full name is required.";
+        if (
+  !formData.username || 
+  formData.username.trim().length < 3 || 
+  !/^[a-z]+([A-Z][a-z]*)*$/.test(formData.username.trim())
+) {
+  errors.username = "Username must be in camelCase and at least 3 characters long";
+}
+
         break;
       case "userPhone":
         if (!/^\d{10}$/.test(value)) message = "Enter a valid 10-digit phone number.";
@@ -82,10 +89,15 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
     const tempErrors = {};
     let valid = true;
 
-    if (!fullName.trim()) {
-      tempErrors.fullName = "Full name is required.";
-      valid = false;
-    }
+    if (
+  !fullName.trim() ||
+  fullName.trim().length < 3 ||
+  !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(fullName.trim())
+) {
+  tempErrors.fullName = "Full name must be in Title Case and at least 3 characters long.";
+  valid = false;
+}
+
     if (!familyMember) {
       tempErrors.familyMember = "Please select relation.";
       valid = false;
