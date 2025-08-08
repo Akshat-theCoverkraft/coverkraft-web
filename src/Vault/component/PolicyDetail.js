@@ -569,6 +569,17 @@ const handlePolicyAction = (action) => {
                   {policy?.policyDetails?.registrationNumber ||
                     policy?.policyNumber}
                 </p>
+                {/* Added Insurance Company line */}
+                <p
+                  style={{
+                    color: "#fff",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    marginBottom: "2px",
+                  }}
+                >
+                  {policy?.insuredCompany}
+                </p>
                 <p
                   style={{
                     color: "#fff",
