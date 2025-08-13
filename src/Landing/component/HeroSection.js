@@ -5,7 +5,13 @@ import { useNavigate } from "react-router-dom";
 import hero from "../../Images/Hero1.png";
 import { Button } from "@mui/material";
 import { styled } from "@mui/system";
-import { motion, useReducedMotion, useInView, useMotionValue, useTransform } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+  useInView,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 
 // Section wrapper with padding
 const SectionWrapper = styled("div")(({ theme }) => ({
@@ -143,7 +149,10 @@ const HeroSection = () => {
           {/* Animate heading only if not reducing motion */}
           {!shouldReduceMotion ? (
             <MotionTypewriter
-              htmlText={t("secureFuture") || "Secure Your <strong>Future</strong><br />With Confidence"}
+              htmlText={
+                t("secureFuture") ||
+                "Secure Your <strong>Future</strong><br />With Confidence"
+              }
             />
           ) : (
             // Fallback for reduced motion - simple text
@@ -155,7 +164,9 @@ const HeroSection = () => {
                 whiteSpace: "pre-wrap",
               }}
               dangerouslySetInnerHTML={{
-                __html: t("secureFuture") || "Secure Your <strong>Future</strong><br />With Confidence",
+                __html:
+                  t("secureFuture") ||
+                  "Secure Your <strong>Future</strong><br />With Confidence",
               }}
             />
           )}
@@ -215,54 +226,53 @@ const HeroSection = () => {
         </Grid>
 
         {/* IMAGE SIDE */}
-       <Grid
-  item
-  xs={12}
-  md={5}
-  sx={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "visible", // <-- Important fix for visibility
-    width: "100%",
-    maxWidth: "100%",
-    position: "relative",
-    zIndex: 1,
-  }}
-  onMouseMove={handleMouseMove}
-  onMouseLeave={handleMouseLeave}
-  onTouchMove={(e) => {
-    const touch = e.touches[0];
-    const bounds = e.currentTarget.getBoundingClientRect();
-    const posX = touch.clientX - bounds.left - bounds.width / 2;
-    const posY = touch.clientY - bounds.top - bounds.height / 2;
-    x.set(posX);
-    y.set(posY);
-  }}
-  onTouchEnd={handleMouseLeave}
->
-  <motion.img
-    initial={{ opacity: 0, scale: 0.95 }}
-    animate={isInView ? { opacity: 1, scale: 1 } : {}}
-    transition={{ delay: 1, duration: 0.6, ease: "easeIn" }}
-    src={hero}
-    alt="Family Home"
-    loading="lazy"
-    draggable={false}
-    style={{
-      width: "200%",
-      maxWidth: "170%",
-      height: "500px",
-      objectFit: "cover",
-      userSelect: "none",
-      pointerEvents: "none",
-      borderRadius: "12px",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-      marginTop: "90px"
-    }}
-  />
-</Grid>
-
+        <Grid
+          item
+          xs={12}
+          md={5}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "visible", // <-- Important fix for visibility
+            width: "100%",
+            maxWidth: "100%",
+            position: "relative",
+            zIndex: 1,
+          }}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          onTouchMove={(e) => {
+            const touch = e.touches[0];
+            const bounds = e.currentTarget.getBoundingClientRect();
+            const posX = touch.clientX - bounds.left - bounds.width / 2;
+            const posY = touch.clientY - bounds.top - bounds.height / 2;
+            x.set(posX);
+            y.set(posY);
+          }}
+          onTouchEnd={handleMouseLeave}
+        >
+          <motion.img
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 1, duration: 0.6, ease: "easeIn" }}
+            src={hero}
+            alt="Family Home"
+            loading="lazy"
+            draggable={false}
+            style={{
+              width: "200%",
+              maxWidth: "200%",
+              height: "500px",
+              objectFit: "contain",
+              userSelect: "none",
+              pointerEvents: "none",
+              borderRadius: "12px",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+              marginTop: "90px",
+            }}
+          />
+        </Grid>
       </Grid>
     </SectionWrapper>
   );
