@@ -207,9 +207,9 @@ const Feeds = () => {
           ) : (
             <Grid container spacing={4}>
               {contentData.map((item, index) => {
-                const isVideo = ["short", "video", "featured"].includes(selectedTab);
+                const isVideo = ["short", "video", "featured", "news"].includes(selectedTab);
                 const showReadMore = textOverflowStates[index];
-                const videoUrl = item.video || item.videoUrl;
+                const videoUrl = item.video || item.videoUrl || item.youTubeLink;
 
                 return (
                   <Grid item xs={12} sm={6} md={4} key={item._id}>

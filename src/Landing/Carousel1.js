@@ -139,76 +139,111 @@ const Carousel1 = () => {
               showIndicators={false}
               showArrows={false}
             >
-              {items.map((item, idx) => (
-                <div className="carousel__slide-item" key={idx}>
-                  {isYouTubeUrl(item.video) ? (
-  <div
-    className="carousel__slide-item-media"
-    style={{
-      width: '100%',
-      height: '100%',
-      borderRadius: '12px',
-      overflow: 'hidden',
-      background: 'black',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 0,
-    }}
-  >
-    <iframe
-      src={convertToEmbedUrl(item.video)}
-      title={`YouTube video player ${idx}`}
-      frameBorder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen
-      style={{
-        width: '100%',
-        height: '100%',
-        border: 'none',
-        objectFit: 'contain',
-      }}
-    />
-  </div>
-) : item.video.endsWith(".mp4") ? (
-
-                    <video
-                      ref={(el) => (videoRefs.current[idx] = el)}
-                      src={item.video}
-                      controls
-                      controlsList="nodownload"
-                      className="carousel__slide-item-media"
-                      onPlay={() => handleVideoPlay(idx)}
-                      onPause={handleVideoPause}
-                      onEnded={handleVideoPause}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                        objectPosition: 'center',
-                        background: "black",
-                        borderRadius: '12px',
-                        padding: "0px"
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={require('../Images/CKanimation.gif')}
-                      alt={item.subtitle}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                        objectPosition: 'center',
-                        background: "black",
-                        borderRadius: '12px',
-                        padding: "0px"
-                      }}
-                      className="carousel__slide-item-media"
-                    />
-                  )}
-                </div>
-              ))}
+           {items.map((item, idx) => {
+  // Fix: Handle string "null" properly
+  const videoSource = (item.video && item.video !== 'null') ? item.video : item.youTubeLink;
+  const hasVideoContent = videoSource && videoSource.trim() !== '' && videoSource !== 'null';
+  
+  console.log("Video source for item:", idx, videoSource);
+  console.log("Item data:", item); // Debug log to see the actual data
+  
+  return (
+    <div className="carousel__slide-item" key={idx}>
+      {hasVideoContent && isYouTubeUrl(videoSource) ? (
+        // YouTube video
+        <div
+          className="carousel__slide-item-media"
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            background: 'black',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 0,
+          }}
+        >
+          <iframe
+            src={convertToEmbedUrl(videoSource)}
+            title={`YouTube video player ${idx}`}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{
+              width: '100%',
+              height: '100%',
+              border: 'none',
+              objectFit: 'contain',
+            }}
+          />
+        </div>
+      ) : hasVideoContent && videoSource.toLowerCase().endsWith(".mp4") ? (
+        // MP4 video
+        <video
+          ref={(el) => (videoRefs.current[idx] = el)}
+          src={videoSource}
+          controls
+          controlsList="nodownload"
+          className="carousel__slide-item-media"
+          onPlay={() => handleVideoPlay(idx)}
+          onPause={handleVideoPause}
+          onEnded={handleVideoPause}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            objectPosition: 'center',
+            background: "black",
+            borderRadius: '12px',
+            padding: "0px"
+          }}
+        />
+      ) : hasVideoContent && (videoSource.toLowerCase().endsWith(".mov") || 
+                               videoSource.toLowerCase().endsWith(".avi") || 
+                               videoSource.toLowerCase().endsWith(".webm") ||
+                               videoSource.toLowerCase().endsWith(".mkv")) ? (
+        // Other video formats
+        <video
+          ref={(el) => (videoRefs.current[idx] = el)}
+          src={videoSource}
+          controls
+          controlsList="nodownload"
+          className="carousel__slide-item-media"
+          onPlay={() => handleVideoPlay(idx)}
+          onPause={handleVideoPause}
+          onEnded={handleVideoPause}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            objectPosition: 'center',
+            background: "black",
+            borderRadius: '12px',
+            padding: "0px"
+          }}
+        />
+      ) : (
+        // Fallback image
+        <img
+          src={require('../Images/CKanimation.gif')}
+          alt={item.subtitle || `Carousel item ${idx}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            objectPosition: 'center',
+            background: "black",
+            borderRadius: '12px',
+            padding: "0px"
+          }}
+          className="carousel__slide-item-media"
+        />
+      )}
+    </div>
+  );
+})}
             </Carousel>
           )}
 
