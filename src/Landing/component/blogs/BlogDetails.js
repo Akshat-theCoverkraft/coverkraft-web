@@ -108,6 +108,31 @@ useEffect(() => {
   };
 }, []);
 
+// Check if the URL is a YouTube link
+const isYouTubeLink = (url) => {
+  return typeof url === "string" && (
+    url.includes("youtube.com") || url.includes("youtu.be")
+  );
+};
+
+// Convert YouTube link to embed URL
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return "";
+  let videoId = "";
+  
+  // For normal YouTube URL
+  if (url.includes("youtube.com/watch?v=")) {
+    const urlObj = new URL(url);
+    videoId = urlObj.searchParams.get("v");
+  }
+  
+  // For short youtu.be URL
+  else if (url.includes("youtu.be/")) {
+    videoId = url.split("youtu.be/")[1].split("?")[0];
+  }
+  
+  return `https://www.youtube.com/embed/${videoId}`;
+};
 
   // Function to render media content (image or video)
 const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null) => {

@@ -123,7 +123,7 @@ const LifePolicyForm = () => {
   const inputFields = [
     policyNumber,
     policyStartDate,
-    policyEndDate,
+    // policyEndDate,
     premiumPaid,
     insuredName,
     insuredCompany,
@@ -158,7 +158,7 @@ const LifePolicyForm = () => {
     policyNumber,
     policyStartDate,
     sumAssured,
-    policyEndDate,
+    // policyEndDate,
     premiumPaid,
     insuredName,
     insuredCompany,
@@ -173,7 +173,7 @@ const LifePolicyForm = () => {
         policyNumber,
         policyStartDate,
         sumAssured,
-        policyEndDate,
+        // policyEndDate,
         premiumPaid,
         insuredName,
         insuredCompany,
@@ -200,7 +200,7 @@ const LifePolicyForm = () => {
     return (
       payload.policyNumber &&
       payload.policyStartDate &&
-      payload.policyEndDate &&
+      // payload.policyEndDate &&
       payload.premiumPaid &&
       payload.insuredName &&
       payload.insuredCompany &&
@@ -217,7 +217,7 @@ const LifePolicyForm = () => {
     formData.append("policyType", responseData?.policyType.toLowerCase());
     formData.append("policyNumber", policyNumber);
     formData.append("policyStartDate", policyStartDate);
-    formData.append("policyEndDate", policyEndDate);
+    // formData.append("policyEndDate", policyEndDate);
     formData.append("sumInsured", sumAssured);
     formData.append("premiumPaid", premiumPaid);
     formData.append("netPremium", netPremium);
@@ -375,7 +375,7 @@ const LifePolicyForm = () => {
       className="w-100" // full width and dark bg
     />
   </Grid>
-                       <Grid item xs={12} md={6}>
+                       {/* <Grid item xs={12} md={6}>
     <label
       className="form-label fw-bold mb-2 text-white fs-6"
       htmlFor="end-date"
@@ -391,7 +391,7 @@ const LifePolicyForm = () => {
       onChange={handleEndDateChange}
       className="w-100"
     />
-  </Grid>
+  </Grid> */}
                     </Grid>
 
                     
@@ -402,7 +402,7 @@ const LifePolicyForm = () => {
         component="label"
         className="fw-bold mb-2 text-white fs-6" 
       >
-        Policy Renewal Date <span style={{ color: "#f44336" }}>*</span>
+        Next premium due date <span style={{ color: "#f44336" }}>*</span>
       </Typography>
       <DateTimePicker
       id="policy-renewal-date"
@@ -438,7 +438,7 @@ const LifePolicyForm = () => {
 </Grid>
 
                     {/* DOB Field */}
-                   <Box sx={{ mt: 2 }}>
+                   {/* <Box sx={{ mt: 2 }}>
   <Typography
     component="label"
     sx={{
@@ -460,7 +460,7 @@ const LifePolicyForm = () => {
     error={false} 
     validationMessage="Invalid date"
   />
-</Box>
+</Box> */}
 
                     {/* Personal Details */}
                     <Box className="mt-4">
@@ -497,7 +497,7 @@ const LifePolicyForm = () => {
                     </Box>
 
                     {/* Coverage Details */}
-                    <Box>
+                    {/* <Box>
                       <CustomInput
                         type="text"
                         label="Critical Illness Coverage"
@@ -517,7 +517,7 @@ const LifePolicyForm = () => {
                         }
                         inputStyle={commonInputStyle}
                       />
-                    </Box>
+                    </Box> */}
                   </Box>
                 </Grid>
 
@@ -570,7 +570,7 @@ const LifePolicyForm = () => {
                       />
                     </Box>
 
-                    <Box>
+                    {/* <Box>
                       <CustomInput
                         type="text"
                         label="Terminal Illness Coverage"
@@ -578,7 +578,7 @@ const LifePolicyForm = () => {
                         onChange={(e) => setTerminalIllness(e.target.value)}
                         inputStyle={commonInputStyle}
                       />
-                    </Box>
+                    </Box> */}
 
                     {/* Policy Information */}
                     <Box>
@@ -592,7 +592,7 @@ const LifePolicyForm = () => {
                       />
                     </Box>
 
-                    <Box>
+                    {/* <Box>
                       <CustomInput
                         type="text"
                         label="Additional Notes"
@@ -600,7 +600,7 @@ const LifePolicyForm = () => {
                         onChange={(e) => setOthers(e.target.value)}
                         inputStyle={commonInputStyle}
                       />
-                    </Box>
+                    </Box> */}
                   </Box>
                   <Box
                     flex={1}
