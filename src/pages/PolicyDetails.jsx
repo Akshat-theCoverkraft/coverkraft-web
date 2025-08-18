@@ -77,7 +77,7 @@ useEffect(() => {
   return () => {
     observer.disconnect();
   };
-}, [footerRef.current]); // ✅ yes, we re-run when it changes
+}, [footerRef.current]); 
 
 
   const handleSessionExpiredOk = () => {
