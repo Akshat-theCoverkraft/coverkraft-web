@@ -193,7 +193,7 @@ useEffect(() => {
     position: "fixed",
     bottom: "20px",
     left: "50%",
-    transform: `translate(-50%, ${isFooterVisible ? "-330px" : "0"})`,
+    transform: `translate(-50%, ${isFooterVisible ? "-500%" : "0"})`,
     zIndex: 9999,
     width: "100%",
     maxWidth: "400px",
