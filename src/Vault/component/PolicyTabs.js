@@ -39,6 +39,7 @@ import moment from "moment";
 import redBg from "../../Images/red-img.png";
 import SessionExpiredModal from "../../utils/sessionExpireModal";
 import { useNavigate } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   parse,
   isAfter,
@@ -47,7 +48,7 @@ import {
   startOfDay,
   isValid,
 } from 'date-fns';
- 
+
 
 const useStyles = makeStyles(() => ({
   searchContainer: {
@@ -166,7 +167,7 @@ const calculatePolicyStatus = (dateString) => {
 
   if (daysToRenewal < 0) return "Expired";
   if (daysToRenewal <= 60) return `${daysToRenewal} days left`;
-  
+
 
   return null;
 };
@@ -202,33 +203,33 @@ const calculatePolicyStatus = (dateString) => {
 //       console.warn('Invalid date format:', dateString);
 //       return null;
 //     }
- 
+
 //   const today = startOfDay(new Date());
- 
+
 //   const policyEndDate = parsedDate;
- 
+
 //   const isExpired = policyEndDate ? isBefore(policyEndDate, today) : false;
- 
+
 //   const daysToRenewal = policyEndDate
 //     ? differenceInDays(policyEndDate, today)
 //     : null;
- 
+
 //   const shouldShowRenewal =
 //     policyEndDate &&
 //     !isExpired &&
 //     daysToRenewal !== null &&
 //     daysToRenewal <= 60 &&
 //     daysToRenewal >= 0;
- 
+
 //   console.log('Policy End Date:', policyEndDate);
 //   console.log('Today:', today);
 //   console.log('Days to renewal:', daysToRenewal);
 //   console.log('isExpired:', isExpired, 'for date:');
- 
+
 //   const isExpiringToday = policyEndDate
 //     ? differenceInDays(policyEndDate, today) === 0
 //     : false;
- 
+
 //   const isExpiredStrict = policyEndDate
 //     ? differenceInDays(policyEndDate, today) < 0
 //     : false;
@@ -370,6 +371,36 @@ const PolicyCard = ({
     ? calculatePolicyStatus(policy.policyEndDate)
     : null;
 
+
+const handleDelete = async (policyId) => {
+  try {
+    const response = await fetch(`${API_URL}policy/delete`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
+      },
+      body: (() => {
+        const formData = new FormData();
+        formData.append("policyId", policyId);
+        return formData;
+      })(),
+    });
+
+    if (response.ok) {
+      console.log("Policy deleted successfully!");
+
+      //Fetch policy
+
+      fetchData("policy/getById", { policyType: "active" })
+
+    } else {
+      console.error("Failed to delete policy:", response.status);
+    }
+  } catch (error) {
+    console.error("Error deleting policy:", error);
+  }
+};
+
   return (
     <Card
       className="mb-4 rounded-5 card-detail"
@@ -388,27 +419,26 @@ const PolicyCard = ({
         overflow: "hidden",
       }}
     >
-      <CardContent sx={{ p: 1.5 }}>
+      <CardContent sx={{}}>
         {/* Status Badge - Fixed positioning to prevent overlap */}
         {(status || isExpired) && (
           <>
             <div
               style={{
                 position: "absolute",
-                top: -50,
                 right: 0,
+                top: 0,
                 width: "120px",
-                height: "25px",
+                height: '30px',
                 backgroundImage: `url(${redBg})`,
                 backgroundSize: "cover",
                 opacity: 1,
-                marginTop: "50px",
               }}
             />
             <div
               style={{
                 position: "absolute",
-                top: 2,
+                top: 5,
                 right: 25,
                 color: "#ffffff",
                 fontSize: "12px",
@@ -550,6 +580,41 @@ const PolicyCard = ({
               </OverlayTrigger>
             </Box>
           </Grid>
+
+          {/* Delete Icon */}
+          <Grid item xs={12} sm={1}>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip style={{ fontSize: "1.2rem" }}>
+                    Delete Policy
+                  </Tooltip>
+                }
+              >
+                <IconButton
+                  sx={{
+                    backgroundColor: "white",
+                    "&:hover": { backgroundColor: "#f5f5f5" },
+                    width: 25,
+                    height: 25,
+                    boxShadow: 2,
+                  }}
+                  onClick={() => handleDelete(policy._id)}
+                >
+                  <DeleteIcon
+                    sx={{
+                      fontSize: 16,
+                      color: "red",
+                    }}
+                  />
+                </IconButton>
+              </OverlayTrigger>
+            </Box>
+          </Grid>
+
+
+
         </Grid>
       </CardContent>
     </Card>
@@ -733,9 +798,9 @@ export default function PolicyTabs({
         onAllPolicyIdsChange?.(data.map((policy) => policy._id));
       }
     } catch (error) {
-       if (error.response?.status === 401) {
-            setShowSessionExpired(true);
-          } 
+      if (error.response?.status === 401) {
+        setShowSessionExpired(true);
+      }
       console.error("Error fetching data:", error);
       const emptyData = [];
       if (isArchive) {
@@ -750,19 +815,19 @@ export default function PolicyTabs({
     }
   };
 
-   const handleSessionExpiredOk = () => {
+  const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
     navigate('/login');
     localStorage.clear();
-  sessionStorage.clear(); 
+    sessionStorage.clear();
   };
 
   useEffect(() => {
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
-    } else if(value===3){
+    } else if (value === 3) {
       fetchData("policy/getById", { policyType: "uncompleted" })
-    }else {    
+    } else {
       fetchData("policy/getById", { policyType: activeTab });
     }
   }, [value, activeTab]);
@@ -814,8 +879,8 @@ export default function PolicyTabs({
           zIndex: 1,
           position: "relative  !important",
           paddingTop: 2,
-          width:'100%',
-          minHeight:'600px'
+          width: '100%',
+          minHeight: '600px'
         }}
       >
         <Box
@@ -835,11 +900,11 @@ export default function PolicyTabs({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                height:"500px"  
+                height: "500px"
               }}
             >
               {/* Scrollable List Area */}
-              <Box sx={{ flex: 0.85,}}>
+              <Box sx={{ flex: 0.85, }}>
                 {paginatedData.map((policy) => (
                   <PolicyCard
                     key={policy._id}
@@ -856,7 +921,7 @@ export default function PolicyTabs({
               </Box>
 
               {/* Fixed Pagination at Bottom */}
-              <Box className='absolute bottom-0 !important' sx={{ }}>
+              <Box className='absolute bottom-0 !important' sx={{}}>
                 {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
                   <CustomPagination
                     totalItems={filteredList.length}
@@ -883,7 +948,7 @@ export default function PolicyTabs({
 
   return (
     <Box sx={{ px: { xs: 2, sm: 2 }, height: "100%" }}>
-        <SessionExpiredModal
+      <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
@@ -894,7 +959,7 @@ export default function PolicyTabs({
           backgroundColor: "#121212 !important",
           border: "0.5px solid white",
           pt: 1.5,
-          height:'600px'
+          height: '600px'
         }}
       >
         <TabContext value={value}>
