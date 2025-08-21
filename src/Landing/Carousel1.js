@@ -166,7 +166,7 @@ const Carousel1 = () => {
                   isYouTubeUrl(videoSource),
                   videoSource.toLowerCase().endsWith(".mp4")
                 );
-                console.log("Item data:", item); // Debug log to see the actual data
+                console.log("Item data:", item);
 
                 return (
                   <div className="carousel__slide-item" key={idx}>

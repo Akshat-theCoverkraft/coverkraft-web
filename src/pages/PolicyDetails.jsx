@@ -6,7 +6,7 @@ import API_URL from "../ServiceModule/Service";
 import Button from "../component/Button";
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import SessionExpiredModal from "../utils/sessionExpireModal";
 
 const getImageForType = (type) => {
@@ -57,28 +57,27 @@ const PolicyDetails = () => {
       });
   }, [id]);
 
-useEffect(() => {
-  const footerEl = footerRef.current;
-  if (!footerEl) return;
+  useEffect(() => {
+    const footerEl = footerRef.current;
+    if (!footerEl) return;
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      console.log("Footer visible:", entry.isIntersecting);
-      setIsFooterVisible(entry.isIntersecting);
-    },
-    {
-      root: null,
-      threshold: 0.1,
-    }
-  );
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        console.log("Footer visible:", entry.isIntersecting);
+        setIsFooterVisible(entry.isIntersecting);
+      },
+      {
+        root: null,
+        threshold: 0.1,
+      }
+    );
 
-  observer.observe(footerEl);
+    observer.observe(footerEl);
 
-  return () => {
-    observer.disconnect();
-  };
-}, [footerRef.current]); 
-
+    return () => {
+      observer.disconnect();
+    };
+  }, [footerRef.current]);
 
   const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
@@ -188,36 +187,37 @@ useEffect(() => {
         </div>
 
         {/* Sticky Smart Button */}
-<div
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    left: "50%",
-    transform: `translate(-50%, ${isFooterVisible ? "-500%" : "0"})`,
-    zIndex: 9999,
-    width: "100%",
-    maxWidth: "400px",
-    padding: "0 2em",
-    transition: "transform 0.3s ease-in-out",
-  }}
->
-  <Button
-    text={"Buy Now"}
-    size="lg"
-    block={true}
-    onClick={() => {
-      toast.info("Feature coming soon!");
-    }}
-  />
-</div>
-
+        <div
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            left: "50%",
+            transform: `translate(-50%, ${isFooterVisible ? "-500%" : "0"})`,
+            zIndex: 9999,
+            width: "100%",
+            maxWidth: "400px",
+            padding: "0 2em",
+            transition: "transform 0.3s ease-in-out",
+          }}
+        >
+          <Button
+            text={"Buy Now"}
+            size="lg"
+            block={true}
+            onClick={() => {
+              toast.info(
+                "Coming soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you."
+              );
+            }}
+          />
+        </div>
       </div>
 
       {/* Footer with ref */}
       <footer ref={footerRef}>
-  <Footer />
-</footer>
-
+        <Footer />
+      </footer>
+      <ToastContainer />
     </>
   );
 };
