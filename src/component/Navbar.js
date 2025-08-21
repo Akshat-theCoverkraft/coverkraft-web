@@ -280,7 +280,17 @@ function Navbar({ scrollToContactBottom }) {
                       onClick={() => navigate("/notification")}
                     />
                   </Badge>
-                  <Tooltip title="Update email for better communication">
+                  <Tooltip
+                    PopperProps={{
+                      sx: {
+                        "& .MuiTooltip-tooltip": {
+                          fontSize: "1.4rem", // increase font size
+                          padding: "8px 12px", // optional: more padding for readability
+                        },
+                      },
+                    }}
+                    title="Please update email."
+                  >
                     <Badge
                       color="error"
                       variant="dot"

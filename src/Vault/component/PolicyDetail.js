@@ -352,7 +352,7 @@ const PolicyDetail = ({ policyId }) => {
             ? "Policy archived successfully"
             : action === "unarchive"
             ? "Policy removed from archive successfully"
-            : "Feature Coming Soon";
+            : "Coming Soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
         showToastOnce(message, "success");
       })
       .catch(() => {
