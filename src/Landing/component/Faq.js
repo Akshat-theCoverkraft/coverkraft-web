@@ -45,7 +45,7 @@ export default function Faq() {
         const data = await res.json();
 
         if (data?.data && Array.isArray(data.data)) {
-          const activeFaqs = data.data.filter(faq => faq.status === "active");
+          const activeFaqs = data.data.filter((faq) => faq.status === "active");
           setFaqList(activeFaqs);
         }
       } catch (err) {
@@ -61,18 +61,17 @@ export default function Faq() {
   };
 
   const handleSeeMore = () => {
-    setVisibleCount(prev => Math.min(prev + 3, faqList.length));
+    setVisibleCount((prev) => Math.min(prev + 3, faqList.length));
   };
 
   const handleSeeLess = () => {
-    setVisibleCount(prev => Math.max(prev - 3, 3));
+    setVisibleCount((prev) => Math.max(prev - 3, 3));
   };
 
   if (!loading && faqList.length === 0) return null;
 
   const visibleFaqs = faqList.slice(0, visibleCount);
   const canShowMore = visibleCount < faqList.length;
-  const canShowLess = visibleCount > 3;
 
   // Animations
   const accordionVariants = {
@@ -133,8 +132,12 @@ export default function Faq() {
           ) : (
             <AnimatePresence>
               {visibleFaqs.map((item, index) => {
-                const actualIndex = faqList.findIndex(f => f._id === item._id);
-                const formattedNumber = (actualIndex + 1).toString().padStart(2, "0");
+                const actualIndex = faqList.findIndex(
+                  (f) => f._id === item._id
+                );
+                const formattedNumber = (actualIndex + 1)
+                  .toString()
+                  .padStart(2, "0");
 
                 return (
                   <motion.div
@@ -171,7 +174,10 @@ export default function Faq() {
                         className="fw-bold"
                         style={{ fontSize: "1.6rem" }}
                       >
-                        <span className="mr-3 fw-bold" style={{ fontSize: "3rem" }}>
+                        <span
+                          className="mr-3 fw-bold"
+                          style={{ fontSize: "3rem" }}
+                        >
                           {formattedNumber}
                         </span>
                         {item.question}
@@ -202,8 +208,14 @@ export default function Faq() {
           )}
         </div>
 
-        {(canShowMore || canShowLess) && (
-          <div style={{ textAlign: "right", marginTop: "20px", paddingRight: "55px" }}>
+        {canShowMore && (
+          <div
+            style={{
+              textAlign: "right",
+              marginTop: "0px",
+              paddingRight: "55px",
+            }}
+          >
             {canShowMore && (
               <Typography
                 onClick={handleSeeMore}
@@ -213,25 +225,10 @@ export default function Faq() {
                   cursor: "pointer",
                   fontSize: "1.2rem",
                   textTransform: "uppercase",
-                  '&:hover': { textDecoration: "underline" },
+                  "&:hover": { textDecoration: "underline" },
                 }}
               >
                 See More
-              </Typography>
-            )}
-            {canShowLess && (
-              <Typography
-                onClick={handleSeeLess}
-                sx={{
-                  color: "#5A9E1E",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  fontSize: "1.2rem",
-                  textTransform: "uppercase",
-                  '&:hover': { textDecoration: "underline" },
-                }}
-              >
-                See Less
               </Typography>
             )}
           </div>
