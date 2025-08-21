@@ -25,8 +25,16 @@ const Login = () => {
   const [fcmId, setFcmId] = useState("");
   const recaptchRef = useRef(null);
   const dispatch = useDispatch();
-  const commonInputStyle = { height: 48, fontSize: "1.222rem", borderRadius: 42, paddingLeft: "20px", width: "100%", color: "white", borderColor: "grey" };
-  const [phoneNumberError, phoneNumberSetError] = useState('');
+  const commonInputStyle = {
+    height: 48,
+    fontSize: "1.222rem",
+    borderRadius: 42,
+    paddingLeft: "20px",
+    width: "100%",
+    color: "white",
+    borderColor: "grey",
+  };
+  const [phoneNumberError, phoneNumberSetError] = useState("");
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   const navigate = useNavigate(); // navigation hook
 
@@ -39,12 +47,11 @@ const Login = () => {
     }
   }, [!valid]);
 
-
   useEffect(() => {
     // Example mock FCM ID (replace with real logic)
     const getFcmId = async () => {
       // const token = await requestForToken(); // If using Firebase
-      const token = getToken() // TEMP
+      const token = getToken(); // TEMP
       setFcmId(token);
     };
     getFcmId();
@@ -52,7 +59,7 @@ const Login = () => {
 
   // Handle phone input (10-digit number)
   const handlephonechange = (e) => {
-    phoneNumberSetError('')
+    phoneNumberSetError("");
     let number = e.target.value.replace(/\D/g, "");
     number = number.slice(0, 10);
     setPhoneNumber(number);
@@ -68,7 +75,7 @@ const Login = () => {
   // Login handler - verifies phone and simulates Firebase OTP send
   const handleLogin = async () => {
     try {
-      phoneNumberSetError('')
+      phoneNumberSetError("");
       const userPhone = phoneNumber;
       const response = await axios.get(
         `${API_URL}user/verifyPhone?userPhone=${userPhone}`
@@ -79,12 +86,15 @@ const Login = () => {
       if (response.status === 200) {
         const user = response.data.user;
 
-        console.log('this is user : ', user)
+        console.log("this is user : ", user);
         const userId = user._id;
+
+        const userEmail = user.userEmail;
         const token = user.token;
 
         // ✅ Store session info
         sessionStorage.setItem("userId", userId);
+        sessionStorage.setItem("userEmail", userEmail);
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("loginTime", Date.now().toString());
         sessionStorage.setItem("isLoggedIn", "true");
@@ -100,7 +110,7 @@ const Login = () => {
         const status = error.response.status;
 
         if (status === 404) {
-          phoneNumberSetError('This phone number is not registered.')
+          phoneNumberSetError("This phone number is not registered.");
           toast.error(" This phone number is not registered.");
         } else if (status === 401) {
           toast.error(" Unauthorized. Please check your credentials.");
@@ -116,11 +126,10 @@ const Login = () => {
   };
   const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
-    navigate('/login');
+    navigate("/login");
     localStorage.clear();
     sessionStorage.clear();
   };
-
 
   // OTP verification (final login)
   // Temporary OTP verification: just allow any 6-digit input for now
@@ -129,7 +138,7 @@ const Login = () => {
       await dispatch(
         verifyUser(API_URL, {
           userPhone: phoneNumber,
-          userFcmId: 'Test123',
+          userFcmId: "Test123",
         })
       );
       sessionStorage.setItem("loggedIn", "true");
@@ -141,20 +150,20 @@ const Login = () => {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && valid && !loggedIn) {
+    if (e.key === "Enter" && valid && !loggedIn) {
       e.preventDefault();
       handleLogin();
     }
   };
   const handleOtpKeyPress = (e) => {
-    if (e.key === 'Enter' && otp.length === 6) {
+    if (e.key === "Enter" && otp.length === 6) {
       e.preventDefault();
       handleVerify();
     }
   };
 
   return (
-    <div className="overflow-hidden" style={{ backgroundColor: '#121212' }}>
+    <div className="overflow-hidden" style={{ backgroundColor: "#121212" }}>
       <ToastContainer />
 
       <div className="container-fluid">
@@ -163,24 +172,34 @@ const Login = () => {
             <form
               className="shadow-md text-white w-100"
               style={{
-                maxWidth: '500px',
-                backgroundColor: '#000',
-                borderRadius: '12px',
-                padding: '40px',
-                minHeight: '620px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
+                maxWidth: "500px",
+                backgroundColor: "#000",
+                borderRadius: "12px",
+                padding: "40px",
+                minHeight: "620px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
               }}
             >
               <div className="text-center mb-4">
-                <img src={logo} alt="Logo" style={{ width: '250px', height: 'auto', objectFit: 'contain' }} />
+                <img
+                  src={logo}
+                  alt="Logo"
+                  style={{
+                    width: "250px",
+                    height: "auto",
+                    objectFit: "contain",
+                  }}
+                />
               </div>
 
               {!loggedIn ? (
                 <>
                   <h2 className="text-center mb-2">Login to your Account</h2>
-                  <p className="text-center text-white-50 mb-4">Enter your mobile number</p>
+                  <p className="text-center text-white-50 mb-4">
+                    Enter your mobile number
+                  </p>
 
                   <CustomInput
                     label="Mobile Number"
@@ -188,17 +207,22 @@ const Login = () => {
                     onChange={handlephonechange}
                     onKeyDown={handleKeyPress}
                     placeholder="Enter Your Number"
-                    className={` ${!valid && phoneNumber.length > 0 ? 'is-invalid' : ''}`}
+                    className={` ${
+                      !valid && phoneNumber.length > 0 ? "is-invalid" : ""
+                    }`}
                     required
                     inputStyle={commonInputStyle}
-                    validationMessage={!valid && phoneNumber.length > 0 ? 'Please enter a valid 10-digit mobile number.' : phoneNumberError}
-
+                    validationMessage={
+                      !valid && phoneNumber.length > 0
+                        ? "Please enter a valid 10-digit mobile number."
+                        : phoneNumberError
+                    }
                   />
                   <div id="recaptcha-container" />
                   <div ref={recaptchRef} />
 
                   <Button
-                    text={loggedIn ? 'Logging in...' : 'Login'}
+                    text={loggedIn ? "Logging in..." : "Login"}
                     size="lg"
                     block={true}
                     onClick={handleLogin}
@@ -228,7 +252,8 @@ const Login = () => {
                 <>
                   <h2 className="text-center mb-2">6 Digit Verification</h2>
                   <p className="text-center text-white-50 mb-4">
-                    Please enter the 6-digit OTP sent to XXXXXXX{phoneNumber.slice(-3)}
+                    Please enter the 6-digit OTP sent to XXXXXXX
+                    {phoneNumber.slice(-3)}
                   </p>
 
                   <div className="d-flex justify-content-center align-items-center my-4">
@@ -254,7 +279,6 @@ const Login = () => {
                     />
                   </div>
 
-
                   {otp.length > 0 && otp.length !== 6 && (
                     <div className="invalid-feedback d-block mt-2 text-center">
                       Please enter a valid 6-digit OTP.
@@ -272,14 +296,13 @@ const Login = () => {
                 </>
               )}
             </form>
-
           </div>
 
           <div
             className="col-md-6 d-none d-md-block position-relative p-0"
             style={{
-              height: '100%',
-              maxHeight: '100vh',
+              height: "100%",
+              maxHeight: "100vh",
             }}
           >
             <img
@@ -287,29 +310,29 @@ const Login = () => {
               alt="Background"
               className="w-100"
               style={{
-                height: '100%',
+                height: "100%",
                 opacity: 0.95,
               }}
             />
             <div
               className="position-absolute text-white text-center"
               style={{
-                top: '55%',
-                left: '54%',
-                transform: 'translate(-50%, -50%)',
+                top: "55%",
+                left: "54%",
+                transform: "translate(-50%, -50%)",
                 zIndex: 2,
-                width: '90%',
+                width: "90%",
               }}
             >
-              <h1 className="fw-bold" style={{ fontSize: '32px' }}>Beema bhi, Bharosa bhi</h1>
-              <p className="opacity-75" style={{ fontSize: '23px' }}>
+              <h1 className="fw-bold" style={{ fontSize: "32px" }}>
+                Beema bhi, Bharosa bhi
+              </h1>
+              <p className="opacity-75" style={{ fontSize: "23px" }}>
                 Secure your future. Simplify your policies. Trust the process.
               </p>
             </div>
           </div>
-
         </div>
-
       </div>
     </div>
   );
