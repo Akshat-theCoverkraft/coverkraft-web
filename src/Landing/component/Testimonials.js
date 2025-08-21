@@ -75,6 +75,7 @@ export default function Testimonials() {
 
   const settings = {
     infinite: testimonials.length > 2,
+    slidesToShow: testimonials.length < 3 ? testimonials.length : 2,
     slidesToScroll: 2,
     autoplay: false,
     arrows: false,
