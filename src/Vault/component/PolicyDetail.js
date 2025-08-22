@@ -91,6 +91,11 @@ const PolicyDetail = ({ policyId }) => {
     }
   };
 
+  const isMotorPolicy = (policyType) => {
+    const motorPolicies = ["car_policy", "bike_policy", "other_vehicle"];
+    return motorPolicies.includes(policyType);
+  };
+
   const getPolicyImage = (policyType) => {
     const imageMap = {
       car_policy: car,
@@ -746,7 +751,9 @@ const PolicyDetail = ({ policyId }) => {
                           fontWeight: "600",
                         }}
                       >
-                        Value (IDV)
+                        {isMotorPolicy(policy?.policyType)
+                          ? "Value (IDV)"
+                          : "Sum Insured"}
                       </p>
                       <p className="fw-bolder">
                         {policy?.policyDetails?.idv ||
