@@ -139,9 +139,6 @@ const PolicyType = () => {
                       <Typography variant="h5" fontWeight={600} color="#fff">
                         {policy.policyType}
                       </Typography>
-                      <Typography fontSize="1.5rem" color="#ccc">
-                        Insurance
-                      </Typography>
                     </CardContent>
                   </CardActionArea>
                 </Card>
