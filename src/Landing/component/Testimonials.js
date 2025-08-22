@@ -91,7 +91,7 @@ export default function Testimonials() {
       width: "100%",
       height: "100%",
       // maxHeight: '200px',
-      objectFit: "cover",
+      objectFit: "contain",
       borderRadius: "10px",
     };
 
@@ -246,7 +246,7 @@ export default function Testimonials() {
                           <div
                             className="text-section "
                             style={{
-                              flex: hasMedia ? "1 1 50%" : "1 1 100%",
+                              flex: "1 1 100%",
                               marginLeft: "10px",
                             }}
                           >
@@ -291,7 +291,7 @@ export default function Testimonials() {
                               <img
                                 src={
                                   testimonial.pfp ||
-                                  "../../Images/blackpfp.webp"
+                                  require("../../Images/ic_default_profile.png")
                                 }
                                 height={50}
                                 width={50}
@@ -368,6 +368,7 @@ export default function Testimonials() {
             position: "relative",
           }}
         >
+          {/* Close button */}
           <span
             onClick={closeModal}
             style={{
@@ -385,35 +386,53 @@ export default function Testimonials() {
           >
             &times;
           </span>
-          <Typography
-            id="testimonial-modal-title"
-            sx={{
-              mb: 2,
-              color: "#7BC043",
-              fontWeight: 700,
-              fontSize: "1.5rem",
-              paddingBottom: "30px",
-            }}
-          >
-            {selectedTestimonial?.author}
-          </Typography>
+
+          {/* Author Info Row */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+            <img
+              src={
+                selectedTestimonial?.pfp ||
+                require("../../Images/ic_default_profile.png")
+              }
+              alt={`${selectedTestimonial?.author} profile`}
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: "50%",
+                objectFit: "cover",
+              }}
+            />
+            <Box>
+              <Typography
+                id="testimonial-modal-title"
+                sx={{
+                  color: "#7BC043",
+                  fontWeight: 700,
+                  fontSize: "1.5rem",
+                }}
+              >
+                {selectedTestimonial?.author}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontStyle: "italic",
+                  color: "#ccc",
+                  fontSize: "1.2rem",
+                  fontWeight: 700,
+                }}
+              >
+                {selectedTestimonial?.role}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Quote */}
           <Typography
             id="testimonial-modal-description"
             sx={{ lineHeight: "1.6", fontSize: "1.6rem", color: "#ccc" }}
           >
             {selectedTestimonial?.quote}
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              mt: 2,
-              fontStyle: "italic",
-              color: "#ccc",
-              fontSize: "1.2rem",
-              fontWeight: 700,
-            }}
-          >
-            {selectedTestimonial?.role}
           </Typography>
         </Box>
       </Modal>
