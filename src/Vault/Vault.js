@@ -44,6 +44,7 @@ import SessionExpiredModal from "../utils/sessionExpireModal";
 import { color } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { usePolicyContext } from "../store/policyContext";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -72,6 +73,7 @@ const StyledButton = styled("button")(({ isAllSelected }) => ({
 }));
 
 const Vault = () => {
+  const {policyListLength, setPolicyListLength,allPolicyIds, setAllPolicyIds} = usePolicyContext();
   // Consolidated state
   const [dialogs, setDialogs] = useState({
     addPolicy: false,
@@ -85,8 +87,6 @@ const Vault = () => {
   const [selectedPolicyId, setSelectedPolicyId] = useState("");
   const [shareAllPolicy, setShareAllPolicy] = useState(false);
   const [selectedPolicies, setSelectedPolicies] = useState([]);
-  const [policyListLength, setPolicyListLength] = useState(0);
-  const [allPolicyIds, setAllPolicyIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [showSessionExpired, setShowSessionExpired] = useState(false);

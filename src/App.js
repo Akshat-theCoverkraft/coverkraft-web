@@ -32,6 +32,7 @@ import PolicyDetails from './pages/PolicyDetails';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
+import { PolicyProvider } from "./store/policyContext.js";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -113,7 +114,10 @@ useEffect(() => {
         <Route path="" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/vault" element={<Vault />} />
+        <Route path="/vault" element={
+          <PolicyProvider>
+            <Vault />
+          </PolicyProvider>} />
         <Route path="/motor-policy" element={<MotorPolicyForm />} />
         <Route path="/health-policy" element={<HealthPolicyForm />} />
         <Route path="/life-policy" element={<LifePolicyForm />} />
