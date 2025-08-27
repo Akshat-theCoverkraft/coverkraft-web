@@ -51,7 +51,6 @@ section.testimonials {
   .container {
     .quotes {
       display: flex;
-      align-items: start;
       gap: 10px;
 
       .slick-prev:before,

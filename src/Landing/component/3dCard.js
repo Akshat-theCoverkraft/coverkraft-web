@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
   Modal,
   IconButton,
   useMediaQuery,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { Carousel } from 'react-responsive-carousel';
-import { motion, AnimatePresence } from 'framer-motion';
-import API_URL from '../../ServiceModule/Service';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import Loader from '../../component/Loader';
-import { headingStyle } from '../../theme/themeStyles';
-import ellipse from '../../Images/Ellipse12.png';
-import cardBG from '../../Images/tip2.png';
-import TLeft from '../../Images/TLeft.png';
-import TRight from '../../Images/TRight.png';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { Carousel } from "react-responsive-carousel";
+import { motion, AnimatePresence } from "framer-motion";
+import API_URL from "../../ServiceModule/Service";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Loader from "../../component/Loader";
+import { headingStyle } from "../../theme/themeStyles";
+import ellipse from "../../Images/Ellipse12.png";
+import cardBG from "../../Images/tip2.png";
+import TLeft from "../../Images/TLeft.png";
+import TRight from "../../Images/TRight.png";
 
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 180;
 
 const truncateText = (text, maxLength = 100) =>
-  text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+  text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 
 const PolicyCard = ({ number, title, description, onSeeMore }) => {
   const isTruncated = description.length > 120;
@@ -30,16 +30,16 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
   return (
     <Box
       sx={{
-        position: 'relative',
-        width: 'fit-content',
+        position: "relative",
+        width: "fit-content",
         maxWidth: CARD_WIDTH,
         height: CARD_HEIGHT + 40,
-        mx: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'visible',
-        flex: '1 1 auto',
+        mx: "10px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "visible",
+        flex: "1 1 auto",
       }}
     >
       <Box
@@ -47,27 +47,26 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         src={ellipse}
         alt="ellipse"
         sx={{
-          position: 'absolute',
-          top: '3px',
-          left: '0px',
-          width: '200px !important',
-          height: '215px',
+          position: "absolute",
+          top: "3px",
+          left: "0px",
+          width: "200px !important",
+          height: "215px",
           zIndex: 0,
         }}
       />
 
       <Typography
         sx={{
-          position: 'absolute',
+          position: "absolute",
           top: 15,
           left: 42,
-          fontFamily: 'DM Sans, sans-serif',
+          fontFamily: "DM Sans, sans-serif",
           fontSize: 36,
-          color: 'transparent',
-          WebkitTextStroke: '2px white',
+          color: "transparent",
+          WebkitTextStroke: "2px white",
           fontWeight: 900,
           zIndex: 3,
-      
         }}
       >
         {number < 10 ? `0${number}` : number}
@@ -76,25 +75,25 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
       <Box
         sx={{
           backgroundImage: `url(${cardBG})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderRadius: '20px',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          borderRadius: "20px",
           padding: 2,
-          width: '100%',
+          width: "100%",
           height: CARD_HEIGHT,
           zIndex: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
           marginLeft: 3.8,
-          backdropFilter: 'blur(8px)',
-          color: '#121212',
+          backdropFilter: "blur(8px)",
+          color: "#121212",
         }}
       >
         <Typography
           variant="h5"
           pl={2}
-          sx={{ color: 'white', fontWeight: 600, textAlign: 'left' }}
+          sx={{ color: "white", fontWeight: 600, textAlign: "left" }}
         >
           {title}
         </Typography>
@@ -102,17 +101,17 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         <Typography
           variant="body2"
           sx={{
-            color: '#fff',
+            color: "#fff",
             mt: 1,
             lineHeight: 1.4,
-            textAlign: 'left',
+            textAlign: "left",
             pl: 2,
             fontSize: 14,
-            display: '-webkit-box',
+            display: "-webkit-box",
             WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {description}
@@ -121,16 +120,16 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         <Typography
           onClick={onSeeMore}
           sx={{
-            color: '#5A9F1D',
-            cursor: 'pointer',
+            color: "#5A9F1D",
+            cursor: "pointer",
             mt: 1,
-            fontWeight: 'bold',
+            fontWeight: "bold",
             fontSize: 13,
-            textAlign: 'right',
-            paddingLeft: '70%',
+            textAlign: "right",
+            paddingLeft: "70%",
           }}
         >
-          {isTruncated ? 'Read More' : ''}
+          {"Read More"}
         </Typography>
       </Box>
     </Box>
@@ -144,8 +143,8 @@ const WhyCoverKraft = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const isSmall = useMediaQuery('(max-width:600px)');
-  const isMedium = useMediaQuery('(max-width:1024px)');
+  const isSmall = useMediaQuery("(max-width:600px)");
+  const isMedium = useMediaQuery("(max-width:1024px)");
   const groupSize = isSmall ? 1 : isMedium ? 2 : 3;
 
   useEffect(() => {
@@ -154,11 +153,13 @@ const WhyCoverKraft = () => {
         const response = await fetch(`${API_URL}tips/getAll`);
         const result = await response.json();
         if (result.status) {
-          const activeCards = result.data.filter(card => card.status === 'active');
+          const activeCards = result.data.filter(
+            (card) => card.status === "active"
+          );
           setCardData(activeCards);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
@@ -168,7 +169,7 @@ const WhyCoverKraft = () => {
 
   const openPopup = (card) => {
     setPopupContent({
-      title: card.subtitle || 'Info',
+      title: card.subtitle || "Info",
       description: card.description,
     });
     setShowPopup(true);
@@ -185,15 +186,23 @@ const WhyCoverKraft = () => {
   }
 
   const handlePrev = () => {
-    setCurrentSlide(prev => (prev === 0 ? groupedData.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? groupedData.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentSlide(prev => (prev === groupedData.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === groupedData.length - 1 ? 0 : prev + 1));
   };
 
   return (
-    <Box id="card" sx={{ backgroundColor: '#121212', px: 2, py: 6, scrollMarginTop: '100px' }}>
+    <Box
+      id="card"
+      sx={{
+        backgroundColor: "#121212",
+        px: 2,
+        py: 6,
+        scrollMarginTop: "100px",
+      }}
+    >
       <Box textAlign="center" mb={4}>
         <Typography variant="subtitle1" sx={headingStyle}>
           Tips & Tricks
@@ -215,18 +224,23 @@ const WhyCoverKraft = () => {
         </Box>
       ) : (
         <>
-          <Box display="flex" alignItems="center" justifyContent="center" position="relative">
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            position="relative"
+          >
             {/* Left Arrow */}
             <button
               className="card-arrow-btn left-arrow"
               onClick={handlePrev}
               style={{
-                position: 'absolute',
-                left: '10px',
+                position: "absolute",
+                left: "10px",
                 zIndex: 5,
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
               }}
             >
               <img src={TLeft} alt="Left" width={35} />
@@ -244,7 +258,12 @@ const WhyCoverKraft = () => {
               swipeable
             >
               {groupedData.map((group, i) => (
-                <Box key={i} display="flex" justifyContent="center" flexWrap="nowrap">
+                <Box
+                  key={i}
+                  display="flex"
+                  justifyContent="center"
+                  flexWrap="nowrap"
+                >
                   {group.map((card, j) => (
                     <PolicyCard
                       key={`${i}-${j}`}
@@ -263,12 +282,12 @@ const WhyCoverKraft = () => {
               className="card-arrow-btn right-arrow"
               onClick={handleNext}
               style={{
-                position: 'absolute',
-                right: '10px',
+                position: "absolute",
+                right: "10px",
                 zIndex: 5,
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
               }}
             >
               <img src={TRight} alt="Right" width={35} />
@@ -284,11 +303,11 @@ const WhyCoverKraft = () => {
                 sx={{
                   width: 12,
                   height: 12,
-                  borderRadius: '50%',
+                  borderRadius: "50%",
                   mx: 1,
-                  cursor: 'pointer',
-                  backgroundColor: currentSlide === index ? '#f39c12' : '#888',
-                  transition: 'all 0.3s ease',
+                  cursor: "pointer",
+                  backgroundColor: currentSlide === index ? "#f39c12" : "#888",
+                  transition: "all 0.3s ease",
                 }}
               />
             ))}
@@ -302,29 +321,29 @@ const WhyCoverKraft = () => {
           <Modal open={true} onClose={closePopup}>
             <Box
               component={motion.div}
-              initial={{ opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' }}
-              exit={{ opacity: 0, clipPath: 'inset(0% 100% 0% 0%)' }}
-              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              initial={{ opacity: 1, clipPath: "inset(0% 0% 0% 0%)" }}
+              exit={{ opacity: 0, clipPath: "inset(0% 100% 0% 0%)" }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
               sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'rgba(33, 33, 33, 0.75)',
-                backdropFilter: 'blur(12px)',
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "rgba(33, 33, 33, 0.75)",
+                backdropFilter: "blur(12px)",
                 borderRadius: 3,
-                color: '#fff',
+                color: "#fff",
                 p: 3,
-                width: '90%',
+                width: "90%",
                 maxWidth: 600,
                 maxHeight: 600,
-                boxShadow: '0px 0px 30px rgba(0, 0, 0, 0.6)',
-                overflow: 'hidden',
+                boxShadow: "0px 0px 30px rgba(0, 0, 0, 0.6)",
+                overflow: "hidden",
               }}
             >
               <IconButton
                 onClick={closePopup}
-                sx={{ position: 'absolute', top: 8, right: 8, color: '#fff' }}
+                sx={{ position: "absolute", top: 8, right: 8, color: "#fff" }}
               >
                 <CloseIcon />
               </IconButton>
@@ -335,18 +354,18 @@ const WhyCoverKraft = () => {
               <Box
                 sx={{
                   maxHeight: 350,
-                  overflowY: 'auto',
+                  overflowY: "auto",
                   pr: 1,
-                  '&::-webkit-scrollbar': { width: 0 },
-                  scrollbarWidth: 'none',
+                  "&::-webkit-scrollbar": { width: 0 },
+                  scrollbarWidth: "none",
                 }}
               >
                 <Typography
                   variant="body1"
                   sx={{
                     fontSize: 16,
-                    color: '#ccc',
-                    whiteSpace: 'pre-line',
+                    color: "#ccc",
+                    whiteSpace: "pre-line",
                     pl: 2,
                   }}
                 >

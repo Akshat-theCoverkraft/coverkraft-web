@@ -42,8 +42,8 @@ import emptyImage from "../../src/Images/NoData.png";
 import "./vault.css";
 import SessionExpiredModal from "../utils/sessionExpireModal";
 import { color } from "framer-motion";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -73,7 +73,11 @@ const StyledButton = styled("button")(({ isAllSelected }) => ({
 
 const Vault = () => {
   // Consolidated state
-  const [dialogs, setDialogs] = useState({ addPolicy: false, confirm: false, error: "" });
+  const [dialogs, setDialogs] = useState({
+    addPolicy: false,
+    confirm: false,
+    error: "",
+  });
   const [files, setFiles] = useState(null);
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -113,23 +117,21 @@ const Vault = () => {
     type === "pdf" ? setFiles(null) : setImage(null);
 
   const handleFileUpload = (e, type) => {
-
     const uploadedFiles = e.target.files;
     type === "pdf" ? setFiles(uploadedFiles) : setImage(uploadedFiles);
     // toggleDialog("addPolicy", false)
-    toggleDialog('error', "");
+    toggleDialog("error", "");
   };
 
   // OCR data extraction
   const handleConfirm = async () => {
-      setLoading(true);
+    setLoading(true);
     if (files == null && image == null) {
-      toggleDialog("error", "Select at least one file to proceed.")
+      toggleDialog("error", "Select at least one file to proceed.");
       return;
     }
-    toggleDialog('error', "");
-    toggleDialog("addPolicy", false)
-  
+    toggleDialog("error", "");
+    toggleDialog("addPolicy", false);
 
     const token = sessionStorage.getItem("token");
     const formData = new FormData();
@@ -143,7 +145,6 @@ const Vault = () => {
     }
 
     try {
-
       const response = await axios.post(
         `${API_URL}document/ocrExtractData`,
         formData,
@@ -154,7 +155,6 @@ const Vault = () => {
           },
         }
       );
-
 
       if (response.status === 200) {
         const responseData = response.data;
@@ -253,35 +253,35 @@ const Vault = () => {
     }
   };
 
-const exportToPDF = async () => {
-  if (selectedPolicies.length === 0) {
-    return toast.error("Please select at least one policy to export");
-  }
+  const exportToPDF = async () => {
+    if (selectedPolicies.length === 0) {
+      return toast.error("Please select at least one policy to export");
+    }
 
-  try {
-    const token = sessionStorage.getItem("token");
-    const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
+    try {
+      const token = sessionStorage.getItem("token");
+      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
 
-    // Step 1: Get the file URL from backend
-    const response = await axios.get(
-      `${API_URL}policy/pdfTable?${queryParams}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+      // Step 1: Get the file URL from backend
+      const response = await axios.get(
+        `${API_URL}policy/pdfTable?${queryParams}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    const fileUrl = response?.data?.fileUrl;
-    if (!fileUrl) throw new Error("PDF file URL is missing in response.");
+      const fileUrl = response?.data?.fileUrl;
+      if (!fileUrl) throw new Error("PDF file URL is missing in response.");
 
-    const filename = fileUrl.split("/").pop() || "policies.pdf";
+      const filename = fileUrl.split("/").pop() || "policies.pdf";
 
-    // Step 2: Trigger download via anchor tag — no CORS issues here
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.setAttribute("download", filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      // Step 2: Trigger download via anchor tag — no CORS issues here
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
       toast.success("PDF downloded successfully!");
     } catch (error) {
@@ -291,14 +291,22 @@ const exportToPDF = async () => {
   };
 
   // File upload card component
-  const FileUploadCard = ({ type, files, icon, text, inputRef, onChange, onClick }) => (
+  const FileUploadCard = ({
+    type,
+    files,
+    icon,
+    text,
+    inputRef,
+    onChange,
+    onClick,
+  }) => (
     <Card
       className="border mx-1 mb-1"
       style={{
         backgroundColor: "#2a2a2a !important",
         color: "#fff !important",
         boxShadow: "rgba(27, 186, 54, 0.1) 0px 0px 16px",
-        borderRadius: 10
+        borderRadius: 10,
       }}
     >
       {!files ? (
@@ -335,10 +343,13 @@ const exportToPDF = async () => {
             style={{ backgroundColor: "#333", color: "#fff", fontSize: "18px" }}
           >
             <span>{file.name}</span>
-            <IconButton onClick={() => {
-              toggleDialog('error', "")
-              resetFiles(type)
-            }} sx={{ color: "#fff" }}>
+            <IconButton
+              onClick={() => {
+                toggleDialog("error", "");
+                resetFiles(type);
+              }}
+              sx={{ color: "#fff" }}
+            >
               <CloseIcon />
             </IconButton>
           </Card>
@@ -357,7 +368,7 @@ const exportToPDF = async () => {
       }}
     >
       <ToastContainer />
-      
+
       <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
@@ -415,12 +426,11 @@ const exportToPDF = async () => {
                   My Policy
                 </Typography>
               </Breadcrumbs>
-              {loading===true && <Loader loading={loading} />}
+              {loading === true && <Loader loading={loading} />}
               <div
                 className="d-flex align-items-center flex-row gap-2 flex-wrap"
                 style={{ marginLeft: 55 }}
               >
-
                 {policyListLength > 0 && (
                   <div
                     onClick={handleShareIconClick}
@@ -456,10 +466,10 @@ const exportToPDF = async () => {
                   size="sm"
                   startIcon={AddIcon}
                   onClick={() => {
-                    setFiles(null)
-                    setImage(null)
-                    toggleDialog('error', "")
-                    toggleDialog("addPolicy", true)
+                    setFiles(null);
+                    setImage(null);
+                    toggleDialog("error", "");
+                    toggleDialog("addPolicy", true);
                   }}
                   style={{
                     padding: "8px 16px",
@@ -467,7 +477,7 @@ const exportToPDF = async () => {
                     borderRadius: "28px",
                     fontSize: "16px",
                     marginTop: "10px",
-                    width: "180px", // This will now work
+                    width: "180px",
                   }}
                 />
 
@@ -520,14 +530,13 @@ const exportToPDF = async () => {
               position: "relative !important",
             }}
           >
-
             <PolicyTabs
               handleCardClick={handleCardClick}
               shareAllPolicy={shareAllPolicy}
               selectedPolicies={selectedPolicies}
               handleCheckboxChange={handleCheckboxChange}
               onPolicyListLengthChange={setPolicyListLength}
-              onArchieveListLength={() => { }}
+              onArchieveListLength={() => {}}
               onAllPolicyIdsChange={setAllPolicyIds}
               searchQuery={searchQuery}
               selectedType={selectedType}
@@ -555,9 +564,9 @@ const exportToPDF = async () => {
                   backgroundColor: "#121212 !important",
                   border: "0.5px solid white",
                   pt: 2.5,
-                  height: '600px',
-                  justifyContent: 'center',
-                  alignContent: 'center'
+                  height: "600px",
+                  justifyContent: "center",
+                  alignContent: "center",
                 }}
               >
                 <Box
@@ -567,16 +576,22 @@ const exportToPDF = async () => {
                     alignItems: "center",
                     alignContent: "center",
                     flexDirection: "column",
-                    alignSelf: 'center',
-                    height: 'auto',
+                    alignSelf: "center",
+                    height: "auto",
                     color: THEME_COLOR.COLOR,
                   }}
                 >
                   <img
                     src={emptyImage}
-                    height='auto'
+                    height="auto"
                     alt="No Data"
-                    style={{ width: "40%", height: "100%", maxWidth: "200px", height: '100%', resize: 'none' }}
+                    style={{
+                      width: "40%",
+                      height: "100%",
+                      maxWidth: "200px",
+                      height: "100%",
+                      resize: "none",
+                    }}
                   />
                   <Typography sx={{ fontSize: "1.6rem", mb: 2, mt: 3 }}>
                     {"No Record Found"}
@@ -586,7 +601,6 @@ const exportToPDF = async () => {
             )}
           </Grid>
         </Grid>
-
       </div>
 
       <About />
@@ -608,7 +622,7 @@ const exportToPDF = async () => {
       >
         <DialogTitle
           className="text-center fw-bold pt-4 fs-2"
-          style={{ backgroundColor: "#212121", color: "#fff", }}
+          style={{ backgroundColor: "#212121", color: "#fff" }}
         >
           Add Policies
         </DialogTitle>
@@ -639,15 +653,17 @@ const exportToPDF = async () => {
             inputRef={inputRef}
             onClick={() => {
               if (image === null || image === "") {
-                inputRef.current.click()
+                inputRef.current.click();
               } else {
-                toggleDialog('error', 'Only one file can be selected.. Clear image data to proceed with PDF.')
+                toggleDialog(
+                  "error",
+                  "Only one file can be selected.. Clear image data to proceed with PDF."
+                );
               }
-
             }}
             onChange={(e) => {
               // if(image===null|| image===""){
-              handleFileUpload(e, "pdf")
+              handleFileUpload(e, "pdf");
               // }else{
               //  toggleDialog('error', 'Only one file can be selected.. Clear image data to proceed with PDF.')
               // }
@@ -662,16 +678,29 @@ const exportToPDF = async () => {
             inputRef={imageRef}
             onClick={() => {
               if (files === null || files === "") {
-                imageRef.current.click()
+                imageRef.current.click();
               } else {
-                toggleDialog('error', 'Only one file can be selected.. Clear pdf data to proceed with Image.')
+                toggleDialog(
+                  "error",
+                  "Only one file can be selected.. Clear pdf data to proceed with Image."
+                );
               }
             }}
             onChange={(e) => {
-              handleFileUpload(e, "image")
+              handleFileUpload(e, "image");
             }}
           />
-          {dialogs.error !== '' ? <div style={{ alignSelf: 'center', justifyContent: 'center', color: 'red' }}>{dialogs.error}</div> : null}
+          {dialogs.error !== "" ? (
+            <div
+              style={{
+                alignSelf: "center",
+                justifyContent: "center",
+                color: "red",
+              }}
+            >
+              {dialogs.error}
+            </div>
+          ) : null}
           <div
             style={{
               display: "flex",
@@ -679,7 +708,6 @@ const exportToPDF = async () => {
               gap: "16px", // space between buttons
             }}
           >
-
             <Button
               text="Cancel"
               size="md"
@@ -816,11 +844,8 @@ const exportToPDF = async () => {
             gap: "16px",
             // padding: "16px 32px",
           }}
-        >
-
-        </DialogActions>
+        ></DialogActions>
       </StyledDialog>
-
     </div>
   );
 };

@@ -138,7 +138,9 @@ const Blog = () => {
               }}
               onError={(e) => {
                 console.warn("📛 Video failed:", e);
-                const fallback = document.getElementById(`fallback-img-${index}`);
+                const fallback = document.getElementById(
+                  `fallback-img-${index}`
+                );
                 if (fallback) fallback.style.display = "block";
                 e.target.style.display = "none";
               }}
@@ -177,8 +179,6 @@ const Blog = () => {
         )}
       </MediaContainer>
 
-
-
       <div style={{ paddingTop: "10px" }}>
         <div
           style={{
@@ -188,7 +188,12 @@ const Blog = () => {
             marginBottom: "8px",
           }}
         >
-          <Typography variant="body2" fontWeight="bold" fontSize="1.2rem" color={THEME_COLOR.GREEN}>
+          <Typography
+            variant="body2"
+            fontWeight="bold"
+            fontSize="1.2rem"
+            color={THEME_COLOR.GREEN}
+          >
             {post?.date}
           </Typography>
           <Chip
@@ -204,11 +209,21 @@ const Blog = () => {
           />
         </div>
 
-        <Typography variant="h6" style={{ marginBottom: "8px", fontSize: "1.6rem", fontWeight: "bold" }}>
+        <Typography
+          variant="h6"
+          style={{
+            marginBottom: "8px",
+            fontSize: "1.6rem",
+            fontWeight: "bold",
+          }}
+        >
           {truncateString(post?.subtitle, 50)}
         </Typography>
 
-        <Typography variant="body2 " style={{ marginBottom: "8px", fontSize: "1.3rem", }}>
+        <Typography
+          variant="body2 "
+          style={{ marginBottom: "8px", fontSize: "1.3rem" }}
+        >
           {truncateString(post?.description, 80)}
         </Typography>
 
@@ -248,7 +263,11 @@ const Blog = () => {
       <CenteredContainer>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
-          <h3 style={{ color: "#FF9906", fontWeight: "bold", fontSize: "29px" }}>Latest from the blogs</h3>
+          <h3
+            style={{ color: "#FF9906", fontWeight: "bold", fontSize: "29px" }}
+          >
+            Latest from the blogs
+          </h3>
           {/* <h1 style={{ fontWeight: "bold", margin: "20px 0" }}>Latest from the blog</h1> */}
         </div>
 
@@ -262,7 +281,15 @@ const Blog = () => {
         </Grid>
 
         {/* View All Button */}
-        <Grid item xs={12} style={{ textAlign: "center", marginTop: "40px", marginBottom: "20px", }}>
+        <Grid
+          item
+          xs={12}
+          style={{
+            textAlign: "center",
+            marginTop: "40px",
+            marginBottom: "20px",
+          }}
+        >
           <MuiButton
             variant="contained"
             onClick={() => navigate(`/feed/${firstPostType}`)}

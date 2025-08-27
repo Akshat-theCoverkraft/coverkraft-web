@@ -74,177 +74,178 @@ const InsuranceCard = () => {
     }
   };
 
- return (
-  <Box sx={{ position: "relative", px: { xs: 1, sm: 2, md: 4 }, py: 4 }}>
-    {apiResponse.length === 0 ? (
-      // ✅ No data: Show message in center
-      <Box
-  sx={{
-    width: "100%",
-    minHeight: "300px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    fontSize: { xs: "1.6rem", sm: "2rem", md: "2.4rem" },
-    fontWeight: 500,
-    color: "white",
-    px: 2,
-  }}
->
-  <Box sx={{ maxWidth: "600px", lineHeight: 1.4 }}>
-    Looks a bit quiet here... <br />
-    New content will be landing shortly!
-  </Box>
-</Box>
-
-    ) : (
-      <>
-        <Carousel
-          ref={carouselRef}
-          showThumbs={false}
-          showStatus={false}
-          infiniteLoop={false}
-          centerMode
-          centerSlidePercentage={100 / slidesPerPage}
-          autoPlay={false}
-          transitionTime={500}
-          swipeable
-          emulateTouch
-          selectedItem={Math.min(currentSlide, apiResponse.length - 1)}
-          onChange={handleSlideChange}
-          showIndicators={false}
-          showArrows={false}
-        >
-          {apiResponse.map((value, index) => (
-            <Box
-              key={index}
-              sx={{ px: 1, boxSizing: "border-box" }}
+  return (
+    apiResponse.length !== 0 && (
+      <Box sx={{ position: "relative", px: { xs: 1, sm: 2, md: 4 }, py: 4 }}>
+        {apiResponse.length === 0 ? (
+          // ✅ No data: Show message in center
+          <Box
+            sx={{
+              width: "100%",
+              minHeight: "300px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              fontSize: { xs: "1.6rem", sm: "2rem", md: "2.4rem" },
+              fontWeight: 500,
+              color: "white",
+              px: 2,
+            }}
+          >
+            <Box sx={{ maxWidth: "600px", lineHeight: 1.4 }}>
+              Looks a bit quiet here... <br />
+              New content will be landing shortly!
+            </Box>
+          </Box>
+        ) : (
+          <>
+            <Carousel
+              ref={carouselRef}
+              showThumbs={false}
+              showStatus={false}
+              infiniteLoop={false}
+              centerMode
+              centerSlidePercentage={100 / slidesPerPage}
+              autoPlay={false}
+              transitionTime={500}
+              swipeable
+              emulateTouch
+              selectedItem={Math.min(currentSlide, apiResponse.length - 1)}
+              onChange={handleSlideChange}
+              showIndicators={false}
+              showArrows={false}
             >
-              <Box
-                sx={{
-                  position: "relative",
-                  borderRadius: 3,
-                  overflow: "hidden",
-                  width: "100%",
-                }}
-              >
-                <img
-                  src={bgImg}
-                  alt="Insurance Background"
-                  style={{ width: "100%", display: "block" }}
-                />
-
-                {/* Flag + Title */}
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: 0.5,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: isXs ? "7rem" : "12rem",
-                    px: 1,
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src={flag}
-                    alt="Flag"
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      display: "block",
-                      borderRadius: 2,
-                    }}
-                  />
+              {apiResponse.map((value, index) => (
+                <Box key={index} sx={{ px: 1, boxSizing: "border-box" }}>
                   <Box
                     sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      color: "black",
-                      fontSize: { xs: "0.9rem", sm: "1.1rem", md: "1.3rem" },
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      whiteSpace: "nowrap",
-                      textOverflow: "ellipsis",
+                      position: "relative",
+                      borderRadius: 3,
                       overflow: "hidden",
-                      maxWidth: "60%",
-                    }}
-                  >
-                    {value?.title}
-                  </Box>
-                </Box>
-
-                {/* Offer Image */}
-                {value?.offerImg && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      right: "5%",
-                      transform: "translateY(-50%)",
-                      width: { xs: "35%", sm: "30%", md: "25%" },
-                      height: "auto",
+                      width: "100%",
                     }}
                   >
                     <img
-                      src={value.offerImg}
-                      alt="Offer"
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                        borderRadius: "12px",
-                        opacity: 0.9,
-                      }}
+                      src={bgImg}
+                      alt="Insurance Background"
+                      style={{ width: "100%", display: "block" }}
                     />
+
+                    {/* Flag + Title */}
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 0.5,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: isXs ? "7rem" : "12rem",
+                        px: 1,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <img
+                        src={flag}
+                        alt="Flag"
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          display: "block",
+                          borderRadius: 2,
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          color: "black",
+                          fontSize: {
+                            xs: "0.9rem",
+                            sm: "1.1rem",
+                            md: "1.3rem",
+                          },
+                          fontWeight: "bold",
+                          textAlign: "center",
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          maxWidth: "60%",
+                        }}
+                      >
+                        {value?.title}
+                      </Box>
+                    </Box>
+
+                    {/* Offer Image */}
+                    {value?.offerImg && (
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          right: "5%",
+                          transform: "translateY(-50%)",
+                          width: { xs: "35%", sm: "30%", md: "25%" },
+                          height: "auto",
+                        }}
+                      >
+                        <img
+                          src={value.offerImg}
+                          alt="Offer"
+                          style={{
+                            width: "100%",
+                            height: "auto",
+                            borderRadius: "12px",
+                            opacity: 0.9,
+                          }}
+                        />
+                      </Box>
+                    )}
                   </Box>
-                )}
-              </Box>
-            </Box>
-          ))}
-        </Carousel>
+                </Box>
+              ))}
+            </Carousel>
 
-        {/* Left Arrow */}
-        <IconButton
-          onClick={goToPrev}
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: 0,
-            transform: "translateY(-50%)",
-            zIndex: 10,
-            backgroundColor: "white",
-            boxShadow: 1,
-            "&:hover": { backgroundColor: "#f0f0f0" },
-          }}
-        >
-          <ArrowBackIos />
-        </IconButton>
+            {/* Left Arrow */}
+            <IconButton
+              onClick={goToPrev}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: 0,
+                transform: "translateY(-50%)",
+                zIndex: 10,
+                backgroundColor: "white",
+                boxShadow: 1,
+                "&:hover": { backgroundColor: "#f0f0f0" },
+              }}
+            >
+              <ArrowBackIos />
+            </IconButton>
 
-        {/* Right Arrow */}
-        <IconButton
-          onClick={goToNext}
-          sx={{
-            position: "absolute",
-            top: "50%",
-            right: 0,
-            transform: "translateY(-50%)",
-            zIndex: 10,
-            backgroundColor: "white",
-            boxShadow: 1,
-            "&:hover": { backgroundColor: "#f0f0f0" },
-          }}
-        >
-          <ArrowForwardIos />
-        </IconButton>
-      </>
-    )}
-  </Box>
-);
-
+            {/* Right Arrow */}
+            <IconButton
+              onClick={goToNext}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                right: 0,
+                transform: "translateY(-50%)",
+                zIndex: 10,
+                backgroundColor: "white",
+                boxShadow: 1,
+                "&:hover": { backgroundColor: "#f0f0f0" },
+              }}
+            >
+              <ArrowForwardIos />
+            </IconButton>
+          </>
+        )}
+      </Box>
+    )
+  );
 };
 
 export default InsuranceCard;
