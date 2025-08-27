@@ -8,7 +8,6 @@ import {
   Checkbox,
   Typography,
   Pagination,
-  CircularProgress,
   TextField,
   InputAdornment,
   Button,
@@ -18,7 +17,6 @@ import {
 } from "@mui/material";
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 import { makeStyles } from "@mui/styles";
-import axios from "axios";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -38,16 +36,16 @@ import { THEME_COLOR } from "../../constants";
 import moment from "moment";
 import redBg from "../../Images/red-img.png";
 import SessionExpiredModal from "../../utils/sessionExpireModal";
-import { useNavigate } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   parse,
-  isAfter,
   isBefore,
   differenceInDays,
   startOfDay,
   isValid,
 } from 'date-fns';
- 
+import { usePolicyContext } from "../../store/policyContext";
+
 
 const useStyles = makeStyles(() => ({
   searchContainer: {
@@ -166,77 +164,10 @@ const calculatePolicyStatus = (dateString) => {
 
   if (daysToRenewal < 0) return "Expired";
   if (daysToRenewal <= 60) return `${daysToRenewal} days left`;
-  
+
 
   return null;
 };
-
-// const calculatePolicyStatus = (dateString) => {
-//   // if (!policyEndDate) return null;
-//   // try {
-//   //   const [day, month, year] = policyEndDate.split(" ")[0].split("/");
-//   //   const endDate = new Date(year, month - 1, day);
-//   //   if (isNaN(endDate)) return null;
-//   //   const now = new Date();
-//   //   const diffInDays = Math.floor(
-//   //     (new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) -
-//   //       new Date(now.getFullYear(), now.getMonth(), now.getDate())) /
-//   //       (1000 * 60 * 60 * 24)
-//   //   );
-//   //   if (diffInDays <= 0) return "Expired";
-//   //   if (diffInDays <= 60) return `${diffInDays} days left`;
-//   //   return null;
-//   // } catch (error) {
-//   //   return null;
-//   // }
-//     //  if (!dateString) return null;
-//     // const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
-//     // if (!isValid(parsedDate)) {
-//     //   console.warn('Invalid date format:', dateString);
-//     //   return null;
-//     // }
-
-//        if (!dateString) return null;
-//     const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
-//     if (!isValid(parsedDate)) {
-//       console.warn('Invalid date format:', dateString);
-//       return null;
-//     }
- 
-//   const today = startOfDay(new Date());
- 
-//   const policyEndDate = parsedDate;
- 
-//   const isExpired = policyEndDate ? isBefore(policyEndDate, today) : false;
- 
-//   const daysToRenewal = policyEndDate
-//     ? differenceInDays(policyEndDate, today)
-//     : null;
- 
-//   const shouldShowRenewal =
-//     policyEndDate &&
-//     !isExpired &&
-//     daysToRenewal !== null &&
-//     daysToRenewal <= 60 &&
-//     daysToRenewal >= 0;
- 
-//   console.log('Policy End Date:', policyEndDate);
-//   console.log('Today:', today);
-//   console.log('Days to renewal:', daysToRenewal);
-//   console.log('isExpired:', isExpired, 'for date:');
- 
-//   const isExpiringToday = policyEndDate
-//     ? differenceInDays(policyEndDate, today) === 0
-//     : false;
- 
-//   const isExpiredStrict = policyEndDate
-//     ? differenceInDays(policyEndDate, today) < 0
-//     : false;
-//  console.log(shouldShowRenewal, daysToRenewal, "---------------------------------->>>>>>>>>>>>>>")
-
-//     return daysToRenewal;
-// };
-
 
 const filterPolicies = (
   policies,
@@ -361,6 +292,9 @@ const PolicyCard = ({
   showStatus = false,
   isExpired = false,
   isSelected = false,
+  fetchData,
+  activeTab,
+  value
 }) => {
   const config = POLICY_CONFIGS[policy.policyType] || {
     label: "",
@@ -369,6 +303,39 @@ const PolicyCard = ({
   const status = showStatus
     ? calculatePolicyStatus(policy.policyEndDate)
     : null;
+
+
+  const handleDelete = async (policyId) => {
+    try {
+      const response = await fetch(`${API_URL}policy/delete`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: (() => {
+          const formData = new FormData();
+          formData.append("policyId", policyId);
+          return formData;
+        })(),
+      });
+
+      if (response.ok) {
+        console.log("Policy deleted successfully!");
+        if (value === 2) {
+          fetchData("policy/archiveData", { status: "archive" }, true);
+        } else if (value === 3) {
+          fetchData("policy/getById", { policyType: "uncompleted" })
+        } else {
+          fetchData("policy/getById", { policyType: activeTab });
+        }
+
+      } else {
+        console.error("Failed to delete policy:", response.status);
+      }
+    } catch (error) {
+      console.error("Error deleting policy:", error);
+    }
+  };
 
   return (
     <Card
@@ -388,27 +355,26 @@ const PolicyCard = ({
         overflow: "hidden",
       }}
     >
-      <CardContent sx={{ p: 1.5 }}>
+      <CardContent sx={{}}>
         {/* Status Badge - Fixed positioning to prevent overlap */}
         {(status || isExpired) && (
           <>
             <div
               style={{
                 position: "absolute",
-                top: -50,
                 right: 0,
+                top: 0,
                 width: "120px",
-                height: "25px",
+                height: '30px',
                 backgroundImage: `url(${redBg})`,
                 backgroundSize: "cover",
                 opacity: 1,
-                marginTop: "50px",
               }}
             />
             <div
               style={{
                 position: "absolute",
-                top: 2,
+                top: 5,
                 right: 25,
                 color: "#ffffff",
                 fontSize: "12px",
@@ -550,6 +516,41 @@ const PolicyCard = ({
               </OverlayTrigger>
             </Box>
           </Grid>
+
+          {/* Delete Icon */}
+          <Grid item xs={12} sm={1}>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip style={{ fontSize: "1.2rem" }}>
+                    Delete Policy
+                  </Tooltip>
+                }
+              >
+                <IconButton
+                  sx={{
+                    backgroundColor: "white",
+                    "&:hover": { backgroundColor: "#f5f5f5" },
+                    width: 25,
+                    height: 25,
+                    boxShadow: 2,
+                  }}
+                  onClick={() => handleDelete(policy._id)}
+                >
+                  <DeleteIcon
+                    sx={{
+                      fontSize: 16,
+                      color: "red",
+                    }}
+                  />
+                </IconButton>
+              </OverlayTrigger>
+            </Box>
+          </Grid>
+
+
+
         </Grid>
       </CardContent>
     </Card>
@@ -624,25 +625,32 @@ export default function PolicyTabs({
   shareAllPolicy,
   selectedPolicies,
   handleCheckboxChange,
-  onPolicyListLengthChange,
-  onArchieveListLength,
-  onAllPolicyIdsChange,
-  clearPolicyId,
 }) {
-  const [value, setValue] = useState(0);
-  const [pages, setPages] = useState({ active: 1, expired: 1, archive: 1 });
-  const [policyList, setPolicyList] = useState([]);
-  const [archieveList, setArchieveList] = useState([]);
-  const [activeTab, setActiveTab] = useState("active");
-  const [loading, setLoading] = useState(false);
-  const [selectedPolicyId, setSelectedPolicyId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTypeFilter, setSelectedTypeFilter] = useState("all");
-  const [showSessionExpired, setShowSessionExpired] = useState(false);
-  const navigate = useNavigate(); // navigation hook
+  const {
+    value,
+    pages,
+    policyList,
+    activeTab,
+    loading,
+    selectedPolicyId,
+    searchTerm,
+    selectedTypeFilter,
+    showSessionExpired,
+    setSelectedPolicyId,
+    setSearchTerm,
+    setSelectedTypeFilter,
+    setPages,
+    fetchData,
+    handleTabChange,
+    handleClearAll,
+    handleSessionExpiredOk,
+    itemsPerPage,
+    setActiveTab,
+    archieveList,
+    setValue
+  } = usePolicyContext();
 
   const classes = useStyles();
-  const itemsPerPage = 3;
 
   useEffect(() => {
     setActiveTab('active')
@@ -685,105 +693,21 @@ export default function PolicyTabs({
     }
   }, [value, policyList, archieveList, searchTerm, selectedTypeFilter]);
 
-  // useEffect(() => {
-  //   const currentList = value === 2 ? archieveList : policyList;
-  //   const filteredList = filterPolicies(
-  //     currentList,
-  //     searchTerm,
-  //     selectedTypeFilter
-  //   );
-  //   if (!filteredList?.length) return;
-
-  //   const storedId = sessionStorage.getItem("selectedPolicyId");
-  //   const policyExists = filteredList.some((p) => p._id === storedId);
-
-  //   if (policyExists) {
-  //     setSelectedPolicyId(storedId);
-  //     handleCardClick(storedId);
-  //   } else {
-  //     const firstId = filteredList[0]._id;
-  //     setSelectedPolicyId(firstId);
-  //     sessionStorage.setItem("selectedPolicyId", firstId);
-  //     handleCardClick(firstId);
-  //   }
-  // }, [value, policyList, archieveList, searchTerm, selectedTypeFilter]);
-
   const handleCardClickWithState = (id) => {
     setSelectedPolicyId(id);
     sessionStorage.setItem("selectedPolicyId", id);
     handleCardClick(id);
   };
 
-  const fetchData = async (endpoint, params, isArchive = false) => {
-    setLoading(true);
-    try {
-      const token = sessionStorage.getItem("token");
-      const userId = sessionStorage.getItem("userId");
-      const response = await axios.get(`${API_URL}${endpoint}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { userId, ...params },
-      });
-      const data = response?.data?.data || [];
-      if (isArchive) {
-        setArchieveList(data);
-        onArchieveListLength(data.length);
-      } else {
-        setPolicyList(data);
-        onPolicyListLengthChange(data.length);
-        onAllPolicyIdsChange?.(data.map((policy) => policy._id));
-      }
-    } catch (error) {
-       if (error.response?.status === 401) {
-            setShowSessionExpired(true);
-          } 
-      console.error("Error fetching data:", error);
-      const emptyData = [];
-      if (isArchive) {
-        setArchieveList(emptyData);
-        onArchieveListLength(0);
-      } else {
-        setPolicyList(emptyData);
-        onPolicyListLengthChange(0);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-   const handleSessionExpiredOk = () => {
-    setShowSessionExpired(false);
-    navigate('/login');
-    localStorage.clear();
-  sessionStorage.clear(); 
-  };
-
   useEffect(() => {
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
-    } else if(value===3){
+    } else if (value === 3) {
       fetchData("policy/getById", { policyType: "uncompleted" })
-    }else {    
+    } else {
       fetchData("policy/getById", { policyType: activeTab });
     }
   }, [value, activeTab]);
-
-  const handleTabChange = (event, newValue) => {
-    setValue(newValue);
-    sessionStorage.setItem("selectedTab", newValue.toString());
-    if (newValue < 2) setActiveTab(TAB_CONFIGS[newValue].key);
-    setPages((prev) => ({
-      ...prev,
-      [TAB_CONFIGS[newValue]?.key || "archive"]: 1,
-    }));
-    setSelectedPolicyId(null);
-    sessionStorage.removeItem("selectedPolicyId");
-  };
-
-  const handleClearAll = () => {
-    setSearchTerm("");
-    setSelectedTypeFilter("all");
-    setPages({ active: 1, expired: 1, archive: 1 });
-  };
 
   const renderTabContent = (
     tabValue,
@@ -814,8 +738,8 @@ export default function PolicyTabs({
           zIndex: 1,
           position: "relative  !important",
           paddingTop: 2,
-          width:'100%',
-          minHeight:'600px'
+          width: '100%',
+          minHeight: '600px'
         }}
       >
         <Box
@@ -835,11 +759,11 @@ export default function PolicyTabs({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                height:"500px"  
+                height: "500px"
               }}
             >
               {/* Scrollable List Area */}
-              <Box sx={{ flex: 0.85,}}>
+              <Box sx={{ flex: 0.85, }}>
                 {paginatedData.map((policy) => (
                   <PolicyCard
                     key={policy._id}
@@ -851,12 +775,15 @@ export default function PolicyTabs({
                     showStatus={showStatus}
                     isExpired={isExpired}
                     isSelected={policy._id === selectedPolicyId}
+                    fetchData={fetchData}
+                    value={value}
+                    activeTab={activeTab}
                   />
                 ))}
               </Box>
 
               {/* Fixed Pagination at Bottom */}
-              <Box className='absolute bottom-0 !important' sx={{ }}>
+              <Box className='absolute bottom-0 !important' sx={{}}>
                 {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
                   <CustomPagination
                     totalItems={filteredList.length}
@@ -883,7 +810,7 @@ export default function PolicyTabs({
 
   return (
     <Box sx={{ px: { xs: 2, sm: 2 }, height: "100%" }}>
-        <SessionExpiredModal
+      <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
@@ -894,7 +821,7 @@ export default function PolicyTabs({
           backgroundColor: "#121212 !important",
           border: "0.5px solid white",
           pt: 1.5,
-          height:'600px'
+          height: '600px'
         }}
       >
         <TabContext value={value}>
