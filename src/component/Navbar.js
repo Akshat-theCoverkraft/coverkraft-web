@@ -289,7 +289,7 @@ function Navbar({ scrollToContactBottom }) {
                         },
                       },
                     }}
-                    title="Please update email."
+                    title={!!userEmail?"":"Please update email."}
                   >
                     <Badge
                       color="error"

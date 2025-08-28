@@ -14,6 +14,11 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
 } from "@mui/material";
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 import { makeStyles } from "@mui/styles";
@@ -304,7 +309,15 @@ const PolicyCard = ({
     ? calculatePolicyStatus(policy.policyEndDate)
     : null;
 
+  const [openConfirm, setOpenConfirm] = useState(false);
 
+  const handleOpenConfirm = () => setOpenConfirm(true);
+  const handleCloseConfirm = () => setOpenConfirm(false);
+
+  const confirmDelete = () => {
+    handleDelete(policy._id);
+    setOpenConfirm(false);
+  };
   const handleDelete = async (policyId) => {
     try {
       const response = await fetch(`${API_URL}policy/delete`, {
@@ -536,7 +549,7 @@ const PolicyCard = ({
                     height: 25,
                     boxShadow: 2,
                   }}
-                  onClick={() => handleDelete(policy._id)}
+                  onClick={handleOpenConfirm}
                 >
                   <DeleteIcon
                     sx={{
@@ -548,11 +561,27 @@ const PolicyCard = ({
               </OverlayTrigger>
             </Box>
           </Grid>
-
-
-
         </Grid>
       </CardContent>
+      <Dialog
+        open={openConfirm}
+        onClose={handleCloseConfirm}
+      >
+        <DialogTitle variant="h5">Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText variant="h5">
+            Are you sure you want to delete this policy?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirm} color="inherit" sx={{ fontSize: 12 }}>
+            Cancel
+          </Button>
+          <Button fontSize="1rem" onClick={confirmDelete} color="error" variant="contained" sx={{ fontSize: 12 }}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };
