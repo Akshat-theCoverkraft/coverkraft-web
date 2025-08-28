@@ -653,15 +653,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       onClick={() => handleMenuAction(item.action)}
       style={{
         cursor: "pointer",
-        borderBottom: "0.5px solid #fff",
+        borderBottom: `0.5px solid #fff`,
         marginBottom: "1.2rem",
         marginTop: "0.02rem",
+        color:`${item.label==="Delete Account"?"red":"#fff"}`
       }}
     >
       <Grid item xs={2}>
         <img src={item.icon} style={{ maxHeight: "2.5rem" }} alt={item.label} />
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={8} >
         <span>{item.label}</span>
       </Grid>
     </Grid>
