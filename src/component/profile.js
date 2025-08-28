@@ -768,7 +768,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         </Grid>
 
         {/* Gender */}
-        <Grid item style={commonItemStyle}>
+        {/* <Grid item style={commonItemStyle}>
           <label className="form-label fw-bold text-light mb-2 d-block">Gender</label>
           <select
             value={formData.gender}
@@ -780,7 +780,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
-        </Grid>
+        </Grid> */}
 
         {/* Buttons */}
         <Grid item style={commonItemStyle}>
