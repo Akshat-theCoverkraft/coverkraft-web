@@ -602,7 +602,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
           </div>
 
-          {!profileState.update && (
+          {/* {!profileState.update && (
             <div style={{ textAlign: 'center', marginTop: '8px' }}>
               <Typography
                 variant="caption"
@@ -616,7 +616,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 Profile Complete
               </Typography>
             </div>
-          )}
+          )} */}
 
           <h2 className="text-header text-light mt-2 text-center">
             {capitalizeFirstLetter(formData.username)}
@@ -656,7 +656,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         borderBottom: `0.5px solid #fff`,
         marginBottom: "1.2rem",
         marginTop: "0.02rem",
-        color:`${item.label==="Delete Account"?"red":"#fff"}`
+        color:`${item.label==="Delete Account"?"red":""}`
       }}
     >
       <Grid item xs={2}>
