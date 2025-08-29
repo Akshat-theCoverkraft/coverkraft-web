@@ -111,31 +111,32 @@ useEffect(() => {
       <UniversalHomeButton />
       <ScrollToTop />
       <BackToTop />
-      <Routes>
-        <Route path="" element={<Landing />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/vault" element={<Vault />} />
-        <Route path="/motor-policy" element={<MotorPolicyForm />} />
-        <Route path="/health-policy" element={<HealthPolicyForm />} />
-        <Route path="/life-policy" element={<LifePolicyForm />} />
-        <Route path="/add-policy" element={<AddPolicy />} />
-        <Route path="/profile" element={<ProfileDrawer />} />
-        <Route path="/family" element={<Family />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/notification" element={<NotificationPage />} />
-        <Route path="/feed/:type" element={<Feeds />} />
-        <Route path="/feed/:type/:id" element={<BlogDetails />} />
-        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-        <Route path='/privacypolicy' element={<PrivacyPolicy />} />
-        <Route path="/legal" element={<LegalPoliciesPage />} />
-        <Route path="/contactus" element={<ContactUs />} />
-        <Route path="/policy-type" element={<PolicyType />} />
-        <Route path="/policy-details/:id" element={<PolicyDetails />} />
-        <Route path="/gmail-sync" element={<GmailSyncPage />} />
 
-        {/* Add more routes as needed */}
-      </Routes>
+      {/* ✅ Wrap Routes inside PolicyProvider */}
+      <PolicyProvider>
+        <Routes>
+          <Route path="" element={<Landing />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/vault" element={<Vault />} />
+          <Route path="/motor-policy" element={<MotorPolicyForm />} />
+          <Route path="/health-policy" element={<HealthPolicyForm />} />
+          <Route path="/life-policy" element={<LifePolicyForm />} />
+          <Route path="/add-policy" element={<AddPolicy />} />
+          <Route path="/profile" element={<ProfileDrawer />} />
+          <Route path="/family" element={<Family />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/notification" element={<NotificationPage />} />
+          <Route path="/feed/:type" element={<Feeds />} />
+          <Route path="/feed/:type/:id" element={<BlogDetails />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+          <Route path="/legal" element={<LegalPoliciesPage />} />
+          <Route path="/contactus" element={<ContactUs />} />
+          <Route path="/policy-type" element={<PolicyType />} />
+          <Route path="/policy-details/:id" element={<PolicyDetails />} />
+          <Route path="/gmail-sync" element={<GmailSyncPage />} />
+        </Routes>
+      </PolicyProvider>
     </>
   );
 }
