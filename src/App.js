@@ -32,6 +32,8 @@ import PolicyDetails from './pages/PolicyDetails';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
+import { PolicyProvider } from "./store/policyContext.js";
+import { HelmetProvider } from "react-helmet-async";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

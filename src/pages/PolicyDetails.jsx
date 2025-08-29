@@ -187,6 +187,29 @@ const PolicyDetails = () => {
         </div>
 
         {/* Sticky Smart Button */}
+<div
+  style={{
+    position: "fixed",
+    bottom: "20px",
+    left: "50%",
+    transform: `translate(-50%, ${isFooterVisible ? "-330px" : "0"})`,
+    zIndex: 9999,
+    width: "100%",
+    maxWidth: "400px",
+    padding: "0 2em",
+    transition: "transform 0.3s ease-in-out",
+  }}
+>
+  <Button
+    text={"Buy Now"}
+    size="lg"
+    block={true}
+    onClick={() => {
+      toast.info("Feature coming soon!");
+    }}
+  />
+</div>
+
         <div
           style={{
             position: "fixed",

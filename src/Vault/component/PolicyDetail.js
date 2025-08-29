@@ -455,10 +455,14 @@ const PolicyDetail = ({ policyId }) => {
   if (policyDetails.length === 0) {
     return (
       <>
-        <ToastContainer
-          position="top-center"
-          style={{ zIndex: 999999 }}
+        <ToastContainer 
+          position="top-center" 
+          style={{ 
+            zIndex: 100000,
+            top: '110px' 
+          }}
           toastClassName="custom-toast"
+          autoClose={3000}
         />
         <Card
           // key={index}
@@ -491,11 +495,15 @@ const PolicyDetail = ({ policyId }) => {
   }
 
   return (
-    <div style={{ minHeight: "620px" }}>
-      <ToastContainer
-        position="top-center"
-        style={{ zIndex: 999999 }}
+    <div style={{minHeight:"620px"}}>
+      <ToastContainer 
+        position="top-center" 
+        style={{ 
+          zIndex: 100000,
+          top: '110px' 
+        }}
         toastClassName="custom-toast"
+        autoClose={3000}
       />
       <SessionExpiredModal
         visible={showSessionExpired}
