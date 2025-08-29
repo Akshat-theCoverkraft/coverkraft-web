@@ -444,8 +444,12 @@ const handlePolicyAction = (action) => {
       <>
         <ToastContainer 
           position="top-center" 
-          style={{ zIndex: 999999  }}
+          style={{ 
+            zIndex: 100000,
+            top: '110px' 
+          }}
           toastClassName="custom-toast"
+          autoClose={3000}
         />
         <Card
           // key={index}
@@ -481,8 +485,12 @@ const handlePolicyAction = (action) => {
     <div style={{minHeight:"620px"}}>
       <ToastContainer 
         position="top-center" 
-        style={{ zIndex: 999999 }}
+        style={{ 
+          zIndex: 100000,
+          top: '110px' 
+        }}
         toastClassName="custom-toast"
+        autoClose={3000}
       />
       <SessionExpiredModal
         visible={showSessionExpired}

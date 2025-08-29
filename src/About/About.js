@@ -7,6 +7,7 @@ import { Grid } from "@mui/material";
 import "../profile/about.css";
 import { THEME_COLOR } from "../constants";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async"; // ✅ For SEO meta tags
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
@@ -24,7 +25,34 @@ const fadeInUp = {
 const About = () => {
   return (
     <div className="d-flex flex-column min-vh-100">
-      <Navbar />
+      {/* ✅ Dynamic SEO Tags */}
+      <Helmet>
+        <title>About Us | Cover Kraft</title>
+        <meta
+          name="description"
+          content="Learn about Cover Kraft's mission and vision. We aim to make insurance accessible, transparent, and simple for everyone."
+        />
+        <meta
+          name="keywords"
+          content="About Cover Kraft, Insurance mission, Insurance vision, Cover Kraft company, insurance platform"
+        />
+        <meta property="og:title" content="About Cover Kraft" />
+        <meta
+          property="og:description"
+          content="Discover Cover Kraft's mission and vision for making insurance easier for everyone."
+        />
+        <meta
+          property="og:image"
+          content="https://yourdomain.com/coverkraft-about.jpg"
+        />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://yourdomain.com/about" />
+      </Helmet>
+
+      <header>
+        <Navbar />
+      </header>
+
       <main className="flex-grow-1">
         <div className="content py-5 px-3">
           <motion.div
@@ -60,25 +88,37 @@ const About = () => {
               variants={fadeInUp}
               custom={1}
             >
-              Coverkraft Insurance Brokers Private. Limited. is on a mission to
-              revolutionize the industry. <br />
-              Led by a team of experts and tech enthusiasts, we have developed
-              a user-friendly tech platform to make insurance easily
-              understandable and accessible for all.
+              Coverkraft Insurance Brokers Private Limited is on a mission to
+              revolutionize the insurance industry. <br />
+              Led by a team of experts and tech enthusiasts, we have developed a
+              user-friendly tech platform to make insurance easily understandable
+              and accessible for all.
             </motion.p>
           </motion.div>
 
-          <Grid
-            container
-            spacing={4}
-            justifyContent="center"
-            alignItems="stretch"
-          >
-            {[{ img: mission, title: "Mission", desc: "To educate customers about various risks and insurance products, equip them with tools for accessing and sharing their policies, and empower them with technology to purchase the most suitable products." }, 
-              { img: vision, title: "Vision", desc: "To be the preferred distribution partner for customers, recognized for our innovation, transparent advice, and integrity." }]
-              .map((card, index) => (
+          <section aria-label="Mission and Vision">
+            <Grid
+              container
+              spacing={4}
+              justifyContent="center"
+              alignItems="stretch"
+            >
+              {[
+                {
+                  img: mission,
+                  title: "Mission",
+                  desc: "To educate customers about various risks and insurance products, equip them with tools for accessing and sharing their policies, and empower them with technology to purchase the most suitable products.",
+                  alt: "Cover Kraft mission icon",
+                },
+                {
+                  img: vision,
+                  title: "Vision",
+                  desc: "To be the preferred distribution partner for customers, recognized for our innovation, transparent advice, and integrity.",
+                  alt: "Cover Kraft vision icon",
+                },
+              ].map((card, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
-                  <motion.div
+                  <motion.article
                     className="card card-container h-100"
                     style={{
                       backgroundColor: THEME_COLOR.FADE_BACKGROUND,
@@ -99,7 +139,7 @@ const About = () => {
                   >
                     <motion.img
                       src={card.img}
-                      alt={card.title}
+                      alt={card.alt}
                       className="image"
                       style={{
                         maxWidth: "100%",
@@ -126,12 +166,14 @@ const About = () => {
                     >
                       {card.desc}
                     </p>
-                  </motion.div>
+                  </motion.article>
                 </Grid>
               ))}
-          </Grid>
+            </Grid>
+          </section>
         </div>
       </main>
+
       <Footer />
     </div>
   );

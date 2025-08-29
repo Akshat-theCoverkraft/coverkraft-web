@@ -32,6 +32,7 @@ import PolicyDetails from './pages/PolicyDetails';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
+import { HelmetProvider } from "react-helmet-async";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -103,38 +104,37 @@ useEffect(() => {
   };
 
   return (
-    <>
-      <ToastContainer position="top-center" />
-      <Toaster position="top-right" reverseOrder={false} />
-      <UniversalHomeButton />
-      <ScrollToTop />
-      <BackToTop />
-      <Routes>
-        <Route path="" element={<Landing />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/vault" element={<Vault />} />
-        <Route path="/motor-policy" element={<MotorPolicyForm />} />
-        <Route path="/health-policy" element={<HealthPolicyForm />} />
-        <Route path="/life-policy" element={<LifePolicyForm />} />
-        <Route path="/add-policy" element={<AddPolicy />} />
-        <Route path="/profile" element={<ProfileDrawer />} />
-        <Route path="/family" element={<Family />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/notification" element={<NotificationPage />} />
-        <Route path="/feed/:type" element={<Feeds />} />
-        <Route path="/feed/:type/:id" element={<BlogDetails />} />
-        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-        <Route path='/privacypolicy' element={<PrivacyPolicy />} />
-        <Route path="/legal" element={<LegalPoliciesPage />} />
-        <Route path="/contactus" element={<ContactUs />} />
-        <Route path="/policy-type" element={<PolicyType />} />
-        <Route path="/policy-details/:id" element={<PolicyDetails />} />
-        <Route path="/gmail-sync" element={<GmailSyncPage />} />
-
-        {/* Add more routes as needed */}
-      </Routes>
-    </>
+    <HelmetProvider>
+      <>
+        <ToastContainer position="top-center" />
+        <Toaster position="top-right" reverseOrder={false} />
+        <UniversalHomeButton />
+        <ScrollToTop />
+        <BackToTop />
+        <Routes>
+          <Route path="" element={<Landing />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/vault" element={<Vault />} />
+          <Route path="/motor-policy" element={<MotorPolicyForm />} />
+          <Route path="/health-policy" element={<HealthPolicyForm />} />
+          <Route path="/life-policy" element={<LifePolicyForm />} />
+          <Route path="/add-policy" element={<AddPolicy />} />
+          <Route path="/profile" element={<ProfileDrawer />} />
+          <Route path="/family" element={<Family />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/notification" element={<NotificationPage />} />
+          <Route path="/feed/:type" element={<Feeds />} />
+          <Route path="/feed/:type/:id" element={<BlogDetails />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+          <Route path="/legal" element={<LegalPoliciesPage />} />
+          <Route path="/contactus" element={<ContactUs />} />
+          <Route path="/policy-type" element={<PolicyType />} />
+          <Route path="/policy-details/:id" element={<PolicyDetails />} />
+          <Route path="/gmail-sync" element={<GmailSyncPage />} />
+        </Routes>
+      </>
+    </HelmetProvider>
   );
 }
 

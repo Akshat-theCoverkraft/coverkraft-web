@@ -171,73 +171,6 @@ const calculatePolicyStatus = (dateString) => {
   return null;
 };
 
-// const calculatePolicyStatus = (dateString) => {
-//   // if (!policyEndDate) return null;
-//   // try {
-//   //   const [day, month, year] = policyEndDate.split(" ")[0].split("/");
-//   //   const endDate = new Date(year, month - 1, day);
-//   //   if (isNaN(endDate)) return null;
-//   //   const now = new Date();
-//   //   const diffInDays = Math.floor(
-//   //     (new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) -
-//   //       new Date(now.getFullYear(), now.getMonth(), now.getDate())) /
-//   //       (1000 * 60 * 60 * 24)
-//   //   );
-//   //   if (diffInDays <= 0) return "Expired";
-//   //   if (diffInDays <= 60) return `${diffInDays} days left`;
-//   //   return null;
-//   // } catch (error) {
-//   //   return null;
-//   // }
-//     //  if (!dateString) return null;
-//     // const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
-//     // if (!isValid(parsedDate)) {
-//     //   console.warn('Invalid date format:', dateString);
-//     //   return null;
-//     // }
-
-//        if (!dateString) return null;
-//     const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
-//     if (!isValid(parsedDate)) {
-//       console.warn('Invalid date format:', dateString);
-//       return null;
-//     }
- 
-//   const today = startOfDay(new Date());
- 
-//   const policyEndDate = parsedDate;
- 
-//   const isExpired = policyEndDate ? isBefore(policyEndDate, today) : false;
- 
-//   const daysToRenewal = policyEndDate
-//     ? differenceInDays(policyEndDate, today)
-//     : null;
- 
-//   const shouldShowRenewal =
-//     policyEndDate &&
-//     !isExpired &&
-//     daysToRenewal !== null &&
-//     daysToRenewal <= 60 &&
-//     daysToRenewal >= 0;
- 
-//   console.log('Policy End Date:', policyEndDate);
-//   console.log('Today:', today);
-//   console.log('Days to renewal:', daysToRenewal);
-//   console.log('isExpired:', isExpired, 'for date:');
- 
-//   const isExpiringToday = policyEndDate
-//     ? differenceInDays(policyEndDate, today) === 0
-//     : false;
- 
-//   const isExpiredStrict = policyEndDate
-//     ? differenceInDays(policyEndDate, today) < 0
-//     : false;
-//  console.log(shouldShowRenewal, daysToRenewal, "---------------------------------->>>>>>>>>>>>>>")
-
-//     return daysToRenewal;
-// };
-
-
 const filterPolicies = (
   policies,
   searchTerm = "",
@@ -684,29 +617,6 @@ export default function PolicyTabs({
       handleCardClick(firstId);
     }
   }, [value, policyList, archieveList, searchTerm, selectedTypeFilter]);
-
-  // useEffect(() => {
-  //   const currentList = value === 2 ? archieveList : policyList;
-  //   const filteredList = filterPolicies(
-  //     currentList,
-  //     searchTerm,
-  //     selectedTypeFilter
-  //   );
-  //   if (!filteredList?.length) return;
-
-  //   const storedId = sessionStorage.getItem("selectedPolicyId");
-  //   const policyExists = filteredList.some((p) => p._id === storedId);
-
-  //   if (policyExists) {
-  //     setSelectedPolicyId(storedId);
-  //     handleCardClick(storedId);
-  //   } else {
-  //     const firstId = filteredList[0]._id;
-  //     setSelectedPolicyId(firstId);
-  //     sessionStorage.setItem("selectedPolicyId", firstId);
-  //     handleCardClick(firstId);
-  //   }
-  // }, [value, policyList, archieveList, searchTerm, selectedTypeFilter]);
 
   const handleCardClickWithState = (id) => {
     setSelectedPolicyId(id);
