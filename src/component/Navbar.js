@@ -5,6 +5,7 @@ import {
   Menu,
   MenuItem,
   styled,
+  Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -22,7 +23,6 @@ import { Badge } from "@mui/material";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
 import { useEffect } from "react";
-
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/" },
@@ -80,9 +80,15 @@ function Navbar({ scrollToContactBottom }) {
   const [moreAnchor, setMoreAnchor] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const userId = useMemo(() => sessionStorage.getItem("userId"), []);
-
-  const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", []);
-  const isHomePage = useMemo(() => location.pathname === "/", [location.pathname]);
+  const userEmail = useMemo(() => sessionStorage.getItem("userEmail"), []);
+  const loggedIn = useMemo(
+    () => sessionStorage.getItem("isLoggedIn") === "true",
+    []
+  );
+  const isHomePage = useMemo(
+    () => location.pathname === "/",
+    [location.pathname]
+  );
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
   useEffect(() => {
     if (loggedIn) {
@@ -100,11 +106,13 @@ function Navbar({ scrollToContactBottom }) {
   const fetchUnreadPolicyCount = async () => {
     try {
       const res = await axios.get(`${API_URL}notification/getAll`, {
-        params: { userId: userId, type: "policy", status: "active" }
+        params: { userId: userId, type: "policy", status: "active" },
       });
 
       if (res.data?.data) {
-        const count = res.data.data.filter(n => n.notificationStatus !== "seen").length;
+        const count = res.data.data.filter(
+          (n) => n.notificationStatus !== "seen"
+        ).length;
         setUnreadPolicyCount(count);
       }
     } catch (error) {
@@ -196,7 +204,6 @@ function Navbar({ scrollToContactBottom }) {
                       setMobileAnchor(null);
                     }}
                     sx={{ fontSize: "1.3rem" }}
-
                   >
                     {item.label}
                   </MenuItem>
@@ -213,7 +220,11 @@ function Navbar({ scrollToContactBottom }) {
                     >
                       Notification
                     </MenuItem>,
-                    <MenuItem key="logout" onClick={handleLogout} sx={{ fontSize: "1.3rem" }}>
+                    <MenuItem
+                      key="logout"
+                      onClick={handleLogout}
+                      sx={{ fontSize: "1.3rem" }}
+                    >
                       Logout
                     </MenuItem>,
                   ]
@@ -237,7 +248,8 @@ function Navbar({ scrollToContactBottom }) {
                   key={item.key}
                   style={{
                     cursor: "pointer",
-                    color: location.pathname === item.path ? "#8AC642" : "white",
+                    color:
+                      location.pathname === item.path ? "#8AC642" : "white",
                     fontWeight: location.pathname === item.path ? "600" : "400",
                     fontSize: "1.7rem",
                     padding: "4px 10px",
@@ -257,8 +269,8 @@ function Navbar({ scrollToContactBottom }) {
                         backgroundColor: "#8AC642",
                         color: "black",
                         fontSize: "0.8rem",
-                        fontWeight: "bold"
-                      }
+                        fontWeight: "bold",
+                      },
                     }}
                   >
                     <img
@@ -268,35 +280,52 @@ function Navbar({ scrollToContactBottom }) {
                       onClick={() => navigate("/notification")}
                     />
                   </Badge>
-
-
-                  <img
-                    src={profileIcon}
-                    alt="profile"
-                    style={{
-                      height: 28,
-                      width: 28,
-                      cursor: "pointer",
+                  <Tooltip
+                    PopperProps={{
+                      sx: {
+                        "& .MuiTooltip-tooltip": {
+                          fontSize: "1.4rem", // increase font size
+                          padding: "8px 12px", // optional: more padding for readability
+                        },
+                      },
                     }}
-                    onClick={(e) => setProfileAnchor(e.currentTarget)}
-                  />
+                    title={!!userEmail?"":"Please update email."}
+                  >
+                    <Badge
+                      color="error"
+                      variant="dot"
+                      invisible={!!userEmail} // hide dot if userEmail exists
+                      sx={{
+                        "& .MuiBadge-badge": {
+                          right: -2,
+                          top: 2,
+                          height: "10px",
+                          minWidth: "10px",
+                          borderRadius: "50%",
+                        },
+                      }}
+                    >
+                      <img
+                        src={profileIcon}
+                        alt="profile"
+                        style={{ height: 28, width: 28, cursor: "pointer" }}
+                        onClick={(e) => setProfileAnchor(e.currentTarget)}
+                      />
+                    </Badge>
+                  </Tooltip>
                   <DarkMenu
                     anchorEl={profileAnchor}
                     open={Boolean(profileAnchor)}
                     onClose={() => setProfileAnchor(null)}
                     anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right',
+                      vertical: "bottom",
+                      horizontal: "right",
                     }}
                     transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
+                      vertical: "top",
+                      horizontal: "right",
                     }}
-                    PaperProps={{
-                      sx: {
-                        mt: 1.2,
-                      },
-                    }}
+                    PaperProps={{ sx: { mt: 1.2 } }}
                   >
                     <MenuItem
                       onClick={() => {
@@ -307,17 +336,26 @@ function Navbar({ scrollToContactBottom }) {
                     >
                       <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
                     </MenuItem>
-                    <MenuItem onClick={handleLogout} sx={{ fontSize: "1.3rem" }}>
+                    <MenuItem
+                      onClick={handleLogout}
+                      sx={{ fontSize: "1.3rem" }}
+                    >
                       <LogoutIcon sx={{ mr: 1 }} /> Logout
                     </MenuItem>
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton style={{ fontSize: "1.3rem" }} onClick={() => navigate("/login")}>
+                <StyledButton
+                  style={{ fontSize: "1.3rem" }}
+                  onClick={() => navigate("/login")}
+                >
                   Login
                 </StyledButton>
               )}
-              <StyledButton style={{ fontSize: "1.3rem" }} onClick={handleVault}>
+              <StyledButton
+                style={{ fontSize: "1.3rem" }}
+                onClick={handleVault}
+              >
                 Policy Vault
               </StyledButton>
               {isHomePage && (
@@ -333,12 +371,12 @@ function Navbar({ scrollToContactBottom }) {
                 open={Boolean(moreAnchor)}
                 onClose={() => setMoreAnchor(null)}
                 anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
+                  vertical: "bottom",
+                  horizontal: "right",
                 }}
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                  vertical: "top",
+                  horizontal: "right",
                 }}
                 PaperProps={{
                   sx: {
