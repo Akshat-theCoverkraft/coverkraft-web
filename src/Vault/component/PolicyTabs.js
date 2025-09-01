@@ -170,7 +170,6 @@ const calculatePolicyStatus = (dateString) => {
   if (daysToRenewal < 0) return "Expired";
   if (daysToRenewal <= 60) return `${daysToRenewal} days left`;
 
-
   return null;
 };
 
@@ -318,6 +317,7 @@ const PolicyCard = ({
     handleDelete(policy._id);
     setOpenConfirm(false);
   };
+  
   const handleDelete = async (policyId) => {
     try {
       const response = await fetch(`${API_URL}policy/delete`, {
@@ -337,11 +337,10 @@ const PolicyCard = ({
         if (value === 2) {
           fetchData("policy/archiveData", { status: "archive" }, true);
         } else if (value === 3) {
-          fetchData("policy/getById", { policyType: "uncompleted" })
+          fetchData("policy/getById", { policyType: "uncompleted" }, false, true);
         } else {
           fetchData("policy/getById", { policyType: activeTab });
         }
-
       } else {
         console.error("Failed to delete policy:", response.status);
       }
@@ -676,6 +675,7 @@ export default function PolicyTabs({
     itemsPerPage,
     setActiveTab,
     archieveList,
+    pendingList, // Added pendingList from context
     setValue
   } = usePolicyContext();
 
@@ -694,7 +694,8 @@ export default function PolicyTabs({
   }, []);
 
   useEffect(() => {
-    const currentList = value === 2 ? archieveList : policyList;
+    // Updated to handle pending list separately
+    const currentList = value === 2 ? archieveList : value === 3 ? pendingList : policyList;
     const filteredList = filterPolicies(
       currentList,
       searchTerm,
@@ -704,7 +705,7 @@ export default function PolicyTabs({
     if (!filteredList || filteredList.length === 0) {
       setSelectedPolicyId(null);
       sessionStorage.removeItem("selectedPolicyId");
-      handleCardClick(null); // ⬅ notify Vault.js to clear PolicyDetail
+      handleCardClick(null); // notify Vault.js to clear PolicyDetail
       return;
     }
 
@@ -720,7 +721,7 @@ export default function PolicyTabs({
       sessionStorage.setItem("selectedPolicyId", firstId);
       handleCardClick(firstId);
     }
-  }, [value, policyList, archieveList, searchTerm, selectedTypeFilter]);
+  }, [value, policyList, archieveList, pendingList, searchTerm, selectedTypeFilter]); // Added pendingList dependency
 
   const handleCardClickWithState = (id) => {
     setSelectedPolicyId(id);
@@ -732,7 +733,7 @@ export default function PolicyTabs({
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
     } else if (value === 3) {
-      fetchData("policy/getById", { policyType: "uncompleted" })
+      fetchData("policy/getById", { policyType: "uncompleted" }, false, true); // Added isPending flag
     } else {
       fetchData("policy/getById", { policyType: activeTab });
     }
@@ -961,7 +962,7 @@ export default function PolicyTabs({
               {renderTabContent(0, policyList, "active", true, false)}
               {renderTabContent(1, policyList, "expired", false, true)}
               {renderTabContent(2, archieveList, "archive", false, false)}
-              {renderTabContent(3, policyList, "pending", true, false)}
+              {renderTabContent(3, pendingList, "pending", true, false)}
             </div>
           )}
         </TabContext>
