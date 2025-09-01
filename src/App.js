@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import './App.css';
-// import { requestFCMPermission, setupOnMessageListener } from "./fcm"; // 💡 New clean file
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom"
 import "./App.css";
-// import { requestFCMPermission, setupOnMessageListener } from "./fcm"; // 💡 New clean file
 import Login from "./LoginModule/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Register from "./LoginModule/Register";
-// import { registerFirebaseSW } from './fcm'; // Import your FCM functions
-import { registerFirebaseSW } from "./fcm"; // Import your FCM functions
-// or './fcm' depending on where you put them
+import { setupOnMessageListener } from "./fcm"; 
 import { Toaster } from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
 import Landing from "./Landing/Landing";
@@ -39,6 +35,11 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
+
+ useEffect(() => {
+    setupOnMessageListener(); // ✅ Foreground messages
+  }, []);
+
 
 useEffect(() => {
   const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours

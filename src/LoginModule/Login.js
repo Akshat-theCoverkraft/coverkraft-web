@@ -17,6 +17,7 @@ import axios from "axios";
 import LOGING from "../Images/LOGING.png";
 import { getToken } from "firebase/messaging";
 import SessionExpiredModal from "../utils/sessionExpireModal";
+import { registerFirebaseSW, requestFCMPermission } from "../fcm";
 const Login = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [otp, setOtp] = useState([]);
@@ -47,15 +48,16 @@ const Login = () => {
     }
   }, [!valid]);
 
-  useEffect(() => {
-    // Example mock FCM ID (replace with real logic)
-    const getFcmId = async () => {
-      // const token = await requestForToken(); // If using Firebase
-      const token = getToken(); // TEMP
-      setFcmId(token);
-    };
-    getFcmId();
-  }, []);
+  // useEffect(() => {
+  //   // Example mock FCM ID (replace with real logic)
+  //   const getFcmId = async () => {
+  //     // const token = await requestForToken(); // If using Firebase
+  //     const token = getToken(); // TEMP
+  //     console.log("FCM Token (mock):", token);
+  //     setFcmId(token);
+  //   };
+  //   getFcmId();
+  // }, []);
 
   // Handle phone input (10-digit number)
   const handlephonechange = (e) => {
@@ -133,21 +135,33 @@ const Login = () => {
 
   // OTP verification (final login)
   // Temporary OTP verification: just allow any 6-digit input for now
-  const handleVerify = async () => {
-    if (otp.length === 6) {
+const handleVerify = async () => {
+  if (otp.length === 6) {
+    try {
+      // ✅ Register SW and request token
+      const registration = await registerFirebaseSW();
+      const fcmToken = await requestFCMPermission(registration);
+
       await dispatch(
         verifyUser(API_URL, {
           userPhone: phoneNumber,
-          userFcmId: "Test123",
+          userFcmId: fcmToken || "NA", // fallback if blocked
         })
       );
+
       sessionStorage.setItem("loggedIn", "true");
-      toast.success("Phone number authentication done (mocked)");
+      toast.success("✅ Phone number authentication successful");
       navigate("/");
-    } else {
-      toast.error("Please enter a 6-digit OTP.");
+    } catch (error) {
+      console.error("Verification failed:", error);
+      toast.error("Verification failed. Please try again.");
     }
-  };
+  } else {
+    toast.error("Please enter a 6-digit OTP.");
+  }
+};
+
+
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && valid && !loggedIn) {
