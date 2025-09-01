@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import './App.css';
-// import { requestFCMPermission, setupOnMessageListener } from "./fcm"; // 💡 New clean file
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom"
 import "./App.css";
-// import { requestFCMPermission, setupOnMessageListener } from "./fcm"; // 💡 New clean file
 import Login from "./LoginModule/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Register from "./LoginModule/Register";
-// import { registerFirebaseSW } from './fcm'; // Import your FCM functions
-import { registerFirebaseSW } from "./fcm"; // Import your FCM functions
-// or './fcm' depending on where you put them
+import { setupOnMessageListener } from "./fcm"; 
 import { Toaster } from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
 import Landing from "./Landing/Landing";
@@ -32,11 +28,18 @@ import PolicyDetails from './pages/PolicyDetails';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
+import { PolicyProvider } from "./store/policyContext.js";
+import { HelmetProvider } from "react-helmet-async";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
+
+ useEffect(() => {
+    setupOnMessageListener(); // ✅ Foreground messages
+  }, []);
+
 
 useEffect(() => {
   const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
@@ -109,31 +112,32 @@ useEffect(() => {
       <UniversalHomeButton />
       <ScrollToTop />
       <BackToTop />
-      <Routes>
-        <Route path="" element={<Landing />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/vault" element={<Vault />} />
-        <Route path="/motor-policy" element={<MotorPolicyForm />} />
-        <Route path="/health-policy" element={<HealthPolicyForm />} />
-        <Route path="/life-policy" element={<LifePolicyForm />} />
-        <Route path="/add-policy" element={<AddPolicy />} />
-        <Route path="/profile" element={<ProfileDrawer />} />
-        <Route path="/family" element={<Family />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/notification" element={<NotificationPage />} />
-        <Route path="/feed/:type" element={<Feeds />} />
-        <Route path="/feed/:type/:id" element={<BlogDetails />} />
-        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-        <Route path='/privacypolicy' element={<PrivacyPolicy />} />
-        <Route path="/legal" element={<LegalPoliciesPage />} />
-        <Route path="/contactus" element={<ContactUs />} />
-        <Route path="/policy-type" element={<PolicyType />} />
-        <Route path="/policy-details/:id" element={<PolicyDetails />} />
-        <Route path="/gmail-sync" element={<GmailSyncPage />} />
 
-        {/* Add more routes as needed */}
-      </Routes>
+      {/* ✅ Wrap Routes inside PolicyProvider */}
+      <PolicyProvider>
+        <Routes>
+          <Route path="" element={<Landing />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/vault" element={<Vault />} />
+          <Route path="/motor-policy" element={<MotorPolicyForm />} />
+          <Route path="/health-policy" element={<HealthPolicyForm />} />
+          <Route path="/life-policy" element={<LifePolicyForm />} />
+          <Route path="/add-policy" element={<AddPolicy />} />
+          <Route path="/profile" element={<ProfileDrawer />} />
+          <Route path="/family" element={<Family />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/notification" element={<NotificationPage />} />
+          <Route path="/feed/:type" element={<Feeds />} />
+          <Route path="/feed/:type/:id" element={<BlogDetails />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+          <Route path="/legal" element={<LegalPoliciesPage />} />
+          <Route path="/contactus" element={<ContactUs />} />
+          <Route path="/policy-type" element={<PolicyType />} />
+          <Route path="/policy-details/:id" element={<PolicyDetails />} />
+          <Route path="/gmail-sync" element={<GmailSyncPage />} />
+        </Routes>
+      </PolicyProvider>
     </>
   );
 }

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import CSS from "./PolicyDetail.css"
+import CSS from "./PolicyDetail.css";
 import Button from "../../component/Button";
 import GradientButton from "../../component/GradientButton";
 import { updateDocument } from "../../store/action/action";
@@ -55,9 +55,9 @@ const PolicyDetail = ({ policyId }) => {
         setPolicyDetails(Array.isArray(data) ? data : []);
         sessionStorage.setItem("policyId", policyId);
       } catch (error) {
-          if (error.response?.status === 401) {
-            setShowSessionExpired(true);
-          } 
+        if (error.response?.status === 401) {
+          setShowSessionExpired(true);
+        }
         console.error("Error fetching policy list:", error);
         setPolicyDetails([]);
       }
@@ -68,27 +68,32 @@ const PolicyDetail = ({ policyId }) => {
 
   const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
-    navigate('/login');
+    navigate("/login");
     localStorage.clear();
-    sessionStorage.clear(); 
+    sessionStorage.clear();
   };
 
   // Helper function to show toast only once
-  const showToastOnce = (message, type = 'success') => {
+  const showToastOnce = (message, type = "success") => {
     const toastKey = `${type}-${message}`;
     if (!toastShownRef.current.has(toastKey)) {
       toastShownRef.current.add(toastKey);
-      if (type === 'success') {
+      if (type === "success") {
         toast.success(message);
-      } else if (type === 'error') {
+      } else if (type === "error") {
         toast.error(message);
-      } else if (type === 'info') {
+      } else if (type === "info") {
         toast.info(message);
       }
-            setTimeout(() => {
+      setTimeout(() => {
         toastShownRef.current.delete(toastKey);
       }, 3000);
     }
+  };
+
+  const isMotorPolicy = (policyType) => {
+    const motorPolicies = ["car_policy", "bike_policy", "other_vehicle"];
+    return motorPolicies.includes(policyType);
   };
 
   const getPolicyImage = (policyType) => {
@@ -154,10 +159,9 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   const handleDocument = async (documentPath, action) => {
-
     if (!documentPath) {
       console.error("Document path is missing");
-      showToastOnce("Document not available", 'error');
+      showToastOnce("Document not available", "error");
       return;
     }
 
@@ -190,7 +194,7 @@ const PolicyDetail = ({ policyId }) => {
         }
       } catch (error) {
         console.error("Error opening document for viewing:", error);
-        showToastOnce("Unable to open document for viewing", 'error');
+        showToastOnce("Unable to open document for viewing", "error");
       }
       return;
     }
@@ -204,7 +208,10 @@ const PolicyDetail = ({ policyId }) => {
             documentPath
           );
           window.open(documentPath, "_blank");
-          showToastOnce("Document opened in new tab. You can download it from there.", 'success');
+          showToastOnce(
+            "Document opened in new tab. You can download it from there.",
+            "success"
+          );
         } else {
           // For manual uploads, use fetch to download
           const fullPath = documentPath.startsWith("/")
@@ -232,11 +239,14 @@ const PolicyDetail = ({ policyId }) => {
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
 
-          showToastOnce("Document downloaded successfully", 'success');
+          showToastOnce("Document downloaded successfully", "success");
         }
       } catch (error) {
         console.error("Error downloading document:", error);
-        showToastOnce("Unable to download document. Please try again.", 'error');
+        showToastOnce(
+          "Unable to download document. Please try again.",
+          "error"
+        );
       }
       return;
     }
@@ -254,28 +264,28 @@ const PolicyDetail = ({ policyId }) => {
                 text: "Here is your policy document.",
                 url: documentPath,
               });
-              showToastOnce("Document shared successfully", 'success');
+              showToastOnce("Document shared successfully", "success");
             } catch (shareError) {
               console.log("Native sharing failed, trying clipboard");
               // Fallback to clipboard
               if (navigator.clipboard) {
                 await navigator.clipboard.writeText(documentPath);
-                showToastOnce("Document link copied to clipboard", 'success');
+                showToastOnce("Document link copied to clipboard", "success");
               } else {
                 // Final fallback - open in new tab
                 window.open(documentPath, "_blank");
-                showToastOnce("Document opened in new tab", 'info');
+                showToastOnce("Document opened in new tab", "info");
               }
             }
           } else {
             // No native share support
             if (navigator.clipboard) {
               await navigator.clipboard.writeText(documentPath);
-              showToastOnce("Document link copied to clipboard", 'success');
+              showToastOnce("Document link copied to clipboard", "success");
             } else {
               // Final fallback - open in new tab
               window.open(documentPath, "_blank");
-              showToastOnce("Document opened in new tab", 'info');
+              showToastOnce("Document opened in new tab", "info");
             }
           }
         } else {
@@ -302,13 +312,13 @@ const PolicyDetail = ({ policyId }) => {
               text: "Here is your policy document.",
               files: [file],
             });
-            showToastOnce("Document shared successfully", 'success');
+            showToastOnce("Document shared successfully", "success");
           } else {
             // Fallback: save file and copy URL to clipboard
             const blobUrl = window.URL.createObjectURL(blob);
             if (navigator.clipboard) {
               await navigator.clipboard.writeText(shareUrl);
-              showToastOnce("Document link copied to clipboard", 'success');
+              showToastOnce("Document link copied to clipboard", "success");
             } else {
               // Final fallback - trigger download
               const link = document.createElement("a");
@@ -317,40 +327,43 @@ const PolicyDetail = ({ policyId }) => {
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
-              showToastOnce("Document downloaded (sharing not supported)", 'info');
+              showToastOnce(
+                "Document downloaded (sharing not supported)",
+                "info"
+              );
             }
             window.URL.revokeObjectURL(blobUrl);
           }
         }
       } catch (error) {
         console.error("Error sharing document:", error);
-        showToastOnce("Unable to share document. Please try again.", 'error');
+        showToastOnce("Unable to share document. Please try again.", "error");
       }
       return;
     }
   };
 
-const handlePolicyAction = (action) => {
-  const userId = sessionStorage.getItem("userId");
-  const formData = new FormData();
-  formData.append("_id", policyId);
-  formData.append("userId", userId);
-  formData.append("status", action);
+  const handlePolicyAction = (action) => {
+    const userId = sessionStorage.getItem("userId");
+    const formData = new FormData();
+    formData.append("_id", policyId);
+    formData.append("userId", userId);
+    formData.append("status", action);
 
-  dispatch(updateDocument(API_URL, formData))
-    .then(() => {
-      const message =
-        action === "archive"
-          ? "Policy archived successfully"
-          : action === "unarchive"
-          ? "Policy removed from archive successfully"
-          : "Feature Coming Soon";
-      showToastOnce(message, 'success');
-    })
-    .catch(() => {
-      showToastOnce("Some error occurred", 'error');
-    });
-};
+    dispatch(updateDocument(API_URL, formData))
+      .then(() => {
+        const message =
+          action === "archive"
+            ? "Policy archived successfully"
+            : action === "unarchive"
+            ? "Policy removed from archive successfully"
+            : "Coming Soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
+        showToastOnce(message, "success");
+      })
+      .catch(() => {
+        showToastOnce("Some error occurred", "error");
+      });
+  };
 
   const renderPolicyActions = (policy) => {
     const isArchived = policy?.status === "archive";
@@ -444,8 +457,12 @@ const handlePolicyAction = (action) => {
       <>
         <ToastContainer 
           position="top-center" 
-          style={{ zIndex: 999999  }}
+          style={{ 
+            zIndex: 100000,
+            top: '110px' 
+          }}
           toastClassName="custom-toast"
+          autoClose={3000}
         />
         <Card
           // key={index}
@@ -481,8 +498,12 @@ const handlePolicyAction = (action) => {
     <div style={{minHeight:"620px"}}>
       <ToastContainer 
         position="top-center" 
-        style={{ zIndex: 999999 }}
+        style={{ 
+          zIndex: 100000,
+          top: '110px' 
+        }}
         toastClassName="custom-toast"
+        autoClose={3000}
       />
       <SessionExpiredModal
         visible={showSessionExpired}
@@ -600,12 +621,12 @@ const handlePolicyAction = (action) => {
                 <img
                   src={getPolicyImage(policy?.policyType)}
                   alt="Policy Type"
-                  style={{ maxWidth: "70px", height: "auto" }} 
+                  style={{ maxWidth: "70px", height: "auto" }}
                 />
               </div>
             </div>
 
-            <div style={{ position: "relative" }}>
+            <div style={{ position: "relative", marginTop: -20 }}>
               {status && (
                 <>
                   <div
@@ -614,7 +635,7 @@ const handlePolicyAction = (action) => {
                       top: -89,
                       right: 0,
                       width: "160px",
-                      height: "45px",
+                      height: "40px",
                       backgroundImage: `url(${redBg})`,
                       backgroundSize: "cover",
                       opacity: 1,
@@ -643,7 +664,7 @@ const handlePolicyAction = (action) => {
                   marginTop: "48px",
                   paddingTop: "5px",
                   width: "100%",
-                 height: "396px",
+                  height: "396px",
                   boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
                   backgroundColor: "#212121",
                   color: THEME_COLOR.COLOR,
@@ -738,7 +759,9 @@ const handlePolicyAction = (action) => {
                           fontWeight: "600",
                         }}
                       >
-                        Value (IDV)
+                        {isMotorPolicy(policy?.policyType)
+                          ? "Value (IDV)"
+                          : "Sum Insured"}
                       </p>
                       <p className="fw-bolder">
                         {policy?.policyDetails?.idv ||

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Box, Typography, IconButton } from "@mui/material";
+import { Drawer, Box, Typography, IconButton, Dialog, DialogContent, DialogActions } from "@mui/material";
 import { Card, Grid } from "@material-ui/core";
 import { toast, ToastContainer } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
@@ -35,7 +35,7 @@ import { capitalizeFirstLetter } from "../utils/helpers";
 
 // Constants
 const LOCAL_STORAGE_KEYS = [
-  "loggedIn", "verificationId", "userId", "policyId", 
+  "loggedIn", "verificationId", "userId", "policyId",
   "selectedPolicyId", "token"
 ];
 
@@ -72,10 +72,13 @@ const CircularProgress = ({ percentage, size = 120, strokeWidth = 6, showPercent
     return "#F44336"; // Red
   };
 
+
+
+
   return (
-    <div style={{ 
-      position: 'relative', 
-      width: size, 
+    <div style={{
+      position: 'relative',
+      width: size,
       height: size,
       display: 'flex',
       alignItems: 'center',
@@ -84,8 +87,8 @@ const CircularProgress = ({ percentage, size = 120, strokeWidth = 6, showPercent
       <svg
         width={size}
         height={size}
-        style={{ 
-          position: 'absolute', 
+        style={{
+          position: 'absolute',
           transform: 'rotate(-90deg)',
           zIndex: 1
         }}
@@ -116,7 +119,7 @@ const CircularProgress = ({ percentage, size = 120, strokeWidth = 6, showPercent
           }}
         />
       </svg>
-      
+
       {/* Percentage text */}
       {showPercentage && (
         <div style={{
@@ -143,22 +146,46 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const [openDialog, setOpenDialog] = useState(false);
   // Redux selectors
   const userbyId = useSelector(state => state.user);
   const states = useSelector(state => state.user);
-  
+  const [openCamera, setOpenCamera] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [stream, setStream] = useState(null);
   // State management
   const [drawers, setDrawers] = useState({
     family: false,
     communication: false,
     help: false
   });
-  
+
+  useEffect(() => {
+    if (openCamera) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((s) => {
+          setStream(s);
+          if (videoRef.current) {
+            videoRef.current.srcObject = s;
+          }
+        })
+        .catch((err) => {
+          console.error("Camera error:", err);
+          setOpenCamera(false);
+        });
+    } else {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    }
+  }, [openCamera]);
+
+
   const [modals, setModals] = useState({
     delete: false
   });
-  
+
   const [profileState, setProfileState] = useState({
     update: false,
     profileImage: icDefaultProfile,
@@ -166,7 +193,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     profileCompletion: 0,
     isUpdating: false
   });
-  
+
   const [formData, setFormData] = useState({
     username: "",
     useremail: "",
@@ -181,7 +208,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     selectedStateId: "",
     selectedCityId: ""
   });
-  
+
   const [validationErrors, setValidationErrors] = useState({});
   const [returnPath, setReturnPath] = useState("/");
 
@@ -214,16 +241,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       { field: "pinCode", weight: 5 },
       { field: "gender", weight: 5 }
     ];
-    
+
     let totalScore = 0;
     requiredFields.forEach(({ field, weight }) => {
       const value = data?.[field];
-      if (value !== undefined && value !== null && value !== "" && 
-          !(typeof value === 'object' && Object.keys(value).length === 0)) {
+      if (value !== undefined && value !== null && value !== "" &&
+        !(typeof value === 'object' && Object.keys(value).length === 0)) {
         totalScore += weight;
       }
     });
-    
+
     return Math.min(100, totalScore);
   }, []);
 
@@ -233,8 +260,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     if (!date) return true;
     const today = new Date();
     const ageDiff = today.getFullYear() - date.getFullYear();
-    const hasHadBirthdayThisYear = 
-      today.getMonth() > date.getMonth() || 
+    const hasHadBirthdayThisYear =
+      today.getMonth() > date.getMonth() ||
       (today.getMonth() === date.getMonth() && today.getDate() >= date.getDate());
     return hasHadBirthdayThisYear ? ageDiff >= 18 : ageDiff - 1 >= 18;
   }, []);
@@ -243,6 +270,33 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   const handleDrawerToggle = useCallback((drawerName, isOpen) => {
     setDrawers(prev => ({ ...prev, [drawerName]: isOpen }));
   }, []);
+
+  const handleCapture = () => {
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    if (!canvas || !video) return;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], "captured_photo.jpg", { type: "image/jpeg" });
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          handleProfileStateChange("profileImage", reader.result);
+          handleFormChange("userImgFile", file);
+        };
+        reader.readAsDataURL(file);
+      }
+    }, "image/jpeg");
+
+    setOpenCamera(false);
+    setOpenDialog(false);
+  };
+
 
   const handleModalToggle = useCallback((modalName, isOpen) => {
     setModals(prev => ({ ...prev, [modalName]: isOpen }));
@@ -286,6 +340,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       reader.onloadend = () => {
         handleProfileStateChange('profileImage', reader.result);
         handleFormChange('userImgFile', file);
+        setOpenDialog(false);
       };
       reader.readAsDataURL(file);
     }
@@ -345,10 +400,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
     try {
       const formDataToSend = new FormData();
-      
+
       // Add user ID
       formDataToSend.append("_id", userId);
-      
+
       // Add form fields with proper mapping
       formDataToSend.append("userName", formData.username || '');
       formDataToSend.append("userEmail", formData.useremail || '');
@@ -356,7 +411,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       formDataToSend.append("userAddress", formData.userAddress || '');
       formDataToSend.append("pinCode", formData.pinCode || '');
       formDataToSend.append("gender", formData.gender || '');
-      
+
       // Handle date of birth
       if (formData.userDob) {
         try {
@@ -369,11 +424,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       } else {
         formDataToSend.append("userDob", '');
       }
-      
+
       // Handle state and city
       formDataToSend.append("state", formData.selectedStateId || '');
       formDataToSend.append("city", formData.selectedCityId || '');
-      
+
       // Handle image file
       if (formData.userImgFile) {
         formDataToSend.append("userImg", formData.userImgFile);
@@ -386,20 +441,20 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       }
 
       const response = await dispatch(updateUser(API_URL, formDataToSend));
-      
+
       if (response && response.status) {
         toast.success("Profile updated successfully!");
         handleProfileStateChange('update', false);
-        
+
         // CRITICAL: Refresh user data after successful update
         await fetchUserProfile();
-        
+
       } else {
         const errorMessage = response?.message || response?.error || "Failed to update profile";
         toast.error(errorMessage);
         console.error("Update failed:", response);
       }
-      
+
     } catch (error) {
       console.error("Update error:", error);
       toast.error("An error occurred while updating profile");
@@ -458,7 +513,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     if (userbyId.getUserById?.data) {
       const data = userbyId.getUserById.data;
       const percentage = calculateProfileCompletion(data);
-      
+
       console.log("Populating form with user data:", data); // Debug log
       
       // Update form data with fresh API data, ensuring proper Title Case for username
@@ -475,7 +530,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         selectedCityId: data?.city?._id || "",
         userImgFile: null // Reset file input
       }));
-      
+
       handleProfileStateChange('profileCompletion', percentage);
       const profileImageUrl = data.userImg || icDefaultProfile;
       handleProfileStateChange('profileImage', profileImageUrl);
@@ -488,13 +543,13 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       <div className="background-image-container1">
         <div className="profile-details">
           <div className="profile-image-container" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <CircularProgress 
-              percentage={profileState.profileCompletion} 
+            <CircularProgress
+              percentage={profileState.profileCompletion}
               size={profileState.update ? 100 : 120}
               strokeWidth={4}
               showPercentage={true}
             />
-            <div style={{ 
+            <div style={{
               position: 'absolute',
               width: profileState.update ? '70px' : '85px',
               height: profileState.update ? '70px' : '85px',
@@ -517,13 +572,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               />
             </div>
             {profileState.update && (
-              <label htmlFor="profile-image-upload" style={{
-                position: 'absolute',
-                bottom: '10px',
-                right: '10px',
-                cursor: 'pointer',
-                zIndex: 10
-              }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '10px',
+                  right: '10px',
+                  cursor: 'pointer',
+                  zIndex: 10
+                }}
+                onClick={() => setOpenDialog(true)} // only open dialog
+              >
                 <img
                   src={editIcon}
                   alt="Edit"
@@ -535,25 +593,34 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                     padding: '4px',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                   }}
-                  onClick={() => handleProfileStateChange('showImageInput', true)}
                 />
-              </label>
+              </div>
+
             )}
             <input
               id="profile-image-upload"
               type="file"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={handleImageChange}   // <-- put this back
               style={{ display: "none" }}
             />
+            <input
+              id="camera-input"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleImageChange}   // <-- and here too
+              style={{ display: "none" }}
+            />
+
           </div>
-          
-          {!profileState.update && (
+
+          {/* {!profileState.update && (
             <div style={{ textAlign: 'center', marginTop: '8px' }}>
-              <Typography 
-                variant="caption" 
-                style={{ 
-                  color: 'rgba(255, 255, 255, 0.7)', 
+              <Typography
+                variant="caption"
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
                   fontSize: '12px',
                   fontWeight: '500',
                   marginTop: "30px"
@@ -562,8 +629,8 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
                 Profile Complete
               </Typography>
             </div>
-          )}
-          
+          )} */}
+
           <h2 className="text-header text-light mt-2 text-center">
             {capitalizeFirstLetter(formData.username)}
           </h2>
@@ -599,15 +666,16 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       onClick={() => handleMenuAction(item.action)}
       style={{
         cursor: "pointer",
-        borderBottom: "0.5px solid #fff",
+        borderBottom: `0.5px solid #fff`,
         marginBottom: "1.2rem",
         marginTop: "0.02rem",
+        color:`${item.label==="Delete Account"?"red":""}`
       }}
     >
       <Grid item xs={2}>
         <img src={item.icon} style={{ maxHeight: "2.5rem" }} alt={item.label} />
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={8} >
         <span>{item.label}</span>
       </Grid>
     </Grid>
@@ -713,7 +781,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
         </Grid>
 
         {/* Gender */}
-        <Grid item style={commonItemStyle}>
+        {/* <Grid item style={commonItemStyle}>
           <label className="form-label fw-bold text-light mb-2 d-block">Gender</label>
           <select
             value={formData.gender}
@@ -725,7 +793,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
-        </Grid>
+        </Grid> */}
 
         {/* Buttons */}
         <Grid item style={commonItemStyle}>
@@ -867,11 +935,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
         {!profileState.update ? (
           <Card
-            className="main-container p-6 mt-8"
+            className="main-container"
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
-              marginTop: "30px",
+              marginTop: "20%",
             }}
           >
             {MENU_ITEMS.map(renderMenuItem)}
@@ -882,13 +950,133 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
         {renderDeleteModal()}
       </Box>
- {/* Sub-drawers */}
+      {/* Sub-drawers */}
       <Family family={drawers.family} onfamilyclose={() => handleDrawerToggle('family', false)} />
       <Communication
         communication={drawers.communication}
         onCommunicationClose={() => handleDrawerToggle('communication', false)}
       />
       <ContactUs help={drawers.help} onHelpClose={() => handleDrawerToggle('help', false)} />
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} minWidth >
+        <DialogContent sx={{ borderBottom: "2px solid #8ac642", bgcolor: "#212121", fontWeight: 600 }}>
+          <Typography variant="h5" align="" gutterBottom color={"white"}>
+            Select Image Source<br></br>
+            Choose how you want to update your profile picture.
+          </Typography>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            px: 3,
+            pb: 3,
+            bgcolor: "#212121"
+          }}
+        >
+          {openCamera ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              {/* Camera Preview */}
+              <video
+                ref={videoRef}
+                autoPlay
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  maxHeight: "70vh",
+                  borderRadius: "12px",
+                  objectFit: "cover",
+                }}
+              />
+              <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+                <Typography
+                  variant="h5"
+                  align="end"
+                  sx={{ cursor: "pointer", color: "error.main", width: "100%", fontWeight: 600 }}
+                  onClick={() => setOpenDialog(false)}
+                >Take Photo</Typography>
+                <Typography
+                  variant="h5"
+                  align="end"
+                  sx={{ cursor: "pointer", color: "error.main", width: "100%", fontWeight: 600 }}
+                  onClick={() => setOpenCamera(false)}
+                >Cancel</Typography>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Typography
+                variant="h5"
+                align="end"
+                sx={{ cursor: "pointer", color: "white", width: "100%", fontWeight: 600 }}
+                onClick={() => document.getElementById("profile-image-upload").click()}
+              >Upload from Files</Typography>
+              <Typography
+                variant="h5"
+                align="end"
+                sx={{ cursor: "pointer", color: "white", width: "100%", fontWeight: 600 }}
+                onClick={() => setOpenCamera(true)}
+              >Take Photo</Typography>
+              <Typography
+                variant="h5"
+                align="end"
+                sx={{ cursor: "pointer", color: "error.main", width: "100%", fontWeight: 600 }}
+                onClick={() => setOpenDialog(false)}
+              >
+                Cancel
+              </Typography>
+            </>
+          )}
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openCamera} onClose={() => setOpenCamera(false)} fullWidth maxWidth="sm">
+        <IconButton
+          aria-label="close"
+          onClick={() => setOpenCamera(false)}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: "white",
+            bgcolor: "#212121",
+            borderRadius: "50%",
+            "&:hover": {
+              bgcolor: "#333", // darker on hover
+            },
+          }}
+        >
+          <CloseIcon sx={{ fontSize: "2rem", fontWeight: 600 }} />
+        </IconButton>
+
+        <DialogContent sx={{ textAlign: "center", bgcolor: "#212121" }}>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            style={{ width: "100%", borderRadius: "8px" }}
+          />
+          <canvas ref={canvasRef} style={{ display: "none" }} />
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: "center", pb: 2, bgcolor: "#212121" }}>
+          <button
+            className="ps-3 pe-3"
+            variant="contained"
+            onClick={handleCapture}
+            style={{
+              background: "#212121",
+              color: "white",
+              fontWeight: 900,
+              borderRadius: "20px",
+              border: "2px solid #8ac642",
+              padding: "0.5rem"
+            }}
+          >
+            📸 Take Photo
+          </button>
+        </DialogActions>
+      </Dialog>
     </Drawer>
   );
 };
