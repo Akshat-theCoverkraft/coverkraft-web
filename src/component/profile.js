@@ -48,6 +48,16 @@ const MENU_ITEMS = [
   { label: "Delete Account", icon: logout, action: "delete" }
 ];
 
+// Utility function to convert text to Title Case
+const toTitleCase = (text) => {
+  if (!text || typeof text !== 'string') return '';
+  return text
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 // Circular Progress Component
 const CircularProgress = ({ percentage, size = 120, strokeWidth = 6, showPercentage = true }) => {
   const radius = (size - strokeWidth) / 2;
@@ -239,7 +249,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   }, []);
 
   const handleFormChange = useCallback((field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    // Apply Title Case formatting specifically for the username field
+    const processedValue = field === 'username' ? toTitleCase(value) : value;
+    
+    setFormData(prev => ({ ...prev, [field]: processedValue }));
     // Clear validation error when user starts typing
     if (validationErrors[field]) {
       setValidationErrors(prev => ({ ...prev, [field]: null }));
@@ -440,7 +453,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     }
   }, [open, location.pathname]);
 
-  // CRITICAL: Populate form data when user data is loaded
+  // FIXED: Populate form data when user data is loaded with proper Title Case handling
   useEffect(() => {
     if (userbyId.getUserById?.data) {
       const data = userbyId.getUserById.data;
@@ -448,10 +461,10 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       
       console.log("Populating form with user data:", data); // Debug log
       
-      // Update form data with fresh API data
+      // Update form data with fresh API data, ensuring proper Title Case for username
       setFormData(prevFormData => ({
         ...prevFormData,
-        username: data.userName || "",
+        username: toTitleCase(data.userName) || "", // Apply Title Case formatting here
         useremail: data.userEmail || "",
         userPhone: data.userPhone || "",
         userDob: data.userDob ? new Date(data.userDob.split("/").reverse().join("-")) : null,
