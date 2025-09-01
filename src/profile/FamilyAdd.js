@@ -9,6 +9,16 @@ import Dropdown from "../component/Dropdown";
 import { toast, ToastContainer } from "react-toastify";
 import { THEME_COLOR } from "../constants";
 
+// ✅ Utility function to format Title Case
+const toTitleCase = (str) => {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .filter((word) => word.trim() !== "")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editData = null }) => {
   const [familyMember, setFamilyMember] = useState("");
   const [fullName, setFullName] = useState("");
@@ -38,7 +48,8 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
   useEffect(() => {
     if (familyAdd && mode === "edit" && editData) {
       setFamilyMember(editData.familyMember || "");
-      setFullName(editData.fullName || "");
+      // ✅ Apply Title Case formatting when setting fullName from editData
+      setFullName(editData.fullName ? toTitleCase(editData.fullName) : "");
       setuserPhone(editData.mobile || "");
       setuserEmail(editData.email || "");
     } else if (mode === "add") {
@@ -60,13 +71,12 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
     switch (name) {
       case "fullName":
         if (
-  !formData.username || 
-  formData.username.trim().length < 3 || 
-  !/^[a-z]+([A-Z][a-z]*)*$/.test(formData.username.trim())
-) {
-  errors.username = "Username must be in camelCase and at least 3 characters long";
-}
-
+          !value.trim() ||
+          value.trim().length < 3 ||
+          !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(value.trim())
+        ) {
+          message = "Full name must be in Title Case and at least 3 characters long.";
+        }
         break;
       case "userPhone":
         if (!/^\d{10}$/.test(value)) message = "Enter a valid 10-digit phone number.";
@@ -76,7 +86,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
         if (!emailRegex.test(value)) message = "Enter a valid email address.";
         break;
       case "familyMember":
-        if (familyMember!=='') message = "Please select relation.";
+        if (!value) message = "Please select relation.";
         break;
       default:
         break;
@@ -90,13 +100,13 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
     let valid = true;
 
     if (
-  !fullName.trim() ||
-  fullName.trim().length < 3 ||
-  !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(fullName.trim())
-) {
-  tempErrors.fullName = "Full name must be in Title Case and at least 3 characters long.";
-  valid = false;
-}
+      !fullName.trim() ||
+      fullName.trim().length < 3 ||
+      !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(fullName.trim())
+    ) {
+      tempErrors.fullName = "Full name must be in Title Case and at least 3 characters long.";
+      valid = false;
+    }
 
     if (!familyMember) {
       tempErrors.familyMember = "Please select relation.";
@@ -106,7 +116,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
       tempErrors.userPhone = "Enter a valid 10-digit phone number.";
       valid = false;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(useremail)) {
       tempErrors.useremail = "Enter a valid email address.";
       valid = false;
@@ -124,21 +134,16 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
 
     const formData = {
       userId,
-      fullName,
+      fullName: toTitleCase(fullName), // ✅ Ensure Title Case before sending to API
       familyMember,
       mobile: userPhone,
       email: useremail,
     };
 
     const formDataEdit = {
-      userId,
-      fullName,
-      familyMember,
-      mobile: userPhone,
-      email: useremail,
+      ...formData,
       _id: editData?._id,
     };
-
 
     try {
       let response;
@@ -161,7 +166,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
         toast.error("Something went wrong.");
       }
     } catch (err) {
-      toast.error(mode === "edit" ?"Failed to update member.":'Failed to save member.');
+      toast.error(mode === "edit" ? "Failed to update member." : "Failed to save member.");
     }
   };
 
@@ -207,7 +212,6 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
               value={familyMember}
               onChange={(e) => {
                 const value = e.target.value;
-                
                 setFamilyMember(value);
                 validateField("familyMember", value);
               }}
