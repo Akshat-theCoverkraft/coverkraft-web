@@ -66,7 +66,7 @@ const Footer = () => {
     {
       src: twitter,
       alt: "Twitter",
-      href: "https://x.com/thecoverkraft/status/1947877105259409817",
+      href: "https://x.com/thecoverkraft",
       target: "_blank",
     },
     {

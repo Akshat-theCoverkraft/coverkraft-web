@@ -67,6 +67,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           WebkitTextStroke: "2px white",
           fontWeight: 900,
           zIndex: 3,
+          marginTop: "10px",
         }}
       >
         {number < 10 ? `0${number}` : number}
@@ -93,7 +94,7 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         <Typography
           variant="h5"
           pl={2}
-          sx={{ color: "white", fontWeight: 600, textAlign: "left" }}
+          sx={{ color: "white", fontWeight: 600, textAlign: "left" , marginTop: "35px"}}
         >
           {title}
         </Typography>
