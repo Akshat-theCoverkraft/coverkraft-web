@@ -135,33 +135,31 @@ const Login = () => {
 
   // OTP verification (final login)
   // Temporary OTP verification: just allow any 6-digit input for now
-const handleVerify = async () => {
-  if (otp.length === 6) {
-    try {
-      // ✅ Register SW and request token
-      const registration = await registerFirebaseSW();
-      const fcmToken = await requestFCMPermission(registration);
+  const handleVerify = async () => {
+    if (otp.length === 6) {
+      try {
+        // ✅ Register SW and request token
+        const registration = await registerFirebaseSW();
+        const fcmToken = await requestFCMPermission(registration);
 
-      await dispatch(
-        verifyUser(API_URL, {
-          userPhone: phoneNumber,
-          userFcmId: fcmToken || "NA", // fallback if blocked
-        })
-      );
+        await dispatch(
+          verifyUser(API_URL, {
+            userPhone: phoneNumber,
+            userFcmId: fcmToken || "NA", // fallback if blocked
+          })
+        );
 
-      sessionStorage.setItem("loggedIn", "true");
-      toast.success("✅ Phone number authentication successful");
-      navigate("/");
-    } catch (error) {
-      console.error("Verification failed:", error);
-      toast.error("Verification failed. Please try again.");
+        sessionStorage.setItem("loggedIn", "true");
+        toast.success("Phone number authentication successful");
+        navigate("/");
+      } catch (error) {
+        console.error("Verification failed:", error);
+        toast.error("Verification failed. Please try again.");
+      }
+    } else {
+      toast.error("Please enter a 6-digit OTP.");
     }
-  } else {
-    toast.error("Please enter a 6-digit OTP.");
-  }
-};
-
-
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && valid && !loggedIn) {

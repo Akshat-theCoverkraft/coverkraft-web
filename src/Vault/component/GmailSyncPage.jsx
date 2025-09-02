@@ -128,7 +128,7 @@ const GmailSyncPage = () => {
       const tomorrowDate = new Date(currentDate);
       tomorrowDate.setDate(currentDate.getDate() + 1);
 
-     // -------commented out the below code to fetch all emails from the last 3 years------------------
+      // -------commented out the below code to fetch all emails from the last 3 years------------------
       if (!lastFetchData || !lastFetchData.lastSyncedAt) {
         const threeYearsAgo = new Date();
         threeYearsAgo.setFullYear(currentDate.getFullYear() - 3);
@@ -140,7 +140,7 @@ const GmailSyncPage = () => {
         console.log(
           `3 years fetch: Getting data from ${fromDate} to ${toDate}`
         );
-     } else {
+      } else {
         const lastFetchDate = new Date(lastFetchData.lastSyncedAt);
         const fromDate = formatDateForGmail(lastFetchDate);
         const toDate = formatDateForGmail(currentDate);
@@ -207,6 +207,7 @@ const GmailSyncPage = () => {
         "nivabupa.com",
         "starhealth.in",
         "trans.hdfcergo.email",
+        "emailer.futuregenerali.in",
       ];
 
       // Enhanced marketing exclusion patterns to catch more marketing emails
@@ -294,7 +295,7 @@ const GmailSyncPage = () => {
         .map((domain) => `from:${domain}`)
         .join(" OR ");
 
-      const query = `(${domainQuery}) (label:spam OR label:inbox OR label:junk) ${dateQuery}`;
+      const query = `(${domainQuery}) (label:spam OR label:inbox OR label:junk OR label: all mail) ${dateQuery}`;
 
       // Function to fetch all messages with pagination
       const fetchAllMessages = async () => {
@@ -307,8 +308,10 @@ const GmailSyncPage = () => {
           pageCount++;
           console.log(`Fetching page ${pageCount}...`);
 
-          let gmailUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=${maxResults}&q=${encodeURIComponent(query)}`;
-          
+          let gmailUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=${maxResults}&q=${encodeURIComponent(
+            query
+          )}`;
+
           if (nextPageToken) {
             gmailUrl += `&pageToken=${nextPageToken}`;
           }
@@ -324,26 +327,29 @@ const GmailSyncPage = () => {
           }
 
           const data = await response.json();
-          
+
           if (data.messages && data.messages.length > 0) {
             allMessages = allMessages.concat(data.messages);
-            console.log(`Page ${pageCount}: Found ${data.messages.length} messages (Total: ${allMessages.length})`);
+            console.log(
+              `Page ${pageCount}: Found ${data.messages.length} messages (Total: ${allMessages.length})`
+            );
           }
 
           nextPageToken = data.nextPageToken;
 
           // Add a small delay to avoid rate limiting
           if (nextPageToken) {
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 100));
           }
-
         } while (nextPageToken);
 
-        console.log(`✅ Pagination complete. Total messages fetched: ${allMessages.length} across ${pageCount} pages`);
-        
+        console.log(
+          `✅ Pagination complete. Total messages fetched: ${allMessages.length} across ${pageCount} pages`
+        );
+
         return {
           messages: allMessages,
-          resultSizeEstimate: allMessages.length
+          resultSizeEstimate: allMessages.length,
         };
       };
 
@@ -384,17 +390,28 @@ const GmailSyncPage = () => {
 
       // Process all emails from target domains, only excluding marketing ones
       const processingBatchSize = 50; // Process emails in batches to avoid overwhelming the API
-      
-      for (let batchStart = 0; batchStart < data.messages.length; batchStart += processingBatchSize) {
-        const batchEnd = Math.min(batchStart + processingBatchSize, data.messages.length);
+
+      for (
+        let batchStart = 0;
+        batchStart < data.messages.length;
+        batchStart += processingBatchSize
+      ) {
+        const batchEnd = Math.min(
+          batchStart + processingBatchSize,
+          data.messages.length
+        );
         const currentBatch = data.messages.slice(batchStart, batchEnd);
-        
-        console.log(`🔄 Processing batch ${Math.floor(batchStart / processingBatchSize) + 1}: emails ${batchStart + 1}-${batchEnd} of ${data.messages.length}`);
+
+        console.log(
+          `🔄 Processing batch ${
+            Math.floor(batchStart / processingBatchSize) + 1
+          }: emails ${batchStart + 1}-${batchEnd} of ${data.messages.length}`
+        );
 
         // Process current batch
         const batchPromises = currentBatch.map(async (msg, batchIndex) => {
           const globalIndex = batchStart + batchIndex;
-          
+
           try {
             const emailData = await fetch(
               `https://www.googleapis.com/gmail/v1/users/me/messages/${msg.id}`,
@@ -404,7 +421,9 @@ const GmailSyncPage = () => {
             );
 
             if (!emailData.ok) {
-              throw new Error(`Failed to fetch email ${msg.id}: ${emailData.status}`);
+              throw new Error(
+                `Failed to fetch email ${msg.id}: ${emailData.status}`
+              );
             }
 
             const emailResponse = await emailData.json();
@@ -468,29 +487,38 @@ const GmailSyncPage = () => {
             };
 
             if (globalIndex % 10 === 0) {
-              console.log(`✅ Processed ${globalIndex + 1}/${data.messages.length}: "${subject}" from ${senderDomain}`);
+              console.log(
+                `✅ Processed ${globalIndex + 1}/${
+                  data.messages.length
+                }: "${subject}" from ${senderDomain}`
+              );
             }
 
             return emailData_processed;
           } catch (err) {
-            console.error(`❌ Error processing email ${msg.id} (${globalIndex + 1}/${data.messages.length}):`, err.message);
+            console.error(
+              `❌ Error processing email ${msg.id} (${globalIndex + 1}/${
+                data.messages.length
+              }):`,
+              err.message
+            );
             return null;
           }
         });
 
         // Wait for current batch to complete
         const batchResults = await Promise.allSettled(batchPromises);
-        
+
         // Add successful results to emailsWithPriority
         batchResults.forEach((result) => {
-          if (result.status === 'fulfilled' && result.value) {
+          if (result.status === "fulfilled" && result.value) {
             emailsWithPriority.push(result.value);
           }
         });
 
         // Add delay between batches to avoid rate limiting
         if (batchEnd < data.messages.length) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
       }
 
