@@ -68,9 +68,10 @@ export const requestFCMPermission = async (registration) => {
   }
 };
 
-/**
- * Listen for foreground FCM messages
- */
+  const handleRedirect = () => {
+    navigate("/notification");
+  };
+
 export const setupOnMessageListener = () => {
   onMessage(messaging, (payload) => {
     console.log("[Foreground Message]", payload);
@@ -81,7 +82,8 @@ export const setupOnMessageListener = () => {
 
       toast.custom((t) => (
         <div
-          className={`position-fixed top-0 end-0 m-4 z-50 ${
+        onClick={() => (window.location.href = "/notification")}
+          className={`position-fixed top-0 cursor-pointer end-0 m-4 z-50 ${
             t.visible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
           } transition-all duration-500 ease-out`}
           role="alert"
