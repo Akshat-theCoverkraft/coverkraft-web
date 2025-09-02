@@ -631,7 +631,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             </div>
           )} */}
 
-          <h2 className="text-header text-light mt-2 text-center">
+          <h2 className="text-header text-light mt-4 text-center">
             {capitalizeFirstLetter(formData.username)}
           </h2>
           {formData.useremail && (
