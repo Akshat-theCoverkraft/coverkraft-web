@@ -12,7 +12,7 @@ import { THEME_COLOR } from "../../../constants";
 import Footer from "../Footer";
 import backArrow from "../../../Images/ic_back_button.png";
 import SessionExpiredModal from "../../../utils/sessionExpireModal";
-
+import DOMPurify from "dompurify";
 const NewsBlog = () => {
   const navigate = useNavigate();
   const { type, id } = useParams();
@@ -273,9 +273,10 @@ const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null)
                   {moment(blog?.createdAt).format("MMM DD, YYYY")}
                 </span>
               </div>
-              <p className="text-left mt-2">
-                {blog?.description}
-              </p>
+              <p
+                className="text-left mt-2"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog?.description) }}
+              />
             </div>
           </div>
 
