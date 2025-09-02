@@ -326,9 +326,13 @@ const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null)
                             {moment(mBlog?.createdAt).format("MMM DD, YYYY")}
                           </span>
                         </div>
-                        <p className="card-text flex-grow-1">
+                        {/* <p className="card-text flex-grow-1">
                           {truncateString(mBlog?.description)}
-                        </p>
+                        </p> */}
+                        <p
+                          className="text-left mt-2"
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(truncateString(mBlog?.description)) }}
+                        />
                         <div className="mt-auto">
                           <MuiButton
                             variant="text"
