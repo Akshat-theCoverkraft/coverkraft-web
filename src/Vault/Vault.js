@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -45,6 +45,26 @@ import { color } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { usePolicyContext } from "../store/policyContext";
+
+const api = axios.create({ baseURL: API_URL });
+
+api.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      window.dispatchEvent(new Event("session-expired"));
+    }
+    return Promise.reject(error);
+  }
+);
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -106,6 +126,14 @@ const Vault = () => {
     accident: "/life-policy",
   };
 
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      setShowSessionExpired(true);
+    };
+    window.addEventListener("session-expired", handleSessionExpired);
+    return () => window.removeEventListener("session-expired", handleSessionExpired);
+  }, []);
+
   // Utility functions
   const toggleDialog = (dialogType, state = null) =>
     setDialogs((prev) => ({
@@ -134,6 +162,7 @@ const Vault = () => {
     toggleDialog("addPolicy", false);
 
     const token = sessionStorage.getItem("token");
+    console.log("Token from session:", sessionStorage.getItem("token"));
     const formData = new FormData();
     const filesToUpload = files || image;
 
@@ -187,7 +216,6 @@ const Vault = () => {
   const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
     navigate("/login");
-    localStorage.clear();
     sessionStorage.clear();
   };
 

@@ -1,43 +1,27 @@
-// import { FirebaseError } from "@firebase/app";
+// public/firebase-messaging-sw.js
+importScripts("https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js");
 
-// // public/firebase-messaging-sw.js
-// importScripts("https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js");
-// importScripts("https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js");
+firebase.initializeApp({
+  apiKey: "AIzaSyAwBkvlUE6tIVEsNjFvMTqHfmDaGMdYtcg",
+  authDomain: "coverkraft-f0697.firebaseapp.com",
+  projectId: "coverkraft-f0697",
+  storageBucket: "coverkraft-f0697.firebasestorage.app",
+  messagingSenderId: "1001414765690",
+  appId: "1:1001414765690:web:10f29e630f6532a7b91fc3",
+});
 
-// console.log("✅ Firebase Messaging SW loaded from:", self.location.href);
+const messaging = firebase.messaging();
 
-// firebase.initializeApp({
-//     apiKey: "AIzaSyAwBkvlUE6tIVEsNjFvMTqHfmDaGMdYtcg",
-//     authDomain: "coverkraft-f0697.firebaseapp.com",
-//     projectId: "coverkraft-f0697",
-//     storageBucket: "coverkraft-f0697.appspot.com",
-//     messagingSenderId: "1001414765690",
-//     appId: "1:1001414765690:web:10f29e630f6532a7b91fc3",
-//     measurementId: "G-BG4LD6N6MY"
-// });
+// Handle background messages
+messaging.onBackgroundMessage(function (payload) {
+  console.log("Background message received:", payload);
 
-// const messaging = FirebaseError.messaging();
+  const notificationTitle = payload.notification?.title || "Background Notification";
+  const notificationOptions = {
+    body: payload.notification?.body || "You have a new message",
+    icon: "/logo192.png", 
+  };
 
-// messaging.onBackgroundMessage(payload => {
-//     console.log("[📩 Background Message]", payload);
-
-//     const notificationTitle = payload.notification.title;
-//     const notificationOptions = {
-//         body: payload.notification.body,
-//         icon: payload.notification.icon || "/firebase-logo.png",
-//     };
-
-//     self.registration.showNotification(notificationTitle, notificationOptions);
-// });
-// messaging.onMessage(payload => {
-//     console.log("[📬 Foreground Message]", payload);
-
-//     const notificationTitle = payload.notification.title;
-//     const notificationOptions = {
-//         body: payload.notification.body,
-//         icon: payload.notification.icon || "/firebase-logo.png",
-//     };
-
-//     self.registration.showNotification(notificationTitle, notificationOptions);
-// }
-// );
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
