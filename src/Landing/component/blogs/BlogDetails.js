@@ -282,9 +282,13 @@ const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null)
 
           {moreBlogs?.length > 0 && (
             <>
-              <h2 className="text-center mb-4">
-                <strong>More From Blogs And News</strong>
-              </h2>
+             <h2 className="text-center mb-4">
+  <strong>
+    More from {capitalizeFirstLetter(type)}
+    {type.toLowerCase() === "blog" || type.toLowerCase() === "news" || type.toLocaleLowerCase() === "videos" || type.toLocaleLowerCase() === "shorts" ? "s" : ""}
+  </strong>
+</h2>
+
               <div className="row">
                 {moreBlogs?.map((mBlog, index) => (
                   <div className="col-md-4 mb-4" key={index}>

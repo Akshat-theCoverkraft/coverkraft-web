@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Tabs, Tab, Box, Typography, Grid, Card, CardContent,
   CardMedia, Button, Pagination, Container, Skeleton,
-  Chip, Avatar
+  Avatar
 } from "@mui/material";
 import {
   PlayArrowRounded, CalendarTodayRounded, PersonRounded
@@ -11,7 +11,7 @@ import Navbar from "../../../component/Navbar";
 import moment from "moment-timezone";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { capitalizeFirstLetter, truncateString } from "../../../utils/helpers";
+import { capitalizeFirstLetter } from "../../../utils/helpers";
 import arrow from "../../../Images/Symbol.png";
 import API_URL from "../../../ServiceModule/Service";
 import Footer from "../Footer";
@@ -25,10 +25,12 @@ const TABS = {
   featured: "Featured Videos",
 };
 
+// ✅ Check if link is YouTube
 const isYouTubeLink = (url) => {
   return typeof url === "string" && (url.includes("youtube.com") || url.includes("youtu.be"));
 };
 
+// ✅ Generate embed link for YouTube
 const getYouTubeEmbedUrl = (url) => {
   try {
     if (url.includes("youtube.com")) {
@@ -42,6 +44,19 @@ const getYouTubeEmbedUrl = (url) => {
     console.error("Invalid YouTube URL", err);
   }
   return null;
+};
+
+// ✅ Detect media type
+const getMediaType = (url) => {
+  if (!url) return "image";
+  if (isYouTubeLink(url)) return "youtube";
+  const videoExtensions = [".mp4", ".mov", ".webm", ".ogg"];
+  const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+
+  if (videoExtensions.some(ext => url.toLowerCase().endsWith(ext))) return "video";
+  if (imageExtensions.some(ext => url.toLowerCase().endsWith(ext))) return "image";
+
+  return "image"; // default fallback
 };
 
 const Feeds = () => {
@@ -178,7 +193,7 @@ const Feeds = () => {
                       flex: 1,
                       borderRadius: "40px", textTransform: "none", padding: "0.75rem 1.5rem",
                       backgroundColor: selectedTab === val ? "#8BC642" : "transparent",
-                      color: selectedTab === val ? "#fff" : "#fff",
+                      color: "#fff",
                       border: "2px solid #8BC642", fontSize: "1.4rem", fontWeight: 600,
                       minWidth: "120px", transition: "all 0.3s ease",
                     }}
@@ -207,9 +222,9 @@ const Feeds = () => {
           ) : (
             <Grid container spacing={4}>
               {contentData.map((item, index) => {
-                const isVideo = ["short", "video", "featured", "news"].includes(selectedTab);
+                const mediaUrl = item.video || item.videoUrl || item.youTubeLink || item.newsImg;
+                const mediaType = getMediaType(mediaUrl);
                 const showReadMore = textOverflowStates[index];
-                const videoUrl = item.video || item.videoUrl || item.youTubeLink;
 
                 return (
                   <Grid item xs={12} sm={6} md={4} key={item._id}>
@@ -226,38 +241,36 @@ const Feeds = () => {
                       }}
                     >
                       <Box sx={{ position: "relative" }}>
-                        {isVideo ? (
-                          isYouTubeLink(videoUrl) ? (
-                            <Box sx={{ height: 220 }}>
-                              <iframe
-                                width="100%"
-                                height="100%"
-                                src={getYouTubeEmbedUrl(videoUrl)}
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                style={{ borderRadius: "20px", objectFit: "cover" }}
-                              ></iframe>
-                            </Box>
-                          ) : (
-                            <CardMedia
-                              component="video"
-                              src={videoUrl || item.newsImg}
-                              controls
-                              controlsList="nodownload"
-                              height="220"
-                              ref={(el) => (videoRefs.current[index] = el)}
-                              onClick={(e) => e.stopPropagation()}
-                              onPlay={() => handleVideoClick(index)}
-                              sx={{ objectFit: "contain", transition: "transform 0.4s ease" }}
-                            />
-                          )
+                        {mediaType === "youtube" ? (
+                          <Box sx={{ height: 220 }}>
+                            <iframe
+                              width="100%"
+                              height="100%"
+                              src={getYouTubeEmbedUrl(mediaUrl)}
+                              title="YouTube video player"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              style={{ borderRadius: "20px", objectFit: "cover" }}
+                            ></iframe>
+                          </Box>
+                        ) : mediaType === "video" ? (
+                          <CardMedia
+                            component="video"
+                            src={mediaUrl}
+                            controls
+                            controlsList="nodownload"
+                            height="220"
+                            ref={(el) => (videoRefs.current[index] = el)}
+                            onClick={(e) => e.stopPropagation()}
+                            onPlay={() => handleVideoClick(index)}
+                            sx={{ objectFit: "contain", transition: "transform 0.4s ease" }}
+                          />
                         ) : (
                           <CardMedia
                             component="img"
-                            image={item.newsImg}
-                            height="200"
+                            image={mediaUrl}
+                            height="220"
                             sx={{ objectFit: "cover", transition: "transform 0.4s ease" }}
                           />
                         )}
