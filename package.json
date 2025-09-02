@@ -25,6 +25,7 @@
     "bootstrap": "^5.3.3",
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.11",
+    "dompurify": "^3.2.6",
     "firebase": "^11.10.0",
     "framer-motion": "^12.23.5",
     "html-react-parser": "^5.2.5",

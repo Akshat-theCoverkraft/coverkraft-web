@@ -379,6 +379,37 @@ const BlogSection = () => {
               </Button>
             </Box>
           )}
+          {post?.subtitle&&(type === "short" || type === "video" || type === "featured") && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                maxWidth: "60%",
+                bgcolor: "rgba(0,0,0,0.6)",
+                px: 1.5,
+                py: 0.5,
+                borderRadius: "12px",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#fff",
+                  fontSize: "1.2rem",
+                  fontWeight: 600,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+                title={post?.subtitle} // tooltip on hover
+              >
+                {post?.subtitle}
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Card>
     );
