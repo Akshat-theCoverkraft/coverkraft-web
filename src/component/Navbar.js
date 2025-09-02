@@ -90,18 +90,6 @@ function Navbar({ scrollToContactBottom }) {
     [location.pathname]
   );
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
-  useEffect(() => {
-    if (loggedIn) {
-      fetchUnreadPolicyCount(); // Initial load
-
-      // Real-time update every 30 seconds
-      const interval = setInterval(() => {
-        fetchUnreadPolicyCount();
-      }, 3000);
-
-      return () => clearInterval(interval); // Cleanup on unmount
-    }
-  }, [loggedIn]);
 
   const fetchUnreadPolicyCount = async () => {
     try {
