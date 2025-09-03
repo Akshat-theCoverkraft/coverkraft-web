@@ -71,6 +71,7 @@ export const PolicyProvider = ({ children }) => {
         const data = await fetchPolicyData(endpoint, params);
         if (isArchive) {
           setArchieveList(data);
+          setAllPolicyIds(data.map((policy) => policy._id));
         } else {
           setPolicyList(data);
           setPolicyListLength(data.length);

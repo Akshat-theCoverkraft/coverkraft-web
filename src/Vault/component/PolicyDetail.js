@@ -569,16 +569,22 @@ const PolicyDetail = ({ policyId }) => {
             <div className="d-flex justify-content-between align-items-start px-4">
               <div>
                 <p
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "700",
-                    marginBottom: "4px",
-                    marginTop: 0,
-                  }}
-                  className="fw-bold"
-                >
-                  {policy?.policyDetails?.make_Model || policy?.insuredName}
-                </p>
+  style={{
+    width: "400px",          // fixed width
+    whiteSpace: "nowrap",    // keep text in one line
+    overflow: "hidden",      // hide overflow
+    textOverflow: "ellipsis",// show "..." when text is too long
+    fontSize: "18px",
+    fontWeight: 700,
+    marginBottom: "4px",
+    marginTop: 0,
+    cursor: "default",       // optional, shows pointer style
+  }}
+  title={policy?.policyDetails?.make_Model || policy?.insuredName} // tooltip
+>
+  {policy?.policyDetails?.make_Model || policy?.insuredName}
+</p>
+
                 <p
                   style={{
                     color: "#fff",
@@ -736,7 +742,7 @@ const PolicyDetail = ({ policyId }) => {
                         style={{ fontSize: "16px", fontWeight: "700" }}
                         className="fw-bolder"
                       >
-                        {policy?.premiumPaid}
+                        {policy?.policyDetails?.totalPremium || "Pending"}
                       </p>
                     </div>
                   </Grid>
@@ -765,7 +771,7 @@ const PolicyDetail = ({ policyId }) => {
                       </p>
                       <p className="fw-bolder">
                         {policy?.policyDetails?.idv ||
-                          policy?.policyDetails?.sumInsured}
+                          policy?.policyDetails?.sumInsured || 'Pending'}
                       </p>
                     </div>
                   </Grid>
@@ -790,7 +796,7 @@ const PolicyDetail = ({ policyId }) => {
                       >
                         Policy Start Date
                       </p>
-                      <p className="fw-bolder">{policy?.policyStartDate}</p>
+                      <p className="fw-bolder">{policy?.policyStartDate || "Pending"}</p>
                     </div>
                   </Grid>
 
@@ -814,7 +820,7 @@ const PolicyDetail = ({ policyId }) => {
                       >
                         Policy End Date
                       </p>
-                      <p className="fw-bolder">{policy?.policyEndDate}</p>
+                      <p className="fw-bolder">{policy?.policyEndDate || 'Pending'}</p>
                     </div>
                   </Grid>
                 </Grid>
