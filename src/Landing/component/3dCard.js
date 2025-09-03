@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
   Typography,
@@ -21,11 +21,21 @@ import TRight from "../../Images/TRight.png";
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 180;
 
-const truncateText = (text, maxLength = 100) =>
-  text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-
 const PolicyCard = ({ number, title, description, onSeeMore }) => {
-  const isTruncated = description.length > 120;
+  const [showReadMore, setShowReadMore] = useState(false);
+  const descRef = useRef(null);
+
+  useEffect(() => {
+    if (descRef.current) {
+      const lineHeight = parseFloat(
+        getComputedStyle(descRef.current).lineHeight
+      );
+      const maxHeight = lineHeight * 2; // 2 lines
+      if (descRef.current.scrollHeight > maxHeight) {
+        setShowReadMore(true);
+      }
+    }
+  }, [description]);
 
   return (
     <Box
@@ -94,12 +104,18 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
         <Typography
           variant="h5"
           pl={2}
-          sx={{ color: "white", fontWeight: 600, textAlign: "left" , marginTop: "35px"}}
+          sx={{
+            color: "white",
+            fontWeight: 600,
+            textAlign: "left",
+            marginTop: "35px",
+          }}
         >
           {title}
         </Typography>
 
         <Typography
+          ref={descRef}
           variant="body2"
           sx={{
             color: "#fff",
@@ -118,20 +134,22 @@ const PolicyCard = ({ number, title, description, onSeeMore }) => {
           {description}
         </Typography>
 
-        <Typography
-          onClick={onSeeMore}
-          sx={{
-            color: "#5A9F1D",
-            cursor: "pointer",
-            mt: 1,
-            fontWeight: "bold",
-            fontSize: 13,
-            textAlign: "right",
-            paddingLeft: "70%",
-          }}
-        >
-          {"Read More"}
-        </Typography>
+        {showReadMore && (
+          <Typography
+            onClick={onSeeMore}
+            sx={{
+              color: "#5A9F1D",
+              cursor: "pointer",
+              mt: 1,
+              fontWeight: "bold",
+              fontSize: 13,
+              textAlign: "right",
+              paddingLeft: "70%",
+            }}
+          >
+            {"Read More"}
+          </Typography>
+        )}
       </Box>
     </Box>
   );
@@ -210,7 +228,6 @@ const WhyCoverKraft = () => {
         </Typography>
       </Box>
 
-      {/* Loader or No Data */}
       {loading ? (
         <Box display="flex" justifyContent="center" gap={3} flexWrap="wrap">
           {[...Array(groupSize)].map((_, idx) => (
@@ -231,7 +248,6 @@ const WhyCoverKraft = () => {
             justifyContent="center"
             position="relative"
           >
-            {/* Left Arrow */}
             <button
               className="card-arrow-btn left-arrow"
               onClick={handlePrev}
@@ -247,7 +263,6 @@ const WhyCoverKraft = () => {
               <img src={TLeft} alt="Left" width={35} />
             </button>
 
-            {/* Carousel */}
             <Carousel
               selectedItem={currentSlide}
               onChange={(index) => setCurrentSlide(index)}
@@ -278,7 +293,6 @@ const WhyCoverKraft = () => {
               ))}
             </Carousel>
 
-            {/* Right Arrow */}
             <button
               className="card-arrow-btn right-arrow"
               onClick={handleNext}
@@ -295,7 +309,6 @@ const WhyCoverKraft = () => {
             </button>
           </Box>
 
-          {/* Pagination Dots */}
           <Box display="flex" justifyContent="center" mt={3}>
             {groupedData.map((_, index) => (
               <Box
@@ -316,7 +329,6 @@ const WhyCoverKraft = () => {
         </>
       )}
 
-      {/* Modal */}
       <AnimatePresence>
         {showPopup && (
           <Modal open={true} onClose={closePopup}>
@@ -378,7 +390,6 @@ const WhyCoverKraft = () => {
         )}
       </AnimatePresence>
 
-      {/* CSS for Arrows */}
       <style jsx>{`
         .card-arrow-btn {
           width: 40px;

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   IconButton,
@@ -8,6 +8,7 @@ import {
   Tooltip,
   useMediaQuery,
   useTheme,
+  Badge,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,10 +20,8 @@ import profileIcon from "../Images/ic-profile.png";
 import notificationIcon from "../Images/ic-notification.png";
 import ProfileDrawer from "../component/profile";
 import { THEME_COLOR } from "../constants";
-import { Badge } from "@mui/material";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
-import { useEffect } from "react";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/" },
@@ -36,8 +35,6 @@ const MORE_MENU_ITEMS = [
   { key: "testimonials", label: "Testimonials", id: "testimonials" },
   { key: "faq", label: "FAQs", id: "faq" },
 ];
-
-const SESSION_KEYS = ["userId", "token", "loginTime", "isLoggedIn"];
 
 export const StyledButton = styled("button")(() => ({
   backgroundColor: "transparent",
@@ -75,10 +72,13 @@ function Navbar({ scrollToContactBottom }) {
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [mobileAnchor, setMobileAnchor] = useState(null);
   const [moreAnchor, setMoreAnchor] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
+
   const userId = useMemo(() => sessionStorage.getItem("userId"), []);
   const userEmail = useMemo(() => sessionStorage.getItem("userEmail"), []);
   const loggedIn = useMemo(
@@ -89,7 +89,6 @@ function Navbar({ scrollToContactBottom }) {
     () => location.pathname === "/",
     [location.pathname]
   );
-  const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
 
   const fetchUnreadPolicyCount = async () => {
     try {
@@ -137,7 +136,6 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleLogout = () => {
     sessionStorage.clear();
-
     setProfileAnchor(null);
     navigate("/");
     setTimeout(() => window.location.reload(), 100);
@@ -197,7 +195,17 @@ function Navbar({ scrollToContactBottom }) {
                   </MenuItem>
                 ))}
                 {loggedIn ? (
-                  [
+                  <>
+                    <MenuItem
+                      key="profile"
+                      onClick={() => {
+                        setDrawerOpen(true);
+                        setMobileAnchor(null);
+                      }}
+                      sx={{ fontSize: "1.3rem" }}
+                    >
+                      My Profile
+                    </MenuItem>
                     <MenuItem
                       key="notify"
                       onClick={() => {
@@ -207,15 +215,15 @@ function Navbar({ scrollToContactBottom }) {
                       sx={{ fontSize: "1.3rem" }}
                     >
                       Notification
-                    </MenuItem>,
+                    </MenuItem>
                     <MenuItem
                       key="logout"
                       onClick={handleLogout}
                       sx={{ fontSize: "1.3rem" }}
                     >
                       Logout
-                    </MenuItem>,
-                  ]
+                    </MenuItem>
+                  </>
                 ) : (
                   <MenuItem
                     onClick={() => {
@@ -227,6 +235,16 @@ function Navbar({ scrollToContactBottom }) {
                     Login
                   </MenuItem>
                 )}
+                <MenuItem
+                  key="policy-vault"
+                  onClick={() => {
+                    handleVault();
+                    setMobileAnchor(null);
+                  }}
+                  sx={{ fontSize: "1.3rem" }}
+                >
+                  Policy Vault
+                </MenuItem>
               </DarkMenu>
             </>
           ) : (
@@ -272,17 +290,17 @@ function Navbar({ scrollToContactBottom }) {
                     PopperProps={{
                       sx: {
                         "& .MuiTooltip-tooltip": {
-                          fontSize: "1.4rem", // increase font size
-                          padding: "8px 12px", // optional: more padding for readability
+                          fontSize: "1.4rem",
+                          padding: "8px 12px",
                         },
                       },
                     }}
-                    title={!!userEmail?"":"Please update email."}
+                    title={!!userEmail ? "" : "Please update email."}
                   >
                     <Badge
                       color="error"
                       variant="dot"
-                      invisible={!!userEmail} // hide dot if userEmail exists
+                      invisible={!!userEmail}
                       sx={{
                         "& .MuiBadge-badge": {
                           right: -2,
