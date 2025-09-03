@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom"
-import "./App.css";
-import Login from "./LoginModule/Login";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Register from "./LoginModule/Register";
 import { setupOnMessageListener } from "./fcm"; 
 import { Toaster } from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
+import { HelmetProvider } from "react-helmet-async";
+
+import Login from "./LoginModule/Login";
+import Register from "./LoginModule/Register";
 import Landing from "./Landing/Landing";
 import Vault from "./Vault/Vault";
 import AddPolicy from "./Vault/component/AddPolicy";
@@ -29,62 +30,59 @@ import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
 import { PolicyProvider } from "./store/policyContext.js";
-import { HelmetProvider } from "react-helmet-async";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
 
- useEffect(() => {
-    setupOnMessageListener(); // ✅ Foreground messages
+  useEffect(() => {
+    setupOnMessageListener();
   }, []);
 
+  useEffect(() => {
+    const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
+    const excludedPages = ["", "/login", "/register"];
 
-useEffect(() => {
-  const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
-  const excludedPages = ["", "/login", "/register"];
-
-  if ('scrollRestoration' in window.history) {
-    window.history.scrollRestoration = 'manual';
-  }
-
-  const loginTime = sessionStorage.getItem("loginTime");
-
-  const handleLogout = () => {
-    sessionStorage.clear();
-    setLogout(true);
-    setIsLoggedIn(false);
-    navigate("/");
-  };
-
-  const now = Date.now();
-
-  if (!excludedPages.includes(window.location.pathname)) {
-    if (loginTime) {
-      const loginTimestamp = parseInt(loginTime, 10);
-      const timeElapsed = now - loginTimestamp;
-
-      if (timeElapsed > SESSION_DURATION) {
-        console.warn("⏰ Session expired.");
-        handleLogout();
-      } else {
-        setIsLoggedIn(true);
-        const remainingTime = SESSION_DURATION - timeElapsed;
-
-        const logoutTimer = setTimeout(() => {
-          console.warn("⏰ Auto-logout due to session expiry.");
-          handleLogout();
-        }, remainingTime);
-
-        return () => clearTimeout(logoutTimer);
-      }
-    } else {
-      console.warn("🚫 loginTime not found. Assuming not logged in.");
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
     }
-  }
-}, []);
 
+    const loginTime = sessionStorage.getItem("loginTime");
+
+    const handleLogout = () => {
+      sessionStorage.clear();
+      setLogout(true);
+      setIsLoggedIn(false);
+      navigate("/");
+    };
+
+    const now = Date.now();
+
+    if (!excludedPages.includes(window.location.pathname)) {
+      if (loginTime) {
+        const loginTimestamp = parseInt(loginTime, 10);
+        const timeElapsed = now - loginTimestamp;
+
+        if (timeElapsed > SESSION_DURATION) {
+          console.warn("⏰ Session expired.");
+          handleLogout();
+        } else {
+          setIsLoggedIn(true);
+          const remainingTime = SESSION_DURATION - timeElapsed;
+
+          const logoutTimer = setTimeout(() => {
+            console.warn("⏰ Auto-logout due to session expiry.");
+            handleLogout();
+          }, remainingTime);
+
+          return () => clearTimeout(logoutTimer);
+        }
+      } else {
+        console.warn("🚫 loginTime not found. Assuming not logged in.");
+      }
+    }
+  }, []);
 
   const handleRefresh = () => {
     const excludedPages = ["", "/login"];
@@ -94,7 +92,6 @@ useEffect(() => {
     }
   };
 
-  // 👇 Inserted scroll-to-top behavior
   const ScrollToTop = () => {
     const { pathname } = window.location;
 
@@ -106,14 +103,13 @@ useEffect(() => {
   };
 
   return (
-    <>
+    <HelmetProvider>
       <ToastContainer position="top-center" />
       <Toaster position="top-right" reverseOrder={false} />
       <UniversalHomeButton />
       <ScrollToTop />
       <BackToTop />
 
-      {/* ✅ Wrap Routes inside PolicyProvider */}
       <PolicyProvider>
         <Routes>
           <Route path="" element={<Landing />} />
@@ -138,7 +134,7 @@ useEffect(() => {
           <Route path="/gmail-sync" element={<GmailSyncPage />} />
         </Routes>
       </PolicyProvider>
-    </>
+    </HelmetProvider>
   );
 }
 
