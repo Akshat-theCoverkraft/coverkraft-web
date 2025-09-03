@@ -45,6 +45,7 @@ import { color } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { usePolicyContext } from "../store/policyContext";
+import { Toast } from "react-bootstrap";
 
 const api = axios.create({ baseURL: API_URL });
 
@@ -231,10 +232,12 @@ const Vault = () => {
     if (!shareAllPolicy) setSelectedPolicies([]);
   };
 
-  const handleSelectAll = () =>
-    setSelectedPolicies(
-      selectedPolicies.length === allPolicyIds.length ? [] : [...allPolicyIds]
-    );
+const handleSelectAll = () => {
+  setSelectedPolicies((prev) => {
+    const newSelections = allPolicyIds.filter((id) => !prev.includes(id));
+    return [...prev, ...newSelections];
+  });
+};
 
   const handleCheckboxChange = (policyId) =>
     setSelectedPolicies((prev) =>
@@ -247,6 +250,15 @@ const Vault = () => {
     setSelectedPolicyId(policyId);
     sessionStorage.setItem("selectedPolicyId", policyId);
   };
+
+
+  const handleExport = (exportFunc) => {
+  if (selectedPolicies.length === 0) {
+    Toast.error("Please select at least one policy!");
+    return;
+  }
+  exportFunc();
+};
 
   // Export functions
   const exportToExcel = async () => {
@@ -324,6 +336,42 @@ const Vault = () => {
     }
   };
 
+  const exportToImage= async () => {
+    if (selectedPolicies.length === 0) {
+      return toast.error("Please select at least one policy to export");
+    }
+
+    try {
+      const token = sessionStorage.getItem("token");
+      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
+
+      // Step 1: Get the file URL from backend
+      const response = await axios.get(
+        `${API_URL}policy/imageTable?${queryParams}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const fileUrl = response?.data?.fileUrl;
+      if (!fileUrl) throw new Error("Image file URL is missing in response.");
+
+      const filename = fileUrl.split("/").pop() || "policies.Image";
+
+      // Step 2: Trigger download via anchor tag — no CORS issues here
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Image downloded successfully!");
+    } catch (error) {
+      console.error("Error exporting Image:", error);
+      toast.error("Unable to export Image. Try again later.");
+    }
+  };
   // File upload card component
   const FileUploadCard = ({
     type,
@@ -515,31 +563,25 @@ const Vault = () => {
                   }}
                 />
 
-                {shareAllPolicy && (
-                  <>
-                    <StyledButton
-                      onClick={handleSelectAll}
-                      isAllSelected={
-                        selectedPolicies.length === allPolicyIds.length
-                      }
-                    >
-                      Select All ({selectedPolicies.length}/
-                      {allPolicyIds.length})
-                    </StyledButton>
-                    <StyledButton
-                      onClick={exportToExcel}
-                      disabled={selectedPolicies.length === 0}
-                    >
-                      Excel
-                    </StyledButton>
-                    <StyledButton
-                      onClick={exportToPDF}
-                      disabled={selectedPolicies.length === 0}
-                    >
-                      PDF
-                    </StyledButton>
-                  </>
-                )}
+             {shareAllPolicy && (
+  <>
+    <StyledButton onClick={handleSelectAll}>
+  Select All ({selectedPolicies.length}/{allPolicyIds.length})
+</StyledButton>
+
+    <StyledButton onClick={() => handleExport(exportToExcel)}>
+      Excel
+    </StyledButton>
+
+    <StyledButton onClick={() => handleExport(exportToPDF)}>
+      PDF
+    </StyledButton>
+
+    <StyledButton onClick={() => handleExport(exportToImage)}>
+      Image
+    </StyledButton>
+  </>
+)}
               </div>
             </div>
           </div>
