@@ -7,7 +7,7 @@ import { Grid } from "@mui/material";
 import "../profile/about.css";
 import { THEME_COLOR } from "../constants";
 import { motion } from "framer-motion";
-import { Helmet } from "react-helmet-async"; // ✅ For SEO meta tags
+import { Helmet } from "react-helmet-async"; 
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
@@ -25,7 +25,6 @@ const fadeInUp = {
 const About = () => {
   return (
     <div className="d-flex flex-column min-vh-100">
-      {/* ✅ Dynamic SEO Tags */}
       <Helmet>
         <title>About Us | Cover Kraft</title>
         <meta
