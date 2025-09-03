@@ -318,20 +318,40 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
   }, []);
 
   const handleMenuAction = useCallback((action) => {
-    const actions = {
-      family: () => handleDrawerToggle('family', true),
-      communication: () => handleDrawerToggle('communication', true),
-      help: () => navigate("/contactus"),
-      about: () => { onClose(); navigate("/about"); },
-      logout: () => {
-        LOCAL_STORAGE_KEYS.forEach(key => sessionStorage.removeItem(key));
+  const actions = {
+    family: () => handleDrawerToggle('family', true),
+    communication: () => handleDrawerToggle('communication', true),
+    help: () => navigate("/contactus"),
+    about: () => { onClose(); navigate("/about"); },
+    logout: () => {
+      try {
+        // ✅ Clear all storage (both session & local)
+        sessionStorage.clear();
+        localStorage.clear();
+
+        // ✅ If using cookies for auth, clear them too
+        document.cookie.split(";").forEach(cookie => {
+          document.cookie = cookie
+            .replace(/^ +/, "")
+            .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        });
+
+        // ✅ If you have a global auth context, reset it here
+        // setAuth(null);
+
+        // ✅ Navigate to login page & force full reload
         navigate("/");
-        setTimeout(() => window.location.reload(), 100);
-      },
-      delete: () => handleModalToggle('delete', true)
-    };
-    actions[action]?.();
-  }, [handleDrawerToggle, handleModalToggle, navigate, onClose]);
+        window.location.replace("/"); // Hard redirect (bypasses React Router cache)
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
+    },
+    delete: () => handleModalToggle('delete', true)
+  };
+
+  actions[action]?.();
+}, [handleDrawerToggle, handleModalToggle, navigate, onClose]);
+
 
   const handleImageChange = useCallback((event) => {
     const file = event.target.files[0];
