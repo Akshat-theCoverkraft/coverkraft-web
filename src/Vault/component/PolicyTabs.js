@@ -41,16 +41,15 @@ import { THEME_COLOR } from "../../constants";
 import moment from "moment";
 import redBg from "../../Images/red-img.png";
 import SessionExpiredModal from "../../utils/sessionExpireModal";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   parse,
   isBefore,
   differenceInDays,
   startOfDay,
   isValid,
-} from 'date-fns';
+} from "date-fns";
 import { usePolicyContext } from "../../store/policyContext";
-
 
 const useStyles = makeStyles(() => ({
   searchContainer: {
@@ -148,9 +147,9 @@ const POLICY_TYPE_FILTERS = [
 const calculatePolicyStatus = (dateString) => {
   if (!dateString) return null;
 
-  const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
+  const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
   if (!isValid(parsedDate)) {
-    console.warn('Invalid date format:', dateString);
+    console.warn("Invalid date format:", dateString);
     return null;
   }
 
@@ -160,12 +159,13 @@ const calculatePolicyStatus = (dateString) => {
   const isExpired = isBefore(policyEndDate, today);
   const daysToRenewal = differenceInDays(policyEndDate, today);
 
-  const shouldShowRenewal = !isExpired && daysToRenewal <= 60 && daysToRenewal >= 0;
+  const shouldShowRenewal =
+    !isExpired && daysToRenewal <= 60 && daysToRenewal >= 0;
 
-  console.log('Policy End Date:', policyEndDate);
-  console.log('Today:', today);
-  console.log('Days to renewal:', daysToRenewal);
-  console.log('isExpired:', isExpired);
+  console.log("Policy End Date:", policyEndDate);
+  console.log("Today:", today);
+  console.log("Days to renewal:", daysToRenewal);
+  console.log("isExpired:", isExpired);
 
   if (daysToRenewal < 0) return "Expired";
   if (daysToRenewal <= 60) return `${daysToRenewal} days left`;
@@ -298,7 +298,7 @@ const PolicyCard = ({
   isSelected = false,
   fetchData,
   activeTab,
-  value
+  value,
 }) => {
   const config = POLICY_CONFIGS[policy.policyType] || {
     label: "",
@@ -317,7 +317,7 @@ const PolicyCard = ({
     handleDelete(policy._id);
     setOpenConfirm(false);
   };
-  
+
   const handleDelete = async (policyId) => {
     try {
       const response = await fetch(`${API_URL}policy/delete`, {
@@ -337,7 +337,12 @@ const PolicyCard = ({
         if (value === 2) {
           fetchData("policy/archiveData", { status: "archive" }, true);
         } else if (value === 3) {
-          fetchData("policy/getById", { policyType: "uncompleted" }, false, true);
+          fetchData(
+            "policy/getById",
+            { policyType: "uncompleted" },
+            false,
+            true
+          );
         } else {
           fetchData("policy/getById", { policyType: activeTab });
         }
@@ -377,7 +382,7 @@ const PolicyCard = ({
                 right: 0,
                 top: 0,
                 width: "120px",
-                height: '30px',
+                height: "30px",
                 backgroundImage: `url(${redBg})`,
                 backgroundSize: "cover",
                 opacity: 1,
@@ -415,7 +420,7 @@ const PolicyCard = ({
           )}
 
           {/* Policy Image */}
-          <Grid item xs={12} sm={shareAllPolicy ? 2 : 2}>
+          <Grid item xs={12} sm={shareAllPolicy ? 2 : 3}>
             <Box
               sx={{
                 display: "flex",
@@ -437,7 +442,7 @@ const PolicyCard = ({
           </Grid>
 
           {/* Policy Details */}
-          <Grid item xs={12} sm={8} sx={{}}>
+          <Grid item xs={12} sm={7} sx={6}>
             <Box sx={{ pr: { xs: 0, sm: status || isExpired ? 8 : 2 } }}>
               {/* Policy Type */}
               <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
@@ -562,10 +567,7 @@ const PolicyCard = ({
           </Grid>
         </Grid>
       </CardContent>
-      <Dialog
-        open={openConfirm}
-        onClose={handleCloseConfirm}
-      >
+      <Dialog open={openConfirm} onClose={handleCloseConfirm}>
         <DialogTitle variant="h5">Confirm Delete</DialogTitle>
         <DialogContent>
           <DialogContentText variant="h5">
@@ -573,10 +575,20 @@ const PolicyCard = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseConfirm} color="inherit" sx={{ fontSize: 12 }}>
+          <Button
+            onClick={handleCloseConfirm}
+            color="inherit"
+            sx={{ fontSize: 12 }}
+          >
             Cancel
           </Button>
-          <Button fontSize="1rem" onClick={confirmDelete} color="error" variant="contained" sx={{ fontSize: 12 }}>
+          <Button
+            fontSize="1rem"
+            onClick={confirmDelete}
+            color="error"
+            variant="contained"
+            sx={{ fontSize: 12 }}
+          >
             Delete
           </Button>
         </DialogActions>
@@ -676,13 +688,13 @@ export default function PolicyTabs({
     setActiveTab,
     archieveList,
     pendingList, // Added pendingList from context
-    setValue
+    setValue,
   } = usePolicyContext();
 
   const classes = useStyles();
 
   useEffect(() => {
-    setActiveTab('active')
+    setActiveTab("active");
     const savedPolicyId = sessionStorage.getItem("selectedPolicyId");
     const savedTab = sessionStorage.getItem("selectedTab");
     if (savedPolicyId) setSelectedPolicyId(savedPolicyId);
@@ -695,7 +707,8 @@ export default function PolicyTabs({
 
   useEffect(() => {
     // Updated to handle pending list separately
-    const currentList = value === 2 ? archieveList : value === 3 ? pendingList : policyList;
+    const currentList =
+      value === 2 ? archieveList : value === 3 ? pendingList : policyList;
     const filteredList = filterPolicies(
       currentList,
       searchTerm,
@@ -721,7 +734,14 @@ export default function PolicyTabs({
       sessionStorage.setItem("selectedPolicyId", firstId);
       handleCardClick(firstId);
     }
-  }, [value, policyList, archieveList, pendingList, searchTerm, selectedTypeFilter]); // Added pendingList dependency
+  }, [
+    value,
+    policyList,
+    archieveList,
+    pendingList,
+    searchTerm,
+    selectedTypeFilter,
+  ]); // Added pendingList dependency
 
   const handleCardClickWithState = (id) => {
     setSelectedPolicyId(id);
@@ -768,8 +788,8 @@ export default function PolicyTabs({
           zIndex: 1,
           position: "relative  !important",
           paddingTop: 2,
-          width: '100%',
-          minHeight: '600px'
+          width: "100%",
+          minHeight: "600px",
         }}
       >
         <Box
@@ -789,11 +809,11 @@ export default function PolicyTabs({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                height: "500px"
+                height: "500px",
               }}
             >
               {/* Scrollable List Area */}
-              <Box sx={{ flex: 0.85, }}>
+              <Box sx={{ flex: 0.85 }}>
                 {paginatedData.map((policy) => (
                   <PolicyCard
                     key={policy._id}
@@ -813,7 +833,7 @@ export default function PolicyTabs({
               </Box>
 
               {/* Fixed Pagination at Bottom */}
-              <Box className='absolute bottom-0 !important' sx={{}}>
+              <Box className="absolute bottom-0 !important" sx={{}}>
                 {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
                   <CustomPagination
                     totalItems={filteredList.length}
@@ -851,7 +871,7 @@ export default function PolicyTabs({
           backgroundColor: "#121212 !important",
           border: "0.5px solid white",
           pt: 1.5,
-          height: '600px'
+          height: "600px",
         }}
       >
         <TabContext value={value}>

@@ -158,7 +158,11 @@ const PolicyType = () => {
                       />
                     </Box>
 
-                    <Tooltip title={policy.policyType} arrow sx={{ fontSize: "40px"}}>
+                    <Tooltip
+                      title={policy.policyType}
+                      arrow
+                      sx={{ fontSize: "40px" }}
+                    >
                       <Typography
                         variant="h6"
                         fontWeight={600}
