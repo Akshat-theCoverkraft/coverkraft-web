@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import Navbar, { StyledButton } from "../../../component/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { Box, IconButton, Button as MuiButton } from "@mui/material";
-import { toast, ToastContainer } from "react-toastify";
+import axios from 'axios'
+import { Box, IconButton, Button as MuiButton } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify';
 import API_URL from "../../../ServiceModule/Service";
 import moment from "moment-timezone";
 import { capitalizeFirstLetter, truncateString } from "../../../utils/helpers";
@@ -13,14 +13,6 @@ import Footer from "../Footer";
 import backArrow from "../../../Images/ic_back_button.png";
 import SessionExpiredModal from "../../../utils/sessionExpireModal";
 import DOMPurify from "dompurify";
-
-// ✅ Utility to decode HTML entities
-const decodeHtmlEntities = (str) => {
-  const textarea = document.createElement("textarea");
-  textarea.innerHTML = str;
-  return textarea.value;
-};
-
 const NewsBlog = () => {
   const navigate = useNavigate();
   const { type, id } = useParams();
@@ -28,13 +20,13 @@ const NewsBlog = () => {
   const [moreBlogs, setMoreBlogs] = React.useState([]);
   const [error, setError] = useState(null);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
-
+  
   // Refs to store video elements
   const videoRefs = useRef([]);
   const mainVideoRef = useRef(null);
-
+  
   console.log(type, id, "<===type");
-
+  
   const fetchBlogDetails = async () => {
     try {
       const { data } = await axios.get(
@@ -57,7 +49,7 @@ const NewsBlog = () => {
       if (error.response?.status === 401) {
         setShowSessionExpired(true);
       } else {
-        setError("Failed to load options");
+        setError('Failed to load options');
         toast.error(
           error?.response?.data?.message || // from backend
             error?.message || // fallback message
@@ -69,21 +61,28 @@ const NewsBlog = () => {
 
   // Function to pause all videos
   const pauseAllVideos = () => {
+    // Pause main video
     if (mainVideoRef.current) {
       mainVideoRef.current.pause();
     }
-    videoRefs.current.forEach((video) => {
+    
+    // Pause all other videos
+    videoRefs.current.forEach(video => {
       if (video) {
         video.pause();
       }
     });
   };
 
+  // Function to handle video play - pause others when one starts
   const handleVideoPlay = (playingVideo) => {
+    // Pause main video if it's not the one playing
     if (mainVideoRef.current && mainVideoRef.current !== playingVideo) {
       mainVideoRef.current.pause();
     }
-    videoRefs.current.forEach((video) => {
+    
+    // Pause all other videos except the one playing
+    videoRefs.current.forEach(video => {
       if (video && video !== playingVideo) {
         video.pause();
       }
@@ -95,131 +94,120 @@ const NewsBlog = () => {
     fetchBlogDetails();
   }, [id]);
 
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      pauseAllVideos();
-    };
+  // Cleanup effect to pause all videos when component unmounts or route changes
+useEffect(() => {
+  const handleBeforeUnload = () => {
+    pauseAllVideos();
+  };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+  window.addEventListener('beforeunload', handleBeforeUnload);
 
-    return () => {
-      pauseAllVideos();
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
+  return () => {
+    pauseAllVideos(); // On unmount or route change
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  };
+}, []);
 
-  const isYouTubeLink = (url) => {
+// Check if the URL is a YouTube link
+const isYouTubeLink = (url) => {
+  return typeof url === "string" && (
+    url.includes("youtube.com") || url.includes("youtu.be")
+  );
+};
+
+// Convert YouTube link to embed URL
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return "";
+  let videoId = "";
+  
+  // For normal YouTube URL
+  if (url.includes("youtube.com/watch?v=")) {
+    const urlObj = new URL(url);
+    videoId = urlObj.searchParams.get("v");
+  }
+  
+  // For short youtu.be URL
+  else if (url.includes("youtu.be/")) {
+    videoId = url.split("youtu.be/")[1].split("?")[0];
+  }
+  
+  return `https://www.youtube.com/embed/${videoId}`;
+};
+
+  // Function to render media content (image or video)
+const renderMediaContent = (mediaUrl, altText, isMainBlog = false, index = null) => {
+  if (!mediaUrl) return null;
+
+  const isVideo = mediaUrl.match(/\.(mp4|mov|avi|mkv|webm)$/i);
+  const isYouTube = isYouTubeLink(mediaUrl);
+
+  // 🎯 Case 1: YouTube video
+  if (isYouTube) {
+    const embedUrl = getYouTubeEmbedUrl(mediaUrl);
     return (
-      typeof url === "string" &&
-      (url.includes("youtube.com") || url.includes("youtu.be"))
+      <div style={isMainBlog ? { maxWidth: "80%", height: "auto", margin: "auto" } : { width: "100%", height: "180px" }}>
+        <iframe
+          width="100%"
+          height={isMainBlog ? "400px" : "180px"}
+          src={embedUrl}
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ borderRadius: "10px", objectFit: "cover" }}
+        ></iframe>
+      </div>
     );
-  };
+  }
 
-  const getYouTubeEmbedUrl = (url) => {
-    if (!url) return "";
-    let videoId = "";
-
-    if (url.includes("youtube.com/watch?v=")) {
-      const urlObj = new URL(url);
-      videoId = urlObj.searchParams.get("v");
-    } else if (url.includes("youtu.be/")) {
-      videoId = url.split("youtu.be/")[1].split("?")[0];
-    }
-
-    return `https://www.youtube.com/embed/${videoId}`;
-  };
-
-  const renderMediaContent = (
-    mediaUrl,
-    altText,
-    isMainBlog = false,
-    index = null
-  ) => {
-    if (!mediaUrl) return null;
-
-    const isVideo = mediaUrl.match(/\.(mp4|mov|avi|mkv|webm)$/i);
-    const isYouTube = isYouTubeLink(mediaUrl);
-
-    if (isYouTube) {
-      const embedUrl = getYouTubeEmbedUrl(mediaUrl);
-      return (
-        <div
-          style={
-            isMainBlog
-              ? { maxWidth: "80%", height: "auto", margin: "auto" }
-              : { width: "100%", height: "180px" }
-          }
-        >
-          <iframe
-            width="100%"
-            height={isMainBlog ? "400px" : "180px"}
-            src={embedUrl}
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            style={{ borderRadius: "10px", objectFit: "cover" }}
-          ></iframe>
-        </div>
-      );
-    }
-
-    if (isVideo) {
-      return (
-        <video
-          ref={
-            isMainBlog
-              ? mainVideoRef
-              : (el) => {
-                  if (index !== null) {
-                    videoRefs.current[index] = el;
-                  }
-                }
-          }
-          controls
-          controlsList="nodownload"
-          style={
-            isMainBlog
-              ? { maxWidth: "80%", maxHeight: "70vh", margin: "auto" }
-              : { width: "100%", height: "180px", objectFit: "cover" }
-          }
-          className={isMainBlog ? "" : "card-img-top"}
-          onPlay={(e) => handleVideoPlay(e.target)}
-          preload="metadata"
-        >
-          <source src={mediaUrl} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      );
-    }
-
+  // 🎯 Case 2: Uploaded video file (backend)
+  if (isVideo) {
     return (
-      <img
-        src={mediaUrl}
-        style={
-          isMainBlog
-            ? { maxWidth: "80%", maxHeight: "70vh", margin: "auto" }
-            : { width: "100%", height: "180px", objectFit: "cover" }
-        }
+      <video
+        ref={isMainBlog ? mainVideoRef : (el) => {
+          if (index !== null) {
+            videoRefs.current[index] = el;
+          }
+        }}
+        controls
+        controlsList="nodownload"
+        style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
         className={isMainBlog ? "" : "card-img-top"}
-        alt={altText}
-      />
+        onPlay={(e) => handleVideoPlay(e.target)}
+        preload="metadata"
+      >
+        <source src={mediaUrl} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
     );
-  };
+  }
+
+  // 🎯 Case 3: Just an image
+  return (
+    <img
+      src={mediaUrl}
+      style={isMainBlog ? { maxWidth: "80%", maxHeight: '70vh', margin: "auto" } : { width: "100%", height: "180px", objectFit: "cover" }}
+      className={isMainBlog ? "" : "card-img-top"}
+      alt={altText}
+    />
+  );
+};
 
   const handleCardClick = (blogId) => {
+    // Pause all videos before navigating
     pauseAllVideos();
     navigate(`/feed/blog/${blogId}`);
   };
-
+  
   const handleSessionExpiredOk = () => {
     pauseAllVideos();
     setShowSessionExpired(false);
-    navigate("/login");
+    navigate('/login');
     localStorage.clear();
-    sessionStorage.clear();
+    sessionStorage.clear(); 
   };
 
+  // Handle navigation back
   const handleBackClick = () => {
     pauseAllVideos();
     navigate(`/feed/${type}`);
@@ -240,9 +228,9 @@ const NewsBlog = () => {
         >
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               mb: 1,
               px: 2,
             }}
@@ -250,13 +238,7 @@ const NewsBlog = () => {
             <IconButton onClick={handleBackClick}>
               <img src={backArrow} alt="Back" style={{ width: 24 }} />
             </IconButton>
-            <Box
-              sx={{
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
-              }}
-            >
+            <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
               <h1 className="mb-0 text-center">
                 {capitalizeFirstLetter(type) === "News"
                   ? "News"
@@ -268,14 +250,10 @@ const NewsBlog = () => {
           </Box>
 
           <div
-            className={`card d-flex ${
-              ["short", "video", "featured"].includes(type)
-                ? "flex-column"
-                : "flex-row"
-            } gap-4 mb-4`}
+            className={`card d-flex ${["short", "video", "featured"].includes(type) ? "flex-column" : "flex-row"} gap-4 mb-4`}
             style={{
               backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-              color: THEME_COLOR.SECONDARY_TEXT,
+              color: THEME_COLOR.SECONDARY_TEXT
             }}
           >
             {renderMediaContent(blog?.newsImg, blog?.subtitle, true)}
@@ -284,15 +262,8 @@ const NewsBlog = () => {
                 <strong>{blog?.subtitle}</strong>
               </h2>
               <div className="text-muted mb-5">
-                <span
-                  className="mr-3 mt-5"
-                  style={{ color: THEME_COLOR.SECONDARY_TEXT }}
-                >
-                  <i
-                    className="fas fa-user"
-                    style={{ color: "rgb(138, 198, 66)" }}
-                  ></i>{" "}
-                  {capitalizeFirstLetter(blog?.createdBy)}
+                <span className="mr-3 mt-5" style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
+                  <i className="fas fa-user" style={{ color: 'rgb(138, 198, 66)' }}></i> {capitalizeFirstLetter(blog?.createdBy)}
                 </span>
                 <span style={{ color: THEME_COLOR.SECONDARY_TEXT }}>
                   <i
@@ -302,32 +273,21 @@ const NewsBlog = () => {
                   {moment(blog?.createdAt).format("MMM DD, YYYY")}
                 </span>
               </div>
-
-              {/* ✅ Decode + Sanitize HTML */}
               <p
                 className="text-left mt-2"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    decodeHtmlEntities(blog?.description || "")
-                  ),
-                }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog?.description) }}
               />
             </div>
           </div>
 
           {moreBlogs?.length > 0 && (
             <>
-              <h2 className="text-center mb-4">
-                <strong>
-                  More from {capitalizeFirstLetter(type)}
-                  {type.toLowerCase() === "blog" ||
-                  type.toLowerCase() === "news" ||
-                  type.toLocaleLowerCase() === "videos" ||
-                  type.toLocaleLowerCase() === "shorts"
-                    ? "s"
-                    : ""}
-                </strong>
-              </h2>
+             <h2 className="text-center mb-4">
+  <strong>
+    More from {capitalizeFirstLetter(type)}
+    {type.toLowerCase() === "blog" || type.toLowerCase() === "news" || type.toLocaleLowerCase() === "videos" || type.toLocaleLowerCase() === "shorts" ? "s" : ""}
+  </strong>
+</h2>
 
               <div className="row">
                 {moreBlogs?.map((mBlog, index) => (
@@ -348,12 +308,7 @@ const NewsBlog = () => {
                         (e.target.style.transform = "translateY(0)")
                       }
                     >
-                      {renderMediaContent(
-                        mBlog?.newsImg,
-                        mBlog?.subtitle,
-                        false,
-                        index
-                      )}
+                      {renderMediaContent(mBlog?.newsImg, mBlog?.subtitle, false, index)}
                       <div className="card-body d-flex flex-column">
                         <h3 className="card-title h5">{mBlog?.subtitle}</h3>
                         <div className="text-muted mb-2">
@@ -375,24 +330,19 @@ const NewsBlog = () => {
                             {moment(mBlog?.createdAt).format("MMM DD, YYYY")}
                           </span>
                         </div>
-
-                        {/* ✅ Decode + Sanitize HTML for moreBlogs */}
+                        {/* <p className="card-text flex-grow-1">
+                          {truncateString(mBlog?.description)}
+                        </p> */}
                         <p
                           className="text-left mt-2"
-                          dangerouslySetInnerHTML={{
-                            __html: DOMPurify.sanitize(
-                              decodeHtmlEntities(
-                                truncateString(mBlog?.description || "")
-                              )
-                            ),
-                          }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(truncateString(mBlog?.description)) }}
                         />
                         <div className="mt-auto">
                           <MuiButton
                             variant="text"
                             className="text-light p-0"
                             onClick={(e) => {
-                              e.stopPropagation();
+                              e.stopPropagation(); // Prevent card click
                               handleCardClick(mBlog?._id);
                             }}
                             style={{

@@ -26,22 +26,36 @@ const TABS = {
 
 //  Check if link is YouTube
 const isYouTubeLink = (url) => {
-  return typeof url === "string" && (url.includes("youtube.com") || url.includes("youtu.be"));
+  return (
+    typeof url === "string" &&
+    (url.includes("youtube.com") || url.includes("youtu.be"))
+  );
 };
 
-// Generate embed link for YouTube
+// ✅ Generate embed link for YouTube (Normal, Shorts, youtu.be)
 const getYouTubeEmbedUrl = (url) => {
   try {
     if (!url) return null;
     url = url.trim();
 
+    // Already an embed URL
     if (url.includes("youtube.com/embed/")) return url;
 
     if (url.includes("youtube.com")) {
-      const videoId = new URL(url).searchParams.get("v");
+      const urlObj = new URL(url);
+
+      // Handle Shorts: /shorts/VIDEO_ID
+      if (urlObj.pathname.startsWith("/shorts/")) {
+        const videoId = urlObj.pathname.split("/shorts/")[1]?.split("?")[0];
+        if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+      }
+
+      // Handle normal YouTube links: ?v=VIDEO_ID
+      const videoId = urlObj.searchParams.get("v");
       if (videoId) return `https://www.youtube.com/embed/${videoId}`;
     }
 
+    // Handle youtu.be short links
     if (url.includes("youtu.be")) {
       const videoId = url.split("youtu.be/")[1]?.split("?")[0];
       if (videoId) return `https://www.youtube.com/embed/${videoId}`;
@@ -51,6 +65,7 @@ const getYouTubeEmbedUrl = (url) => {
   }
   return null;
 };
+
 
 //  Detect media type
 const getMediaType = (url) => {
@@ -245,15 +260,16 @@ const Feeds = () => {
                         {mediaType === "youtube" ? (
                           <Box sx={{ height: 220 }}>
                             <iframe
-                              width="100%"
-                              height="100%"
-                              src={getYouTubeEmbedUrl(mediaUrl)}
-                              title="YouTube video player"
-                              frameBorder="0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              style={{ borderRadius: "20px", objectFit: "cover" }}
-                            ></iframe>
+  width="100%"
+  height="100%"
+  src={`${getYouTubeEmbedUrl(mediaUrl)}?modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+  style={{ borderRadius: "20px", objectFit: "cover" }}
+></iframe>
+
                           </Box>
                         ) : mediaType === "video" ? (
                           <CardMedia

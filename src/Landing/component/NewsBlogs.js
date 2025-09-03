@@ -27,11 +27,24 @@ const isYouTubeUrl = (url) =>
 
 const getYouTubeEmbedUrl = (url) => {
   try {
+    let videoId = null;
+
     if (url.includes("youtube.com")) {
-      const videoId = new URL(url).searchParams.get("v");
-      return `https://www.youtube.com/embed/${videoId}`;
+      const urlObj = new URL(url);
+
+      // Handle shorts: /shorts/VIDEO_ID
+      if (urlObj.pathname.startsWith("/shorts/")) {
+        videoId = urlObj.pathname.split("/shorts/")[1];
+      } else {
+        // Normal YouTube URL: ?v=VIDEO_ID
+        videoId = urlObj.searchParams.get("v");
+      }
     } else if (url.includes("youtu.be")) {
-      const videoId = url.split("youtu.be/")[1];
+      // Handle youtu.be URLs
+      videoId = url.split("youtu.be/")[1];
+    }
+
+    if (videoId) {
       return `https://www.youtube.com/embed/${videoId}`;
     }
   } catch (err) {
@@ -39,6 +52,7 @@ const getYouTubeEmbedUrl = (url) => {
   }
   return null;
 };
+
 
 const isVideoFile = (url) =>
   /\.(mp4|mov|avi|mkv|webm|ogg)$/i.test(url || "");
@@ -149,18 +163,20 @@ const BlogSection = () => {
     if (isYouTubeUrl(source)) {
       return (
         <iframe
-          src={getYouTubeEmbedUrl(source)}
-          title="YouTube video"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          style={{
-            width: "100%",
-            height: "100%",
-            borderRadius: "20px",
-            backgroundColor: "#000",
-          }}
-        />
+  src={`${getYouTubeEmbedUrl(source)}?modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
+  title="YouTube video"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+  style={{
+    width: "100%",
+    height: "100%",
+    borderRadius: "20px",
+    backgroundColor: "#000",
+    objectFit: "cover",
+  }}
+/>
+
       );
     } else if (isVideoFile(source)) {
       return (
