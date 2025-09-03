@@ -5,7 +5,7 @@ import {
   Avatar
 } from "@mui/material";
 import {
-  PlayArrowRounded, CalendarTodayRounded, PersonRounded
+  CalendarTodayRounded, PersonRounded
 } from "@mui/icons-material";
 import Navbar from "../../../component/Navbar";
 import moment from "moment-timezone";
@@ -22,39 +22,47 @@ const TABS = {
   news: "News",
   short: "Shorts",
   video: "Videos",
-  featured: "Featured Videos",
 };
 
-// ✅ Check if link is YouTube
+//  Check if link is YouTube
 const isYouTubeLink = (url) => {
   return typeof url === "string" && (url.includes("youtube.com") || url.includes("youtu.be"));
 };
 
-// ✅ Generate embed link for YouTube
+// Generate embed link for YouTube
 const getYouTubeEmbedUrl = (url) => {
   try {
+    if (!url) return null;
+    url = url.trim();
+
+    if (url.includes("youtube.com/embed/")) return url;
+
     if (url.includes("youtube.com")) {
       const videoId = new URL(url).searchParams.get("v");
-      return `https://www.youtube.com/embed/${videoId}`;
-    } else if (url.includes("youtu.be")) {
-      const videoId = url.split("youtu.be/")[1];
-      return `https://www.youtube.com/embed/${videoId}`;
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    if (url.includes("youtu.be")) {
+      const videoId = url.split("youtu.be/")[1]?.split("?")[0];
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
     }
   } catch (err) {
-    console.error("Invalid YouTube URL", err);
+    console.error("Invalid YouTube URL", url, err);
   }
   return null;
 };
 
-// ✅ Detect media type
+//  Detect media type
 const getMediaType = (url) => {
-  if (!url) return "image";
+  if (!url || typeof url !== "string") return "image"; // <-- safe default
   if (isYouTubeLink(url)) return "youtube";
+
   const videoExtensions = [".mp4", ".mov", ".webm", ".ogg"];
   const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
 
-  if (videoExtensions.some(ext => url.toLowerCase().endsWith(ext))) return "video";
-  if (imageExtensions.some(ext => url.toLowerCase().endsWith(ext))) return "image";
+  const lowerUrl = url.toLowerCase();
+  if (videoExtensions.some(ext => lowerUrl.endsWith(ext))) return "video";
+  if (imageExtensions.some(ext => lowerUrl.endsWith(ext))) return "image";
 
   return "image"; // default fallback
 };
@@ -76,18 +84,11 @@ const Feeds = () => {
   const fetchContent = async (tab, page = 1) => {
     setIsLoading(true);
     try {
-      let res;
-      if (tab === "featured") {
-        res = await axios.get(`${API_URL}featureVideo/getAll`);
-        const featured = res.data.data?.filter(item => item.status === "active") || [];
-        setContentData(featured);
-      } else {
-        res = await axios.get(`${API_URL}news/getFeedByType`, {
-          params: { type: tab, page, limit: pagination.limit }
-        });
-        setContentData(res.data.data);
-        setPagination(res.data.pagination);
-      }
+      const res = await axios.get(`${API_URL}news/getFeedByType`, {
+        params: { type: tab, page, limit: pagination.limit }
+      });
+      setContentData(res.data.data);
+      setPagination(res.data.pagination);
     } catch (error) {
       console.error('Error fetching options:', error);
       if (error.response?.status === 401) {
@@ -222,7 +223,7 @@ const Feeds = () => {
           ) : (
             <Grid container spacing={4}>
               {contentData.map((item, index) => {
-                const mediaUrl = item.video || item.videoUrl || item.youTubeLink || item.newsImg;
+                const mediaUrl = item.video || item.videoUrl || item.youtubeLink || item.youTubeLink || item.newsImg || item.link;
                 const mediaType = getMediaType(mediaUrl);
                 const showReadMore = textOverflowStates[index];
 
@@ -271,7 +272,7 @@ const Feeds = () => {
                             component="img"
                             image={mediaUrl}
                             height="220"
-                            sx={{ objectFit: "cover", transition: "transform 0.4s ease" }}
+                            sx={{ objectFit: "contain", transition: "transform 0.4s ease" }}
                           />
                         )}
                       </Box>
@@ -301,17 +302,24 @@ const Feeds = () => {
                           </Box>
                         </Box>
 
-                        {item.description ? <Typography
-                          ref={el => textRefs.current[index] = el}
-                          variant="body2"
-                          marginBottom={2}
-                          sx={{
-                            color: "rgba(255,255,255,0.8)", lineHeight: 1.3, fontSize: "13px",
-                            display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
-                          }}
-                        >
-                          {item.description}
-                        </Typography> : null}
+                        {item.description ? (
+                          <Box
+                            ref={el => textRefs.current[index] = el}
+                            sx={{
+                              color: "rgba(255,255,255,0.8)",
+                              lineHeight: 1.4,
+                              fontSize: "13px",
+                              maxHeight: "3.4em",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              mb: 2
+                            }}
+                            dangerouslySetInnerHTML={{ __html: item.description }}
+                          />
+                        ) : null}
 
                         {item.description && showReadMore && (
                           <Button
@@ -340,7 +348,7 @@ const Feeds = () => {
             </Grid>
           )}
 
-          {!isLoading && selectedTab !== "featured" && pagination.totalPages > 1 && (
+          {!isLoading && pagination.totalPages > 1 && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
               <Pagination
                 count={pagination.totalPages}
