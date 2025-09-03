@@ -2,22 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import "./CSS/login.css";
 import LoginImg from "../Images/img_phone_login.png";
 import logo from "../Images/CoverKraft-beta.png";
-// import { getAuth, PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, signInWithPopup } from 'firebase/auth';
 import { Link, useNavigate } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import CustomInput from "../component/CustomInput";
 import Button from "../component/Button";
 import { verifyUser } from "../store/action/action";
 import API_URL from "../ServiceModule/Service";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-// import { requestForToken } from '../helper';
 import LOGING from "../Images/LOGING.png";
-import { getToken } from "firebase/messaging";
-import SessionExpiredModal from "../utils/sessionExpireModal";
 import { registerFirebaseSW, requestFCMPermission } from "../fcm";
+
 const Login = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [otp, setOtp] = useState([]);
@@ -26,6 +23,8 @@ const Login = () => {
   const [fcmId, setFcmId] = useState("");
   const recaptchRef = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const commonInputStyle = {
     height: 48,
     fontSize: "1.222rem",
@@ -35,11 +34,27 @@ const Login = () => {
     color: "white",
     borderColor: "grey",
   };
-  const [phoneNumberError, phoneNumberSetError] = useState("");
-  const [showSessionExpired, setShowSessionExpired] = useState(false);
-  const navigate = useNavigate(); // navigation hook
 
-  // Syncs `valid` with input validation
+  const [phoneNumberError, phoneNumberSetError] = useState("");
+
+  // ✅ Prevent back navigation when on OTP screen
+  useEffect(() => {
+    if (loggedIn) {
+      const handlePopState = (e) => {
+        e.preventDefault();
+        window.history.pushState(null, "", window.location.href);
+      };
+
+      window.history.pushState(null, "", window.location.href);
+      window.addEventListener("popstate", handlePopState);
+
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+      };
+    }
+  }, [loggedIn]);
+
+  // Sync valid with input validation
   useEffect(() => {
     if (valid) {
       setValid(true);
@@ -47,17 +62,6 @@ const Login = () => {
       setValid(false);
     }
   }, [!valid]);
-
-  // useEffect(() => {
-  //   // Example mock FCM ID (replace with real logic)
-  //   const getFcmId = async () => {
-  //     // const token = await requestForToken(); // If using Firebase
-  //     const token = getToken(); // TEMP
-  //     console.log("FCM Token (mock):", token);
-  //     setFcmId(token);
-  //   };
-  //   getFcmId();
-  // }, []);
 
   // Handle phone input (10-digit number)
   const handlephonechange = (e) => {
@@ -74,7 +78,7 @@ const Login = () => {
     setOtp(newValue);
   };
 
-  // Login handler - verifies phone and simulates Firebase OTP send
+  // Login handler
   const handleLogin = async () => {
     try {
       phoneNumberSetError("");
@@ -83,14 +87,9 @@ const Login = () => {
         `${API_URL}user/verifyPhone?userPhone=${userPhone}`
       );
 
-      console.log(response, "response");
-
       if (response.status === 200) {
         const user = response.data.user;
-
-        console.log("this is user : ", user);
         const userId = user._id;
-
         const userEmail = user.userEmail;
         const token = user.token;
 
@@ -110,14 +109,13 @@ const Login = () => {
 
       if (error.response) {
         const status = error.response.status;
-
         if (status === 404) {
           phoneNumberSetError("This phone number is not registered.");
-          toast.error(" This phone number is not registered.");
+          toast.error("This phone number is not registered.");
         } else if (status === 401) {
-          toast.error(" Unauthorized. Please check your credentials.");
+          toast.error("Unauthorized. Please check your credentials.");
         } else if (status === 500) {
-          toast.error(" Server error. Please try again later.");
+          toast.error("Server error. Please try again later.");
         } else {
           toast.error(error.response.data.message || "Something went wrong.");
         }
@@ -126,26 +124,18 @@ const Login = () => {
       }
     }
   };
-  const handleSessionExpiredOk = () => {
-    setShowSessionExpired(false);
-    navigate("/login");
-    localStorage.clear();
-    sessionStorage.clear();
-  };
 
   // OTP verification (final login)
-  // Temporary OTP verification: just allow any 6-digit input for now
   const handleVerify = async () => {
     if (otp.length === 6) {
       try {
-        // ✅ Register SW and request token
         const registration = await registerFirebaseSW();
         const fcmToken = await requestFCMPermission(registration);
 
         await dispatch(
           verifyUser(API_URL, {
             userPhone: phoneNumber,
-            userFcmId: fcmToken || "NA", // fallback if blocked
+            userFcmId: fcmToken || "NA",
           })
         );
 
@@ -167,6 +157,7 @@ const Login = () => {
       handleLogin();
     }
   };
+
   const handleOtpKeyPress = (e) => {
     if (e.key === "Enter" && otp.length === 6) {
       e.preventDefault();
@@ -230,8 +221,6 @@ const Login = () => {
                         : phoneNumberError
                     }
                   />
-                  <div id="recaptcha-container" />
-                  <div ref={recaptchRef} />
 
                   <Button
                     text={loggedIn ? "Logging in..." : "Login"}
