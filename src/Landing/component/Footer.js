@@ -48,7 +48,7 @@ const Footer = () => {
   ];
 
   const servicesLinks = [
-    { to: "/", label: "Home" },
+    // { to: "/", label: "Home" },
     { to: "/vault", label: "Policy Vault" },
     { to: "/contactus", label: "Contact Us" },
     { label: "Grievance Redress Policy", to: "/legal#GrievanceRedressPolicy" },

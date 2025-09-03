@@ -81,7 +81,7 @@ const StyledButton = styled("button")(({ isAllSelected }) => ({
   border: "1.5px solid #8AC642",
   borderRadius: "20px",
   padding: "8px 16px",
-  marginTop: "19px",
+  marginTop: "10px",
   fontSize: "1.4rem",
   fontWeight: 600,
   minWidth: "100px",
@@ -93,7 +93,12 @@ const StyledButton = styled("button")(({ isAllSelected }) => ({
 }));
 
 const Vault = () => {
-  const {policyListLength, setPolicyListLength,allPolicyIds, setAllPolicyIds} = usePolicyContext();
+  const {
+    policyListLength,
+    setPolicyListLength,
+    allPolicyIds,
+    setAllPolicyIds,
+  } = usePolicyContext();
   // Consolidated state
   const [dialogs, setDialogs] = useState({
     addPolicy: false,
@@ -131,7 +136,8 @@ const Vault = () => {
       setShowSessionExpired(true);
     };
     window.addEventListener("session-expired", handleSessionExpired);
-    return () => window.removeEventListener("session-expired", handleSessionExpired);
+    return () =>
+      window.removeEventListener("session-expired", handleSessionExpired);
   }, []);
 
   // Utility functions

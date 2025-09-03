@@ -142,56 +142,118 @@ const POLICY_TYPE_FILTERS = [
   { key: "motor", label: "Motor" },
   { key: "life", label: "Life" },
   { key: "health", label: "Health" },
+  { key: "pending", label: "Pending" }, // Add this option
 ];
 
 const calculatePolicyStatus = (dateString) => {
-  if (!dateString) return null;
-
-  const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
-  if (!isValid(parsedDate)) {
-    console.warn("Invalid date format:", dateString);
+  if (
+    !dateString ||
+    dateString === "" ||
+    dateString === "NaN" ||
+    dateString === null ||
+    dateString === undefined
+  ) {
     return null;
   }
 
-  const today = startOfDay(new Date());
-  const policyEndDate = parsedDate;
+  try {
+    const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
 
-  const isExpired = isBefore(policyEndDate, today);
-  const daysToRenewal = differenceInDays(policyEndDate, today);
+    if (!isValid(parsedDate)) {
+      console.warn("Invalid date format:", dateString);
+      return null;
+    }
 
-  const shouldShowRenewal =
-    !isExpired && daysToRenewal <= 60 && daysToRenewal >= 0;
+    const today = startOfDay(new Date());
+    const policyEndDate = parsedDate;
 
-  console.log("Policy End Date:", policyEndDate);
-  console.log("Today:", today);
-  console.log("Days to renewal:", daysToRenewal);
-  console.log("isExpired:", isExpired);
+    const isExpired = isBefore(policyEndDate, today);
+    const daysToRenewal = differenceInDays(policyEndDate, today);
 
-  if (daysToRenewal < 0) return "Expired";
-  if (daysToRenewal <= 60) return `${daysToRenewal} days left`;
+    if (daysToRenewal < 0) return "Expired";
+    if (daysToRenewal <= 60) return `${daysToRenewal} days left`;
 
-  return null;
+    return null;
+  } catch (error) {
+    console.warn("Error parsing date:", dateString, error);
+    return null;
+  }
+};
+const isPendingPolicy = (policy) => {
+  return (
+    !policy.policyEndDate ||
+    policy.policyEndDate === "" ||
+    policy.policyEndDate === "NaN" ||
+    !policy.policyStartDate ||
+    policy.policyStartDate === "" ||
+    policy.policyStartDate === "NaN" ||
+    !policy.premiumPaid ||
+    policy.premiumPaid === "" ||
+    policy.premiumPaid === "NaN" ||
+    policy.status === "pending" ||
+    policy.status === "uncompleted"
+  );
 };
 
 const filterPolicies = (
   policies,
   searchTerm = "",
-  selectedTypeFilter = "all"
+  selectedTypeFilter = "all",
+  isPendingTab = false
 ) => {
   if (!Array.isArray(policies)) return [];
+
   const searchLower = searchTerm.trim().toLowerCase();
+
   return policies.filter((policy) => {
+    // Handle policy configuration
     const config = POLICY_CONFIGS[policy.policyType] || {
-      label: "",
-      category: "",
+      label: "Unknown Policy",
+      category: "other",
     };
-    const matchesTypeFilter =
-      selectedTypeFilter === "all" || config.category === selectedTypeFilter;
+
+    // For pending tab, we want to show ALL incomplete policies regardless of type filter
+    // unless specifically filtering by "pending"
+    let matchesTypeFilter;
+
+    if (isPendingTab) {
+      // On pending tab, show incomplete policies
+      const policyIsPending = isPendingPolicy(policy);
+
+      if (selectedTypeFilter === "all") {
+        matchesTypeFilter = policyIsPending;
+      } else if (selectedTypeFilter === "pending") {
+        matchesTypeFilter = policyIsPending;
+      } else {
+        // Filter by category AND must be pending
+        matchesTypeFilter =
+          policyIsPending && config.category === selectedTypeFilter;
+      }
+    } else {
+      // On other tabs, use normal category filtering
+      if (selectedTypeFilter === "all") {
+        matchesTypeFilter = true;
+      } else if (selectedTypeFilter === "pending") {
+        matchesTypeFilter = isPendingPolicy(policy);
+      } else {
+        matchesTypeFilter = config.category === selectedTypeFilter;
+      }
+    }
+
+    // Search term matching with null handling
     const matchesSearchTerm =
       !searchLower ||
-      (policy.insuredName?.toLowerCase().includes(searchLower) ?? false) ||
-      (policy.policyNumber?.toLowerCase().includes(searchLower) ?? false) ||
-      config.label.toLowerCase().includes(searchLower);
+      [
+        // Insured name search (with null/empty handling)
+        policy.insuredName || "",
+        // Policy number search (with null/empty handling)
+        policy.policyNumber || "",
+        // Policy label search
+        config.label || "",
+        // Company name search (with null/empty handling)
+        policy.insuredCompany || "",
+      ].some((field) => field.toLowerCase().includes(searchLower));
+
     return matchesTypeFilter && matchesSearchTerm;
   });
 };
@@ -287,6 +349,8 @@ const SearchAndFilter = ({
   );
 };
 
+// Enhanced PolicyCard component with better null/empty value handling
+
 const PolicyCard = ({
   policy,
   shareAllPolicy,
@@ -301,16 +365,45 @@ const PolicyCard = ({
   value,
 }) => {
   const config = POLICY_CONFIGS[policy.policyType] || {
-    label: "",
+    label: "Unknown Policy",
     image: scooty,
   };
-  const status = showStatus
-    ? calculatePolicyStatus(policy.policyEndDate)
-    : null;
+
+  const getSafeValue = (value, fallback = "Not Available") => {
+    if (
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      value === "NaN"
+    ) {
+      return fallback;
+    }
+    return value;
+  };
+
+  const isValidDate = (dateString) => {
+    if (!dateString || dateString === "" || dateString === "NaN") {
+      return false;
+    }
+    const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
+    return isValid(parsedDate);
+  };
+
+  const status =
+    showStatus && isValidDate(policy?.policyEndDate)
+      ? calculatePolicyStatus(policy?.policyEndDate)
+      : null;
+
+  const isPendingPolicy =
+    value === 3 || !policy.policyEndDate || policy.policyEndDate === "";
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const handleOpenConfirm = () => setOpenConfirm(true);
+  const handleOpenConfirm = (e) => {
+    e.stopPropagation();
+    setOpenConfirm(true);
+  };
+
   const handleCloseConfirm = () => setOpenConfirm(false);
 
   const confirmDelete = () => {
@@ -370,11 +463,40 @@ const PolicyCard = ({
         transition: "all 0.3s ease",
         position: "relative",
         overflow: "hidden",
+        opacity: isPendingPolicy ? 1 : 1,
       }}
     >
-      <CardContent sx={{}}>
-        {/* Status Badge - Fixed positioning to prevent overlap */}
-        {(status || isExpired) && (
+      <CardContent>
+        {isPendingPolicy && (
+          <>
+            <div
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                width: "120px",
+                height: "30px",
+                backgroundColor: "#ffa500",
+                clipPath: "polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)",
+                opacity: 0.9,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: 5,
+                right: 15,
+                color: "#ffffff",
+                fontSize: "12px",
+                fontWeight: "bold",
+                zIndex: 1,
+              }}
+            >
+              Incomplete
+            </div>
+          </>
+        )}
+        {(status || isExpired) && !isPendingPolicy && (
           <>
             <div
               style={{
@@ -412,6 +534,7 @@ const PolicyCard = ({
                 checked={selectedPolicies.includes(policy._id)}
                 onChange={() => handleCheckboxChange(policy._id)}
                 sx={{
+                  transform: "scale(1.5)",
                   color: "#ffffff !important",
                   "&.Mui-checked": { color: THEME_COLOR.GREEN },
                 }}
@@ -443,12 +566,21 @@ const PolicyCard = ({
 
           {/* Policy Details */}
           <Grid item xs={12} sm={7} sx={6}>
-            <Box sx={{ pr: { xs: 0, sm: status || isExpired ? 8 : 2 } }}>
+            <Box
+              sx={{
+                pr: {
+                  xs: 0,
+                  sm: status || isExpired || isPendingPolicy ? 8 : 2,
+                },
+              }}
+            >
               {/* Policy Type */}
               <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
                 <Box
                   sx={{
-                    backgroundColor: "#8AC642 !important",
+                    backgroundColor: isPendingPolicy
+                      ? "#ffa500 !important"
+                      : "#8AC642 !important",
                     width: "10px",
                     height: "10px",
                     borderRadius: "50%",
@@ -458,7 +590,9 @@ const PolicyCard = ({
                 />
                 <Typography
                   sx={{
-                    color: "#8AC642 !important",
+                    color: isPendingPolicy
+                      ? "#ffa500 !important"
+                      : "#8AC642 !important",
                     fontSize: "1.3rem",
                     fontWeight: "600",
                   }}
@@ -477,7 +611,7 @@ const PolicyCard = ({
                   mb: 0.4,
                 }}
               >
-                {policy.insuredName}
+                {getSafeValue(policy.insuredName, "")}
               </Typography>
 
               {/* Policy Number */}
@@ -490,22 +624,10 @@ const PolicyCard = ({
                   wordBreak: "break-all",
                 }}
               >
-                {policy.policyNumber}
-              </Typography>
-
-              {/* Expiry Date */}
-              <Typography
-                sx={{
-                  fontSize: "1rem !important",
-                  fontWeight: "600",
-                  color: "#fff",
-                }}
-              >
-                Expires on{" "}
-                {moment(policy.policyEndDate, [
-                  "DD/MM/YYYY",
-                  "YYYY-MM-DD",
-                ]).format("DD MMM, YYYY")}
+                {getSafeValue(
+                  policy.policyNumber,
+                  "Policy number not available"
+                )}
               </Typography>
             </Box>
           </Grid>
@@ -567,6 +689,8 @@ const PolicyCard = ({
           </Grid>
         </Grid>
       </CardContent>
+
+      {/* Confirmation Dialog */}
       <Dialog open={openConfirm} onClose={handleCloseConfirm}>
         <DialogTitle variant="h5">Confirm Delete</DialogTitle>
         <DialogContent>
@@ -597,7 +721,7 @@ const PolicyCard = ({
   );
 };
 
-const EmptyState = ({ hasFilters, onClearFilters }) => (
+const EmptyState = ({ hasFilters, onClearFilters, isPendingTab = false }) => (
   <Box
     sx={{
       display: "flex",
@@ -614,7 +738,11 @@ const EmptyState = ({ hasFilters, onClearFilters }) => (
       style={{ width: "40%", height: "auto", maxWidth: "200px" }}
     />
     <Typography sx={{ fontSize: "1.6rem", mb: 2, mt: 3 }}>
-      {hasFilters ? "No policies match your search" : "No Record Found"}
+      {hasFilters
+        ? "No policies match your search"
+        : isPendingTab
+        ? "No pending policies found"
+        : "No Record Found"}
     </Typography>
     {hasFilters && (
       <Button
@@ -766,17 +894,40 @@ export default function PolicyTabs({
     showStatus = false,
     isExpired = false
   ) => {
+    console.log(`=== RENDERING TAB ${tabValue} ===`);
+    console.log("Data list received:", dataList);
+    console.log("Data list length:", dataList?.length);
+
+    // For pending tab, if pendingList is empty, try to get pending policies from regular policyList
+    let actualDataList = dataList;
+    if (
+      tabValue === 3 &&
+      (!dataList || dataList.length === 0) &&
+      policyList &&
+      policyList.length > 0
+    ) {
+      console.log("Pending list empty, filtering from policyList");
+      actualDataList = policyList.filter(isPendingPolicy);
+      console.log("Found pending policies in policyList:", actualDataList);
+    }
+
     const filteredList = filterPolicies(
-      dataList,
+      actualDataList,
       searchTerm,
-      selectedTypeFilter
+      selectedTypeFilter,
+      tabValue === 3 // isPendingTab
     );
+
+    console.log("Filtered list:", filteredList);
+    console.log("Filtered list length:", filteredList?.length);
+
     const currentPage = pages[pageKey];
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedData = filteredList.slice(
       startIndex,
       startIndex + itemsPerPage
     );
+
     const hasFilters = searchTerm.trim() || selectedTypeFilter !== "all";
 
     return (
@@ -803,6 +954,7 @@ export default function PolicyTabs({
             <EmptyState
               hasFilters={hasFilters}
               onClearFilters={handleClearAll}
+              isPendingTab={tabValue === 3}
             />
           ) : (
             <div
@@ -812,28 +964,33 @@ export default function PolicyTabs({
                 height: "500px",
               }}
             >
-              {/* Scrollable List Area */}
-              <Box sx={{ flex: 0.85 }}>
-                {paginatedData.map((policy) => (
-                  <PolicyCard
-                    key={policy._id}
-                    policy={policy}
-                    shareAllPolicy={shareAllPolicy}
-                    selectedPolicies={selectedPolicies}
-                    handleCheckboxChange={handleCheckboxChange}
-                    handleCardClick={handleCardClickWithState}
-                    showStatus={showStatus}
-                    isExpired={isExpired}
-                    isSelected={policy._id === selectedPolicyId}
-                    fetchData={fetchData}
-                    value={value}
-                    activeTab={activeTab}
-                  />
-                ))}
+              <Box sx={{ flex: 0.9 }}>
+                {paginatedData.map((policy, index) => {
+                  console.log(
+                    `Rendering policy ${index}:`,
+                    policy._id,
+                    isPendingPolicy(policy)
+                  );
+                  return (
+                    <PolicyCard
+                      key={policy._id}
+                      policy={policy}
+                      shareAllPolicy={shareAllPolicy}
+                      selectedPolicies={selectedPolicies}
+                      handleCheckboxChange={handleCheckboxChange}
+                      handleCardClick={handleCardClickWithState}
+                      showStatus={showStatus}
+                      isExpired={isExpired}
+                      isSelected={policy._id === selectedPolicyId}
+                      fetchData={fetchData}
+                      value={value}
+                      activeTab={activeTab}
+                    />
+                  );
+                })}
               </Box>
 
-              {/* Fixed Pagination at Bottom */}
-              <Box className="absolute bottom-0 !important" sx={{}}>
+              <Box className="absolute bottom-0 !important">
                 {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
                   <CustomPagination
                     totalItems={filteredList.length}
@@ -844,7 +1001,7 @@ export default function PolicyTabs({
                     itemsPerPage={itemsPerPage}
                   />
                 ) : (
-                  <Box sx={{ minHeight: "200px" }} /> // Empty space if pagination not needed
+                  <Box sx={{ minHeight: "200px" }} />
                 )}
               </Box>
             </div>
@@ -855,7 +1012,7 @@ export default function PolicyTabs({
   };
 
   const expiredCount = policyList.filter(
-    (policy) => calculatePolicyStatus(policy.policyEndDate) === "Expired"
+    (policy) => calculatePolicyStatus(policy?.policyEndDate) === "Expired"
   ).length;
 
   return (
@@ -955,8 +1112,6 @@ export default function PolicyTabs({
                       fontWeight: "700",
                       minWidth: "unset",
                       flex: 1,
-                      mx: 0.5,
-                      my: 0.5,
                       px: { xs: 1, sm: 2 },
                     }}
                     onClick={() => tab.value < 2 && setActiveTab(tab.key)}
