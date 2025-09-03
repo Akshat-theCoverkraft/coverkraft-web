@@ -45,7 +45,7 @@ import { color } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { usePolicyContext } from "../store/policyContext";
-import { Toast } from "react-bootstrap";
+// import { Toast } from "react-bootstrap";
 
 const api = axios.create({ baseURL: API_URL });
 
@@ -254,7 +254,7 @@ const handleSelectAll = () => {
 
   const handleExport = (exportFunc) => {
   if (selectedPolicies.length === 0) {
-    Toast.error("Please select at least one policy!");
+    toast.error("Please select at least one policy!");
     return;
   }
   exportFunc();
