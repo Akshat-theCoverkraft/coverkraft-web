@@ -17,10 +17,10 @@ import IMAGE_PATH from "../../ServiceModule/imagePath";
 
 // Import images
 import EditIcon from "../../Images/edit.png";
-import scooty from "../../Images/detail-scooty.png";
-import family from "../../Images/Family.png";
-import car from "../../Images/Car.png";
-import Health from "../../Images/ic_health.png";
+import scooty from "../../Images/new_bike.png";
+import family from "../../Images/new_health.png";
+import car from "../../Images/ic_car.png";
+import Health from "../../Images/new_health.png";
 import premium from "../../Images/premium.png";
 import value from "../../Images/value.png";
 import startDate from "../../Images/startDate.png";
