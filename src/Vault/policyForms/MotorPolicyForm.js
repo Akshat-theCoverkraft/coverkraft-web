@@ -440,7 +440,7 @@ const MotorPolicyForm = () => {
 
                   <CustomInput
                     type="text"
-                    label="Insured jack"
+                    label="Insured Name"
                     value={insuredName}
                     onChange={(e) => {
                       setInsuredName(e.target.value);
