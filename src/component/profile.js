@@ -455,9 +455,9 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       }
 
       // Debug: Log form data (remove in production)
-      console.log("Sending form data:");
+      // console.log("Sending form data:");
       for (let [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
+        // console.log(key, value);
       }
 
       const response = await dispatch(updateUser(API_URL, formDataToSend));
@@ -534,7 +534,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       const data = userbyId.getUserById.data;
       const percentage = calculateProfileCompletion(data);
 
-      console.log("Populating form with user data:", data); // Debug log
+      // console.log("Populating form with user data:", data); // Debug log
       
       // Update form data with fresh API data, ensuring proper Title Case for username
       setFormData(prevFormData => ({

@@ -167,7 +167,7 @@ const PolicyDetail = ({ policyId }) => {
 
     const isGmailSync =
       documentPath.startsWith("https://") || documentPath.startsWith("http://");
-    console.log("Is Gmail Sync:", isGmailSync);
+    // console.log("Is Gmail Sync:", isGmailSync);
 
     if (action === "view") {
       try {
@@ -176,7 +176,7 @@ const PolicyDetail = ({ policyId }) => {
           const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
             documentPath
           )}`;
-          console.log("Opening in Google Viewer:", googleViewerUrl);
+          // console.log("Opening in Google Viewer:", googleViewerUrl);
           window.open(googleViewerUrl, "_blank");
         } else {
           // For manual uploads, use your server path
@@ -184,7 +184,7 @@ const PolicyDetail = ({ policyId }) => {
             ? documentPath
             : `/${documentPath}`;
           const viewUrl = `${IMAGE_PATH}${fullPath}`;
-          console.log("Opening manual upload:", viewUrl);
+          // console.log("Opening manual upload:", viewUrl);
 
           // Try Google Viewer first, fallback to direct link
           const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
@@ -203,10 +203,10 @@ const PolicyDetail = ({ policyId }) => {
       try {
         if (isGmailSync) {
           // For Gmail-synced policies, open in new tab (browser will handle download)
-          console.log(
-            "Opening Gmail-synced document for download:",
-            documentPath
-          );
+          // console.log(
+          //   "Opening Gmail-synced document for download:",
+          //   documentPath
+          // );
           window.open(documentPath, "_blank");
           showToastOnce(
             "Document opened in new tab. You can download it from there.",
@@ -218,7 +218,7 @@ const PolicyDetail = ({ policyId }) => {
             ? documentPath
             : `/${documentPath}`;
           const downloadUrl = `${API_URL}${fullPath}`;
-          console.log("Downloading manual upload from:", downloadUrl);
+          // console.log("Downloading manual upload from:", downloadUrl);
 
           const response = await fetch(downloadUrl);
           if (!response.ok) {
@@ -255,7 +255,7 @@ const PolicyDetail = ({ policyId }) => {
       try {
         if (isGmailSync) {
           // For Gmail-synced policies, share the URL
-          console.log("Sharing Gmail-synced document:", documentPath);
+          // console.log("Sharing Gmail-synced document:", documentPath);
 
           if (navigator.share) {
             try {
@@ -266,7 +266,7 @@ const PolicyDetail = ({ policyId }) => {
               });
               showToastOnce("Document shared successfully", "success");
             } catch (shareError) {
-              console.log("Native sharing failed, trying clipboard");
+              // console.log("Native sharing failed, trying clipboard");
               // Fallback to clipboard
               if (navigator.clipboard) {
                 await navigator.clipboard.writeText(documentPath);
@@ -294,7 +294,7 @@ const PolicyDetail = ({ policyId }) => {
             ? documentPath
             : `/${documentPath}`;
           const shareUrl = `${API_URL}${fullPath}`;
-          console.log("Sharing manual upload from:", shareUrl);
+          // console.log("Sharing manual upload from:", shareUrl);
 
           const response = await fetch(shareUrl);
           if (!response.ok) {

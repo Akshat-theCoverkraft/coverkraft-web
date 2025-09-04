@@ -88,7 +88,7 @@ const Blog = () => {
       try {
         const response = await fetch(`${API_URL}news/getAll`);
         const result = await response.json();
-        console.log("📦 Blog API Result:", result);
+        // console.log("📦 Blog API Result:", result);
 
         if (result?.status && Array.isArray(result.data)) {
           setPosts(result.data);

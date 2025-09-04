@@ -426,7 +426,7 @@ const PolicyCard = ({
       });
 
       if (response.ok) {
-        console.log("Policy deleted successfully!");
+        // console.log("Policy deleted successfully!");
         if (value === 2) {
           fetchData("policy/archiveData", { status: "archive" }, true);
         } else if (value === 3) {
@@ -894,9 +894,9 @@ export default function PolicyTabs({
     showStatus = false,
     isExpired = false
   ) => {
-    console.log(`=== RENDERING TAB ${tabValue} ===`);
-    console.log("Data list received:", dataList);
-    console.log("Data list length:", dataList?.length);
+    // console.log(`=== RENDERING TAB ${tabValue} ===`);
+    // console.log("Data list received:", dataList);
+    // console.log("Data list length:", dataList?.length);
 
     // For pending tab, if pendingList is empty, try to get pending policies from regular policyList
     let actualDataList = dataList;
@@ -906,9 +906,9 @@ export default function PolicyTabs({
       policyList &&
       policyList.length > 0
     ) {
-      console.log("Pending list empty, filtering from policyList");
+      // console.log("Pending list empty, filtering from policyList");
       actualDataList = policyList.filter(isPendingPolicy);
-      console.log("Found pending policies in policyList:", actualDataList);
+      // console.log("Found pending policies in policyList:", actualDataList);
     }
 
     const filteredList = filterPolicies(
@@ -918,8 +918,8 @@ export default function PolicyTabs({
       tabValue === 3 // isPendingTab
     );
 
-    console.log("Filtered list:", filteredList);
-    console.log("Filtered list length:", filteredList?.length);
+    // console.log("Filtered list:", filteredList);
+    // console.log("Filtered list length:", filteredList?.length);
 
     const currentPage = pages[pageKey];
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -966,11 +966,11 @@ export default function PolicyTabs({
             >
               <Box sx={{ flex: 0.9 }}>
                 {paginatedData.map((policy, index) => {
-                  console.log(
-                    `Rendering policy ${index}:`,
-                    policy._id,
-                    isPendingPolicy(policy)
-                  );
+                  // console.log(
+                  //   `Rendering policy ${index}:`,
+                  //   policy._id,
+                  //   isPendingPolicy(policy)
+                  // );
                   return (
                     <PolicyCard
                       key={policy._id}
