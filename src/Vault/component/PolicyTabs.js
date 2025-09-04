@@ -110,8 +110,6 @@ const useStyles = makeStyles(() => ({
   progressContainer: {
     display: "flex",
     alignItems: "center",
-    gap: "8px",
-    marginTop: "8px",
   },
   progressBar: {
     flex: 1,
@@ -317,17 +315,15 @@ const filterPolicies = (
     let matchesTypeFilter;
 
     if (isPendingTab) {
-      const policyIsPending = isPendingPolicy(policy);
-
-      if (selectedTypeFilter === "all") {
-        matchesTypeFilter = policyIsPending;
-      } else if (selectedTypeFilter === "pending") {
-        matchesTypeFilter = policyIsPending;
+      // For pending tab, policies are already filtered as pending
+      // Just apply category filter on top
+      if (selectedTypeFilter === "all" || selectedTypeFilter === "pending") {
+        matchesTypeFilter = true;
       } else {
-        matchesTypeFilter =
-          policyIsPending && config.category === selectedTypeFilter;
+        matchesTypeFilter = config.category === selectedTypeFilter;
       }
     } else {
+      // For other tabs, use normal category filtering
       if (selectedTypeFilter === "all") {
         matchesTypeFilter = true;
       } else if (selectedTypeFilter === "pending") {
@@ -650,6 +646,7 @@ const PolicyCard = ({
                   maxWidth: "80px",
                   height: "auto",
                   objectFit: "contain",
+                  maxHeight: "60px",
                 }}
               />
             </Box>
@@ -702,20 +699,23 @@ const PolicyCard = ({
                 {getSafeValue(policy.insuredName, "")}
               </Typography>
 
-              <Typography
-                sx={{
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  color: "#fff !important",
-                  mb: 0.15,
-                  wordBreak: "break-all",
-                }}
-              >
-                {getSafeValue(
-                  policy.policyNumber,
-                  "Policy number not available"
-                )}
-              </Typography>
+              {/* Don't show policy number for pending policies */}
+{!isPendingPolicy && (
+  <Typography
+    sx={{
+      fontSize: "1rem",
+      fontWeight: "600",
+      color: "#fff !important",
+      mb: 0.15,
+      wordBreak: "break-all",
+    }}
+  >
+    {getSafeValue(
+      policy.policyNumber,
+      "Policy number not available"
+    )}
+  </Typography>
+)}
 
               {/* Progress Bar - Only show for pending policies */}
               {showProgress && (
@@ -1034,14 +1034,21 @@ export default function PolicyTabs({
               isPendingTab={tabValue === 3}
             />
           ) : (
-            <div
-              style={{
+            <Box
+              sx={{
                 display: "flex",
                 flexDirection: "column",
-                height: "500px",
+                height: "100%",
+                minHeight: "450px",
               }}
             >
-              <Box sx={{ flex: 0.9 }}>
+              <Box 
+                sx={{ 
+                  flexGrow: 1,
+                  overflowY: "auto",
+                  mb: 2,
+                }}
+              >
                 {paginatedData.map((policy, index) => {
                   return (
                     <PolicyCard
@@ -1058,14 +1065,22 @@ export default function PolicyTabs({
                       value={tabValue}
                       activeTab={activeTab}
                       classes={classes}
-                      showProgress={tabValue === 3} // Show progress bar only for pending tab
+                      showProgress={tabValue === 3} 
                     />
                   );
                 })}
               </Box>
 
-              <Box className="absolute bottom-0 !important">
-                {Math.ceil(filteredList.length / itemsPerPage) > 1 ? (
+              {Math.ceil(filteredList.length / itemsPerPage) > 1 && (
+                <Box 
+                  sx={{ 
+                    display: "flex", 
+                    justifyContent: "center",
+                    mt: "auto",
+                    py: 2,
+                    borderTop: "1px solid #444",
+                  }}
+                >
                   <CustomPagination
                     totalItems={filteredList.length}
                     currentPage={currentPage}
@@ -1074,11 +1089,9 @@ export default function PolicyTabs({
                     }
                     itemsPerPage={itemsPerPage}
                   />
-                ) : (
-                  <Box sx={{ minHeight: "200px" }} />
-                )}
-              </Box>
-            </div>
+                </Box>
+              )}
+            </Box>
           )}
         </Box>
       </TabPanel>
