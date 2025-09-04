@@ -43,6 +43,8 @@ const HealthPolicyForm = () => {
   // const responseData = JSON.parse(responseData.ocrText);
   // const PolicyType = responseData.policyType.toLowerCase();
 
+  console.log("responseData", responseData);
+  console.log("policyDetails++++++++++++++", policyDetails);
   const [policyNumber, setPolicyNumber] = useState(
     responseData?.policyNumber || policyDetails?.policyNumber || ""
   );
@@ -76,6 +78,10 @@ const HealthPolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
+  const [documentId, setdocumentId] = useState(
+   policyDetails?.documentDetails?._id || ""
+  );
+  console.log("documentId" , documentId);
   // const [idv, setIdv] = useState(responseData.idv || "");
   const commonItemStyle = {
     maxWidth: 900,
@@ -94,7 +100,6 @@ const HealthPolicyForm = () => {
 
   const [loading, setLoading] = useState(false);
   const userId = sessionStorage.getItem("userId");
-  const documentId = sessionStorage.getItem("documentId");
   const policyId = sessionStorage.getItem("policyId");
   const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();

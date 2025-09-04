@@ -343,6 +343,7 @@ const PolicyDetail = ({ policyId }) => {
     }
   };
 
+// console.log("policyDetails in main render", );
   const handlePolicyAction = (action) => {
     const userId = sessionStorage.getItem("userId");
     const formData = new FormData();
@@ -356,8 +357,8 @@ const PolicyDetail = ({ policyId }) => {
           action === "archive"
             ? "Policy archived successfully"
             : action === "unarchive"
-            ? "Policy removed from archive successfully"
-            : "Coming Soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
+              ? "Policy removed from archive successfully"
+              : "Coming Soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
         showToastOnce(message, "success");
       })
       .catch(() => {
@@ -410,21 +411,27 @@ const PolicyDetail = ({ policyId }) => {
             flexWrap: "wrap",
           }}
         >
-          <button
-            className="btn btn-sm rounded-6"
-            style={{
-              border: "1px solid #8AC642",
-              color: "#8AC642",
-              padding: "15px 20px",
-              width: "45%",
-              minWidth: "150px",
-              maxWidth: "280px",
-              textAlign: "center",
-            }}
-            onClick={() => handlePolicyAction("renew")}
-          >
-            Renew Policy
-          </button>
+     {getExpiryStatus(policy?.policyEndDate) && (
+  <button
+    className="btn btn-sm rounded-6"
+    style={{
+      border: "1px solid #8AC642",
+      color: "#8AC642",
+      padding: "15px 20px",
+      width: "45%",
+      minWidth: "150px",
+      maxWidth: "280px",
+      textAlign: "center",
+    }}
+    onClick={() => handlePolicyAction("renew")}
+  >
+     Renew Policy
+  </button>
+)}
+
+
+
+
 
           <button
             className="btn btn-sm rounded-7"
@@ -442,6 +449,7 @@ const PolicyDetail = ({ policyId }) => {
             Archive Policy
           </button>
         </div>
+
       </Grid>
     );
   };
@@ -455,11 +463,11 @@ const PolicyDetail = ({ policyId }) => {
   if (policyDetails.length === 0) {
     return (
       <>
-        <ToastContainer 
-          position="top-center" 
-          style={{ 
+        <ToastContainer
+          position="top-center"
+          style={{
             zIndex: 100000,
-            top: '110px' 
+            top: '110px'
           }}
           toastClassName="custom-toast"
           autoClose={3000}
@@ -495,12 +503,12 @@ const PolicyDetail = ({ policyId }) => {
   }
 
   return (
-    <div style={{minHeight:"620px"}}>
-      <ToastContainer 
-        position="top-center" 
-        style={{ 
+    <div style={{ minHeight: "620px" }}>
+      <ToastContainer
+        position="top-center"
+        style={{
           zIndex: 100000,
-          top: '110px' 
+          top: '110px'
         }}
         toastClassName="custom-toast"
         autoClose={3000}
@@ -512,7 +520,6 @@ const PolicyDetail = ({ policyId }) => {
       {policyDetails.map((policy, index) => {
         const status = getExpiryStatus(policy?.policyEndDate);
         const documentPath = policy?.documentDetails?.documentPath;
-
         return (
           <Card
             key={index}
@@ -569,21 +576,21 @@ const PolicyDetail = ({ policyId }) => {
             <div className="d-flex justify-content-between align-items-start px-4">
               <div>
                 <p
-  style={{
-    width: "400px",          // fixed width
-    whiteSpace: "nowrap",    // keep text in one line
-    overflow: "hidden",      // hide overflow
-    textOverflow: "ellipsis",// show "..." when text is too long
-    fontSize: "18px",
-    fontWeight: 700,
-    marginBottom: "4px",
-    marginTop: 0,
-    cursor: "default",       // optional, shows pointer style
-  }}
-  title={policy?.policyDetails?.make_Model || policy?.insuredName} // tooltip
->
-  {policy?.policyDetails?.make_Model || policy?.insuredName}
-</p>
+                  style={{
+                    width: "400px",          // fixed width
+                    whiteSpace: "nowrap",    // keep text in one line
+                    overflow: "hidden",      // hide overflow
+                    textOverflow: "ellipsis",// show "..." when text is too long
+                    fontSize: "18px",
+                    fontWeight: 700,
+                    marginBottom: "4px",
+                    marginTop: 0,
+                    cursor: "default",       // optional, shows pointer style
+                  }}
+                  title={policy?.policyDetails?.make_Model || policy?.insuredName} // tooltip
+                >
+                  {policy?.policyDetails?.make_Model || policy?.insuredName}
+                </p>
 
                 <p
                   style={{

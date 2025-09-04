@@ -32,8 +32,8 @@ const MotorPolicyForm = () => {
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
   const policyDetails = location.state?.policyDetails;
-  console.log("responsethedata", responseData);
-  console.log("policydetails", policyDetails);
+  // console.log("responsethedata", responseData);
+  // console.log("policydetails----------", policyDetails.documentDetails);
   // Now you can use the responseData and mode in your component
   let headingText;
   if (mode === "edit") {
@@ -112,6 +112,10 @@ const MotorPolicyForm = () => {
   const [model, setModel] = useState(
     responseData?.model || policyDetails?.policyDetails?.model || ""
   );
+   const [documentId, setdocumentId] = useState(
+     policyDetails?.documentDetails?._id || ""
+    );
+    console.log("documentId" , documentId);
   const commonItemStyle = {
     maxWidth: 900,
     width: "100%",
@@ -129,7 +133,6 @@ const MotorPolicyForm = () => {
 
   const [loading, setLoading] = useState(false);
   const userId = sessionStorage.getItem("userId");
-  const documentId = sessionStorage.getItem("documentId");
   const policyId = sessionStorage.getItem("policyId");
 
   const token = sessionStorage.getItem("token");

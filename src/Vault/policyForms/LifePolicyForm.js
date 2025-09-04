@@ -96,10 +96,11 @@ const LifePolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
-
+ const [documentId, setdocumentId] = useState(
+     policyDetails?.documentDetails?._id || ""
+    );
   const [loading, setLoading] = useState(false);
   const userId = sessionStorage.getItem("userId");
-  const documentId = sessionStorage.getItem("documentId");
   const policyId = sessionStorage.getItem("policyId");
 
   const token = sessionStorage.getItem("token");
