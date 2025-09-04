@@ -29,7 +29,7 @@ export const registerFirebaseSW = async () => {
       "/firebase-messaging-sw.js",
       { scope: "/" }
     );
-    console.log("Service Worker registered:", registration);
+    // console.log("Service Worker registered:", registration);
     return registration;
   } catch (err) {
     console.error("Service Worker registration failed:", err);
@@ -56,7 +56,7 @@ export const requestFCMPermission = async (registration) => {
     });
 
     if (token) {
-      console.log("📲 FCM Token received:", token);
+      // console.log("📲 FCM Token received:", token);
     } else {
       console.warn("FCM Token is null");
     }
@@ -74,7 +74,7 @@ export const requestFCMPermission = async (registration) => {
 
 export const setupOnMessageListener = () => {
   onMessage(messaging, (payload) => {
-    console.log("[Foreground Message]", payload);
+    // console.log("[Foreground Message]", payload);
 
     // ✅ Only show toast if notification payload exists
     if (payload?.notification) {

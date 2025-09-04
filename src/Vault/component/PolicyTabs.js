@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
+  LinearProgress,
 } from "@mui/material";
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 import { makeStyles } from "@mui/styles";
@@ -28,11 +29,11 @@ import ClearIcon from "@mui/icons-material/Clear";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Loader from "../../component/Loader";
-import scooty from "../../Images/Scooty.png";
-import HealthInsurance from "../../Images/FamilyHealthInsurance.png";
-import car from "../../Images/Car.png";
-import Health from "../../Images/ic_health.png";
-import Life from "../../Images/ic_life.png";
+import scooty from "../../Images/new_bike.png";
+import HealthInsurance from "../../Images/new_health.png";
+import car from "../../Images/ic_car.png";
+import Health from "../../Images/new_health.png";
+import Life from "../../Images/new_life.png";
 import arrow from "../../Images/right-arrow.png";
 import emptyImage from "../../Images/NoData.png";
 import "./policy.css";
@@ -106,6 +107,28 @@ const useStyles = makeStyles(() => ({
       "&:hover": { backgroundColor: "#333 !important" },
     },
   },
+  progressContainer: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    marginTop: "8px",
+  },
+  progressBar: {
+    flex: 1,
+    height: "6px",
+    borderRadius: "3px",
+    backgroundColor: "#444 !important",
+    "& .MuiLinearProgress-bar": {
+      backgroundColor: "#8AC642 !important",
+      borderRadius: "3px",
+    },
+  },
+  progressText: {
+    color: "#8AC642 !important",
+    fontSize: "11px !important",
+    fontWeight: "600 !important",
+    minWidth: "35px",
+  },
 }));
 
 const POLICY_CONFIGS = {
@@ -142,8 +165,87 @@ const POLICY_TYPE_FILTERS = [
   { key: "motor", label: "Motor" },
   { key: "life", label: "Life" },
   { key: "health", label: "Health" },
-  { key: "pending", label: "Pending" }, // Add this option
+  { key: "pending", label: "Pending" },
 ];
+
+// Progress calculation logic from React Native version
+const getInputFieldsByPolicyType = (policy) => {
+  switch (policy.policyType) {
+    case 'car_policy':
+    case 'bike_policy':
+    case 'other_vehicle':
+      return [
+        policy?.policyNumber,
+        policy?.policyStartDate,
+        policy?.policyEndDate,
+        policy?.premiumPaid || policy?.policyDetails?.totalPremium,
+        policy?.insuredName,
+        policy?.insuredCompany,
+        policy?.policyDetails?.registrationNumber,
+        policy?.policyDetails?.make,
+        policy?.policyDetails?.model,
+        policy?.policyDetails?.assetType,
+        policy?.policyDetails?.idv,
+      ];
+    case 'life':
+    case 'accident':
+      return [
+        policy?.policyNumber,
+        policy?.policyStartDate,
+        policy?.policyEndDate,
+        policy?.policyDetails?.sumInsured,
+        policy?.premiumPaid,
+        policy?.insuredName,
+        policy?.insuredCompany,
+        policy?.policyDetails?.policyName,
+      ];
+    case 'health':
+    case 'other_health':
+      return [
+        policy?.policyNumber,
+        policy?.policyStartDate,
+        policy?.policyEndDate,
+        policy?.policyDetails?.sumInsured,
+        policy?.premiumPaid,
+        policy?.insuredName,
+        policy?.insuredCompany,
+        policy?.policyDetails?.policyName,
+      ];
+    default:
+      return [
+        policy?.policyNumber,
+        policy?.policyStartDate,
+        policy?.policyEndDate,
+        policy?.insuredName,
+      ];
+  }
+};
+
+const calculateProgress = (policy) => {
+  const inputFields = getInputFieldsByPolicyType(policy);
+  const filledFields = inputFields.filter(
+    field => field !== '' && field !== undefined && field !== null
+  ).length;
+  return Math.round((filledFields / inputFields.length) * 100);
+};
+
+// Progress Bar Component
+const ProgressBarComponent = ({ progress, classes }) => {
+  if (progress >= 100) return null;
+  
+  return (
+    <Box className={classes.progressContainer}>
+      <LinearProgress
+        variant="determinate"
+        value={progress}
+        className={classes.progressBar}
+      />
+      <Typography className={classes.progressText}>
+        {progress}%
+      </Typography>
+    </Box>
+  );
+};
 
 const calculatePolicyStatus = (dateString) => {
   if (
@@ -179,6 +281,7 @@ const calculatePolicyStatus = (dateString) => {
     return null;
   }
 };
+
 const isPendingPolicy = (policy) => {
   return (
     !policy.policyEndDate ||
@@ -206,18 +309,14 @@ const filterPolicies = (
   const searchLower = searchTerm.trim().toLowerCase();
 
   return policies.filter((policy) => {
-    // Handle policy configuration
     const config = POLICY_CONFIGS[policy.policyType] || {
       label: "Unknown Policy",
       category: "other",
     };
 
-    // For pending tab, we want to show ALL incomplete policies regardless of type filter
-    // unless specifically filtering by "pending"
     let matchesTypeFilter;
 
     if (isPendingTab) {
-      // On pending tab, show incomplete policies
       const policyIsPending = isPendingPolicy(policy);
 
       if (selectedTypeFilter === "all") {
@@ -225,12 +324,10 @@ const filterPolicies = (
       } else if (selectedTypeFilter === "pending") {
         matchesTypeFilter = policyIsPending;
       } else {
-        // Filter by category AND must be pending
         matchesTypeFilter =
           policyIsPending && config.category === selectedTypeFilter;
       }
     } else {
-      // On other tabs, use normal category filtering
       if (selectedTypeFilter === "all") {
         matchesTypeFilter = true;
       } else if (selectedTypeFilter === "pending") {
@@ -240,17 +337,12 @@ const filterPolicies = (
       }
     }
 
-    // Search term matching with null handling
     const matchesSearchTerm =
       !searchLower ||
       [
-        // Insured name search (with null/empty handling)
         policy.insuredName || "",
-        // Policy number search (with null/empty handling)
         policy.policyNumber || "",
-        // Policy label search
         config.label || "",
-        // Company name search (with null/empty handling)
         policy.insuredCompany || "",
       ].some((field) => field.toLowerCase().includes(searchLower));
 
@@ -349,8 +441,6 @@ const SearchAndFilter = ({
   );
 };
 
-// Enhanced PolicyCard component with better null/empty value handling
-
 const PolicyCard = ({
   policy,
   shareAllPolicy,
@@ -363,6 +453,8 @@ const PolicyCard = ({
   fetchData,
   activeTab,
   value,
+  classes,
+  showProgress = false, // New prop to control progress bar display
 }) => {
   const config = POLICY_CONFIGS[policy.policyType] || {
     label: "Unknown Policy",
@@ -397,6 +489,8 @@ const PolicyCard = ({
   const isPendingPolicy =
     value === 3 || !policy.policyEndDate || policy.policyEndDate === "";
 
+  const progress = showProgress ? calculateProgress(policy) : 0;
+
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleOpenConfirm = (e) => {
@@ -426,7 +520,6 @@ const PolicyCard = ({
       });
 
       if (response.ok) {
-        console.log("Policy deleted successfully!");
         if (value === 2) {
           fetchData("policy/archiveData", { status: "archive" }, true);
         } else if (value === 3) {
@@ -527,7 +620,6 @@ const PolicyCard = ({
         )}
 
         <Grid container spacing={2} alignItems="center">
-          {/* Checkbox */}
           {shareAllPolicy && (
             <Grid item xs={12} sm={1}>
               <Checkbox
@@ -542,7 +634,6 @@ const PolicyCard = ({
             </Grid>
           )}
 
-          {/* Policy Image */}
           <Grid item xs={12} sm={shareAllPolicy ? 2 : 3}>
             <Box
               sx={{
@@ -564,7 +655,6 @@ const PolicyCard = ({
             </Box>
           </Grid>
 
-          {/* Policy Details */}
           <Grid item xs={12} sm={7} sx={6}>
             <Box
               sx={{
@@ -574,7 +664,6 @@ const PolicyCard = ({
                 },
               }}
             >
-              {/* Policy Type */}
               <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
                 <Box
                   sx={{
@@ -601,7 +690,6 @@ const PolicyCard = ({
                 </Typography>
               </Box>
 
-              {/* Insured Name */}
               <Typography
                 sx={{
                   fontSize: "1.6rem",
@@ -614,7 +702,6 @@ const PolicyCard = ({
                 {getSafeValue(policy.insuredName, "")}
               </Typography>
 
-              {/* Policy Number */}
               <Typography
                 sx={{
                   fontSize: "1rem",
@@ -629,10 +716,14 @@ const PolicyCard = ({
                   "Policy number not available"
                 )}
               </Typography>
+
+              {/* Progress Bar - Only show for pending policies */}
+              {showProgress && (
+                <ProgressBarComponent progress={progress} classes={classes} />
+              )}
             </Box>
           </Grid>
 
-          {/* Arrow Icon */}
           <Grid item xs={12} sm={1}>
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <OverlayTrigger
@@ -656,7 +747,6 @@ const PolicyCard = ({
             </Box>
           </Grid>
 
-          {/* Delete Icon */}
           <Grid item xs={12} sm={1}>
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <OverlayTrigger
@@ -690,7 +780,6 @@ const PolicyCard = ({
         </Grid>
       </CardContent>
 
-      {/* Confirmation Dialog */}
       <Dialog open={openConfirm} onClose={handleCloseConfirm}>
         <DialogTitle variant="h5">Confirm Delete</DialogTitle>
         <DialogContent>
@@ -815,7 +904,7 @@ export default function PolicyTabs({
     itemsPerPage,
     setActiveTab,
     archieveList,
-    pendingList, // Added pendingList from context
+    pendingList,
     setValue,
   } = usePolicyContext();
 
@@ -834,7 +923,6 @@ export default function PolicyTabs({
   }, []);
 
   useEffect(() => {
-    // Updated to handle pending list separately
     const currentList =
       value === 2 ? archieveList : value === 3 ? pendingList : policyList;
     const filteredList = filterPolicies(
@@ -846,7 +934,7 @@ export default function PolicyTabs({
     if (!filteredList || filteredList.length === 0) {
       setSelectedPolicyId(null);
       sessionStorage.removeItem("selectedPolicyId");
-      handleCardClick(null); // notify Vault.js to clear PolicyDetail
+      handleCardClick(null);
       return;
     }
 
@@ -869,7 +957,7 @@ export default function PolicyTabs({
     pendingList,
     searchTerm,
     selectedTypeFilter,
-  ]); // Added pendingList dependency
+  ]);
 
   const handleCardClickWithState = (id) => {
     setSelectedPolicyId(id);
@@ -881,7 +969,7 @@ export default function PolicyTabs({
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
     } else if (value === 3) {
-      fetchData("policy/getById", { policyType: "uncompleted" }, false, true); // Added isPending flag
+      fetchData("policy/getById", { policyType: "uncompleted" }, false, true); 
     } else {
       fetchData("policy/getById", { policyType: activeTab });
     }
@@ -894,11 +982,6 @@ export default function PolicyTabs({
     showStatus = false,
     isExpired = false
   ) => {
-    console.log(`=== RENDERING TAB ${tabValue} ===`);
-    console.log("Data list received:", dataList);
-    console.log("Data list length:", dataList?.length);
-
-    // For pending tab, if pendingList is empty, try to get pending policies from regular policyList
     let actualDataList = dataList;
     if (
       tabValue === 3 &&
@@ -906,21 +989,15 @@ export default function PolicyTabs({
       policyList &&
       policyList.length > 0
     ) {
-      console.log("Pending list empty, filtering from policyList");
       actualDataList = policyList.filter(isPendingPolicy);
-      console.log("Found pending policies in policyList:", actualDataList);
     }
 
     const filteredList = filterPolicies(
       actualDataList,
       searchTerm,
       selectedTypeFilter,
-      tabValue === 3 // isPendingTab
+      tabValue === 3
     );
-
-    console.log("Filtered list:", filteredList);
-    console.log("Filtered list length:", filteredList?.length);
-
     const currentPage = pages[pageKey];
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedData = filteredList.slice(
@@ -966,11 +1043,6 @@ export default function PolicyTabs({
             >
               <Box sx={{ flex: 0.9 }}>
                 {paginatedData.map((policy, index) => {
-                  console.log(
-                    `Rendering policy ${index}:`,
-                    policy._id,
-                    isPendingPolicy(policy)
-                  );
                   return (
                     <PolicyCard
                       key={policy._id}
@@ -983,8 +1055,10 @@ export default function PolicyTabs({
                       isExpired={isExpired}
                       isSelected={policy._id === selectedPolicyId}
                       fetchData={fetchData}
-                      value={value}
+                      value={tabValue}
                       activeTab={activeTab}
+                      classes={classes}
+                      showProgress={tabValue === 3} // Show progress bar only for pending tab
                     />
                   );
                 })}

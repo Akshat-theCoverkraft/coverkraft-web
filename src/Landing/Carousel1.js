@@ -159,14 +159,14 @@ const Carousel1 = () => {
                   videoSource.trim() !== "" &&
                   videoSource !== "null";
 
-                console.log(
-                  "Video source for item:",
-                  idx,
-                  videoSource,
-                  isYouTubeUrl(videoSource),
-                  videoSource.toLowerCase().endsWith(".mp4")
-                );
-                console.log("Item data:", item);
+                // console.log(
+                //   "Video source for item:",
+                //   idx,
+                //   videoSource,
+                //   isYouTubeUrl(videoSource),
+                //   videoSource.toLowerCase().endsWith(".mp4")
+                // );
+                // console.log("Item data:", item);
 
                 return (
                   <div className="carousel__slide-item" key={idx}>
