@@ -207,7 +207,7 @@ const HealthPolicyForm = () => {
       });
   };
   const updatePolicy = (payload) => {
-    console.log("================");
+    // console.log("================");
     const formData = new FormData();
     formData.append("_id", policyId);
     formData.append("userId", userId);

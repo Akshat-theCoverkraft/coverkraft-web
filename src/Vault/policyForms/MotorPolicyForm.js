@@ -32,8 +32,8 @@ const MotorPolicyForm = () => {
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
   const policyDetails = location.state?.policyDetails;
-  console.log("responsethedata", responseData);
-  console.log("policydetails", policyDetails);
+  // console.log("responsethedata", responseData);
+  // console.log("policydetails", policyDetails);
   // Now you can use the responseData and mode in your component
   let headingText;
   if (mode === "edit") {
@@ -42,7 +42,7 @@ const MotorPolicyForm = () => {
     headingText = "Add Policy";
   }
   const PolicyType = policyDetails?.policyType.toLowerCase();
-  console.log("policythe tpe", PolicyType);
+  // console.log("policythe tpe", PolicyType);
   const [policyNumber, setPolicyNumber] = useState(
     responseData?.policyNumber || policyDetails?.policyNumber || ""
   );
@@ -85,7 +85,7 @@ const MotorPolicyForm = () => {
     responseData?.insuredName || policyDetails?.insuredName || ""
   );
   const normalizeCompanyName = (name) => {
-    console.log('name', name ? name.replace('.', '') : 'oo', name)
+    // console.log('name', name ? name.replace('.', '') : 'oo', name)
     return name ? name.replace('.', '') : "";
   };
 
@@ -157,12 +157,12 @@ const MotorPolicyForm = () => {
   };
 
   const handleStartDateChange = (date) => {
-    console.log("Start date changed:", date);
+    // console.log("Start date changed:", date);
 
     setPolicyStartDate(date);
   };
   const handleEndDateChange = (date) => {
-    console.log("End date changed:", date);
+    // console.log("End date changed:", date);
     setPolicyEndDate(date);
   };
   useEffect(() => {
@@ -274,7 +274,7 @@ const MotorPolicyForm = () => {
         toast.success("Successfully Created");
         navigate("/vault");
       } else {
-        console.log("hello error", response.status);
+        // console.log("hello error", response.status);
         toast.error("Error creating policy");
       }
     } catch (error) {
@@ -440,7 +440,7 @@ const MotorPolicyForm = () => {
 
                   <CustomInput
                     type="text"
-                    label="Insured Name"
+                    label="Insured jack"
                     value={insuredName}
                     onChange={(e) => {
                       setInsuredName(e.target.value);

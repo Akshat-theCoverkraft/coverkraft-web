@@ -63,7 +63,7 @@ const PolicyDetails = () => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        console.log("Footer visible:", entry.isIntersecting);
+        // console.log("Footer visible:", entry.isIntersecting);
         setIsFooterVisible(entry.isIntersecting);
       },
       {

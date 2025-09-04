@@ -169,7 +169,7 @@ const Vault = () => {
     toggleDialog("addPolicy", false);
 
     const token = sessionStorage.getItem("token");
-    console.log("Token from session:", sessionStorage.getItem("token"));
+    // console.log("Token from session:", sessionStorage.getItem("token"));
     const formData = new FormData();
     const filesToUpload = files || image;
 
