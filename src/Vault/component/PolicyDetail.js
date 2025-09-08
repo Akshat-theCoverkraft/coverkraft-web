@@ -749,7 +749,7 @@ const PolicyDetail = ({ policyId }) => {
                         style={{ fontSize: "16px", fontWeight: "700" }}
                         className="fw-bolder"
                       >
-                        {policy?.premiumPaid || "Pending"}
+                        {policy?.premiumPaid || "-"}
                       </p>
                     </div>
                   </Grid>
