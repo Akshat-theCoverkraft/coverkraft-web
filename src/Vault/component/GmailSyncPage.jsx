@@ -278,6 +278,11 @@ const GmailSyncPage = () => {
         /sweepstakes/i,
         /contest/i,
         /giveaway/i,
+        /fnf\s*documents?/i, // exclude FNF Documents
+        /full\s*and\s*final/i, // exclude "Full and Final"
+        /request\s*for\s*quotation?/i, // "Request for Quotation"
+        /request\s*for\s*quote/i, // "Request for Quote"
+        /\brfq\b/i, // RFQ shorthand (word boundary)
       ];
 
       const isMarketingEmail = (subject) => {
