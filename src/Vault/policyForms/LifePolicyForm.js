@@ -13,7 +13,6 @@ import "react-toastify/dist/ReactToastify.css";
 import API_URL from "../../ServiceModule/Service";
 import { saveDocument, updateDocument } from "../../store/action/action";
 import Footer from "../../Landing/component/Footer";
-import dayjs from "dayjs";
 import ProgressBarCircle from "../../component/ProgressBarCircle";
 import DateTimePicker from "../../component/DateTimePicker";
 import { formatDate } from "../../utils/dateUtils";
@@ -25,11 +24,12 @@ const LifePolicyForm = () => {
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
   const policyDetails = location.state?.policyDetails;
-  const normalize = (str) => str.replace(/\s+/g, " ").trim().toLowerCase();
 
-  let headingText = mode === "edit" ? "Edit Policy" : "Add Policy";
+  const headingText = mode === "edit" ? "Edit Policy" : "Add Life Policy";
 
-  // State variables
+  const normalizeString = (str = "") => str.replace(/\s+/g, "").toLowerCase();
+
+  // ✅ State variables
   const [policyNumber, setPolicyNumber] = useState(
     responseData?.policyNumber || policyDetails?.policyNumber || ""
   );
@@ -47,6 +47,9 @@ const LifePolicyForm = () => {
   );
   const [insuredName, setInsuredName] = useState(
     responseData?.insuredName || policyDetails?.insuredName || ""
+  );
+  const [insuredCompany, setInsuredCompany] = useState(
+    responseData?.insuredCompany || policyDetails?.insuredCompany || ""
   );
   const [netPremium, setNetPremium] = useState(
     responseData?.netPremium || policyDetails?.policyDetails?.netPremium || ""
@@ -80,35 +83,36 @@ const LifePolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
-  const [documentId, setdocumentId] = useState(
-    () => sessionStorage.getItem("documentId") || policyDetails?.documentDetails?._id || ""
-);
 
-useEffect(() => {
+  // ✅ Persist documentId in sessionStorage
+  const [documentId, setDocumentId] = useState(
+    () =>
+      sessionStorage.getItem("documentId") ||
+      policyDetails?.documentDetails?._id ||
+      ""
+  );
+  useEffect(() => {
     sessionStorage.setItem("documentId", documentId);
-}, [documentId]);
+  }, [documentId]);
 
   const [loading, setLoading] = useState(false);
-  const [dropdownOptions, setDropdownOptions] = useState([]); // NEW
+  const [dropdownOptions, setDropdownOptions] = useState([]);
 
   const userId = sessionStorage.getItem("userId");
   const policyId = sessionStorage.getItem("policyId");
-  const token = sessionStorage.getItem("token");
 
-const safeJsonParse = (str) => {
-  try {
-    return str ? JSON.parse(str) : null;
-  } catch (err) {
-    console.warn("Failed to parse OCR text:", err);
-    return null;
-  }
-};
-
-const ocrData = safeJsonParse(responseData?.ocrText);
-const ocrCompany = ocrData?.insuredCompany || "";
-
-const [insuredCompany, setInsuredCompany] = useState("");      // stores ID for submission
-const [insuredCompanyName, setInsuredCompanyName] = useState(ocrCompany); // label for dropdown
+  // ✅ OCR Data Handling
+  const safeJsonParse = (str) => {
+    try {
+      return str ? JSON.parse(str) : null;
+    } catch (err) {
+      console.warn("Failed to parse OCR text:", err);
+      return null;
+    }
+  };
+  const ocrData = safeJsonParse(responseData?.ocrText);
+  const ocrCompany = ocrData?.insuredCompany || "";
+  const [insuredCompanyName, setInsuredCompanyName] = useState(ocrCompany);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -134,37 +138,38 @@ const [insuredCompanyName, setInsuredCompanyName] = useState(ocrCompany); // lab
 
   const calculateProgress = () => {
     const filledFields = inputFields.filter((field) => field !== "").length;
-    const totalFields = inputFields.length;
-    return (filledFields / totalFields) * 100;
+    return (filledFields / inputFields.length) * 100;
   };
 
-useEffect(() => {
-  const fetchDropdownOptions = async () => {
-    try {
-      const response = await fetch("https://api.thecoverkraft.com/api/dropdown?q=");
-      const data = await response.json();
-      if (Array.isArray(data)) setDropdownOptions(data);
-    } catch (err) {
-      console.error(err);
+  // ✅ Fetch Insurance Companies
+  useEffect(() => {
+    const fetchDropdownOptions = async () => {
+      try {
+        const response = await fetch("https://api.thecoverkraft.com/api/dropdown?q=");
+        const data = await response.json();
+        if (Array.isArray(data)) setDropdownOptions(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchDropdownOptions();
+  }, []);
+
+  // ✅ Auto-select OCR Company if available
+  useEffect(() => {
+    if (ocrCompany && dropdownOptions.length > 0) {
+      const normalize = (str) => str?.replace(/\s+/g, " ").trim().toLowerCase();
+      const match = dropdownOptions.find(
+        (opt) => normalize(opt.label) === normalize(ocrCompany)
+      );
+      if (match) {
+        setInsuredCompany(match._id);
+        setInsuredCompanyName(match.label);
+      }
     }
-  };
-  fetchDropdownOptions();
-}, []);
+  }, [ocrCompany, dropdownOptions]);
 
-
-useEffect(() => {
-  if (ocrCompany && dropdownOptions.length > 0) {
-    const normalize = (str) => str?.replace(/\s+/g, " ").trim().toLowerCase();
-    const match = dropdownOptions.find(opt => normalize(opt.label) === normalize(ocrCompany));
-
-    if (match) {
-      setInsuredCompany(match._id);       // store ID
-      setInsuredCompanyName(match.label); // store label to display
-    }
-  }
-}, [ocrCompany, dropdownOptions]);
-
-
+  // ✅ Form Submit
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -179,11 +184,7 @@ useEffect(() => {
       };
 
       if (validateFields(payload)) {
-        if (mode === "edit") {
-          await updatePolicy(payload);
-        } else {
-          await createPolicy(payload);
-        }
+        mode === "edit" ? await updatePolicy(payload) : await createPolicy(payload);
       } else {
         toast.error("Please fill all required fields!");
       }
@@ -208,17 +209,11 @@ useEffect(() => {
 
   const createPolicy = (payload) => {
     const formData = new FormData();
-
     formData.append("userId", userId);
     formData.append("documentId", documentId);
     formData.append("policyType", responseData?.policyType.toLowerCase());
-    formData.append("policyNumber", policyNumber);
-    formData.append("policyStartDate", policyStartDate);
-    formData.append("sumInsured", sumAssured);
-    formData.append("premiumPaid", premiumPaid);
+    Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
     formData.append("netPremium", netPremium);
-    formData.append("insuredName", insuredName);
-    formData.append("insuranceCompany", insuredCompany);
     formData.append("criticalIllness", criticalIllness);
     formData.append("accidentalDisability", accidentalDisability);
     formData.append("terminalIllness", terminalIllness);
@@ -227,15 +222,13 @@ useEffect(() => {
     formData.append("maturityDate", maturityDate);
     formData.append("others", others);
     formData.append("dob", dob);
-    formData.append("policyName", policyName);
+
     dispatch(saveDocument(API_URL, formData))
       .then(() => {
         toast.success("Successfully Created");
         navigate("/vault");
       })
-      .catch((error) => {
-        toast.error("Error creating policy");
-      });
+      .catch(() => toast.error("Error creating policy"));
   };
 
   const updatePolicy = (payload) => {
@@ -244,14 +237,9 @@ useEffect(() => {
     formData.append("documentId", documentId);
     formData.append("_id", policyId);
     formData.append("policyType", policyDetails?.policyType.toLowerCase());
-    formData.append("policyNumber", policyNumber);
-    formData.append("policyStartDate", policyStartDate);
+    Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
     formData.append("policyEndDate", policyEndDate);
-    formData.append("sumInsured", sumAssured);
-    formData.append("premiumPaid", premiumPaid);
     formData.append("netPremium", netPremium);
-    formData.append("insuredName", insuredName);
-    formData.append("insuranceCompany", insuredCompany);
     formData.append("criticalIllness", criticalIllness);
     formData.append("accidentalDisability", accidentalDisability);
     formData.append("terminalIllness", terminalIllness);
@@ -260,20 +248,16 @@ useEffect(() => {
     formData.append("maturityDate", maturityDate);
     formData.append("others", others);
     formData.append("dob", dob);
-    formData.append("policyName", policyName);
+
     dispatch(updateDocument(API_URL, formData))
       .then(() => {
         toast.success("Successfully Updated");
         navigate("/vault");
       })
-      .catch((error) => {
-        toast.error("Error updating policy");
-      });
+      .catch(() => toast.error("Error updating policy"));
   };
 
-  const handleCancel = () => {
-    navigate("/vault");
-  };
+  const handleCancel = () => navigate("/vault");
 
   return (
     <Box sx={{ backgroundColor: "#000", minHeight: "100vh" }}>
@@ -292,16 +276,16 @@ useEffect(() => {
                 border: "1px solid #333",
               }}
             >
+              {/* Header */}
               <div className="d-flex justify-content-between">
                 <Typography
                   onClick={() => navigate(-1)}
                   variant="h4"
                   component="h2"
+                  style={{ color: "#fff", fontSize: "28px", cursor: "pointer" }}
                   className="fw-bold d-flex align-items-center gap-2"
                 >
-                  <span style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
-                    <ArrowBackIcon style={{ color: "#fff", fontSize: "28px" }} />
-                  </span>
+                  <ArrowBackIcon style={{ color: "#fff", fontSize: "28px" }} />
                   {headingText}
                 </Typography>
                 <ProgressBarCircle progress={calculateProgress()} color="#8AC642" />
@@ -321,25 +305,25 @@ useEffect(() => {
               </Typography>
 
               <Grid container spacing={4}>
+                {/* Left Column */}
                 <Grid item xs={12} lg={6}>
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <Box>
-                      <CustomInput
-                        type="text"
-                        label="Policy Number"
-                        value={policyNumber}
-                        disabled={true}
-                        required
-                        inputStyle={commonInputStyle}
-                      />
-                    </Box>
+                    <CustomInput
+                      type="text"
+                      label="Policy Number"
+                      value={policyNumber}
+                      disabled
+                      required
+                      inputStyle={commonInputStyle}
+                    />
 
                     <Grid container spacing={10}>
                       <Grid item xs={12} md={6}>
-                        <label className="form-label fw-bold mb-2 text-white fs-6">
+                        <label className="form-label fw-bold text-light mb-2 d-block">
                           Start date <span className="text-danger">*</span>
                         </label>
                         <DateTimePicker
+                          id="start-date"
                           type="date"
                           isIcon={false}
                           label="DD/MM/YYYY"
@@ -352,125 +336,119 @@ useEffect(() => {
 
                     <Grid container spacing={4}>
                       <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography component="label" className="fw-bold mb-2 text-white fs-6">
-                            Next premium due date <span style={{ color: "#f44336" }}>*</span>
-                          </Typography>
-                          <DateTimePicker
-                            type="date"
-                            value={policyRenewalDate}
-                            onChange={(value) => setPolicyRenewalDate(value)}
-                            label="DD/MM/YYYY"
-                            isIcon={false}
-                            className="w-100"
-                          />
-                        </Box>
+                        <label className="form-label fw-bold text-light mt-3 mb-2 d-block">
+                          Next premium due date <span className="text-danger">*</span>
+                        </label>
+                        <DateTimePicker
+                          id="policy-renewal-date"
+                          type="date"
+                          value={policyRenewalDate}
+                          onChange={(val) => setPolicyRenewalDate(val)}
+                          label="DD/MM/YYYY"
+                          isIcon={false}
+                          className="w-100"
+                        />
                       </Grid>
 
                       <Grid item xs={12} sm={6}>
-                        <Box>
-                          <Typography
-                            component="label"
-                            className="fw-bold mb-2 text-white font-size-16 ml-4"
-                          >
-                            Policy Maturity Date <span style={{ color: "#f44336" }}>*</span>
-                          </Typography>
-                          <DateTimePicker
-                            type="date"
-                            value={maturityDate}
-                            onChange={(value) => setMaturityDate(value)}
-                            label="DD/MM/YYYY"
-                            isIcon={false}
-                            className="w-100 ml-4"
-                          />
-                        </Box>
+                        <label className="form-label fw-bold text-light mt-3 mb-2 d-block">
+                          Policy Maturity Date <span className="text-danger">*</span>
+                        </label>
+                        <DateTimePicker
+                          id="maturity-date"
+                          type="date"
+                          value={maturityDate}
+                          onChange={(val) => setMaturityDate(val)}
+                          label="DD/MM/YYYY"
+                          isIcon={false}
+                          className="w-100"
+                        />
                       </Grid>
                     </Grid>
 
-                    <Box className="mt-4">
-                      <CustomInput
-                        type="text"
-                        label="Insured Name"
-                        value={insuredName}
-                        onChange={(e) => setInsuredName(e.target.value)}
-                        required
-                        inputStyle={commonInputStyle}
-                      />
-                    </Box>
+                    <CustomInput
+                      type="text"
+                      label="Insured Name"
+                      value={insuredName}
+                      onChange={(e) => setInsuredName(e.target.value)}
+                      required
+                      inputStyle={commonInputStyle}
+                    />
 
-                    <Box>
-                      <InsuranceDropdown
-  options={dropdownOptions}
-  onCompanySelect={(id) => setInsuredCompany(id)}
-  initialValue={insuredCompanyName}  // shows the label
-/>
-
-                    </Box>
+                    <InsuranceDropdown
+                      onCompanySelect={(companyId) => setInsuredCompany(companyId)}
+                      initialValue={
+                        insuredCompany ||
+                        responseData?.insuranceCompany ||
+                        responseData?.insuredCompany ||
+                        policyDetails?.insuredCompany
+                      }
+                      matchFn={(optionLabel, value) =>
+                        normalizeString(optionLabel) === normalizeString(value)
+                      }
+                    />
                   </Box>
                 </Grid>
 
                 {/* Right Column */}
                 <Grid item xs={12} lg={6}>
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <Box>
-                      <CustomInput
-                        type="text"
-                        label="Net Premium"
-                        value={netPremium}
-                        onChange={(e) => setNetPremium(e.target.value)}
-                        inputStyle={commonInputStyle}
-                      />
-                    </Box>
-
-                    <Box>
-                      <CustomInput
-                        type="text"
-                        label="Total Premium"
-                        value={premiumPaid}
-                        onChange={(e) => setPremiumPaid(e.target.value)}
-                        inputStyle={commonInputStyle}
-                        required
-                      />
-                    </Box>
-
-                    <Box>
-                      <CustomInput
-                        type="text"
-                        label="Sum Assured"
-                        value={sumAssured}
-                        inputStyle={commonInputStyle}
-                        onChange={(e) => setSumAssured(e.target.value)}
-                        required
-                      />
-                    </Box>
-                    <Box>
-                      <CustomInput
-                        type="text"
-                        label="Personal Accident Coverage"
-                        value={pa}
-                        onChange={(e) => setPa(e.target.value)}
-                        inputStyle={commonInputStyle}
-                      />
-                    </Box>
-                    <Box>
-                      <CustomInput
-                        type="text"
-                        label="Policy Name"
-                        value={policyName}
-                        inputStyle={commonInputStyle}
-                        onChange={(e) => setPolicyName(e.target.value)}
-                        required
-                      />
-                    </Box>
+                    <CustomInput
+                      type="text"
+                      label="Net Premium"
+                      value={netPremium}
+                      onChange={(e) => setNetPremium(e.target.value)}
+                      inputStyle={commonInputStyle}
+                    />
+                    <CustomInput
+                      type="text"
+                      label="Total Premium"
+                      value={premiumPaid}
+                      onChange={(e) => setPremiumPaid(e.target.value)}
+                      inputStyle={commonInputStyle}
+                      required
+                    />
+                    <CustomInput
+                      type="text"
+                      label="Sum Assured"
+                      value={sumAssured}
+                      onChange={(e) => setSumAssured(e.target.value)}
+                      inputStyle={commonInputStyle}
+                      required
+                    />
+                    <CustomInput
+                      type="text"
+                      label="Personal Accident Coverage"
+                      value={pa}
+                      onChange={(e) => setPa(e.target.value)}
+                      inputStyle={commonInputStyle}
+                    />
+                    <CustomInput
+                      type="text"
+                      label="Policy Name"
+                      value={policyName}
+                      onChange={(e) => setPolicyName(e.target.value)}
+                      inputStyle={commonInputStyle}
+                      required
+                    />
                   </Box>
-                  <Box flex={1} display="flex" justifyContent="center" gap={2} mt={2} width="100%">
+
+                  {/* Buttons */}
+                  <Box
+                    flex={1}
+                    display="flex"
+                    justifyContent="center"
+                    gap={2}
+                    mt={2}
+                    width="100%"
+                  >
                     <Button
                       text={mode === "edit" ? "Update" : "Save"}
                       size="lg"
                       onClick={handleSubmit}
                       style={{
                         backgroundColor: "#8AC642",
-                        color: "#fff !important",
+                        color: "#fff",
                         padding: "10px 40px",
                         fontWeight: 600,
                         borderRadius: "8px",
@@ -483,7 +461,6 @@ useEffect(() => {
                       size="lg"
                       onClick={handleCancel}
                       style={{
-                        width: "500px",
                         backgroundColor: "transparent",
                         color: "#8AC642",
                         border: "2px solid #8AC642",

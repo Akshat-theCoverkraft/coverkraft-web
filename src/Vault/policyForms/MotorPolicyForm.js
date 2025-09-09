@@ -28,7 +28,6 @@ const MotorPolicyForm = () => {
   const location = useLocation();
   const [showSessionExpired, setShowSessionExpired] = useState(false);
 
-
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
   const policyDetails = location.state?.policyDetails;
@@ -37,9 +36,9 @@ const MotorPolicyForm = () => {
   // Now you can use the responseData and mode in your component
   let headingText;
   if (mode === "edit") {
-    headingText = "Edit Policy";
+    headingText = "Edit Motor Policy";
   } else {
-    headingText = "Add Policy";
+    headingText = "Add Motor Policy";
   }
   const PolicyType = policyDetails?.policyType.toLowerCase();
   // console.log("policythe tpe", PolicyType);
@@ -57,8 +56,8 @@ const MotorPolicyForm = () => {
   );
   const [vehicleEngineNumber, setVehicleEngineNumber] = useState(
     responseData?.vehicleEngineNumber ||
-    policyDetails?.policyDetails?.vehicleEngineNumber ||
-    ""
+      policyDetails?.policyDetails?.vehicleEngineNumber ||
+      ""
   );
   const [idv, setIdv] = useState(
     responseData?.idv || policyDetails?.policyDetails?.idv || ""
@@ -72,8 +71,8 @@ const MotorPolicyForm = () => {
   );
   const [ncb, setNcb] = useState(
     responseData?.ncpPercentage ||
-    policyDetails?.policyDetails?.ncpPercentage ||
-    ""
+      policyDetails?.policyDetails?.ncpPercentage ||
+      ""
   );
   const [tpPremium, setTpPremium] = useState(
     responseData?.tpPremium || policyDetails?.policyDetails?.tpPremium || ""
@@ -86,25 +85,26 @@ const MotorPolicyForm = () => {
   );
   const normalizeCompanyName = (name) => {
     // console.log('name', name ? name.replace('.', '') : 'oo', name)
-    return name ? name.replace('.', '') : "";
+    return name ? name.replace(".", "") : "";
   };
+  const normalizeString = (str = "") => str.replace(/\s+/g, "").toLowerCase();
 
   const [insuredCompany, setInsuredCompany] = useState(
     normalizeCompanyName(responseData?.insuredCompany) ||
-    normalizeCompanyName(policyDetails?.insuredCompany) ||
-    ""
+      normalizeCompanyName(policyDetails?.insuredCompany) ||
+      ""
   );
 
   const isAlphanumeric = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d -]+$/;
   const [registrationNumber, setRegistrationNumber] = useState(
     responseData?.registrationNumber ||
-    policyDetails?.policyDetails?.registrationNumber ||
-    ""
+      policyDetails?.policyDetails?.registrationNumber ||
+      ""
   );
   const [registrationYear, setRegistrationYear] = useState(
     responseData?.registrationYear ||
-    policyDetails?.policyDetails?.registrationYear ||
-    ""
+      policyDetails?.policyDetails?.registrationYear ||
+      ""
   );
   const [make, setMake] = useState(
     responseData?.make || policyDetails?.policyDetails?.make || ""
@@ -295,7 +295,7 @@ const MotorPolicyForm = () => {
   };
   const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);
-    navigate('/login');
+    navigate("/login");
     localStorage.clear();
     sessionStorage.clear();
   };
@@ -405,9 +405,8 @@ const MotorPolicyForm = () => {
                     required
                   />
 
-
-                  <Grid container spacing={1} className="mb-2">
-                    <Grid item xs={12} md={6} margin={0} >
+                  <Grid container spacing={1} className="mb-2 mt-1">
+                    <Grid item xs={12} md={6} margin={0}>
                       <label
                         className="form-label fw-bold mb-0" // ensure tight spacing
                         htmlFor="start-date"
@@ -443,7 +442,6 @@ const MotorPolicyForm = () => {
                     </Grid>
                   </Grid>
 
-
                   <CustomInput
                     type="text"
                     label="Insured Name"
@@ -455,8 +453,7 @@ const MotorPolicyForm = () => {
                     inputStyle={commonInputStyle}
                   />
                   <Box>
-
-                    <CustomInput
+                    {/* <CustomInput
                       type="text"
                       label="Insurance Company"
                       value={normalizeCompanyName(insuredCompany)}
@@ -464,8 +461,21 @@ const MotorPolicyForm = () => {
                       disabled
                       required
                       inputStyle={commonInputStyle}
+                    /> */}
+                    <InsuranceDropdown
+                      onCompanySelect={(companyId) =>
+                        setInsuredCompany(companyId)
+                      }
+                      initialValue={
+                        insuredCompany ||
+                        responseData?.insuranceCompany ||
+                        responseData?.insuredCompany ||
+                        policyDetails?.insuredCompany
+                      }
+                      matchFn={(optionLabel, value) =>
+                        normalizeString(optionLabel) === normalizeString(value)
+                      }
                     />
-
                   </Box>
 
                   <CustomInput
@@ -474,10 +484,10 @@ const MotorPolicyForm = () => {
                     value={registrationNumber}
                     onChange={(e) => setRegistrationNumber(e.target.value)}
                     required
-
                     inputStyle={commonInputStyle}
                     validationMessage={
-                      registrationNumber && !isAlphanumeric.test(registrationNumber)
+                      registrationNumber &&
+                      !isAlphanumeric.test(registrationNumber)
                         ? "Registration number must contain letters and numbers. No special characters other than - and space allowed."
                         : ""
                     }
@@ -560,6 +570,7 @@ const MotorPolicyForm = () => {
                     type="text"
                     label="Make "
                     value={make}
+                    className="mt-1"
                     inputStyle={commonInputStyle}
                     onChange={(e) => {
                       setMake(e.target.value);
@@ -569,6 +580,7 @@ const MotorPolicyForm = () => {
                   <CustomInput
                     type="text"
                     label="Model "
+                    className="mt-1"
                     value={model}
                     inputStyle={commonInputStyle}
                     onChange={(e) => {
@@ -579,6 +591,7 @@ const MotorPolicyForm = () => {
                   <CustomInput
                     type="text"
                     label="Liability Premium"
+                    className="mt-1"
                     value={tpPremium}
                     inputStyle={commonInputStyle}
                     onChange={(e) => {

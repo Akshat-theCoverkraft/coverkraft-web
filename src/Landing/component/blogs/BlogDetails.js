@@ -25,10 +25,10 @@ const NewsBlog = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [textOverflowStates, setTextOverflowStates] = useState({});
   
-  const videoRefs = useRef([]);
+  const videoRefs = useRef({});
   const mainVideoRef = useRef(null);
   const textRefs = useRef({});
-  const youtubePlayers = useRef({}); // ✅ Store all YouTube players
+  const youtubePlayers = useRef({});
 
   // ✅ Load YouTube Iframe API once
   useEffect(() => {
@@ -37,10 +37,7 @@ const NewsBlog = () => {
       tag.src = "https://www.youtube.com/iframe_api";
       document.body.appendChild(tag);
     }
-  }, []);
 
-  // ✅ Global YouTube API ready callback
-  useEffect(() => {
     window.onYouTubeIframeAPIReady = () => {
       console.log("YouTube API Ready");
     };
@@ -113,23 +110,54 @@ const NewsBlog = () => {
     }
   };
 
-  // ✅ Pause ALL videos (YouTube + HTML5)
+  // ✅ Pause ALL videos (YouTube + HTML5) 
   const pauseAllVideos = () => {
-    if (mainVideoRef.current) mainVideoRef.current.pause();
-    videoRefs.current.forEach(video => { if (video) video.pause(); });
+    // Pause main HTML5 video
+    if (mainVideoRef.current && !mainVideoRef.current.paused) {
+      mainVideoRef.current.pause();
+    }
+    
+    // Pause all other HTML5 videos
+    Object.values(videoRefs.current).forEach(video => {
+      if (video && !video.paused) {
+        video.pause();
+      }
+    });
 
+    // Pause all YouTube players
     Object.values(youtubePlayers.current).forEach(player => {
-      if (player && player.pauseVideo) player.pauseVideo();
+      if (player && player.pauseVideo && typeof player.pauseVideo === 'function') {
+        try {
+          player.pauseVideo();
+        } catch (e) {
+          console.warn("Error pausing YouTube player:", e);
+        }
+      }
     });
   };
 
-  // ✅ When normal video plays → pause other videos + YouTube
-  const handleVideoPlay = (playingVideo) => {
-    videoRefs.current.forEach(video => { if (video && video !== playingVideo) video.pause(); });
-    if (mainVideoRef.current && mainVideoRef.current !== playingVideo) mainVideoRef.current.pause();
+  // ✅ When HTML5 video plays → pause other videos + YouTube
+  const handleVideoPlay = (playingVideo, playingIndex = null) => {
+    // Pause other HTML5 videos
+    if (mainVideoRef.current && mainVideoRef.current !== playingVideo && !mainVideoRef.current.paused) {
+      mainVideoRef.current.pause();
+    }
+    
+    Object.entries(videoRefs.current).forEach(([index, video]) => {
+      if (video && video !== playingVideo && parseInt(index) !== playingIndex && !video.paused) {
+        video.pause();
+      }
+    });
 
+    // Pause all YouTube players
     Object.values(youtubePlayers.current).forEach(player => {
-      if (player && player.pauseVideo) player.pauseVideo();
+      if (player && player.pauseVideo && typeof player.pauseVideo === 'function') {
+        try {
+          player.pauseVideo();
+        } catch (e) {
+          console.warn("Error pausing YouTube player:", e);
+        }
+      }
     });
   };
 
@@ -156,15 +184,38 @@ const NewsBlog = () => {
       // Main blog player
       const mainIframe = document.getElementById("youtube-main");
       if (mainIframe && !youtubePlayers.current.main) {
-        youtubePlayers.current.main = new window.YT.Player("youtube-main", {
-          events: {
-            onStateChange: (event) => {
-              if (event.data === window.YT.PlayerState.PLAYING) {
-                pauseAllVideos(); // ✅ Pause all others
-              }
+        try {
+          youtubePlayers.current.main = new window.YT.Player("youtube-main", {
+            events: {
+              onStateChange: (event) => {
+                if (event.data === window.YT.PlayerState.PLAYING) {
+                  // Pause all HTML5 videos
+                  if (mainVideoRef.current && !mainVideoRef.current.paused) {
+                    mainVideoRef.current.pause();
+                  }
+                  Object.values(videoRefs.current).forEach(video => {
+                    if (video && !video.paused) {
+                      video.pause();
+                    }
+                  });
+                  
+                  // Pause other YouTube players
+                  Object.entries(youtubePlayers.current).forEach(([key, player]) => {
+                    if (key !== 'main' && player && player.pauseVideo && typeof player.pauseVideo === 'function') {
+                      try {
+                        player.pauseVideo();
+                      } catch (e) {
+                        console.warn("Error pausing YouTube player:", e);
+                      }
+                    }
+                  });
+                }
+              },
             },
-          },
-        });
+          });
+        } catch (e) {
+          console.warn("Error creating main YouTube player:", e);
+        }
       }
 
       // More blogs players
@@ -172,22 +223,52 @@ const NewsBlog = () => {
         const playerId = `youtube-player-${index}`;
         const iframe = document.getElementById(playerId);
         if (iframe && !youtubePlayers.current[index]) {
-          youtubePlayers.current[index] = new window.YT.Player(playerId, {
-            events: {
-              onStateChange: (event) => {
-                if (event.data === window.YT.PlayerState.PLAYING) {
-                  pauseAllVideos(); // ✅ Pause all others
-                }
+          try {
+            youtubePlayers.current[index] = new window.YT.Player(playerId, {
+              events: {
+                onStateChange: (event) => {
+                  if (event.data === window.YT.PlayerState.PLAYING) {
+                    // Pause main HTML5 video
+                    if (mainVideoRef.current && !mainVideoRef.current.paused) {
+                      mainVideoRef.current.pause();
+                    }
+                    
+                    // Pause all other HTML5 videos
+                    Object.values(videoRefs.current).forEach(video => {
+                      if (video && !video.paused) {
+                        video.pause();
+                      }
+                    });
+                    
+                    // Pause other YouTube players
+                    Object.entries(youtubePlayers.current).forEach(([key, player]) => {
+                      if (parseInt(key) !== index && key !== 'main' && player && player.pauseVideo && typeof player.pauseVideo === 'function') {
+                        try {
+                          player.pauseVideo();
+                        } catch (e) {
+                          console.warn("Error pausing YouTube player:", e);
+                        }
+                      }
+                    });
+                  }
+                },
               },
-            },
-          });
+            });
+          } catch (e) {
+            console.warn(`Error creating YouTube player ${index}:`, e);
+          }
         }
       });
     }
   }, [moreBlogs]);
 
+  // ✅ Cleanup on unmount
   useEffect(() => {
-    return () => pauseAllVideos();
+    return () => {
+      pauseAllVideos();
+      // Clear YouTube players
+      youtubePlayers.current = {};
+    };
   }, []);
 
   const renderMainMediaContent = (blog) => {
@@ -276,7 +357,7 @@ const NewsBlog = () => {
           height="220"
           ref={(el) => (videoRefs.current[index] = el)}
           onClick={(e) => e.stopPropagation()}
-          onPlay={(e) => handleVideoPlay(e.target)}
+          onPlay={(e) => handleVideoPlay(e.target, index)}
           sx={{ objectFit: "contain", transition: "transform 0.4s ease" }}
         />
       );
@@ -284,7 +365,7 @@ const NewsBlog = () => {
 
     return <CardMedia component="img" image={mediaUrl} height="220" sx={{ objectFit: "contain", transition: "transform 0.4s ease" }} />;
   };
- 
+
   const handleCardClick = (blogId) => {
     pauseAllVideos();
     navigate(`/feed/${type}/${blogId}`);

@@ -7,7 +7,6 @@ import {
   Typography,
   Skeleton,
   Button,
-  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
@@ -27,26 +26,29 @@ const isYouTubeUrl = (url) =>
 
 const getYouTubeEmbedUrl = (url) => {
   try {
+    if (!url) return null;
+    url = url.trim();
+
+    if (url.includes("youtube.com/embed/")) return url;
+
     let videoId = null;
 
     if (url.includes("youtube.com")) {
       const urlObj = new URL(url);
       if (urlObj.pathname.startsWith("/shorts/")) {
-        videoId = urlObj.pathname.split("/shorts/")[1];
+        videoId = urlObj.pathname.split("/shorts/")[1]?.split("?")[0];
       } else {
         videoId = urlObj.searchParams.get("v");
       }
     } else if (url.includes("youtu.be")) {
-      videoId = url.split("youtu.be/")[1];
+      videoId = url.split("youtu.be/")[1]?.split("?")[0];
     }
 
-    if (videoId) {
-      return `https://www.youtube.com/embed/${videoId}`;
-    }
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
   } catch (err) {
     console.error("Invalid YouTube URL", err);
+    return null;
   }
-  return null;
 };
 
 const isVideoFile = (url) =>
@@ -60,15 +62,14 @@ const BlogSection = () => {
   const navigate = useNavigate();
 
   const videoRefs = useRef({});
-  const youtubePlayers = useRef({}); 
+  const youtubePlayers = useRef({});
 
   const registerVideo = (el, id) => {
-    if (el && id) {
-      videoRefs.current[id] = el;
-    }
+    if (el && id) videoRefs.current[id] = el;
   };
 
   const handleSessionExpiredOk = () => {
+    pauseAllVideos();
     setShowSessionExpired(false);
     navigate("/login");
     localStorage.clear();
@@ -86,19 +87,56 @@ const BlogSection = () => {
       : `${API_URL}${post.newsImg}`;
   };
 
-  // ✅ Load YouTube API
+  // ✅ Pause ALL videos (YouTube + HTML5)
+  const pauseAllVideos = () => {
+    // Pause HTML5 videos
+    Object.values(videoRefs.current).forEach((video) => {
+      if (video && !video.paused) video.pause();
+    });
+
+    // Pause YouTube players
+    Object.values(youtubePlayers.current).forEach((player) => {
+      if (player?.pauseVideo) {
+        try {
+          player.pauseVideo();
+        } catch (e) {
+          console.warn("Error pausing YouTube player:", e);
+        }
+      }
+    });
+  };
+
+  // ✅ Handle when an HTML5 video plays
+  const handleVideoPlay = (playingId) => {
+    // Pause other HTML5 videos
+    Object.entries(videoRefs.current).forEach(([id, video]) => {
+      if (id !== playingId && video && !video.paused) video.pause();
+    });
+
+    // Pause YouTube players
+    Object.values(youtubePlayers.current).forEach((player) => {
+      if (player?.pauseVideo) {
+        try {
+          player.pauseVideo();
+        } catch (e) {
+          console.warn("Error pausing YouTube player:", e);
+        }
+      }
+    });
+  };
+
+  // ✅ Load YouTube API once
   useEffect(() => {
     if (!window.YT) {
       const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
       document.body.appendChild(tag);
     }
-
-    window.onYouTubeIframeAPIReady = () => {
-      console.log("YouTube API ready in BlogSection");
-    };
+    window.onYouTubeIframeAPIReady = () =>
+      console.log("YouTube API loaded for BlogSection");
   }, []);
 
+  // ✅ Fetch Data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -113,7 +151,7 @@ const BlogSection = () => {
 
         const latestByType = {
           videos: sortedNews.filter((p) => p.type === "video").slice(0, 1),
-          shorts: sortedNews.filter((p) => p.type === "short").slice(0, 1)[0],
+          shorts: sortedNews.find((p) => p.type === "short"),
           news: sortedNews.find((p) => p.type === "news"),
           blog: sortedNews.find((p) => p.type === "blog"),
         };
@@ -122,14 +160,12 @@ const BlogSection = () => {
         const activeFeatured = Array.isArray(featuredData.data)
           ? featuredData.data.filter((item) => item.status === "active")
           : [];
-        setFeaturedVideo(activeFeatured[0] || null);
 
+        setFeaturedVideo(activeFeatured[0] || null);
         setLatestPosts(latestByType);
       } catch (error) {
         console.error("Error fetching data:", error);
-        if (error.response?.status === 401) {
-          setShowSessionExpired(true);
-        }
+        if (error.response?.status === 401) setShowSessionExpired(true);
       } finally {
         setLoading(false);
       }
@@ -137,48 +173,49 @@ const BlogSection = () => {
 
     fetchData();
 
-    // ✅ Pause all videos on scroll
-    const pauseAllVideos = () => {
-      Object.values(videoRefs.current).forEach((video) => {
-        if (video && !video.paused) video.pause();
-      });
-      Object.values(youtubePlayers.current).forEach((player) => {
-        if (player && player.pauseVideo) player.pauseVideo();
-      });
-    };
-
+    // Pause all videos on scroll
     window.addEventListener("scroll", pauseAllVideos);
     return () => {
       window.removeEventListener("scroll", pauseAllVideos);
-      pauseAllVideos(); // ✅ On unmount
+      pauseAllVideos();
+      youtubePlayers.current = {};
     };
   }, []);
 
-  // ✅ Initialize YouTube players after content load
+  // ✅ Initialize YouTube players after posts load
   useEffect(() => {
-    if (window.YT && window.YT.Player) {
-      const ids = ["featured", latestPosts.shorts?._id, latestPosts.videos?.[0]?._id]
-        .filter(Boolean);
+    if (window.YT?.Player) {
+      const ids = ["featured", latestPosts.shorts?._id, latestPosts.videos?.[0]?._id].filter(Boolean);
 
       ids.forEach((id) => {
         const iframe = document.getElementById(`youtube-${id}`);
         if (iframe && !youtubePlayers.current[id]) {
-          youtubePlayers.current[id] = new window.YT.Player(`youtube-${id}`, {
-            events: {
-              onStateChange: (event) => {
-                if (event.data === window.YT.PlayerState.PLAYING) {
-                  Object.entries(youtubePlayers.current).forEach(([key, player]) => {
-                    if (key !== id) player.pauseVideo();
-                  });
-                }
+          try {
+            youtubePlayers.current[id] = new window.YT.Player(`youtube-${id}`, {
+              events: {
+                onStateChange: (event) => {
+                  if (event.data === window.YT.PlayerState.PLAYING) {
+                    // Pause all other YouTube players
+                    Object.entries(youtubePlayers.current).forEach(([key, player]) => {
+                      if (key !== id && player?.pauseVideo) player.pauseVideo();
+                    });
+                    // Pause all HTML5 videos
+                    Object.values(videoRefs.current).forEach((video) => {
+                      if (video && !video.paused) video.pause();
+                    });
+                  }
+                },
               },
-            },
-          });
+            });
+          } catch (e) {
+            console.warn(`Error creating YouTube player ${id}:`, e);
+          }
         }
       });
     }
   }, [latestPosts, featuredVideo]);
 
+  // ✅ Styled Button
   const StyledButton = styled("button")(() => ({
     backgroundColor: "transparent",
     color: "#8AC642",
@@ -198,14 +235,16 @@ const BlogSection = () => {
     },
   }));
 
+  // ✅ Render Media (YouTube, Video, Image)
   const renderMedia = (source, id) => {
     if (!source) return null;
 
     if (isYouTubeUrl(source)) {
+      const embedUrl = getYouTubeEmbedUrl(source);
       return (
         <iframe
           id={`youtube-${id}`}
-          src={`${getYouTubeEmbedUrl(source)}?enablejsapi=1&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
+          src={`${embedUrl}?enablejsapi=1&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
           title="YouTube video"
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -233,13 +272,7 @@ const BlogSection = () => {
             borderRadius: "20px",
             backgroundColor: "#000",
           }}
-          onPlay={() => {
-            Object.entries(videoRefs.current).forEach(([vidId, video]) => {
-              if (vidId !== id && video && !video.paused) {
-                video.pause();
-              }
-            });
-          }}
+          onPlay={() => handleVideoPlay(id)}
         >
           <source src={source} type="video/mp4" />
         </video>
@@ -255,6 +288,7 @@ const BlogSection = () => {
     }
   };
 
+  // ✅ Render Card
   const renderCard = (post, type) => {
     if (loading) {
       return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: "20px" }} />;
@@ -271,7 +305,10 @@ const BlogSection = () => {
 
     return (
       <Card
-        onClick={() => navigate(`/feed/${post.type}/${post._id}`)}
+        onClick={() => {
+          pauseAllVideos();
+          navigate(`/feed/${post.type}/${post._id}`);
+        }}
         sx={{
           position: "relative",
           height: "100%",
@@ -326,6 +363,7 @@ const BlogSection = () => {
               }}
               onClick={(e) => {
                 e.stopPropagation();
+                pauseAllVideos();
                 navigate(`/feed/${post.type}/${post._id}`);
               }}
             >
@@ -338,48 +376,57 @@ const BlogSection = () => {
   };
 
   return (
-    <Box
-      id="blog"
-      sx={{
-        backgroundColor: "#111",
-        color: "#fff",
-        px: 4,
-        py: 6,
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <SessionExpiredModal visible={showSessionExpired} onConfirm={handleSessionExpiredOk} />
-      <Typography variant="h3" sx={headingStyle}>
-        Blogs And News
-      </Typography>
+    <>
+      <Box
+        id="blog"
+        sx={{
+          backgroundColor: "#111",
+          color: "#fff",
+          px: 4,
+          py: 6,
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <SessionExpiredModal visible={showSessionExpired} onConfirm={handleSessionExpiredOk} />
+        <Typography variant="h3" sx={headingStyle}>
+          Blogs And News
+        </Typography>
 
-      <Grid container spacing={2} mt={3}>
-        <Grid item xs={12} md={5}>
-          <Box sx={{ height: "500px" }}>{renderCard(latestPosts.shorts, "short")}</Box>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Box sx={{ height: "500px", display: "flex", flexDirection: "column", gap: 2 }}>
-            <Box sx={{ height: "240px" }}>{renderCard(latestPosts.news, "news")}</Box>
-            <Box sx={{ height: "240px" }}>{renderCard(latestPosts.blog, "blog")}</Box>
-          </Box>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Box sx={{ height: "500px", display: "flex", flexDirection: "column", gap: 2 }}>
-            <Box sx={{ height: "240px" }}>{renderCard(latestPosts.videos?.[0], "video")}</Box>
-            <Box sx={{ height: "240px" }}>
-              {renderMedia(featuredVideo?.video || featuredVideo?.youTubeLink, "featured")}
+        <Grid container spacing={2} mt={3}>
+          <Grid item xs={12} md={5}>
+            <Box sx={{ height: "500px" }}>{renderCard(latestPosts.shorts, "short")}</Box>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Box sx={{ height: "500px", display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ height: "240px" }}>{renderCard(latestPosts.news, "news")}</Box>
+              <Box sx={{ height: "240px" }}>{renderCard(latestPosts.blog, "blog")}</Box>
             </Box>
-          </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box sx={{ height: "500px", display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ height: "240px" }}>{renderCard(latestPosts.videos?.[0], "video")}</Box>
+              <Box sx={{ height: "240px" }}>
+                {renderMedia(featuredVideo?.video || featuredVideo?.youTubeLink, "featured")}
+              </Box>
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
 
-      <Box textAlign="center" mt={4}>
-        <StyledButton onClick={() => navigate("/feed/blog")}>VIEW ALL</StyledButton>
+        <Box textAlign="center" mt={4}>
+          <StyledButton
+            onClick={() => {
+              pauseAllVideos();
+              navigate("/feed/blog");
+            }}
+          >
+            VIEW ALL
+          </StyledButton>
+        </Box>
+        <InsuranceCard />
       </Box>
-      <InsuranceCard />
-    </Box>
+    </>
   );
 };
 

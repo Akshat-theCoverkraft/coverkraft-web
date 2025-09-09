@@ -109,7 +109,7 @@ export const PolicyProvider = ({ children }) => {
   const handleClearAll = () => {
     setSearchTerm("");
     setSelectedTypeFilter("all");
-    setPages({ active: 1, expired: 1, archive: 1 });
+    setPages({ active: 1, expired: 1, archive: 1, pending: 1});
   };
 
   return (
