@@ -116,6 +116,9 @@ const MotorPolicyForm = () => {
      policyDetails?.documentDetails?._id || ""
     );
     console.log("documentId" , documentId);
+    useEffect(() => {
+        sessionStorage.setItem("documentId", documentId);
+    }, [documentId]);
   const commonItemStyle = {
     maxWidth: 900,
     width: "100%",

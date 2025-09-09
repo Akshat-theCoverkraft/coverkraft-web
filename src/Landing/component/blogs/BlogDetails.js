@@ -1,25 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { 
-  Box, 
-  IconButton, 
-  Container, 
-  Typography, 
-  Card, 
-  CardContent, 
-  CardMedia, 
-  Grid,
-  Avatar,
-  Button as MuiButton,
-  Skeleton
+  Box, IconButton, Container, Typography, Card, CardContent, CardMedia, Grid, Avatar, Button as MuiButton, Skeleton
 } from '@mui/material';
-import { 
-  ArrowBack, 
-  CalendarTodayRounded, 
-  PersonRounded 
-} from '@mui/icons-material';
+import { ArrowBack, CalendarTodayRounded, PersonRounded } from '@mui/icons-material';
 import Navbar from "../../../component/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from 'axios'
+import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import API_URL from "../../../ServiceModule/Service";
 import moment from "moment-timezone";
@@ -39,45 +25,46 @@ const NewsBlog = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [textOverflowStates, setTextOverflowStates] = useState({});
   
-  // Refs to store video elements
   const videoRefs = useRef([]);
   const mainVideoRef = useRef(null);
   const textRefs = useRef({});
-  
-  console.log(type, id, "<===type");
+  const youtubePlayers = useRef({}); // ✅ Store all YouTube players
 
-  // Check if link is YouTube
-  const isYouTubeLink = (url) => {
-    return (
-      typeof url === "string" &&
-      (url.includes("youtube.com") || url.includes("youtu.be"))
-    );
-  };
+  // ✅ Load YouTube Iframe API once
+  useEffect(() => {
+    if (!window.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(tag);
+    }
+  }, []);
 
-  // Generate embed link for YouTube (Normal, Shorts, youtu.be)
+  // ✅ Global YouTube API ready callback
+  useEffect(() => {
+    window.onYouTubeIframeAPIReady = () => {
+      console.log("YouTube API Ready");
+    };
+  }, []);
+
+  const isYouTubeLink = (url) =>
+    typeof url === "string" && (url.includes("youtube.com") || url.includes("youtu.be"));
+
   const getYouTubeEmbedUrl = (url) => {
     try {
       if (!url) return null;
       url = url.trim();
-
-      // Already an embed URL
       if (url.includes("youtube.com/embed/")) return url;
 
       if (url.includes("youtube.com")) {
         const urlObj = new URL(url);
-
-        // Handle Shorts: /shorts/VIDEO_ID
         if (urlObj.pathname.startsWith("/shorts/")) {
           const videoId = urlObj.pathname.split("/shorts/")[1]?.split("?")[0];
           if (videoId) return `https://www.youtube.com/embed/${videoId}`;
         }
-
-        // Handle normal YouTube links: ?v=VIDEO_ID
         const videoId = urlObj.searchParams.get("v");
         if (videoId) return `https://www.youtube.com/embed/${videoId}`;
       }
 
-      // Handle youtu.be short links
       if (url.includes("youtu.be")) {
         const videoId = url.split("youtu.be/")[1]?.split("?")[0];
         if (videoId) return `https://www.youtube.com/embed/${videoId}`;
@@ -88,7 +75,6 @@ const NewsBlog = () => {
     return null;
   };
 
-  // Detect media type
   const getMediaType = (url) => {
     if (!url || typeof url !== "string") return "image";
     if (isYouTubeLink(url)) return "youtube";
@@ -106,17 +92,10 @@ const NewsBlog = () => {
   const fetchBlogDetails = async () => {
     setIsLoading(true);
     try {
-      const { data } = await axios.get(
-        `${API_URL}news/get-blog-details?blogId=${id}`
-      );
-
+      const { data } = await axios.get(`${API_URL}news/get-blog-details?blogId=${id}`);
       if (data?.success) {
         setBlog(data?.blog);
-
-        // Only set moreBlogs with status 'active' and exclude current blog
-        const activeBlogs = (data?.moreBlogs || []).filter(
-          (blog) => blog.status === "active" && blog._id !== id
-        );
+        const activeBlogs = (data?.moreBlogs || []).filter((b) => b.status === "active" && b._id !== id);
         setMoreBlogs(activeBlogs);
       } else {
         toast.error(data?.message || "Failed to load blog details.");
@@ -127,46 +106,30 @@ const NewsBlog = () => {
         setShowSessionExpired(true);
       } else {
         setError('Failed to load options');
-        toast.error(
-          error?.response?.data?.message ||
-            error?.message ||
-            "Something went wrong while loading the blog."
-        );
+        toast.error(error?.response?.data?.message || error?.message || "Something went wrong while loading the blog.");
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Function to pause all videos
+  // ✅ Pause ALL videos (YouTube + HTML5)
   const pauseAllVideos = () => {
-    if (mainVideoRef.current) {
-      mainVideoRef.current.pause();
-    }
-    
-    videoRefs.current.forEach(video => {
-      if (video) {
-        video.pause();
-      }
+    if (mainVideoRef.current) mainVideoRef.current.pause();
+    videoRefs.current.forEach(video => { if (video) video.pause(); });
+
+    Object.values(youtubePlayers.current).forEach(player => {
+      if (player && player.pauseVideo) player.pauseVideo();
     });
   };
 
-  // Function to handle video play - pause others when one starts
+  // ✅ When normal video plays → pause other videos + YouTube
   const handleVideoPlay = (playingVideo) => {
-    if (mainVideoRef.current && mainVideoRef.current !== playingVideo) {
-      mainVideoRef.current.pause();
-    }
-    
-    videoRefs.current.forEach(video => {
-      if (video && video !== playingVideo) {
-        video.pause();
-      }
-    });
-  };
+    videoRefs.current.forEach(video => { if (video && video !== playingVideo) video.pause(); });
+    if (mainVideoRef.current && mainVideoRef.current !== playingVideo) mainVideoRef.current.pause();
 
-  const handleVideoClick = (index) => {
-    Object.entries(videoRefs.current).forEach(([key, video]) => {
-      if (parseInt(key) !== index && video) video.pause();
+    Object.values(youtubePlayers.current).forEach(player => {
+      if (player && player.pauseVideo) player.pauseVideo();
     });
   };
 
@@ -187,44 +150,62 @@ const NewsBlog = () => {
     }
   }, [moreBlogs, isLoading]);
 
-  // Cleanup effect to pause all videos when component unmounts or route changes
+  // ✅ Initialize YouTube players after blogs load
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      pauseAllVideos();
-    };
+    if (window.YT && window.YT.Player) {
+      // Main blog player
+      const mainIframe = document.getElementById("youtube-main");
+      if (mainIframe && !youtubePlayers.current.main) {
+        youtubePlayers.current.main = new window.YT.Player("youtube-main", {
+          events: {
+            onStateChange: (event) => {
+              if (event.data === window.YT.PlayerState.PLAYING) {
+                pauseAllVideos(); // ✅ Pause all others
+              }
+            },
+          },
+        });
+      }
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+      // More blogs players
+      moreBlogs.forEach((_, index) => {
+        const playerId = `youtube-player-${index}`;
+        const iframe = document.getElementById(playerId);
+        if (iframe && !youtubePlayers.current[index]) {
+          youtubePlayers.current[index] = new window.YT.Player(playerId, {
+            events: {
+              onStateChange: (event) => {
+                if (event.data === window.YT.PlayerState.PLAYING) {
+                  pauseAllVideos(); // ✅ Pause all others
+                }
+              },
+            },
+          });
+        }
+      });
+    }
+  }, [moreBlogs]);
 
-    return () => {
-      pauseAllVideos();
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
+  useEffect(() => {
+    return () => pauseAllVideos();
   }, []);
 
-  // Function to render media content for main blog
   const renderMainMediaContent = (blog) => {
     const mediaUrl = blog?.video || blog?.videoUrl || blog?.youtubeLink || blog?.youTubeLink || blog?.newsImg || blog?.link;
     if (!mediaUrl) return null;
 
     const mediaType = getMediaType(mediaUrl);
-
-    const commonMainStyles = {
-      maxWidth: "100%",
-      width: "100%",
-      height: "400px",
-      borderRadius: "24px",
-      margin: "0 auto 2rem auto",
-      display: "block"
-    };
+    const commonMainStyles = { maxWidth: "100%", width: "100%", height: "400px", borderRadius: "24px", margin: "0 auto 2rem auto", display: "block" };
 
     if (mediaType === "youtube") {
       const embedUrl = getYouTubeEmbedUrl(mediaUrl);
       return (
         <Box sx={commonMainStyles}>
           <iframe
+            id="youtube-main"
             width="100%"
             height="100%"
-            src={`${embedUrl}?modestbranding=1&rel=0`}
+            src={`${embedUrl}?enablejsapi=1&modestbranding=1&rel=0`}
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -242,12 +223,7 @@ const NewsBlog = () => {
             ref={mainVideoRef}
             controls
             controlsList="nodownload"
-            style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: "24px",
-              objectFit: "contain"
-            }}
+            style={{ width: "100%", height: "100%", borderRadius: "24px", objectFit: "contain" }}
             onPlay={(e) => handleVideoPlay(e.target)}
             preload="metadata"
           >
@@ -260,21 +236,11 @@ const NewsBlog = () => {
 
     return (
       <Box sx={commonMainStyles}>
-        <img
-          src={mediaUrl}
-          style={{
-            width: "100%",
-            height: "100%",
-            borderRadius: "24px",
-            objectFit: "contain"
-          }}
-          alt={blog?.subtitle}
-        />
+        <img src={mediaUrl} style={{ width: "100%", height: "100%", borderRadius: "24px", objectFit: "contain" }} alt={blog?.subtitle} />
       </Box>
     );
   };
 
-  // Function to render media content for more blogs cards
   const renderCardMediaContent = (item, index) => {
     const mediaUrl = item?.video || item?.videoUrl || item?.youtubeLink || item?.youTubeLink || item?.newsImg || item?.link;
     if (!mediaUrl) return null;
@@ -286,9 +252,10 @@ const NewsBlog = () => {
       return (
         <Box sx={{ height: 220 }}>
           <iframe
+            id={`youtube-player-${index}`}
             width="100%"
             height="100%"
-            src={`${embedUrl}?modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
+            src={`${embedUrl}?enablejsapi=1&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -309,22 +276,15 @@ const NewsBlog = () => {
           height="220"
           ref={(el) => (videoRefs.current[index] = el)}
           onClick={(e) => e.stopPropagation()}
-          onPlay={() => handleVideoClick(index)}
+          onPlay={(e) => handleVideoPlay(e.target)}
           sx={{ objectFit: "contain", transition: "transform 0.4s ease" }}
         />
       );
     }
 
-    return (
-      <CardMedia
-        component="img"
-        image={mediaUrl}
-        height="220"
-        sx={{ objectFit: "contain", transition: "transform 0.4s ease" }}
-      />
-    );
+    return <CardMedia component="img" image={mediaUrl} height="220" sx={{ objectFit: "contain", transition: "transform 0.4s ease" }} />;
   };
-
+ 
   const handleCardClick = (blogId) => {
     pauseAllVideos();
     navigate(`/feed/${type}/${blogId}`);

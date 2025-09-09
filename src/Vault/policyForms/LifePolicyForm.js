@@ -4,23 +4,15 @@ import { ToastContainer, toast } from "react-toastify";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import CustomInput from "../../component/CustomInput";
 import Button from "../../component/Button";
-import { useLocation } from "react-router-dom";
-import Vault from "../Vault";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import API_URL from "../../ServiceModule/Service";
 import { saveDocument, updateDocument } from "../../store/action/action";
-import { useNavigate } from "react-router-dom";
-import moment from "moment";
 import Footer from "../../Landing/component/Footer";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import ProgressBarCircle from "../../component/ProgressBarCircle";
 import DateTimePicker from "../../component/DateTimePicker";
@@ -33,14 +25,9 @@ const LifePolicyForm = () => {
   const responseData = location.state?.responseData;
   const mode = location.state?.mode;
   const policyDetails = location.state?.policyDetails;
+  const normalize = (str) => str.replace(/\s+/g, " ").trim().toLowerCase();
 
-  // Now you can use the responseData and mode in your component
-  let headingText;
-  if (mode === "edit") {
-    headingText = "Edit Policy";
-  } else {
-    headingText = "Add Policy";
-  }
+  let headingText = mode === "edit" ? "Edit Policy" : "Add Policy";
 
   // State variables
   const [policyNumber, setPolicyNumber] = useState(
@@ -60,9 +47,6 @@ const LifePolicyForm = () => {
   );
   const [insuredName, setInsuredName] = useState(
     responseData?.insuredName || policyDetails?.insuredName || ""
-  );
-  const [insuredCompany, setInsuredCompany] = useState(
-    responseData?.insuranceCompany || policyDetails?.insuredCompany || ""
   );
   const [netPremium, setNetPremium] = useState(
     responseData?.netPremium || policyDetails?.policyDetails?.netPremium || ""
@@ -96,21 +80,39 @@ const LifePolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
- const [documentId, setdocumentId] = useState(
-     policyDetails?.documentDetails?._id || ""
-    );
+  const [documentId, setdocumentId] = useState(
+    () => sessionStorage.getItem("documentId") || policyDetails?.documentDetails?._id || ""
+);
+
+useEffect(() => {
+    sessionStorage.setItem("documentId", documentId);
+}, [documentId]);
+
   const [loading, setLoading] = useState(false);
+  const [dropdownOptions, setDropdownOptions] = useState([]); // NEW
+
   const userId = sessionStorage.getItem("userId");
   const policyId = sessionStorage.getItem("policyId");
-
   const token = sessionStorage.getItem("token");
+
+const safeJsonParse = (str) => {
+  try {
+    return str ? JSON.parse(str) : null;
+  } catch (err) {
+    console.warn("Failed to parse OCR text:", err);
+    return null;
+  }
+};
+
+const ocrData = safeJsonParse(responseData?.ocrText);
+const ocrCompany = ocrData?.insuredCompany || "";
+
+const [insuredCompany, setInsuredCompany] = useState("");      // stores ID for submission
+const [insuredCompanyName, setInsuredCompanyName] = useState(ocrCompany); // label for dropdown
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const commonItemStyle = {
-    maxWidth: 900,
-    width: "100%",
-    paddingLeft: "10px !important",
-  };
+
   const commonInputStyle = {
     height: 48,
     fontSize: "1.222rem",
@@ -124,7 +126,6 @@ const LifePolicyForm = () => {
   const inputFields = [
     policyNumber,
     policyStartDate,
-    // policyEndDate,
     premiumPaid,
     insuredName,
     insuredCompany,
@@ -137,44 +138,40 @@ const LifePolicyForm = () => {
     return (filledFields / totalFields) * 100;
   };
 
-  const handleStartDateChange = (date) => {
-    setPolicyStartDate(date);
+useEffect(() => {
+  const fetchDropdownOptions = async () => {
+    try {
+      const response = await fetch("https://api.thecoverkraft.com/api/dropdown?q=");
+      const data = await response.json();
+      if (Array.isArray(data)) setDropdownOptions(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
-  const handleEndDateChange = (date) => {
-    setPolicyEndDate(date);
-  };
-  const handleRenewalDate = (date) => {
-    setPolicyRenewalDate(date);
-  };
-  const handleMaturityDate = (date) => {
-    setMaturityDate(date);
-  };
-  const handleDob = (date) => {
-    setDob(date);
-  };
+  fetchDropdownOptions();
+}, []);
 
-  useEffect(() => {
-    const progress = calculateProgress();
-  }, [
-    policyNumber,
-    policyStartDate,
-    sumAssured,
-    // policyEndDate,
-    premiumPaid,
-    insuredName,
-    insuredCompany,
-    policyName,
-  ]);
+
+useEffect(() => {
+  if (ocrCompany && dropdownOptions.length > 0) {
+    const normalize = (str) => str?.replace(/\s+/g, " ").trim().toLowerCase();
+    const match = dropdownOptions.find(opt => normalize(opt.label) === normalize(ocrCompany));
+
+    if (match) {
+      setInsuredCompany(match._id);       // store ID
+      setInsuredCompanyName(match.label); // store label to display
+    }
+  }
+}, [ocrCompany, dropdownOptions]);
+
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
-
       const payload = {
         policyNumber,
         policyStartDate,
         sumAssured,
-        // policyEndDate,
         premiumPaid,
         insuredName,
         insuredCompany,
@@ -201,7 +198,6 @@ const LifePolicyForm = () => {
     return (
       payload.policyNumber &&
       payload.policyStartDate &&
-      // payload.policyEndDate &&
       payload.premiumPaid &&
       payload.insuredName &&
       payload.insuredCompany &&
@@ -218,7 +214,6 @@ const LifePolicyForm = () => {
     formData.append("policyType", responseData?.policyType.toLowerCase());
     formData.append("policyNumber", policyNumber);
     formData.append("policyStartDate", policyStartDate);
-    // formData.append("policyEndDate", policyEndDate);
     formData.append("sumInsured", sumAssured);
     formData.append("premiumPaid", premiumPaid);
     formData.append("netPremium", netPremium);
@@ -297,7 +292,6 @@ const LifePolicyForm = () => {
                 border: "1px solid #333",
               }}
             >
-              {/* Header Section */}
               <div className="d-flex justify-content-between">
                 <Typography
                   onClick={() => navigate(-1)}
@@ -305,26 +299,14 @@ const LifePolicyForm = () => {
                   component="h2"
                   className="fw-bold d-flex align-items-center gap-2"
                 >
-                  <span
-                    style={{
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <ArrowBackIcon
-                      style={{ color: "#fff", fontSize: "28px" }}
-                    />
+                  <span style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
+                    <ArrowBackIcon style={{ color: "#fff", fontSize: "28px" }} />
                   </span>
                   {headingText}
                 </Typography>
-                <ProgressBarCircle
-                  progress={calculateProgress()}
-                  color="#8AC642"
-                />{" "}
+                <ProgressBarCircle progress={calculateProgress()} color="#8AC642" />
               </div>
 
-              {/* Section Title */}
               <Typography
                 variant="h6"
                 sx={{
@@ -338,14 +320,9 @@ const LifePolicyForm = () => {
                 Policy Details
               </Typography>
 
-              {/* Form Content */}
               <Grid container spacing={4}>
-                {/* Left Column */}
                 <Grid item xs={12} lg={6}>
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
-                  >
-                    {/* Policy Number */}
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                     <Box>
                       <CustomInput
                         type="text"
@@ -357,113 +334,59 @@ const LifePolicyForm = () => {
                       />
                     </Box>
 
-                    {/* Date Fields Row */}
                     <Grid container spacing={10}>
-                       <Grid item xs={12} md={6} margin={0} >
-    <label
-      className="form-label fw-bold mb-2 text-white fs-6" // ensure tight spacing
-      htmlFor="start-date"
-    >
-      Start date <span className="text-danger">*</span>
-    </label>
-    <DateTimePicker
-      id="start-date"
-      type="date"
-      isIcon={false}
-      label="DD/MM/YYYY"
-      value={formatDate(policyStartDate)}
-      onChange={handleStartDateChange}
-      className="w-100" // full width and dark bg
-    />
-  </Grid>
-                       {/* <Grid item xs={12} md={6}>
-    <label
-      className="form-label fw-bold mb-2 text-white fs-6"
-      htmlFor="end-date"
-    >
-      End date <span className="text-danger">*</span>
-    </label>
-    <DateTimePicker
-      id="end-date"
-      type="date"
-      isIcon={false}
-      label="DD/MM/YYYY"
-      value={formatDate(policyEndDate)}
-      onChange={handleEndDateChange}
-      className="w-100"
-    />
-  </Grid> */}
+                      <Grid item xs={12} md={6}>
+                        <label className="form-label fw-bold mb-2 text-white fs-6">
+                          Start date <span className="text-danger">*</span>
+                        </label>
+                        <DateTimePicker
+                          type="date"
+                          isIcon={false}
+                          label="DD/MM/YYYY"
+                          value={formatDate(policyStartDate)}
+                          onChange={(val) => setPolicyStartDate(val)}
+                          className="w-100"
+                        />
+                      </Grid>
                     </Grid>
 
-                    
                     <Grid container spacing={4}>
-  <Grid item xs={12} sm={6}>
-    <Box>
-      <Typography
-        component="label"
-        className="fw-bold mb-2 text-white fs-6" 
-      >
-        Next premium due date <span style={{ color: "#f44336" }}>*</span>
-      </Typography>
-      <DateTimePicker
-      id="policy-renewal-date"
-        type="date"
-        value={policyRenewalDate}
-        onChange={(value) => setPolicyRenewalDate(value)}
-        label="DD/MM/YYYY"
-        isIcon={false}
-        className="w-100"
-      />
-    </Box>
-  </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box>
+                          <Typography component="label" className="fw-bold mb-2 text-white fs-6">
+                            Next premium due date <span style={{ color: "#f44336" }}>*</span>
+                          </Typography>
+                          <DateTimePicker
+                            type="date"
+                            value={policyRenewalDate}
+                            onChange={(value) => setPolicyRenewalDate(value)}
+                            label="DD/MM/YYYY"
+                            isIcon={false}
+                            className="w-100"
+                          />
+                        </Box>
+                      </Grid>
 
-  <Grid item xs={12} sm={6}>
-    <Box>
-      <Typography
-        component="label"
-        className="fw-bold mb-2 text-white font-size-16 ml-4"
-      >
-       Policy Maturity Date <span style={{ color: "#f44336" }}>*</span>
-      </Typography>
-      <DateTimePicker
-      id="maturity-date"
-        type="date"
-        value={maturityDate}
-        onChange={(value) => setMaturityDate(value)}
-        label="DD/MM/YYYY"
-        isIcon={false}
-        className="w-100 ml-4"
-      />
-    </Box>
-  </Grid>
-</Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box>
+                          <Typography
+                            component="label"
+                            className="fw-bold mb-2 text-white font-size-16 ml-4"
+                          >
+                            Policy Maturity Date <span style={{ color: "#f44336" }}>*</span>
+                          </Typography>
+                          <DateTimePicker
+                            type="date"
+                            value={maturityDate}
+                            onChange={(value) => setMaturityDate(value)}
+                            label="DD/MM/YYYY"
+                            isIcon={false}
+                            className="w-100 ml-4"
+                          />
+                        </Box>
+                      </Grid>
+                    </Grid>
 
-                    {/* DOB Field */}
-                   {/* <Box sx={{ mt: 2 }}>
-  <Typography
-    component="label"
-    sx={{
-      display: "block",
-      fontWeight: 600,
-      color: "#fff",
-      marginBottom: 1,
-      fontSize: "0.95rem",
-    }}
-  >
-    Date of Birth
-  </Typography>
-  <DateTimePicker
-    value={dob}
-    onChange={(val) => setDob(val)}
-    label="MM/DD/YYYY"
-    isIcon={false}
-    className="w-100"
-    error={false} 
-    validationMessage="Invalid date"
-  />
-</Box> */}
-
-                    {/* Personal Details */}
                     <Box className="mt-4">
                       <CustomInput
                         type="text"
@@ -476,58 +399,19 @@ const LifePolicyForm = () => {
                     </Box>
 
                     <Box>
-                      {policyDetails?.insuredCompany ||
-                      responseData?.insuranceCompany ? (
-                        <CustomInput
-                          type="text"
-                          label="Insurance Company"
-                          value={insuredCompany}
-                          readOnly
-                          disabled
-                          required
-                          inputStyle={commonInputStyle}
-                        />
-                      ) : (
-                        <InsuranceDropdown
-                          onCompanySelect={(companyId) =>
-                            setInsuredCompany(companyId)
-                          }
-                          initialValue={insuredCompany}
-                        />
-                      )}
-                    </Box>
+                      <InsuranceDropdown
+  options={dropdownOptions}
+  onCompanySelect={(id) => setInsuredCompany(id)}
+  initialValue={insuredCompanyName}  // shows the label
+/>
 
-                    {/* Coverage Details */}
-                    {/* <Box>
-                      <CustomInput
-                        type="text"
-                        label="Critical Illness Coverage"
-                        value={criticalIllness}
-                        onChange={(e) => setCriticalIllness(e.target.value)}
-                        inputStyle={commonInputStyle}
-                      />
                     </Box>
-
-                    <Box>
-                      <CustomInput
-                        type="text"
-                        label="Accidental Disability Coverage"
-                        value={accidentalDisability}
-                        onChange={(e) =>
-                          setAccidentalDisability(e.target.value)
-                        }
-                        inputStyle={commonInputStyle}
-                      />
-                    </Box> */}
                   </Box>
                 </Grid>
 
                 {/* Right Column */}
                 <Grid item xs={12} lg={6}>
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}
-                  >
-                    {/* Premium Details */}
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                     <Box>
                       <CustomInput
                         type="text"
@@ -559,8 +443,6 @@ const LifePolicyForm = () => {
                         required
                       />
                     </Box>
-
-                    {/* Additional Coverage */}
                     <Box>
                       <CustomInput
                         type="text"
@@ -570,18 +452,6 @@ const LifePolicyForm = () => {
                         inputStyle={commonInputStyle}
                       />
                     </Box>
-
-                    {/* <Box>
-                      <CustomInput
-                        type="text"
-                        label="Terminal Illness Coverage"
-                        value={terminalIllness}
-                        onChange={(e) => setTerminalIllness(e.target.value)}
-                        inputStyle={commonInputStyle}
-                      />
-                    </Box> */}
-
-                    {/* Policy Information */}
                     <Box>
                       <CustomInput
                         type="text"
@@ -592,25 +462,8 @@ const LifePolicyForm = () => {
                         required
                       />
                     </Box>
-
-                    {/* <Box>
-                      <CustomInput
-                        type="text"
-                        label="Additional Notes"
-                        value={others}
-                        onChange={(e) => setOthers(e.target.value)}
-                        inputStyle={commonInputStyle}
-                      />
-                    </Box> */}
                   </Box>
-                  <Box
-                    flex={1}
-                    display="flex"
-                    justifyContent="center"
-                    gap={2}
-                    mt={2}
-                    width="100%"
-                  >
+                  <Box flex={1} display="flex" justifyContent="center" gap={2} mt={2} width="100%">
                     <Button
                       text={mode === "edit" ? "Update" : "Save"}
                       size="lg"
@@ -623,7 +476,6 @@ const LifePolicyForm = () => {
                         borderRadius: "8px",
                         fontSize: "16px",
                         textTransform: "none",
-                        
                       }}
                     />
                     <Button

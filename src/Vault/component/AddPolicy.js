@@ -289,10 +289,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
             default:
                 break;
         }
-
-
-        // Check if the input field is filled
-        // const isFilled = value.trim().length === 1;
         const isFilled = typeof value === 'string' || value === 'number' ? value.length === 1 : value !== '';
         // setPrevious(value.trim().length > 0);
         setPrevious(value.length > 0);
@@ -310,20 +306,12 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
         });
 
     };
-    // Update filledFields when any input field is changed end
+
 
     //save api for health insurance form 
     const handleHealthInsurance = () => {
         const userId = sessionStorage.getItem('userId');
         const documentId = sessionStorage.getItem('documentId');
-        // if (
-        //     userId &&
-        //     documentId &&
-        //     PolicyType &&
-        //     dob &&
-        //     policyNumber && policyName && startDate && endDate && insuredName && sumInsured && insuranceCompany && totalSumInsured &&
-        //     type && idv && netPremium && totalPremium && premiumPaid && registration && consumables && coPayment
-        // ) {
         const formData = new FormData();
 
         formData.append('userId', userId);
@@ -348,34 +336,13 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
         formData.append('coPayment', coPayment);
         dispatch(saveDocument(API_URL, formData));
         navigate('/vault')
-        // }
-        // else {
-        //     toast.error("Please fill all required fields", {
-        //         position: "top-center",
-        //         autoClose: 5000,
-        //         hideProgressBar: false,
-        //         closeOnClick: true,
-        //         pauseOnHover: true,
-        //         draggable: true,
-        //     });
-        // }
     }
 
     //save api for life insurance
     const handleLifeInsurance = () => {
         const userId = sessionStorage.getItem('userId');
         const documentId = sessionStorage.getItem('documentId');
-        // if (
-        //     userId &&
-        //     documentId &&
-        //     PolicyType &&
-        //     startDate &&
-        //     renewalDate && policyName && maturityDate && insuredName && dayRenewal && insuranceCompany && dob &&
-        //     sumInsured && others && type && pa && netPremium && totalPremium && illness && disability &&
-        //     waiverPremium && hospitalCare && terminalIllness
-        // ) {
         const formData = new FormData();
-
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', PolicyType);
@@ -400,33 +367,13 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
         formData.append('terminalIllness', terminalIllness);
         dispatch(saveDocument(API_URL, formData))
         navigate('/vault')
-        // } else {
-        //     toast.error("Please fill all required fields", {
-        //         position: "top-center",
-        //         autoClose: 5000,
-        //         hideProgressBar: false,
-        //         closeOnClick: true,
-        //         pauseOnHover: true,
-        //         draggable: true,
-        //     });
-        // }
     }
 
     //save api for motor insurance
     const handleMotorInsurance = () => {
         const userId = sessionStorage.getItem('userId');
         const documentId = sessionStorage.getItem('documentId');
-        // if (
-        //     userId &&
-        //     documentId &&
-        //     PolicyType &&
-        //     startDate &&
-        //     endDate && policyNumber && ncb && insuredName && tpPremium && insuranceCompany && odPremium &&
-        //     assetType && model && registrationYear && registrationNumber && netPremium && totalPremium && engineCC && idv &&
-        //     vehicleType
-        // ) {
         const formData = new FormData();
-
         formData.append('userId', userId);
         formData.append('documentId', documentId);
         formData.append('policyType', PolicyType);
@@ -450,26 +397,7 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
 
         dispatch(saveDocument(API_URL, formData))
         navigate('/vault')
-        // } else {
-
-        //     toast.error("Please fill all required fields", {
-        //         position: "top-center",
-        //         autoClose: 5000,
-        //         hideProgressBar: false,
-        //         closeOnClick: true,
-        //         pauseOnHover: true,
-        //         draggable: true,
-        //     });
-        // }
-
-        // if (mode === 'add') {
-        //     dispatch(saveDocument(API_URL, formData));
-        // } else if (mode === 'edit') {
-        //     dispatch(updateDocument(API_URL, formData)); 
-        // }
     }
-
-
     return (
         <div>
             <Navbar />
@@ -505,16 +433,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
 
                                             <Grid container spacing={3}>
                                                 <Grid item xs={12} md={6}>
-                                                    {/* <CustomInput
-                                                        type="date"
-                                                        label=" Start Date"
-                                                        value={startDate}
-                                                        onChange={(e) => {
-                                                            setStartDate(e.target.value);
-                                                            handleInputChange(e);
-                                                        }}
-                                                        required
-                                                    /> */}
                                                     <label className="form-label fw-bold" htmlFor="inputField">
                                                         Start date <span className='text-danger'>*</span>
                                                     </label>
@@ -537,16 +455,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </LocalizationProvider>
                                                 </Grid>
                                                 <Grid item xs={12} md={6}>
-                                                    {/* <CustomInput
-                                                        type="text"
-                                                        label=" End Date"
-                                                        value={endDate}
-                                                        onChange={(e) => {
-                                                            setEndDate(e.target.value);
-                                                            handleInputChange(e);
-                                                        }}
-                                                        required
-                                                    /> */}
                                                     <label className="form-label fw-bold" htmlFor="inputField">
                                                         End date <span className='text-danger'>*</span>
                                                     </label>
@@ -582,7 +490,7 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                             />
                                             <CustomInput
                                                 type="number"
-                                                label="Net Premium"
+                                                label="Neeet Premium"
                                                 value={netPremium}
                                                 onChange={(e) => {
                                                     setNetPremium(e.target.value);
@@ -773,16 +681,7 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
 
                                                 required
                                             />
-                                            {/* <CustomInput
-                                                type="date"
-                                                label=" DOB"
-                                                value={dob}
-                                                onChange={(e) => {
-                                                    setDob(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}<label className="form-label fw-bold" htmlFor="inputField">
+                                           <label className="form-label fw-bold" htmlFor="inputField">
                                                 DOB <span className='text-danger'>*</span>
                                             </label>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -804,16 +703,7 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                             </LocalizationProvider>
                                             <Grid container spacing={3} className='mt-2'>
                                                 <Grid item xs={12} md={6}>
-                                                    {/* <CustomInput
-                                                        type="date"
-                                                        label=" Start Date"
-                                                        value={startDate}
-                                                        onChange={(e) => {
-                                                            setStartDate(e.target.value);
-                                                            handleInputChange(e);
-                                                        }}
-                                                        required
-                                                    /> */}
+                                                    
                                                     <label className="form-label fw-bold" htmlFor="inputField">
                                                         Start date <span className='text-danger'>*</span>
                                                     </label>
@@ -835,16 +725,7 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </LocalizationProvider>
                                                 </Grid>
                                                 <Grid item xs={12} md={6}>
-                                                    {/* <CustomInput
-                                                        type="date"
-                                                        label=" End Date"
-                                                        value={endDate}
-                                                        onChange={(e) => {
-                                                            setEndDate(e.target.value);
-                                                            handleInputChange(e);
-                                                        }}
-                                                        required
-                                                    /> */}
+                                                   
                                                     <label className="form-label fw-bold" htmlFor="inputField">
                                                         End date <span className='text-danger'>*</span>
                                                     </label>
@@ -1002,34 +883,12 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
 
                                                 required
                                             />
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="registration"
-                                                value={registration}
-                                                onChange={(e) => {
-                                                    setregistration(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
-
-                                            {/* <CustomInput
-                                                type="text" // Change to 'select' for dropdown
-                                                label="registration"
-                                                name="registration" // Add name attribute to identify the input
-                                                value={registration} // Convert boolean to string for select value
-                                                onChange={handleInputChange} // Use custom handler for dropdown
-                                                required
-                                            >
-                                                <option value="true">True</option>
-                                                <option value="false">False</option>
-                                            </CustomInput> */}
+                                           
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Registration <span className='text-danger'>*</span>
                                             </label>
                                             <Box sx={{ minWidth: 120, mb: 2 }}>
                                                 <FormControl fullWidth>
-                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
                                                     <Select
                                                         labelId="demo-simple-select-label"
                                                         id="demo-simple-select"
@@ -1046,16 +905,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </Select>
                                                 </FormControl>
                                             </Box>
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="Consumables"
-                                                value={consumables}
-                                                onChange={(e) => {
-                                                    setConsumables(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Consumables <span className='text-danger'>*</span>
                                             </label>
@@ -1078,22 +927,11 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </Select>
                                                 </FormControl>
                                             </Box>
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="Co-Payment"
-                                                value={coPayment}
-                                                onChange={(e) => {
-                                                    setCoPayment(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Co Payment <span className='text-danger'>*</span>
                                             </label>
                                             <Box sx={{ minWidth: 120, mb: 2 }}>
                                                 <FormControl fullWidth>
-                                                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
                                                     <Select
                                                         labelId="demo-simple-select-label"
                                                         id="demo-simple-select"
@@ -1134,16 +972,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                             />
                                             <Grid container spacing={3}>
                                                 <Grid item xs={12} md={6}>
-                                                    {/* <CustomInput
-                                                        type="date"
-                                                        label=" Start Date"
-                                                        value={startDate}
-                                                        onChange={(e) => {
-                                                            setStartDate(e.target.value);
-                                                            handleInputChange(e);
-                                                        }}
-                                                        required
-                                                    /> */}
                                                     <label className="form-label fw-bold" htmlFor="inputField">
                                                         Start date <span className='text-danger'>*</span>
                                                     </label>
@@ -1165,16 +993,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </LocalizationProvider>
                                                 </Grid>
                                                 <Grid item xs={12} md={6}>
-                                                    {/* <CustomInput
-                                                        type="date"
-                                                        label=" Renewal Date"
-                                                        value={renewalDate}
-                                                        onChange={(e) => {
-                                                            setRenewalDate(e.target.value);
-                                                            handleInputChange(e);
-                                                        }}
-                                                        required
-                                                    /> */}
                                                     <label className="form-label fw-bold" htmlFor="inputField">
                                                         Renewal date <span className='text-danger'>*</span>
                                                     </label>
@@ -1196,16 +1014,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </LocalizationProvider>
                                                 </Grid>
                                             </Grid>
-                                            {/* <CustomInput
-                                                type="date"
-                                                label=" Maturity Date"
-                                                value={maturityDate}
-                                                onChange={(e) => {
-                                                    setMaturityDate(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Maturity date <span className='text-danger'>*</span>
                                             </label>
@@ -1261,16 +1069,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
 
                                                 required
                                             />
-                                            {/* <CustomInput
-                                                type="date"
-                                                label="Dob"
-                                                value={dob}
-                                                onChange={(e) => {
-                                                    setDob(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 DOB <span className='text-danger'>*</span>
                                             </label>
@@ -1324,9 +1122,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
 
                                         </Grid>
                                         <Grid item xs={12} md={6}>
-                                            {/* <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}>Vehicle Details</p> */}
-
-
                                             <CustomInput
                                                 type="text"
                                                 label="Type"
@@ -1339,18 +1134,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
 
                                                 required
                                             />
-
-
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="PA"
-                                                value={pa}
-                                                onChange={(e) => {
-                                                    setPa(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 PA <span className='text-danger'>*</span>
                                             </label>
@@ -1397,16 +1180,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
 
                                                 required
                                             />
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="Critical Illness"
-                                                value={illness}
-                                                onChange={(e) => {
-                                                    setIllness(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Critical Illness <span className='text-danger'>*</span>
                                             </label>
@@ -1429,16 +1202,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </Select>
                                                 </FormControl>
                                             </Box>
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="Accidental Disability"
-                                                value={disability}
-                                                onChange={(e) => {
-                                                    setDisability(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Accidental Illness <span className='text-danger'>*</span>
                                             </label>
@@ -1461,16 +1224,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </Select>
                                                 </FormControl>
                                             </Box>
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="Waiver of Premium"
-                                                value={waiverPremium}
-                                                onChange={(e) => {
-                                                    setWaiverPremium(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Waiver of premium <span className='text-danger'>*</span>
                                             </label>
@@ -1493,16 +1246,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </Select>
                                                 </FormControl>
                                             </Box>
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="Hospital Care"
-                                                value={hospitalCare}
-                                                onChange={(e) => {
-                                                    setHospitalCare(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Hospital Care <span className='text-danger'>*</span>
                                             </label>
@@ -1525,16 +1268,6 @@ const commonItemStyle = { maxWidth: 900, width: "100%", paddingLeft: "10px !impo
                                                     </Select>
                                                 </FormControl>
                                             </Box>
-                                            {/* <CustomInput
-                                                type="text"
-                                                label="Terminal Illness"
-                                                value={terminalIllness}
-                                                onChange={(e) => {
-                                                    setTerminalIllness(e.target.value);
-                                                    handleInputChange(e);
-                                                }}
-                                                required
-                                            /> */}
                                             <label className="form-label fw-bold" htmlFor="inputField">
                                                 Terminal Illness <span className='text-danger'>*</span>
                                             </label>
