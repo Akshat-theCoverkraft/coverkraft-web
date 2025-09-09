@@ -36,9 +36,9 @@ const HealthPolicyForm = () => {
   // Now you can use the responseData and mode in your component
   let headingText;
   if (mode === "edit") {
-    headingText = "Edit Policy";
+    headingText = "Edit Health Policy";
   } else {
-    headingText = "Add Policy";
+    headingText = "Add Health Policy";
   }
   // const responseData = JSON.parse(responseData.ocrText);
   // const PolicyType = responseData.policyType.toLowerCase();
@@ -71,6 +71,8 @@ const HealthPolicyForm = () => {
   const [insuredName, setInsuredName] = useState(
     responseData?.insuredName || policyDetails?.insuredName || ""
   );
+  const normalizeString = (str = "") => str.replace(/\s+/g, "").toLowerCase();
+
   const [insuredCompany, setInsuredCompany] = useState(
     responseData?.insuranceCompany || policyDetails?.insuredCompany || ""
   );
@@ -79,9 +81,9 @@ const HealthPolicyForm = () => {
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
   const [documentId, setdocumentId] = useState(
-   policyDetails?.documentDetails?._id || ""
+    policyDetails?.documentDetails?._id || ""
   );
-  console.log("documentId" , documentId);
+  console.log("documentId", documentId);
   // const [idv, setIdv] = useState(responseData.idv || "");
   const commonItemStyle = {
     maxWidth: 900,
@@ -306,13 +308,14 @@ const HealthPolicyForm = () => {
                     }}
                     required
                     inputStyle={commonInputStyle}
-                    />
-                    <div className="">
-                    <label className="form-label fw-bold" htmlFor="dob-picker">
+                  />
+                  <div className="">
+                    <label
+                      className="form-label fw-bold text-light d-block"
+                      htmlFor="dob-picker"
+                    >
                       DOB <span className="text-danger">*</span>
                     </label>
-                    <div className="mb-1">
-                      </div>
                     <DateTimePicker
                       id="dob-picker"
                       isIcon={false}
@@ -321,46 +324,46 @@ const HealthPolicyForm = () => {
                       onChange={handleDobChange}
                       className="w-100 mb-0"
                     />
-                    </div>
-                    <Grid container spacing={3} className="mt-2 mb-2">
+                  </div>
+                  <Grid container spacing={1} className="mt-2">
                     <Grid item xs={12} md={6}>
-                      <div className="mb-3">
-                      <label
-                        className="form-label fw-bold"
-                        htmlFor="start-date-picker"
-                      >
-                        Start date <span className="text-danger">*</span>
-                      </label>
-                      <DateTimePicker
-                        id="start-date-picker"
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(policyStartDate)}
-                        onChange={handleStartDateChange}
-                        className="w-100"
-                      />
+                      <div className="mb-2">
+                        <label
+                          className="form-label fw-bold "
+                          htmlFor="start-date-picker"
+                        >
+                          Start date <span className="text-danger">*</span>
+                        </label>
+                        <DateTimePicker
+                          id="start-date-picker"
+                          isIcon={false}
+                          label="DD/MM/YYYY"
+                          value={formatDate(policyStartDate)}
+                          onChange={handleStartDateChange}
+                          className="w-100"
+                        />
                       </div>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <div className="mb-3">
-                      <label
-                        className="form-label fw-bold"
-                        htmlFor="end-date-picker"
-                      >
-                        End date <span className="text-danger">*</span>
-                      </label>
-                      <DateTimePicker
-                        id="end-date-picker"
-                        className="w-100"
-                        isIcon={false}
-                        label="DD/MM/YYYY"
-                        value={formatDate(policyEndDate)}
-                        onChange={handleEndDateChange}
-                      />
+                        <label
+                          className="form-label fw-bold"
+                          htmlFor="end-date-picker"
+                        >
+                          End date <span className="text-danger">*</span>
+                        </label>
+                        <DateTimePicker
+                          id="end-date-picker"
+                          className="w-100"
+                          isIcon={false}
+                          label="DD/MM/YYYY"
+                          value={formatDate(policyEndDate)}
+                          onChange={handleEndDateChange}
+                        />
                       </div>
                     </Grid>
-                    </Grid>
-                    <CustomInput
+                  </Grid>
+                  <CustomInput
                     type="text"
                     label="Insured Name"
                     value={insuredName}
@@ -370,7 +373,7 @@ const HealthPolicyForm = () => {
                     required
                     inputStyle={commonInputStyle}
                   />
-                  {policyDetails?.insuredCompany ||
+                  {/* {policyDetails?.insuredCompany ||
                   responseData?.insuranceCompany ? (
                     // If backend has provided it, show read-only field
                     <CustomInput
@@ -391,7 +394,21 @@ const HealthPolicyForm = () => {
                       }
                       initialValue={insuredCompany}
                     />
-                  )}
+                  )} */}
+                  <InsuranceDropdown
+                    onCompanySelect={(companyId) =>
+                      setInsuredCompany(companyId)
+                    }
+                    initialValue={
+                      insuredCompany ||
+                      responseData?.insuranceCompany ||
+                      responseData?.insuredCompany ||
+                      policyDetails?.insuredCompany
+                    }
+                    matchFn={(optionLabel, value) =>
+                      normalizeString(optionLabel) === normalizeString(value)
+                    }
+                  />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   {/* <p className='custom-color my-4' style={{ fontSize: '18px', fontWeight: '700' }}>Vehicle Details</p> */}
@@ -402,7 +419,7 @@ const HealthPolicyForm = () => {
                     onChange={(e) => {
                       setNetPremium(e.target.value);
                     }}
-                    inputStyle = { commonInputStyle }
+                    inputStyle={commonInputStyle}
                   />
                   <CustomInput
                     type="text"
@@ -427,6 +444,7 @@ const HealthPolicyForm = () => {
                   <CustomInput
                     type="text"
                     label="Sum Insured"
+                    className="mt-2"
                     value={sumAssured}
                     onChange={(e) => {
                       setSumAssured(e.target.value);
@@ -441,10 +459,10 @@ const HealthPolicyForm = () => {
                     onChange={(e) => {
                       setTotalSumAssured(e.target.value);
                     }}
-                    inputStyle = { commonInputStyle }
+                    inputStyle={commonInputStyle}
                   />
                 </Grid>
-                  <Box
+                <Box
                   flex={1}
                   display="flex"
                   justifyContent="center"
