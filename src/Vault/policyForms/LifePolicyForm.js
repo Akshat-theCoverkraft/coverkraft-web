@@ -39,9 +39,9 @@ const LifePolicyForm = () => {
   if (mode === "edit") {
     headingText = "Edit Policy";
   } else {
-    headingText = "Add Policy";
+    headingText = "Add Life Policy";
   }
-
+  const normalizeString = (str = "") => str.replace(/\s+/g, "").toLowerCase();
   // State variables
   const [policyNumber, setPolicyNumber] = useState(
     responseData?.policyNumber || policyDetails?.policyNumber || ""
@@ -62,7 +62,7 @@ const LifePolicyForm = () => {
     responseData?.insuredName || policyDetails?.insuredName || ""
   );
   const [insuredCompany, setInsuredCompany] = useState(
-    responseData?.insuranceCompany || policyDetails?.insuredCompany || ""
+    responseData?.insuredCompany || policyDetails?.insuredCompany || ""
   );
   const [netPremium, setNetPremium] = useState(
     responseData?.netPremium || policyDetails?.policyDetails?.netPremium || ""
@@ -96,9 +96,9 @@ const LifePolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
- const [documentId, setdocumentId] = useState(
-     policyDetails?.documentDetails?._id || ""
-    );
+  const [documentId, setdocumentId] = useState(
+    policyDetails?.documentDetails?._id || ""
+  );
   const [loading, setLoading] = useState(false);
   const userId = sessionStorage.getItem("userId");
   const policyId = sessionStorage.getItem("policyId");
@@ -303,6 +303,7 @@ const LifePolicyForm = () => {
                   onClick={() => navigate(-1)}
                   variant="h4"
                   component="h2"
+                  style={{ color: "#fff", fontSize: "28px" }}
                   className="fw-bold d-flex align-items-center gap-2"
                 >
                   <span
@@ -310,6 +311,8 @@ const LifePolicyForm = () => {
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
+                      color: "#fff",
+                      fontSize: "28px",
                     }}
                   >
                     <ArrowBackIcon
@@ -359,24 +362,24 @@ const LifePolicyForm = () => {
 
                     {/* Date Fields Row */}
                     <Grid container spacing={10}>
-                       <Grid item xs={12} md={6} margin={0} >
-    <label
-      className="form-label fw-bold mb-2 text-white fs-6" // ensure tight spacing
-      htmlFor="start-date"
-    >
-      Start date <span className="text-danger">*</span>
-    </label>
-    <DateTimePicker
-      id="start-date"
-      type="date"
-      isIcon={false}
-      label="DD/MM/YYYY"
-      value={formatDate(policyStartDate)}
-      onChange={handleStartDateChange}
-      className="w-100" // full width and dark bg
-    />
-  </Grid>
-                       {/* <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6} margin={0}>
+                        <label
+                          className="form-label fw-bold text-light mb-2 d-block" // ensure tight spacing
+                          htmlFor="start-date"
+                        >
+                          Start date <span className="text-danger">*</span>
+                        </label>
+                        <DateTimePicker
+                          id="start-date"
+                          type="date"
+                          isIcon={false}
+                          label="DD/MM/YYYY"
+                          value={formatDate(policyStartDate)}
+                          onChange={handleStartDateChange}
+                          className="w-100" // full width and dark bg
+                        />
+                      </Grid>
+                      {/* <Grid item xs={12} md={6}>
     <label
       className="form-label fw-bold mb-2 text-white fs-6"
       htmlFor="end-date"
@@ -395,51 +398,66 @@ const LifePolicyForm = () => {
   </Grid> */}
                     </Grid>
 
-                    
                     <Grid container spacing={4}>
-  <Grid item xs={12} sm={6}>
-    <Box>
-      <Typography
-        component="label"
-        className="fw-bold mb-2 text-white fs-6" 
-      >
-        Next premium due date <span style={{ color: "#f44336" }}>*</span>
-      </Typography>
-      <DateTimePicker
-      id="policy-renewal-date"
-        type="date"
-        value={policyRenewalDate}
-        onChange={(value) => setPolicyRenewalDate(value)}
-        label="DD/MM/YYYY"
-        isIcon={false}
-        className="w-100"
-      />
-    </Box>
-  </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box>
+                          {/* <Typography
+                            component="label"
+                            className="form-label fw-bold text-light mb-2 d-block"
+                          >
+                            Next premium due date{" "}
+                            <span style={{ color: "#f44336" }}>*</span>
+                          </Typography> */}
+                          <label
+                            className="form-label fw-bold text-light mt-3 mb-2 d-block" // ensure tight spacing
+                            htmlFor="start-date"
+                          >
+                            Next premium due date{" "}
+                            <span className="text-danger">*</span>
+                          </label>
+                          <DateTimePicker
+                            id="policy-renewal-date"
+                            type="date"
+                            value={policyRenewalDate}
+                            onChange={(value) => setPolicyRenewalDate(value)}
+                            label="DD/MM/YYYY"
+                            isIcon={false}
+                            className="w-100"
+                          />
+                        </Box>
+                      </Grid>
 
-  <Grid item xs={12} sm={6}>
-    <Box>
-      <Typography
-        component="label"
-        className="fw-bold mb-2 text-white font-size-16 ml-4"
-      >
-       Policy Maturity Date <span style={{ color: "#f44336" }}>*</span>
-      </Typography>
-      <DateTimePicker
-      id="maturity-date"
-        type="date"
-        value={maturityDate}
-        onChange={(value) => setMaturityDate(value)}
-        label="DD/MM/YYYY"
-        isIcon={false}
-        className="w-100 ml-4"
-      />
-    </Box>
-  </Grid>
-</Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box>
+                          {/* <Typography
+                            component="label"
+                            className="fw-bold mb-2 text-white font-size-16 ml-4"
+                          >
+                            Policy Maturity Date{" "}
+                            <span style={{ color: "#f44336" }}>*</span>
+                          </Typography> */}
+                          <label
+                            className="form-label fw-bold text-light mt-3 mb-2 d-block" // ensure tight spacing
+                            htmlFor="start-date"
+                          >
+                            Policy Maturity Date{" "}
+                            <span className="text-danger">*</span>
+                          </label>
+                          <DateTimePicker
+                            id="maturity-date"
+                            type="date"
+                            value={maturityDate}
+                            onChange={(value) => setMaturityDate(value)}
+                            label="DD/MM/YYYY"
+                            isIcon={false}
+                            className="w-100 ml-2"
+                          />
+                        </Box>
+                      </Grid>
+                    </Grid>
 
                     {/* DOB Field */}
-                   {/* <Box sx={{ mt: 2 }}>
+                    {/* <Box sx={{ mt: 2 }}>
   <Typography
     component="label"
     sx={{
@@ -464,7 +482,7 @@ const LifePolicyForm = () => {
 </Box> */}
 
                     {/* Personal Details */}
-                    <Box className="mt-4">
+                    <Box className="mt-3">
                       <CustomInput
                         type="text"
                         label="Insured Name"
@@ -476,25 +494,21 @@ const LifePolicyForm = () => {
                     </Box>
 
                     <Box>
-                      {policyDetails?.insuredCompany ||
-                      responseData?.insuranceCompany ? (
-                        <CustomInput
-                          type="text"
-                          label="Insurance Company"
-                          value={insuredCompany}
-                          readOnly
-                          disabled
-                          required
-                          inputStyle={commonInputStyle}
-                        />
-                      ) : (
-                        <InsuranceDropdown
-                          onCompanySelect={(companyId) =>
-                            setInsuredCompany(companyId)
-                          }
-                          initialValue={insuredCompany}
-                        />
-                      )}
+                      <InsuranceDropdown
+                        onCompanySelect={(companyId) =>
+                          setInsuredCompany(companyId)
+                        }
+                        initialValue={
+                          insuredCompany ||
+                          responseData?.insuranceCompany ||
+                          responseData?.insuredCompany ||
+                          policyDetails?.insuredCompany
+                        }
+                        matchFn={(optionLabel, value) =>
+                          normalizeString(optionLabel) ===
+                          normalizeString(value)
+                        }
+                      />
                     </Box>
 
                     {/* Coverage Details */}
@@ -623,7 +637,6 @@ const LifePolicyForm = () => {
                         borderRadius: "8px",
                         fontSize: "16px",
                         textTransform: "none",
-                        
                       }}
                     />
                     <Button
