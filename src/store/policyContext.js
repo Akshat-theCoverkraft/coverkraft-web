@@ -64,29 +64,40 @@ export const PolicyProvider = ({ children }) => {
     return response?.data?.data || [];
   };
 
-  const fetchData = useCallback(
-    async (endpoint, params, isArchive = false) => {
-      setLoading(true);
-      try {
-        const data = await fetchPolicyData(endpoint, params);
-        if (isArchive) {
-          setArchieveList(data);
-          setAllPolicyIds(data.map((policy) => policy._id));
-        } else {
-          setPolicyList(data);
-          setPolicyListLength(data.length);
-          setAllPolicyIds(data.map((policy) => policy._id));
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        if (isArchive) setArchieveList([]);
-        else setPolicyList([]);
-      } finally {
-        setLoading(false);
+const fetchData = useCallback(
+  async (endpoint, params, isArchive = false, isUncompleted = false) => {
+    setLoading(true);
+    try {
+      // Clone and sanitize parameters
+      const cleanParams = { ...params };
+
+      // Sanitize: remove invalid `policyNumber` if it's not numeric
+      if (cleanParams.policyNumber && isNaN(cleanParams.policyNumber)) {
+        console.warn("Invalid policyNumber. Removing it from request.");
+        delete cleanParams.policyNumber;
       }
-    },
-    []
-  );
+
+      const data = await fetchPolicyData(endpoint, cleanParams);
+
+      if (isArchive) {
+        setArchieveList(data);
+        setAllPolicyIds(data.map((policy) => policy._id));
+      } else {
+        setPolicyList(data);
+        setPolicyListLength(data.length);
+        setAllPolicyIds(data.map((policy) => policy._id));
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      if (isArchive) setArchieveList([]);
+      else setPolicyList([]);
+    } finally {
+      setLoading(false);
+    }
+  },
+  []
+);
+
 
   const handleSessionExpiredOk = () => {
     setShowSessionExpired(false);

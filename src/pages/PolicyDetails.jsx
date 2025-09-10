@@ -131,14 +131,14 @@ const handleBuyNow = async () => {
       // Redirect to the generated URL in the same tab
       window.location.href = autoLoginRes.data.redirect_url;
     } else {
-      toast.error(autoLoginRes.data?.message || "Unable to generate login link");
+      toast.error("Coming soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.");
     }
 
   } catch (error) {
     if (error.response?.status === 401) {
       setShowSessionExpired(true);
     } else {
-      toast.error("Failed to generate login link. Please try again.");
+      toast.error("Coming soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.");
     }
   } finally {
     setBuying(false);
@@ -270,57 +270,6 @@ const handleBuyNow = async () => {
           />
         </div>
       </div>
-
-      {/* Modal for redirect_url */}
-      {modalOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.8)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 10000,
-          }}
-        >
-          <div
-            style={{
-              width: "90%",
-              height: "90%",
-              background: "#fff",
-              borderRadius: "12px",
-              overflow: "hidden",
-              position: "relative",
-            }}
-          >
-            <button
-              onClick={() => setModalOpen(false)}
-              style={{
-                position: "absolute",
-                top: 10,
-                right: 10,
-                background: "#f00",
-                color: "#fff",
-                border: "none",
-                borderRadius: "50%",
-                width: "35px",
-                height: "35px",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-            >
-              ✕
-            </button>
-            <iframe
-              src={redirectUrl}
-              title="Policy Auto Login"
-              style={{ width: "100%", height: "100%", border: "none" }}
-            />
-          </div>
-        </div>
-      )}
-
       <footer ref={footerRef}>
         <Footer />
       </footer>
