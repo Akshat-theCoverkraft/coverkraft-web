@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./CSS/login.css";
 import LoginImg from "../Images/img_phone_login.png";
 import logo from "../Images/CoverKraft-beta.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import CustomInput from "../component/CustomInput";
 import Button from "../component/Button";
@@ -24,6 +24,10 @@ const Login = () => {
   const recaptchRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the previous route from location state
+  const from = location.state?.from || '/';
 
   const commonInputStyle = {
     height: 48,
@@ -141,7 +145,9 @@ const Login = () => {
 
         sessionStorage.setItem("loggedIn", "true");
         toast.success("Phone number authentication successful");
-        navigate("/");
+        
+        // ✅ Redirect to the previous route or home page
+        navigate(from, { replace: true });
       } catch (error) {
         console.error("Verification failed:", error);
         toast.error("Verification failed. Please try again.");
