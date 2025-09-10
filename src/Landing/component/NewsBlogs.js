@@ -65,7 +65,9 @@ const BlogSection = () => {
   const youtubePlayers = useRef({});
 
   const registerVideo = (el, id) => {
-    if (el && id) videoRefs.current[id] = el;
+    if (el && id) {
+      videoRefs.current[id] = el;
+    }
   };
 
   const handleSessionExpiredOk = () => {
@@ -87,40 +89,36 @@ const BlogSection = () => {
       : `${API_URL}${post.newsImg}`;
   };
 
-  // ✅ Pause ALL videos (YouTube + HTML5)
+  // ✅ Pause all videos
   const pauseAllVideos = () => {
-    // Pause HTML5 videos
-    Object.values(videoRefs.current).forEach((video) => {
-      if (video && !video.paused) video.pause();
+    Object.entries(videoRefs.current).forEach(([id, video]) => {
+      if (video && !video.paused) {
+        video.pause();
+      }
     });
 
-    // Pause YouTube players
-    Object.values(youtubePlayers.current).forEach((player) => {
-      if (player?.pauseVideo) {
+    Object.entries(youtubePlayers.current).forEach(([id, player]) => {
+      if (player && typeof player.pauseVideo === "function") {
         try {
           player.pauseVideo();
         } catch (e) {
-          console.warn("Error pausing YouTube player:", e);
+          console.error(`Error pausing YouTube player ${id}:`, e);
         }
       }
     });
   };
 
-  // ✅ Handle when an HTML5 video plays
+  // ✅ Pause others when one plays
   const handleVideoPlay = (playingId) => {
-    // Pause other HTML5 videos
     Object.entries(videoRefs.current).forEach(([id, video]) => {
-      if (id !== playingId && video && !video.paused) video.pause();
+      if (id !== playingId && video && !video.paused) {
+        video.pause();
+      }
     });
 
-    // Pause YouTube players
-    Object.values(youtubePlayers.current).forEach((player) => {
-      if (player?.pauseVideo) {
-        try {
-          player.pauseVideo();
-        } catch (e) {
-          console.warn("Error pausing YouTube player:", e);
-        }
+    Object.entries(youtubePlayers.current).forEach(([id, player]) => {
+      if (id !== playingId && player && typeof player.pauseVideo === "function") {
+        player.pauseVideo();
       }
     });
   };
@@ -132,11 +130,12 @@ const BlogSection = () => {
       tag.src = "https://www.youtube.com/iframe_api";
       document.body.appendChild(tag);
     }
-    window.onYouTubeIframeAPIReady = () =>
+    window.onYouTubeIframeAPIReady = () => {
       console.log("YouTube API loaded for BlogSection");
+    };
   }, []);
 
-  // ✅ Fetch Data
+  // ✅ Fetch posts
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -173,49 +172,45 @@ const BlogSection = () => {
 
     fetchData();
 
-    // Pause all videos on scroll
     window.addEventListener("scroll", pauseAllVideos);
     return () => {
       window.removeEventListener("scroll", pauseAllVideos);
       pauseAllVideos();
-      youtubePlayers.current = {};
     };
   }, []);
 
-  // ✅ Initialize YouTube players after posts load
+  // ✅ Initialize YouTube players
   useEffect(() => {
-    if (window.YT?.Player) {
-      const ids = ["featured", latestPosts.shorts?._id, latestPosts.videos?.[0]?._id].filter(Boolean);
+    if (window.YT && window.YT.Player) {
+      const itemsToCheck = [
+        { id: "featured", data: featuredVideo },
+        { id: latestPosts.shorts?._id, data: latestPosts.shorts },
+        { id: latestPosts.videos?.[0]?._id, data: latestPosts.videos?.[0] },
+      ].filter((item) => item.id && item.data);
 
-      ids.forEach((id) => {
-        const iframe = document.getElementById(`youtube-${id}`);
-        if (iframe && !youtubePlayers.current[id]) {
-          try {
-            youtubePlayers.current[id] = new window.YT.Player(`youtube-${id}`, {
-              events: {
-                onStateChange: (event) => {
-                  if (event.data === window.YT.PlayerState.PLAYING) {
-                    // Pause all other YouTube players
-                    Object.entries(youtubePlayers.current).forEach(([key, player]) => {
-                      if (key !== id && player?.pauseVideo) player.pauseVideo();
-                    });
-                    // Pause all HTML5 videos
-                    Object.values(videoRefs.current).forEach((video) => {
-                      if (video && !video.paused) video.pause();
-                    });
-                  }
-                },
-              },
-            });
-          } catch (e) {
-            console.warn(`Error creating YouTube player ${id}:`, e);
+      itemsToCheck.forEach(({ id, data }) => {
+        const mediaUrl = data.video || data.youtubeLink || data.youTubeLink || getUrl(data);
+        if (isYouTubeUrl(mediaUrl)) {
+          const playerId = `youtube-${id}`;
+          if (!youtubePlayers.current[id] && document.getElementById(playerId)) {
+           youtubePlayers.current[id] = new window.YT.Player(playerId, {
+  events: {
+    onReady: () => {
+      console.log(`Player ${id} ready`);
+    },
+    onStateChange: (event) => {
+      if (event.data === window.YT.PlayerState.PLAYING) {
+        handleVideoPlay(id);
+      }
+    }
+  }
+});
           }
         }
       });
     }
   }, [latestPosts, featuredVideo]);
 
-  // ✅ Styled Button
   const StyledButton = styled("button")(() => ({
     backgroundColor: "transparent",
     color: "#8AC642",
@@ -235,7 +230,7 @@ const BlogSection = () => {
     },
   }));
 
-  // ✅ Render Media (YouTube, Video, Image)
+  // ✅ Render Media
   const renderMedia = (source, id) => {
     if (!source) return null;
 
@@ -244,10 +239,10 @@ const BlogSection = () => {
       return (
         <iframe
           id={`youtube-${id}`}
-          src={`${embedUrl}?enablejsapi=1&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
+          src={`${embedUrl}?enablejsapi=1&modestbranding=1&rel=0&controls=1&disablekb=1&fs=0`}
           title="YouTube video"
           frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           style={{
             width: "100%",
@@ -288,7 +283,6 @@ const BlogSection = () => {
     }
   };
 
-  // ✅ Render Card
   const renderCard = (post, type) => {
     if (loading) {
       return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: "20px" }} />;

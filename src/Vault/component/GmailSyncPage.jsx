@@ -225,7 +225,7 @@ const GmailSyncPage = () => {
     /policy\s*proposal/i,
     /revised\s*proposal/i,
     /rfp/i,
- 
+    /fnf/i,
     /renewal\s*notice/i,
     /renewal\s*notification/i,
     /renewal\s*reminder/i,
