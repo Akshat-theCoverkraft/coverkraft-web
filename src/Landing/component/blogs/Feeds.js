@@ -24,7 +24,7 @@ const TABS = {
   video: "Videos",
 };
 
-//  Check if link is YouTube
+// ✅ Check if link is YouTube
 const isYouTubeLink = (url) => {
   return (
     typeof url === "string" &&
@@ -38,24 +38,20 @@ const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
     url = url.trim();
 
-    // Already an embed URL
     if (url.includes("youtube.com/embed/")) return url;
 
     if (url.includes("youtube.com")) {
       const urlObj = new URL(url);
 
-      // Handle Shorts: /shorts/VIDEO_ID
       if (urlObj.pathname.startsWith("/shorts/")) {
         const videoId = urlObj.pathname.split("/shorts/")[1]?.split("?")[0];
         if (videoId) return `https://www.youtube.com/embed/${videoId}`;
       }
 
-      // Handle normal YouTube links: ?v=VIDEO_ID
       const videoId = urlObj.searchParams.get("v");
       if (videoId) return `https://www.youtube.com/embed/${videoId}`;
     }
 
-    // Handle youtu.be short links
     if (url.includes("youtu.be")) {
       const videoId = url.split("youtu.be/")[1]?.split("?")[0];
       if (videoId) return `https://www.youtube.com/embed/${videoId}`;
@@ -66,10 +62,9 @@ const getYouTubeEmbedUrl = (url) => {
   return null;
 };
 
-
-//  Detect media type
+// ✅ Detect media type
 const getMediaType = (url) => {
-  if (!url || typeof url !== "string") return "image"; // <-- safe default
+  if (!url || typeof url !== "string") return "image";
   if (isYouTubeLink(url)) return "youtube";
 
   const videoExtensions = [".mp4", ".mov", ".webm", ".ogg"];
@@ -79,7 +74,7 @@ const getMediaType = (url) => {
   if (videoExtensions.some(ext => lowerUrl.endsWith(ext))) return "video";
   if (imageExtensions.some(ext => lowerUrl.endsWith(ext))) return "image";
 
-  return "image"; // default fallback
+  return "image";
 };
 
 const Feeds = () => {
@@ -92,9 +87,23 @@ const Feeds = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [textOverflowStates, setTextOverflowStates] = useState({});
   const videoRefs = useRef({});
+  const youtubePlayers = useRef({});
   const textRefs = useRef({});
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   const [error, setError] = useState(null);
+
+  // ✅ Load YouTube Iframe API
+  useEffect(() => {
+    if (!window.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(tag);
+    }
+
+    window.onYouTubeIframeAPIReady = () => {
+      console.log("YouTube API Loaded");
+    };
+  }, []);
 
   const fetchContent = async (tab, page = 1) => {
     setIsLoading(true);
@@ -129,6 +138,7 @@ const Feeds = () => {
     sessionStorage.clear();
   };
 
+  // ✅ Detect text overflow for "Read More"
   useEffect(() => {
     if (!isLoading) {
       contentData.forEach((_, index) => {
@@ -141,6 +151,56 @@ const Feeds = () => {
     }
   }, [contentData, isLoading]);
 
+  // ✅ Initialize YouTube players after content load
+  useEffect(() => {
+    if (window.YT && window.YT.Player) {
+      contentData.forEach((item, index) => {
+        const mediaUrl = item.video || item.videoUrl || item.youtubeLink || item.youTubeLink || item.newsImg || item.link;
+        const mediaType = getMediaType(mediaUrl);
+        if (mediaType === "youtube") {
+          const playerId = `youtube-player-${index}`;
+          if (!youtubePlayers.current[index] && document.getElementById(playerId)) {
+            youtubePlayers.current[index] = new window.YT.Player(playerId, {
+              events: {
+                onStateChange: (event) => {
+                  if (event.data === window.YT.PlayerState.PLAYING) {
+                    // Pause all other YouTube players
+                    Object.entries(youtubePlayers.current).forEach(([key, player]) => {
+                      if (parseInt(key) !== index) {
+                        player.pauseVideo();
+                      }
+                    });
+
+                    // ✅ Pause all normal videos
+                    Object.values(videoRefs.current).forEach(video => {
+                      if (video && !video.paused) {
+                        video.pause();
+                      }
+                    });
+                  }
+                }
+              }
+            });
+          }
+        }
+      });
+    }
+  }, [contentData]);
+
+  // ✅ Handle when normal video plays
+  const handleVideoClick = (index) => {
+    Object.entries(videoRefs.current).forEach(([key, video]) => {
+      if (parseInt(key) !== index && video) video.pause();
+    });
+
+    // ✅ Pause all YouTube videos
+    Object.values(youtubePlayers.current).forEach(player => {
+      if (player && player.pauseVideo) {
+        player.pauseVideo();
+      }
+    });
+  };
+
   const handleTabChange = (_, newValue) => {
     setSelectedTab(newValue);
     navigate(`/feed/${newValue}`);
@@ -152,12 +212,6 @@ const Feeds = () => {
   const handleReadMoreClick = (e, item) => {
     e.stopPropagation();
     navigate(`/feed/${selectedTab}/${item._id}`);
-  };
-
-  const handleVideoClick = (index) => {
-    Object.entries(videoRefs.current).forEach(([key, video]) => {
-      if (parseInt(key) !== index && video) video.pause();
-    });
   };
 
   const renderSkeletonCards = () => Array.from({ length: 9 }).map((_, i) => (
@@ -260,16 +314,16 @@ const Feeds = () => {
                         {mediaType === "youtube" ? (
                           <Box sx={{ height: 220 }}>
                             <iframe
-  width="100%"
-  height="100%"
-  src={`${getYouTubeEmbedUrl(mediaUrl)}?modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-  style={{ borderRadius: "20px", objectFit: "cover" }}
-></iframe>
-
+                              id={`youtube-player-${index}`}
+                              width="100%"
+                              height="100%"
+                              src={`${getYouTubeEmbedUrl(mediaUrl)}?enablejsapi=1&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0`}
+                              title="YouTube video player"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              style={{ borderRadius: "20px", objectFit: "cover" }}
+                            ></iframe>
                           </Box>
                         ) : mediaType === "video" ? (
                           <CardMedia

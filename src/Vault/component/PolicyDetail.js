@@ -9,6 +9,7 @@ import axios from "axios";
 import CSS from "./PolicyDetail.css";
 import Button from "../../component/Button";
 import GradientButton from "../../component/GradientButton";
+import ProgressBarCircle from "../../component/ProgressBarCircle"; // Import the component
 import { updateDocument } from "../../store/action/action";
 import { formatDate } from "../../utils/dateUtils";
 import { THEME_COLOR } from "../../constants";
@@ -36,9 +37,9 @@ import SessionExpiredModal from "../../utils/sessionExpireModal";
 const PolicyDetail = ({ policyId }) => {
   const [policyDetails, setPolicyDetails] = useState([]);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
-  const navigate = useNavigate(); // navigation hook
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const toastShownRef = useRef(new Set()); // Track shown toasts to prevent duplicates
+  const toastShownRef = useRef(new Set());
 
   useEffect(() => {
     const fetchPolicyDetails = async () => {
@@ -72,6 +73,62 @@ const PolicyDetail = ({ policyId }) => {
     localStorage.clear();
     sessionStorage.clear();
   };
+
+  // Function to calculate progress based on policy completeness
+ const calculatePolicyProgress = (policy) => {
+  if (!policy) return null;
+
+  const requiredFields = [];
+  const policyType = policy.policyType;
+
+  if (isMotorPolicy(policyType)) {
+    requiredFields.push(
+      policy.policyNumber,
+      policy.policyStartDate,
+      policy.policyEndDate,
+      policy.premiumPaid,
+      policy.insuredName,
+      policy.insuredCompany,
+      policy.policyDetails?.registrationNumber,
+      policy.policyDetails?.make,
+      policy.policyDetails?.model,
+      policy.policyDetails?.assetType,
+      policy.policyDetails?.vehicleEngineNumber,
+      policy.policyDetails?.idv
+    );
+  } else if (policyType === "health" || policyType === "other_health") {
+    requiredFields.push(
+      policy.policyNumber,
+      policy.policyStartDate,
+      policy.policyEndDate,
+      policy.policyDetails?.sumInsured,
+      policy.premiumPaid,
+      policy.insuredName,
+      policy.insuredCompany,
+      policy.policyDetails?.policyName
+    );
+  } else if (policyType === "life" || policyType === "accident") {
+    requiredFields.push(
+      policy.policyNumber,
+      policy.policyStartDate,
+      policy.premiumPaid,
+      policy.insuredName,
+      policy.insuredCompany,
+      policy.policyDetails?.policyName,
+      policy.policyDetails?.sumInsured
+    );
+  }
+
+  const filledFields = requiredFields.filter(field => field && field !== "").length;
+  const totalFields = requiredFields.length;
+
+  if (totalFields === 0) return null;
+
+  const progress = (filledFields / totalFields) * 100;
+
+  return progress === 100 ? null : progress;
+};
+
 
   // Helper function to show toast only once
   const showToastOnce = (message, type = "success") => {
@@ -167,26 +224,19 @@ const PolicyDetail = ({ policyId }) => {
 
     const isGmailSync =
       documentPath.startsWith("https://") || documentPath.startsWith("http://");
-    // console.log("Is Gmail Sync:", isGmailSync);
 
     if (action === "view") {
       try {
         if (isGmailSync) {
-          // For Gmail-synced policies, use Google Drive Viewer
           const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
             documentPath
           )}`;
-          // console.log("Opening in Google Viewer:", googleViewerUrl);
           window.open(googleViewerUrl, "_blank");
         } else {
-          // For manual uploads, use your server path
           const fullPath = documentPath.startsWith("/")
             ? documentPath
             : `/${documentPath}`;
           const viewUrl = `${IMAGE_PATH}${fullPath}`;
-          // console.log("Opening manual upload:", viewUrl);
-
-          // Try Google Viewer first, fallback to direct link
           const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
             viewUrl
           )}`;
@@ -202,23 +252,16 @@ const PolicyDetail = ({ policyId }) => {
     if (action === "download") {
       try {
         if (isGmailSync) {
-          // For Gmail-synced policies, open in new tab (browser will handle download)
-          // console.log(
-          //   "Opening Gmail-synced document for download:",
-          //   documentPath
-          // );
           window.open(documentPath, "_blank");
           showToastOnce(
             "Document opened in new tab. You can download it from there.",
             "success"
           );
         } else {
-          // For manual uploads, use fetch to download
           const fullPath = documentPath.startsWith("/")
             ? documentPath
             : `/${documentPath}`;
           const downloadUrl = `${API_URL}${fullPath}`;
-          // console.log("Downloading manual upload from:", downloadUrl);
 
           const response = await fetch(downloadUrl);
           if (!response.ok) {
@@ -229,7 +272,6 @@ const PolicyDetail = ({ policyId }) => {
           const fileName =
             documentPath.split("/").pop() || "policy_document.pdf";
 
-          // Create download link
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement("a");
           link.href = url;
@@ -254,9 +296,6 @@ const PolicyDetail = ({ policyId }) => {
     if (action === "share") {
       try {
         if (isGmailSync) {
-          // For Gmail-synced policies, share the URL
-          // console.log("Sharing Gmail-synced document:", documentPath);
-
           if (navigator.share) {
             try {
               await navigator.share({
@@ -266,35 +305,28 @@ const PolicyDetail = ({ policyId }) => {
               });
               showToastOnce("Document shared successfully", "success");
             } catch (shareError) {
-              // console.log("Native sharing failed, trying clipboard");
-              // Fallback to clipboard
               if (navigator.clipboard) {
                 await navigator.clipboard.writeText(documentPath);
                 showToastOnce("Document link copied to clipboard", "success");
               } else {
-                // Final fallback - open in new tab
                 window.open(documentPath, "_blank");
                 showToastOnce("Document opened in new tab", "info");
               }
             }
           } else {
-            // No native share support
             if (navigator.clipboard) {
               await navigator.clipboard.writeText(documentPath);
               showToastOnce("Document link copied to clipboard", "success");
             } else {
-              // Final fallback - open in new tab
               window.open(documentPath, "_blank");
               showToastOnce("Document opened in new tab", "info");
             }
           }
         } else {
-          // For manual uploads, try to share file blob
           const fullPath = documentPath.startsWith("/")
             ? documentPath
             : `/${documentPath}`;
           const shareUrl = `${API_URL}${fullPath}`;
-          // console.log("Sharing manual upload from:", shareUrl);
 
           const response = await fetch(shareUrl);
           if (!response.ok) {
@@ -314,13 +346,11 @@ const PolicyDetail = ({ policyId }) => {
             });
             showToastOnce("Document shared successfully", "success");
           } else {
-            // Fallback: save file and copy URL to clipboard
             const blobUrl = window.URL.createObjectURL(blob);
             if (navigator.clipboard) {
               await navigator.clipboard.writeText(shareUrl);
               showToastOnce("Document link copied to clipboard", "success");
             } else {
-              // Final fallback - trigger download
               const link = document.createElement("a");
               link.href = blobUrl;
               link.download = fileName;
@@ -343,7 +373,6 @@ const PolicyDetail = ({ policyId }) => {
     }
   };
 
-// console.log("policyDetails in main render", );
   const handlePolicyAction = (action) => {
     const userId = sessionStorage.getItem("userId");
     const formData = new FormData();
@@ -411,27 +440,23 @@ const PolicyDetail = ({ policyId }) => {
             flexWrap: "wrap",
           }}
         >
-     {getExpiryStatus(policy?.policyEndDate) && (
-  <button
-    className="btn btn-sm rounded-6"
-    style={{
-      border: "1px solid #8AC642",
-      color: "#8AC642",
-      padding: "15px 20px",
-      width: "45%",
-      minWidth: "150px",
-      maxWidth: "280px",
-      textAlign: "center",
-    }}
-    onClick={() => handlePolicyAction("renew")}
-  >
-     Renew Policy
-  </button>
-)}
-
-
-
-
+          {getExpiryStatus(policy?.policyEndDate) && (
+            <button
+              className="btn btn-sm rounded-6"
+              style={{
+                border: "1px solid #8AC642",
+                color: "#8AC642",
+                padding: "15px 20px",
+                width: "45%",
+                minWidth: "150px",
+                maxWidth: "280px",
+                textAlign: "center",
+              }}
+              onClick={() => handlePolicyAction("renew")}
+            >
+              Renew Policy
+            </button>
+          )}
 
           <button
             className="btn btn-sm rounded-7"
@@ -449,7 +474,6 @@ const PolicyDetail = ({ policyId }) => {
             Archive Policy
           </button>
         </div>
-
       </Grid>
     );
   };
@@ -473,7 +497,6 @@ const PolicyDetail = ({ policyId }) => {
           autoClose={3000}
         />
         <Card
-          // key={index}
           className="p-5 rounded-5"
           style={{
             justifyContent: "center",
@@ -520,6 +543,8 @@ const PolicyDetail = ({ policyId }) => {
       {policyDetails.map((policy, index) => {
         const status = getExpiryStatus(policy?.policyEndDate);
         const documentPath = policy?.documentDetails?.documentPath;
+        const progress = calculatePolicyProgress(policy);
+        
         return (
           <Card
             key={index}
@@ -527,15 +552,13 @@ const PolicyDetail = ({ policyId }) => {
             style={{
               justifyContent: "center",
               boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
-              //  backgroundColor:"red",
               height: "680px !important",
-              // marginBottom: "5vh",
               backgroundColor: "#121212",
               color: THEME_COLOR.COLOR,
               border: "0.5px solid white",
             }}
           >
-            <div className="d-flex justify-content-between  pb-3">
+            <div className="d-flex justify-content-between pb-3">
               <p
                 style={{ fontSize: "22px", fontWeight: "600" }}
                 className="fw-bold pl-4"
@@ -543,51 +566,61 @@ const PolicyDetail = ({ policyId }) => {
                 Policy Details
               </p>
 
-              <button
-                type="button"
-                // className={`btn btn-lg ${block ? "w-100" : ""} ${className || ""}`}
-                style={{
-                  background:
-                    "linear-gradient(122.01deg, #1DB1BB 7.48%, #B6E597 86.54%)",
-                  color: "white",
-                  borderColor: "transparent",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: EditIcon ? "space-evenly" : "center",
-                  padding: "1px 20px",
-                  borderRadius: "30px",
-                  border: "none",
-                  fontSize: "1.5rem",
-                  fontWeight: "bold",
-                  // height: "auto",
-                }}
-                onClick={handleEdit}
-              >
-                <img
-                  src={EditIcon}
-                  height={12}
-                  alt="Start Icon"
-                  style={{ marginRight: "8px" }}
-                />
-                Edit
-              </button>
+              <div className="d-flex align-items-center gap-3 mr-5">
+                {/* Add Progress Bar */}
+               {progress !== null && progress < 100 && (
+  <ProgressBarCircle
+    progress={progress}
+    color="#8AC642"
+    size={10} // Make it smaller for the detail view
+  />
+)}
+
+                
+                <button
+                  type="button"
+                  style={{
+                    background:
+                      "linear-gradient(122.01deg, #1DB1BB 7.48%, #B6E597 86.54%)",
+                    color: "white",
+                    borderColor: "transparent",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: EditIcon ? "space-evenly" : "center",
+                    padding: "1px 20px",
+                    borderRadius: "30px",
+                    border: "none",
+                    fontSize: "1.5rem",
+                    fontWeight: "bold",
+                  }}
+                  onClick={handleEdit}
+                >
+                  <img
+                    src={EditIcon}
+                    height={12}
+                    alt="Start Icon"
+                    style={{ marginRight: "8px" }}
+                  />
+                  Edit
+                </button>
+              </div>
             </div>
 
             <div className="d-flex justify-content-between align-items-start px-4">
               <div>
                 <p
                   style={{
-                    width: "400px",          // fixed width
-                    whiteSpace: "nowrap",    // keep text in one line
-                    overflow: "hidden",      // hide overflow
-                    textOverflow: "ellipsis",// show "..." when text is too long
+                    width: "400px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                     fontSize: "18px",
                     fontWeight: 700,
                     marginBottom: "4px",
                     marginTop: 0,
-                    cursor: "default",       // optional, shows pointer style
+                    cursor: "default",
                   }}
-                  title={policy?.policyDetails?.make_Model || policy?.insuredName} // tooltip
+                  title={policy?.policyDetails?.make_Model || policy?.insuredName}
                 >
                   {policy?.policyDetails?.make_Model || policy?.insuredName}
                 </p>
@@ -603,7 +636,6 @@ const PolicyDetail = ({ policyId }) => {
                   {policy?.policyDetails?.registrationNumber ||
                     policy?.policyNumber}
                 </p>
-                {/* Added Insurance Company line */}
                 <p
                   style={{
                     color: "#fff",

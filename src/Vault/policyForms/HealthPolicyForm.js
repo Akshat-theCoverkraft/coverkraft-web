@@ -83,7 +83,10 @@ const HealthPolicyForm = () => {
   const [documentId, setdocumentId] = useState(
     policyDetails?.documentDetails?._id || ""
   );
-  console.log("documentId", documentId);
+  console.log("documentId" , documentId);
+  useEffect(() => {
+      sessionStorage.setItem("documentId", documentId);
+  }, [documentId]);
   // const [idv, setIdv] = useState(responseData.idv || "");
   const commonItemStyle = {
     maxWidth: 900,
