@@ -6,9 +6,50 @@ import API_URL from "../ServiceModule/Service";
 import Button from "../component/Button";
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import SessionExpiredModal from "../utils/sessionExpireModal";
 import "react-toastify/dist/ReactToastify.css";
+
+// New Modal for Coming Soon
+const ComingSoonModal = ({ visible, onClose }) => {
+  if (!visible) return null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        background: "rgba(0,0,0,0.6)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10000,
+      }}
+    >
+      <div
+        style={{
+          background: "#1e1e1e",
+          padding: "2em",
+          borderRadius: "16px",
+          maxWidth: "450px",
+          textAlign: "center",
+          color: "#fff",
+          boxShadow: "0 0 20px rgba(0,0,0,0.7)",
+        }}
+      >
+        <h2 style={{ marginBottom: "1em", fontSize: "1.5em" }}>Coming Soon 🚀</h2>
+        <p style={{ marginBottom: "1.5em", color: "#ccc", lineHeight: 1.6 }}>
+          You may send your requirement to <b>Contact@thecoverkraft.com</b> and
+          our team will get in touch with you.
+        </p>
+        <Button text="OK" size="md" block={true} onClick={onClose} />
+      </div>
+    </div>
+  );
+};
 
 const getImageForType = (type) => {
   if (!type) return require("../Images/img_lifecard.png");
@@ -38,9 +79,8 @@ const PolicyDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   const [isFooterVisible, setIsFooterVisible] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [redirectUrl, setRedirectUrl] = useState("");
   const [buying, setBuying] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
 
   const footerRef = useRef(null);
   const navigate = useNavigate();
@@ -85,68 +125,59 @@ const PolicyDetails = () => {
     sessionStorage.clear();
   };
 
-const handleBuyNow = async () => {
-  if (!policy) return;
+  const handleBuyNow = async () => {
+    if (!policy) return;
 
-  setBuying(true);
+    setBuying(true);
 
-  try {
-    // Fetch all available policy types
-    const policiesRes = await axios.get(
-      "https://api.thecoverkraft.com/policyType/getAll"
-    );
+    try {
+      const policiesRes = await axios.get(
+        "https://api.thecoverkraft.com/policyType/getAll"
+      );
 
-    const allPolicies = policiesRes.data?.data || [];
+      const allPolicies = policiesRes.data?.data || [];
 
-    // Find the policy that matches the current selected policyType
-    const matchedPolicy = allPolicies.find(
-      (p) => p.policyType === policy.policyType
-    );
+      const matchedPolicy = allPolicies.find(
+        (p) => p.policyType === policy.policyType
+      );
 
-    if (!matchedPolicy) {
-      toast.error("Policy number not found for this type.");
-      return;
-    }
-
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      toast.error("Session expired. Please login again.");
-      setShowSessionExpired(true);
-      return;
-    }
-
-    // Only send `type` with the value of `policyNumber`
-    const autoLoginRes = await axios.post(
-      "https://api.thecoverkraft.com/autoLogin/auto-login-url",
-      { type: matchedPolicy.policyNumber },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      if (!matchedPolicy) {
+        setShowComingSoon(true);
+        return;
       }
-    );
 
-    if (autoLoginRes.data?.success && autoLoginRes.data.redirect_url) {
-      // Redirect to the generated URL in the same tab
-      window.location.href = autoLoginRes.data.redirect_url;
-    } else {
-      toast.error("Coming soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.");
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        setShowSessionExpired(true);
+        return;
+      }
+
+      const autoLoginRes = await axios.post(
+        "https://api.thecoverkraft.com/autoLogin/auto-login-url",
+        { type: matchedPolicy.policyNumber },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (autoLoginRes.data?.success && autoLoginRes.data.redirect_url) {
+        window.location.href = autoLoginRes.data.redirect_url;
+      } else {
+        setShowComingSoon(true);
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setShowSessionExpired(true);
+      } else {
+        setShowComingSoon(true);
+      }
+    } finally {
+      setBuying(false);
     }
-
-  } catch (error) {
-    if (error.response?.status === 401) {
-      setShowSessionExpired(true);
-    } else {
-      toast.error("Coming soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.");
-    }
-  } finally {
-    setBuying(false);
-  }
-};
-
-
-
+  };
 
   if (loading)
     return <div style={{ padding: 50, color: "#fff" }}>Loading...</div>;
@@ -161,6 +192,10 @@ const handleBuyNow = async () => {
       <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
+      />
+      <ComingSoonModal
+        visible={showComingSoon}
+        onClose={() => setShowComingSoon(false)}
       />
 
       <div
