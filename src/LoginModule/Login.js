@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./CSS/login.css";
 import LoginImg from "../Images/img_phone_login.png";
 import logo from "../Images/CoverKraft-beta.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import CustomInput from "../component/CustomInput";
 import Button from "../component/Button";
@@ -14,16 +14,31 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import LOGING from "../Images/LOGING.png";
 import { registerFirebaseSW, requestFCMPermission } from "../fcm";
+import { ArrowLeft } from "lucide-react";
 
 const Login = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [otp, setOtp] = useState([]);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [valid, setValid] = useState(false);
-  const [fcmId, setFcmId] = useState("");
-  const recaptchRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
+
+  // form / UI state
+  const [loggedIn, setLoggedIn] = useState(false); // when true -> OTP screen
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
+  const [valid, setValid] = useState(false);
+
+  // OTP should be a string (react-otp-input accepts string)
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false); // for sending OTP / resend
+  const [isVerifying, setIsVerifying] = useState(false); // for verifying OTP
+
+  // resend state
+  const RESEND_SECONDS = 30;
+  const [canResend, setCanResend] = useState(false);
+  const [resendCounter, setResendCounter] = useState(RESEND_SECONDS);
 
   const commonInputStyle = {
     height: 48,
@@ -35,13 +50,11 @@ const Login = () => {
     borderColor: "grey",
   };
 
-  const [phoneNumberError, phoneNumberSetError] = useState("");
-
-  // ✅ Prevent back navigation when on OTP screen
+  // Prevent back navigation while on OTP (optional)
   useEffect(() => {
     if (loggedIn) {
       const handlePopState = (e) => {
-        e.preventDefault();
+        // push state back so browser back won't navigate away
         window.history.pushState(null, "", window.location.href);
       };
 
@@ -54,112 +67,254 @@ const Login = () => {
     }
   }, [loggedIn]);
 
-  // Sync valid with input validation
+  // Resend timer effect (runs only when OTP screen is active)
   useEffect(() => {
-    if (valid) {
-      setValid(true);
-    } else {
-      setValid(false);
+    let timer;
+    if (loggedIn && !canResend) {
+      setResendCounter(RESEND_SECONDS);
+      timer = setInterval(() => {
+        setResendCounter((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setCanResend(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }
-  }, [!valid]);
 
-  // Handle phone input (10-digit number)
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [loggedIn, canResend]);
+
+  // phone input handler (only digits, max 10)
   const handlephonechange = (e) => {
-    phoneNumberSetError("");
-    let number = e.target.value.replace(/\D/g, "");
-    number = number.slice(0, 10);
+    setPhoneNumberError("");
+    let number = e.target.value.replace(/\D/g, "").slice(0, 10);
     setPhoneNumber(number);
-    const isValid = /^\d{10}$/.test(number.replace("+91", ""));
-    setValid(isValid);
+    setValid(/^\d{10}$/.test(number));
   };
 
-  // Handle OTP input
+  // OTP change handler (string)
   const handleOtpChange = (newValue) => {
     setOtp(newValue);
+    setOtpError("");
   };
 
-  // Login handler
   const handleLogin = async () => {
+    if (isLoading) return;
+    if (!valid) {
+      setPhoneNumberError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+    setIsLoading(true);
+    setPhoneNumberError("");
     try {
-      phoneNumberSetError("");
-      const userPhone = phoneNumber;
-      const response = await axios.get(
-        `${API_URL}user/verifyPhone?userPhone=${userPhone}`
-      );
+      const response = await axios.post(`${API_URL}sms/request-otp`, {
+        userPhone: phoneNumber,
+      });
 
-      if (response.status === 200) {
-        const user = response.data.user;
-        const userId = user._id;
-        const userEmail = user.userEmail;
-        const token = user.token;
-
-        // ✅ Store session info
-        sessionStorage.setItem("userId", userId);
-        sessionStorage.setItem("userEmail", userEmail);
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("loginTime", Date.now().toString());
-        sessionStorage.setItem("isLoggedIn", "true");
-
+      if (response.status === 200 && response.data) {
+        // clear previous session data if any
+        sessionStorage.clear();
+        toast.success("OTP sent successfully!");
         setLoggedIn(true);
+        setCanResend(false);
+        setResendCounter(RESEND_SECONDS);
       } else {
-        toast.error("⚠️ Couldn't verify phone number. Please try again.");
+        toast.error("Couldn't send OTP. Please try again.");
       }
     } catch (error) {
-      console.error("Error:", error);
-
+      console.error("send OTP error:", error);
       if (error.response) {
         const status = error.response.status;
+        const message = error.response.data?.message || "";
         if (status === 404) {
-          phoneNumberSetError("This phone number is not registered.");
+          setPhoneNumberError("This phone number is not registered.");
           toast.error("This phone number is not registered.");
         } else if (status === 401) {
           toast.error("Unauthorized. Please check your credentials.");
         } else if (status === 500) {
           toast.error("Server error. Please try again later.");
         } else {
-          toast.error(error.response.data.message || "Something went wrong.");
+          toast.error(message || "Something went wrong while sending OTP.");
         }
       } else {
-        toast.error("⚡ Network error. Please check your internet connection.");
+        toast.error("Network error. Please check your connection.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // OTP verification (final login)
-  const handleVerify = async () => {
-    if (otp.length === 6) {
-      try {
-        const registration = await registerFirebaseSW();
-        const fcmToken = await requestFCMPermission(registration);
+  const handleResendOtp = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${API_URL}sms/request-otp`, {
+        userPhone: phoneNumber,
+      });
 
-        await dispatch(
-          verifyUser(API_URL, {
-            userPhone: phoneNumber,
-            userFcmId: fcmToken || "NA",
-          })
-        );
-
-        sessionStorage.setItem("loggedIn", "true");
-        toast.success("Phone number authentication successful");
-        navigate("/");
-      } catch (error) {
-        console.error("Verification failed:", error);
-        toast.error("Verification failed. Please try again.");
+      if (response.status === 200 && response.data) {
+        toast.success("OTP resent successfully!");
+        setCanResend(false);
+        setResendCounter(RESEND_SECONDS);
+      } else {
+        toast.error("Couldn't resend OTP. Please try again.");
       }
-    } else {
+    } catch (error) {
+      console.error("resend OTP error:", error);
+      const message = error?.response?.data?.message || "Failed to resend OTP";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Final verification (login)
+  const handleVerify = async () => {
+    if (otp.length !== 6) {
+      setOtpError("Please enter a 6-digit OTP.");
       toast.error("Please enter a 6-digit OTP.");
+      return;
+    }
+    if (isVerifying) return;
+
+    setIsVerifying(true);
+    setOtpError("");
+
+    // Attempt to get FCM token, but continue if it fails
+    let fcmToken = "NA";
+    try {
+      const registration = await registerFirebaseSW();
+      fcmToken = await requestFCMPermission(registration);
+    } catch (fcmError) {
+      console.log("FCM Error (continuing):", fcmError);
+    }
+
+    try {
+      // Try direct API call
+      try {
+        const directResponse = await axios.post(`${API_URL}user/loginUser`, {
+          userPhone: phoneNumber,
+          userFcmId: fcmToken,
+          otp: otp,
+        });
+
+        if (directResponse.status === 200 && directResponse.data) {
+          const responseData = directResponse.data;
+          const userData =
+            responseData.user || responseData.data || responseData;
+
+          if (userData && typeof userData === "object") {
+            sessionStorage.setItem("userId", userData._id || userData.id || "");
+            sessionStorage.setItem(
+              "userEmail",
+              userData.userEmail || userData.email || ""
+            );
+            sessionStorage.setItem(
+              "token",
+              userData.token || userData.accessToken || responseData.token || ""
+            );
+            sessionStorage.setItem("loginTime", Date.now().toString());
+            sessionStorage.setItem("isLoggedIn", "true");
+            sessionStorage.setItem("loggedIn", "true");
+
+            toast.success("Login successful!");
+            setTimeout(() => navigate(from, { replace: true }), 800);
+            return;
+          }
+        }
+      } catch (directApiError) {
+        console.log("Direct API Error:", directApiError?.response || directApiError);
+        if (directApiError.response) {
+          const msg =
+            directApiError.response.data?.message ||
+            directApiError.response.data?.error ||
+            "Verification failed";
+          setOtpError(msg);
+          toast.error(msg);
+          setOtp("");
+          return;
+        }
+      }
+
+      // Fallback to redux action
+      const result = await dispatch(
+        verifyUser(API_URL, {
+          userPhone: phoneNumber,
+          userFcmId: fcmToken,
+          otp: otp,
+        })
+      );
+
+      const isSuccess =
+        (result?.type &&
+          (result.type.includes("fulfilled") ||
+            result.type.toLowerCase().includes("success"))) ||
+        result?.payload?.success === true ||
+        result?.payload?.status === 200 ||
+        (result?.payload?.user && Object.keys(result.payload.user).length > 0) ||
+        (result?.meta?.requestStatus === "fulfilled" && !result?.error) ||
+        (!result?.error && result?.payload && Object.keys(result.payload).length > 0);
+
+      if (isSuccess) {
+        const userData =
+          result?.payload?.user ||
+          result?.payload?.data?.user ||
+          result?.payload?.data ||
+          result?.payload;
+
+        if (userData && typeof userData === "object") {
+          sessionStorage.setItem("userId", userData._id || userData.id || "");
+          sessionStorage.setItem(
+            "userEmail",
+            userData.userEmail || userData.email || ""
+          );
+          sessionStorage.setItem(
+            "token",
+            userData.token || userData.accessToken || result?.payload?.token || ""
+          );
+          sessionStorage.setItem("loginTime", Date.now().toString());
+          sessionStorage.setItem("isLoggedIn", "true");
+          sessionStorage.setItem("loggedIn", "true");
+        }
+
+        toast.success("Login successful!");
+        setTimeout(() => navigate(from, { replace: true }), 800);
+      } else {
+        const errorMessage =
+          result?.payload?.message ||
+          result?.error?.message ||
+          result?.payload?.error ||
+          "Invalid OTP. Please try again.";
+        setOtpError(errorMessage);
+        toast.error(errorMessage);
+        setOtp("");
+      }
+    } catch (err) {
+      console.error("Verification catch error:", err);
+      const errorMessage =
+        err?.response?.data?.message || err?.message || "Verification failed.";
+      setOtpError(errorMessage);
+      toast.error(errorMessage);
+      setOtp("");
+    } finally {
+      setIsVerifying(false);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" && valid && !loggedIn) {
+    if (e.key === "Enter" && valid && !loggedIn && !isLoading) {
       e.preventDefault();
       handleLogin();
     }
   };
 
   const handleOtpKeyPress = (e) => {
-    if (e.key === "Enter" && otp.length === 6) {
+    if (e.key === "Enter" && otp.length === 6 && !isVerifying) {
       e.preventDefault();
       handleVerify();
     }
@@ -168,7 +323,6 @@ const Login = () => {
   return (
     <div className="overflow-hidden" style={{ backgroundColor: "#121212" }}>
       <ToastContainer />
-
       <div className="container-fluid">
         <div className="row">
           <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
@@ -184,6 +338,7 @@ const Login = () => {
                 flexDirection: "column",
                 justifyContent: "center",
               }}
+              onSubmit={(e) => e.preventDefault()}
             >
               <div className="text-center mb-4">
                 <img
@@ -210,9 +365,7 @@ const Login = () => {
                     onChange={handlephonechange}
                     onKeyDown={handleKeyPress}
                     placeholder="Enter Your Number"
-                    className={` ${
-                      !valid && phoneNumber.length > 0 ? "is-invalid" : ""
-                    }`}
+                    className={` ${!valid && phoneNumber.length > 0 ? "is-invalid" : ""}`}
                     required
                     inputStyle={commonInputStyle}
                     validationMessage={
@@ -223,11 +376,11 @@ const Login = () => {
                   />
 
                   <Button
-                    text={loggedIn ? "Logging in..." : "Login"}
+                    text={isLoading ? "Sending OTP..." : "Login"}
                     size="lg"
                     block={true}
                     onClick={handleLogin}
-                    disabled={!valid || loggedIn}
+                    disabled={!valid || isLoading}
                     className="mt-3"
                     customStyle={{
                       color: "#fff",
@@ -239,6 +392,7 @@ const Login = () => {
                       boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
                       textTransform: "uppercase",
                       letterSpacing: "1px",
+                      opacity: isLoading ? 0.7 : 1,
                     }}
                   />
 
@@ -251,6 +405,34 @@ const Login = () => {
                 </>
               ) : (
                 <>
+                  {/* Back Button */}
+                  <div className="d-flex align-items-center mb-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // go back to phone screen
+                        setLoggedIn(false);
+                        setOtp("");
+                        setOtpError("");
+                        setCanResend(false);
+                      }}
+                      className="btn p-2"
+                      style={{
+                        backgroundColor: "#333",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "40px",
+                        height: "40px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <ArrowLeft size={20} color="white" />
+                    </button>
+                    <div className="flex-grow-1"></div>
+                  </div>
+
                   <h2 className="text-center mb-2">6 Digit Verification</h2>
                   <p className="text-center text-white-50 mb-4">
                     Please enter the 6-digit OTP sent to XXXXXXX
@@ -262,6 +444,8 @@ const Login = () => {
                       value={otp}
                       onChange={handleOtpChange}
                       numInputs={6}
+                      isInputNum
+                      shouldAutoFocus
                       renderInput={(props) => (
                         <input
                           {...props}
@@ -270,30 +454,75 @@ const Login = () => {
                             textAlign: "center",
                             width: "3.5rem",
                             height: "3.5rem",
-                            margin: "0 10px",
+                            margin: "0 8px",
                             fontSize: "1.2rem",
-                            borderRadius: "6px",
-                            border: "1px solid #ccc",
+                            borderRadius: "8px",
+                            border: "2px solid #ccc",
+                            backgroundColor: otpError ? "#ffebee" : "white",
+                            borderColor: otpError ? "#f44336" : "#ccc",
+                            outline: "none",
+                            transition: "border-color 0.3s",
                           }}
                         />
                       )}
                     />
                   </div>
 
-                  {otp.length > 0 && otp.length !== 6 && (
-                    <div className="invalid-feedback d-block mt-2 text-center">
-                      Please enter a valid 6-digit OTP.
+                  {otpError && (
+                    <div
+                      className="invalid-feedback d-block mt-2 text-center"
+                      style={{ color: "#f44336" }}
+                    >
+                      {otpError}
                     </div>
                   )}
 
                   <Button
-                    text="Verify"
+                    text={isVerifying ? "Verifying..." : "Verify"}
                     size="lg"
                     block={true}
                     onClick={handleVerify}
                     className="mt-4"
-                    disabled={otp.length !== 6}
+                    disabled={otp.length !== 6 || isVerifying}
+                    customStyle={{
+                      color: "#fff",
+                      backgroundColor: "#5A9E1E",
+                      borderRadius: "40px",
+                      padding: "14px 32px",
+                      fontSize: "1.4rem",
+                      fontWeight: 700,
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      opacity: otp.length !== 6 || isVerifying ? 0.7 : 1,
+                    }}
                   />
+
+                  <div className="text-center mt-4">
+                    {!canResend ? (
+                      <p className="text-white-50 mb-0">
+                        Resend OTP in {resendCounter} second{resendCounter !== 1 ? "s" : ""}
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        disabled={isLoading}
+                        className="btn btn-link text-decoration-none"
+                        style={{
+                          color: "#5A9E1E",
+                          fontWeight: 600,
+                          fontSize: "1rem",
+                          padding: 0,
+                          border: "none",
+                          background: "none",
+                          opacity: isLoading ? 0.5 : 1,
+                        }}
+                      >
+                        {isLoading ? "Sending..." : "Resend OTP"}
+                      </button>
+                    )}
+                  </div>
                 </>
               )}
             </form>
