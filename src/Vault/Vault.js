@@ -195,7 +195,7 @@ const Vault = () => {
       if (response.status === 200) {
         const responseData = response.data;
         setResponseData(responseData);
-        sessionStorage.setItem("documentId", responseData.documentId);
+        localStorage.setItem("documentId", responseData.documentId);
         const ocrTextObject = JSON.parse(responseData.ocrText);
         const policyType = ocrTextObject.policyType.toLowerCase();
         const route = navigationMap[policyType];

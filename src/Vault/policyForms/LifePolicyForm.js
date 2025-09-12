@@ -85,12 +85,8 @@ const LifePolicyForm = () => {
   );
 
   // ✅ Persist documentId in sessionStorage
-  const [documentId, setDocumentId] = useState(
-    () =>
-      sessionStorage.getItem("documentId") ||
-      policyDetails?.documentDetails?._id ||
-      ""
-  );
+   const documentId =
+    localStorage.getItem("documentId") ;
   useEffect(() => {
     sessionStorage.setItem("documentId", documentId);
   }, [documentId]);
