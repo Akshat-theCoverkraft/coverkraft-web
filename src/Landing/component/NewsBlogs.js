@@ -51,8 +51,7 @@ const getYouTubeEmbedUrl = (url) => {
   }
 };
 
-const isVideoFile = (url) =>
-  /\.(mp4|mov|avi|mkv|webm|ogg)$/i.test(url || "");
+const isVideoFile = (url) => /\.(mp4|mov|avi|mkv|webm|ogg)$/i.test(url || "");
 
 const BlogSection = () => {
   const [latestPosts, setLatestPosts] = useState({});
@@ -117,7 +116,11 @@ const BlogSection = () => {
     });
 
     Object.entries(youtubePlayers.current).forEach(([id, player]) => {
-      if (id !== playingId && player && typeof player.pauseVideo === "function") {
+      if (
+        id !== playingId &&
+        player &&
+        typeof player.pauseVideo === "function"
+      ) {
         player.pauseVideo();
       }
     });
@@ -189,22 +192,26 @@ const BlogSection = () => {
       ].filter((item) => item.id && item.data);
 
       itemsToCheck.forEach(({ id, data }) => {
-        const mediaUrl = data.video || data.youtubeLink || data.youTubeLink || getUrl(data);
+        const mediaUrl =
+          data.video || data.youtubeLink || data.youTubeLink || getUrl(data);
         if (isYouTubeUrl(mediaUrl)) {
           const playerId = `youtube-${id}`;
-          if (!youtubePlayers.current[id] && document.getElementById(playerId)) {
-           youtubePlayers.current[id] = new window.YT.Player(playerId, {
-  events: {
-    onReady: () => {
-      console.log(`Player ${id} ready`);
-    },
-    onStateChange: (event) => {
-      if (event.data === window.YT.PlayerState.PLAYING) {
-        handleVideoPlay(id);
-      }
-    }
-  }
-});
+          if (
+            !youtubePlayers.current[id] &&
+            document.getElementById(playerId)
+          ) {
+            youtubePlayers.current[id] = new window.YT.Player(playerId, {
+              events: {
+                onReady: () => {
+                  console.log(`Player ${id} ready`);
+                },
+                onStateChange: (event) => {
+                  if (event.data === window.YT.PlayerState.PLAYING) {
+                    handleVideoPlay(id);
+                  }
+                },
+              },
+            });
           }
         }
       });
@@ -277,7 +284,12 @@ const BlogSection = () => {
         <img
           src={source}
           alt="content"
-          style={{ width: "100%", height: "100%", borderRadius: "20px", objectFit: "cover" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            borderRadius: "20px",
+            objectFit: "cover",
+          }}
         />
       );
     }
@@ -285,11 +297,27 @@ const BlogSection = () => {
 
   const renderCard = (post, type) => {
     if (loading) {
-      return <Skeleton variant="rectangular" height="100%" sx={{ borderRadius: "20px" }} />;
+      return (
+        <Skeleton
+          variant="rectangular"
+          height="100%"
+          sx={{ borderRadius: "20px" }}
+        />
+      );
     }
     if (!post) {
       return (
-        <Card sx={{ bgcolor: "#212121", borderRadius: "20px", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#888" }}>
+        <Card
+          sx={{
+            bgcolor: "#212121",
+            borderRadius: "20px",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#888",
+          }}
+        >
           <Typography>No {type} available.</Typography>
         </Card>
       );
@@ -315,7 +343,11 @@ const BlogSection = () => {
       >
         <Chip
           icon={<TravelExploreIcon />}
-          label={post.type ? post.type.charAt(0).toUpperCase() + post.type.slice(1) : "Content"}
+          label={
+            post.type
+              ? post.type.charAt(0).toUpperCase() + post.type.slice(1)
+              : "Content"
+          }
           size="small"
           sx={{
             position: "absolute",
@@ -331,7 +363,11 @@ const BlogSection = () => {
 
         {renderMedia(mediaSource, post._id)}
 
-        {(type === "blog" || type === "news" || type === "short" || type === "featured" || type === "video") && (
+        {(type === "blog" ||
+          type === "news" ||
+          type === "short" ||
+          type === "featured" ||
+          type === "video") && (
           <Box
             sx={{
               position: "absolute",
@@ -343,7 +379,11 @@ const BlogSection = () => {
               color: "#fff",
             }}
           >
-            <Typography variant="caption" display="block" sx={{ mb: 1, fontSize: "1.3rem" }}>
+            <Typography
+              variant="caption"
+              display="block"
+              sx={{ mb: 1, fontSize: "1.3rem" }}
+            >
               {moment(post.createdAt).format("MMM DD, YYYY")}
             </Typography>
             <Button
@@ -383,26 +423,56 @@ const BlogSection = () => {
           backgroundPosition: "center",
         }}
       >
-        <SessionExpiredModal visible={showSessionExpired} onConfirm={handleSessionExpiredOk} />
+        <SessionExpiredModal
+          visible={showSessionExpired}
+          onConfirm={handleSessionExpiredOk}
+        />
         <Typography variant="h3" sx={headingStyle}>
           Blogs And News
         </Typography>
 
         <Grid container spacing={2} mt={3}>
           <Grid item xs={12} md={5}>
-            <Box sx={{ height: "500px" }}>{renderCard(latestPosts.shorts, "short")}</Box>
+            <Box sx={{ height: "500px" }}>
+              {renderCard(latestPosts.shorts, "short")}
+            </Box>
           </Grid>
           <Grid item xs={12} md={3}>
-            <Box sx={{ height: "500px", display: "flex", flexDirection: "column", gap: 2 }}>
-              <Box sx={{ height: "240px" }}>{renderCard(latestPosts.news, "news")}</Box>
-              <Box sx={{ height: "240px" }}>{renderCard(latestPosts.blog, "blog")}</Box>
+            <Box
+              sx={{
+                height: "500px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+              }}
+            >
+              <Box sx={{ height: "240px" }}>
+                {renderCard(latestPosts.news, "news")}
+              </Box>
+              <Box sx={{ height: "240px" }}>
+                {renderCard(latestPosts.blog, "blog")}
+              </Box>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Box sx={{ height: "500px", display: "flex", flexDirection: "column", gap: 2 }}>
-              <Box sx={{ height: "240px" }}>{renderCard(latestPosts.videos?.[0], "video")}</Box>
+            <Box
+              sx={{
+                height: "500px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+              }}
+            >
               <Box sx={{ height: "240px" }}>
-                {renderMedia(featuredVideo?.video || featuredVideo?.youTubeLink, "featured")}
+                {renderCard(latestPosts.videos?.[0], "video")}
+              </Box>
+              <Box sx={{ height: "240px" }}>
+                {renderMedia(
+                  featuredVideo?.video === "null"
+                    ? featuredVideo?.youTubeLink
+                    : featuredVideo?.video,
+                  "featured"
+                )}
               </Box>
             </Box>
           </Grid>
