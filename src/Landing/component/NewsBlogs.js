@@ -467,11 +467,27 @@ const BlogSection = () => {
                 {renderCard(latestPosts.videos?.[0], "video")}
               </Box>
               <Box sx={{ height: "240px" }}>
-                {renderMedia(
-                  featuredVideo?.video === "null"
-                    ? featuredVideo?.youTubeLink
-                    : featuredVideo?.video,
-                  "featured"
+                {featuredVideo ? (
+                  renderMedia(
+                    featuredVideo?.video === "null"
+                      ? featuredVideo?.youTubeLink
+                      : featuredVideo?.video,
+                    "featured"
+                  )
+                ) : (
+                  <Card
+                    sx={{
+                      bgcolor: "#212121",
+                      borderRadius: "20px",
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#888",
+                    }}
+                  >
+                    <Typography>No feature available.</Typography>
+                  </Card>
                 )}
               </Box>
             </Box>
