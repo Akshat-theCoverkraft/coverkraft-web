@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAwBkvlUE6tIVEsNjFvMTqHfmDaGMdYtcg",
-  authDomain: "coverkraft-f0697.firebaseapp.com",
-  projectId: "coverkraft-f0697",
-  storageBucket: "coverkraft-f0697.firebasestorage.app",
-  messagingSenderId: "1001414765690",
-  appId: "1:1001414765690:web:10f29e630f6532a7b91fc3",
-  measurementId: "G-BG4LD6N6MY",
+apiKey: "AIzaSyAuqyGKHe7E367WydQQGF98oGcAMr2v4Nw",
+  authDomain: "coverkraft-uat-7480d.firebaseapp.com",
+  projectId: "coverkraft-uat-7480d",
+  storageBucket: "coverkraft-uat-7480d.firebasestorage.app",
+  messagingSenderId: "907496635934",
+  appId: "1:907496635934:web:5c3c1a1bb6a99f7ad5f80f",
+  measurementId: "G-V19J2LMBD9"
 };
 
 const app = initializeApp(firebaseConfig);
