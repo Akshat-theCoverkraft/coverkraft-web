@@ -70,11 +70,16 @@ const LifePolicyForm = () => {
       ""
   );
   const [pa, setPa] = useState(responseData?.pa || "");
+  console.log("policy renewal date", policyDetails, responseData);
   const [policyRenewalDate, setPolicyRenewalDate] = useState(
-    responseData?.policyRenewalDate || policyDetails.policyRenewalDate || ""
+    responseData?.policyRenewalDate ||
+      policyDetails?.policyDetails.policyRenewalDate ||
+      ""
   );
   const [maturityDate, setMaturityDate] = useState(
-    responseData?.maturityDate || ""
+    responseData?.maturityDate ||
+      policyDetails?.policyDetails.maturityDate ||
+      ""
   );
   const [others, setOthers] = useState(
     responseData?.others || policyDetails?.others || ""
