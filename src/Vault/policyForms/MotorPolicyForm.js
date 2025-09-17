@@ -566,7 +566,7 @@ const MotorPolicyForm = () => {
                     type="text"
                     label="Make "
                     value={make}
-                    className="mt-1"
+                    className="mt-2"
                     inputStyle={commonInputStyle}
                     onChange={(e) => {
                       setMake(e.target.value);
