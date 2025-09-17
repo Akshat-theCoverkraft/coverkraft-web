@@ -80,8 +80,7 @@ const HealthPolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
-     const documentId =
-    localStorage.getItem("documentId") ;
+  const documentId = localStorage.getItem("documentId");
   // const [idv, setIdv] = useState(responseData.idv || "");
   const commonItemStyle = {
     maxWidth: 900,
@@ -323,7 +322,7 @@ const HealthPolicyForm = () => {
                       className="w-100 mb-0"
                     />
                   </div>
-                  <Grid container spacing={1} className="mt-2">
+                  {/* <Grid container spacing={1} className="mt-2">
                     <Grid item xs={12} md={6}>
                       <div className="mb-2">
                         <label
@@ -360,6 +359,42 @@ const HealthPolicyForm = () => {
                         />
                       </div>
                     </Grid>
+                  </Grid> */}
+                  <Grid
+                    container
+                    justifyContent={"space-between"}
+                    className="ml-1 mt-2"
+                  >
+                    <div className="form-outline mb-3">
+                      <label className="form-label fw-bold text-light mb-2 d-block">
+                        {"Start Date"}
+                        {<span className="text-danger">*</span>}
+                      </label>
+                      <DateTimePicker
+                        id="start-date"
+                        type="date"
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyStartDate)}
+                        onChange={handleStartDateChange}
+                        className={"w-100"}
+                      />
+                    </div>
+                    <div className="form-outline mb-3">
+                      <label className="form-label fw-bold text-light mb-2 d-block">
+                        {"End Date"}
+                        {<span className="text-danger">*</span>}
+                      </label>
+                      <DateTimePicker
+                        id="end-date"
+                        type="date"
+                        isIcon={false}
+                        label="DD/MM/YYYY"
+                        value={formatDate(policyEndDate)}
+                        onChange={handleEndDateChange}
+                        className={"w-100"}
+                      />
+                    </div>
                   </Grid>
                   <CustomInput
                     type="text"
@@ -393,6 +428,7 @@ const HealthPolicyForm = () => {
                       initialValue={insuredCompany}
                     />
                   )} */}
+                  <div style={{ height: 5 }}></div>
                   <InsuranceDropdown
                     onCompanySelect={(companyId) =>
                       setInsuredCompany(companyId)
