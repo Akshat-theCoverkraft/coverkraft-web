@@ -59,6 +59,7 @@ const Footer = () => {
     { label: "Legal And Admin Policies", to: "/legal" },
     { label: "Disclaimer", to: "/legal#disclaimer" },
     { label: "Terms of Use", to: "/legal#TermsOfUse" },
+    {label: "Our-Leaders", to: "/Our-LeaderShip" },
   ];
 
   const socialIcons = [

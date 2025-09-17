@@ -259,163 +259,78 @@ const PolicyDetail = ({ policyId }) => {
     }
   };
 
-  const handleDocument = async (documentPath, action) => {
-    if (!documentPath) {
-      console.error("Document path is missing");
-      showToastOnce("Document not available", "error");
-      return;
-    }
+const handleDocument = async (documentPath, action) => {
+  if (!documentPath) {
+    console.error("Document path is missing");
 
-    const isGmailSync =
-      documentPath.startsWith("https://") || documentPath.startsWith("http://");
+    return;
+  }
 
+  // Determine full URL for API or external links
+  const fullPath = documentPath.startsWith("http")
+    ? documentPath
+    : `${API_URL}${documentPath.startsWith("/") ? documentPath : `/${documentPath}`}`;
+
+  // Extract filename for download
+  const fileName = documentPath.split("/").pop() || "policy_document.pdf";
+
+  try {
     if (action === "view") {
-      try {
-        if (isGmailSync) {
-          const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
-            documentPath
-          )}`;
-          window.open(googleViewerUrl, "_blank");
-        } else {
-          const fullPath = documentPath.startsWith("/")
-            ? documentPath
-            : `/${documentPath}`;
-          const viewUrl = `${IMAGE_PATH}${fullPath}`;
-          const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
-            viewUrl
-          )}`;
-          window.open(googleViewerUrl, "_blank");
-        }
-      } catch (error) {
-        console.error("Error opening document for viewing:", error);
-        showToastOnce("Unable to open document for viewing", "error");
-      }
+      // Open PDF directly in browser
+      window.open(fullPath, "_blank");
       return;
     }
 
     if (action === "download") {
-      try {
-        if (isGmailSync) {
-          window.open(documentPath, "_blank");
-          showToastOnce(
-            "Document opened in new tab. You can download it from there.",
-            "success"
-          );
-        } else {
-          const fullPath = documentPath.startsWith("/")
-            ? documentPath
-            : `/${documentPath}`;
-          const downloadUrl = `${API_URL}${fullPath}`;
+      // Direct download without fetch (avoids CORS issues)
+      const link = document.createElement("a");
+      link.href = fullPath;
+      link.download = fileName; // suggested filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-          const response = await fetch(downloadUrl);
-          if (!response.ok) {
-            throw new Error(`Download failed: ${response.status}`);
-          }
 
-          const blob = await response.blob();
-          const fileName =
-            documentPath.split("/").pop() || "policy_document.pdf";
-
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-
-          showToastOnce("Document downloaded successfully", "success");
-        }
-      } catch (error) {
-        console.error("Error downloading document:", error);
-        showToastOnce(
-          "Unable to download document. Please try again.",
-          "error"
-        );
-      }
       return;
     }
 
-    if (action === "share") {
-      try {
-        if (isGmailSync) {
-          if (navigator.share) {
-            try {
-              await navigator.share({
-                title: "Policy Document",
-                text: "Here is your policy document.",
-                url: documentPath,
-              });
-              showToastOnce("Document shared successfully", "success");
-            } catch (shareError) {
-              if (navigator.clipboard) {
-                await navigator.clipboard.writeText(documentPath);
-                showToastOnce("Document link copied to clipboard", "success");
-              } else {
-                window.open(documentPath, "_blank");
-                showToastOnce("Document opened in new tab", "info");
-              }
-            }
-          } else {
-            if (navigator.clipboard) {
-              await navigator.clipboard.writeText(documentPath);
-              showToastOnce("Document link copied to clipboard", "success");
-            } else {
-              window.open(documentPath, "_blank");
-              showToastOnce("Document opened in new tab", "info");
-            }
-          }
-        } else {
-          const fullPath = documentPath.startsWith("/")
-            ? documentPath
-            : `/${documentPath}`;
-          const shareUrl = `${API_URL}${fullPath}`;
-
-          const response = await fetch(shareUrl);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch file: ${response.status}`);
-          }
-
-          const blob = await response.blob();
-          const fileName =
-            documentPath.split("/").pop() || "policy_document.pdf";
-          const file = new File([blob], fileName, { type: "application/pdf" });
-
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              title: "Policy Document",
-              text: "Here is your policy document.",
-              files: [file],
-            });
-            showToastOnce("Document shared successfully", "success");
-          } else {
-            const blobUrl = window.URL.createObjectURL(blob);
-            if (navigator.clipboard) {
-              await navigator.clipboard.writeText(shareUrl);
-              showToastOnce("Document link copied to clipboard", "success");
-            } else {
-              const link = document.createElement("a");
-              link.href = blobUrl;
-              link.download = fileName;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              showToastOnce(
-                "Document downloaded (sharing not supported)",
-                "info"
-              );
-            }
-            window.URL.revokeObjectURL(blobUrl);
-          }
-        }
-      } catch (error) {
-        console.error("Error sharing document:", error);
-        showToastOnce("Unable to share document. Please try again.", "error");
-      }
-      return;
+  if (action === "share") {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "Policy Document",
+        text: "Here is your policy document.",
+        url: fullPath, // just share the link
+      });
+      showToastOnce("Document link shared successfully", "success");
+    } catch (err) {
+      console.warn("Share failed, copying to clipboard", err);
+      if (navigator.clipboard) await navigator.clipboard.writeText(fullPath);
+      showToastOnce("Document link copied to clipboard", "success");
     }
-  };
+  } else {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(fullPath);
+      showToastOnce("Document link copied to clipboard", "success");
+    } else {
+      window.open(fullPath, "_blank");
+      showToastOnce("Document opened in new tab", "info");
+    }
+  }
+  return;
+}
+
+
+    // Unknown action
+    console.warn(`Unknown action: ${action}`);
+
+  } catch (error) {
+    console.error(`Error handling document (${action}):`, error);
+
+  }
+};
+
+
 
   const handlePolicyAction = (action) => {
      // Show ComingSoonModal for renew action
