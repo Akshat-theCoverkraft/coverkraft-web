@@ -71,7 +71,7 @@ const LifePolicyForm = () => {
   );
   const [pa, setPa] = useState(responseData?.pa || "");
   const [policyRenewalDate, setPolicyRenewalDate] = useState(
-    responseData?.policyRenewalDate || ""
+    responseData?.policyRenewalDate || policyDetails.policyRenewalDate || ""
   );
   const [maturityDate, setMaturityDate] = useState(
     responseData?.maturityDate || ""
@@ -85,8 +85,7 @@ const LifePolicyForm = () => {
   );
 
   // ✅ Persist documentId in sessionStorage
-   const documentId =
-    localStorage.getItem("documentId") ;
+  const documentId = localStorage.getItem("documentId");
   useEffect(() => {
     sessionStorage.setItem("documentId", documentId);
   }, [documentId]);
@@ -141,7 +140,9 @@ const LifePolicyForm = () => {
   useEffect(() => {
     const fetchDropdownOptions = async () => {
       try {
-        const response = await fetch("https://api.thecoverkraft.com/api/dropdown?q=");
+        const response = await fetch(
+          "https://api.thecoverkraft.com/api/dropdown?q="
+        );
         const data = await response.json();
         if (Array.isArray(data)) setDropdownOptions(data);
       } catch (err) {
@@ -180,7 +181,9 @@ const LifePolicyForm = () => {
       };
 
       if (validateFields(payload)) {
-        mode === "edit" ? await updatePolicy(payload) : await createPolicy(payload);
+        mode === "edit"
+          ? await updatePolicy(payload)
+          : await createPolicy(payload);
       } else {
         toast.error("Please fill all required fields!");
       }
@@ -208,7 +211,9 @@ const LifePolicyForm = () => {
     formData.append("userId", userId);
     formData.append("documentId", documentId);
     formData.append("policyType", responseData?.policyType.toLowerCase());
-    Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
+    Object.entries(payload).forEach(([key, value]) =>
+      formData.append(key, value)
+    );
     formData.append("netPremium", netPremium);
     formData.append("criticalIllness", criticalIllness);
     formData.append("accidentalDisability", accidentalDisability);
@@ -233,7 +238,9 @@ const LifePolicyForm = () => {
     formData.append("documentId", documentId);
     formData.append("_id", policyId);
     formData.append("policyType", policyDetails?.policyType.toLowerCase());
-    Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
+    Object.entries(payload).forEach(([key, value]) =>
+      formData.append(key, value)
+    );
     formData.append("policyEndDate", policyEndDate);
     formData.append("netPremium", netPremium);
     formData.append("criticalIllness", criticalIllness);
@@ -284,7 +291,10 @@ const LifePolicyForm = () => {
                   <ArrowBackIcon style={{ color: "#fff", fontSize: "28px" }} />
                   {headingText}
                 </Typography>
-                <ProgressBarCircle progress={calculateProgress()} color="#8AC642" />
+                <ProgressBarCircle
+                  progress={calculateProgress()}
+                  color="#8AC642"
+                />
               </div>
 
               <Typography
@@ -303,7 +313,9 @@ const LifePolicyForm = () => {
               <Grid container spacing={4}>
                 {/* Left Column */}
                 <Grid item xs={12} lg={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                  >
                     <CustomInput
                       type="text"
                       label="Policy Number"
@@ -330,11 +342,13 @@ const LifePolicyForm = () => {
                       </Grid>
                     </Grid>
 
-                    <Grid container spacing={4}>
+                    <Grid container spacing={4} className="mb-3">
                       <Grid item xs={12} sm={6}>
                         <label className="form-label fw-bold text-light mt-3 mb-2 d-block">
-                          Next premium due date <span className="text-danger">*</span>
+                          Next premium due date{" "}
+                          <span className="text-danger">*</span>
                         </label>
+                        {console.log("Policy...", policyRenewalDate)}
                         <DateTimePicker
                           id="policy-renewal-date"
                           type="date"
@@ -348,7 +362,8 @@ const LifePolicyForm = () => {
 
                       <Grid item xs={12} sm={6}>
                         <label className="form-label fw-bold text-light mt-3 mb-2 d-block">
-                          Policy Maturity Date <span className="text-danger">*</span>
+                          Policy Maturity Date{" "}
+                          <span className="text-danger">*</span>
                         </label>
                         <DateTimePicker
                           id="maturity-date"
@@ -361,7 +376,6 @@ const LifePolicyForm = () => {
                         />
                       </Grid>
                     </Grid>
-
                     <CustomInput
                       type="text"
                       label="Insured Name"
@@ -370,25 +384,31 @@ const LifePolicyForm = () => {
                       required
                       inputStyle={commonInputStyle}
                     />
-
-                    <InsuranceDropdown
-                      onCompanySelect={(companyId) => setInsuredCompany(companyId)}
-                      initialValue={
-                        insuredCompany ||
-                        responseData?.insuranceCompany ||
-                        responseData?.insuredCompany ||
-                        policyDetails?.insuredCompany
-                      }
-                      matchFn={(optionLabel, value) =>
-                        normalizeString(optionLabel) === normalizeString(value)
-                      }
-                    />
+                    <Grid item xs={12} sm={12}>
+                      <InsuranceDropdown
+                        onCompanySelect={(companyId) =>
+                          setInsuredCompany(companyId)
+                        }
+                        initialValue={
+                          insuredCompany ||
+                          responseData?.insuranceCompany ||
+                          responseData?.insuredCompany ||
+                          policyDetails?.insuredCompany
+                        }
+                        matchFn={(optionLabel, value) =>
+                          normalizeString(optionLabel) ===
+                          normalizeString(value)
+                        }
+                      />
+                    </Grid>
                   </Box>
                 </Grid>
 
                 {/* Right Column */}
                 <Grid item xs={12} lg={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                  >
                     <CustomInput
                       type="text"
                       label="Net Premium"
