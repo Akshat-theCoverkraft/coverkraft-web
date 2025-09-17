@@ -299,42 +299,48 @@ const handleSelectAll = () => {
     }
   };
 
-  const exportToPDF = async () => {
-    if (selectedPolicies.length === 0) {
-      return toast.error("Please select at least one policy to export");
-    }
+const exportToPDF = async () => {
+  if (selectedPolicies.length === 0) {
+    return toast.error("Please select at least one policy to export");
+  }
 
-    try {
-      const token = sessionStorage.getItem("token");
-      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
+  try {
+    const token = sessionStorage.getItem("token");
+    const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
 
-      // Step 1: Get the file URL from backend
-      const response = await axios.get(
-        `${API_URL}policy/pdfTable?${queryParams}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    // Step 1: Get fresh signed URL from backend
+    const response = await axios.get(`${API_URL}policy/pdfTable?${queryParams}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      const fileUrl = response?.data?.fileUrl;
-      if (!fileUrl) throw new Error("PDF file URL is missing in response.");
+    const fileUrl = response?.data?.fileUrl;
+    if (!fileUrl) throw new Error("PDF file URL is missing in response.");
 
-      const filename = fileUrl.split("/").pop() || "policies.pdf";
+    // Extract filename from URL
+    const filename = fileUrl.split("/").pop() || "policies.pdf";
 
-      // Step 2: Trigger download via anchor tag — no CORS issues here
-      const link = document.createElement("a");
-      link.href = fileUrl;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    // Step 2: Trigger download automatically (avoids CORS issues)
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = filename; // suggested filename
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      toast.success("PDF downloded successfully!");
-    } catch (error) {
-      console.error("Error exporting PDF:", error);
+    toast.success("PDF downloaded successfully!");
+  } catch (error) {
+    console.error("Error exporting PDF:", error);
+
+    // Handle access denied / expired URL gracefully
+    if (error.response?.status === 403) {
+      toast.error("Access denied or expired link. Please try again.");
+    } else {
       toast.error("Unable to export PDF. Try again later.");
     }
-  };
+  }
+};
+
+
 
   const exportToImage= async () => {
     if (selectedPolicies.length === 0) {

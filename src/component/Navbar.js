@@ -25,7 +25,15 @@ import API_URL from "../ServiceModule/Service";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/" },
-  { key: "about", label: "About Us", path: "/about", auth: true },
+  {
+    key: "about",
+    label: "About Us",
+    path: "/about",
+    auth: true,
+    children: [
+      { label: "Our Leaders", path: "/Our-LeaderShip" },
+    ],
+  },
   { key: "contact", label: "Contact Us", path: "/contactus", auth: true },
 ];
 
@@ -76,6 +84,7 @@ function Navbar({ scrollToContactBottom }) {
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [mobileAnchor, setMobileAnchor] = useState(null);
   const [moreAnchor, setMoreAnchor] = useState(null);
+  const [submenuAnchor, setSubmenuAnchor] = useState(null); // for About Us dropdown
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
 
@@ -183,16 +192,29 @@ function Navbar({ scrollToContactBottom }) {
                 onClose={() => setMobileAnchor(null)}
               >
                 {visibleNavItems.map((item) => (
-                  <MenuItem
-                    key={item.key}
-                    onClick={() => {
-                      handleNavigation(item);
-                      setMobileAnchor(null);
-                    }}
-                    sx={{ fontSize: "1.3rem" }}
-                  >
-                    {item.label}
-                  </MenuItem>
+                  <React.Fragment key={item.key}>
+                    <MenuItem
+                      onClick={() => {
+                        handleNavigation(item);
+                        setMobileAnchor(null);
+                      }}
+                      sx={{ fontSize: "1.3rem" }}
+                    >
+                      {item.label}
+                    </MenuItem>
+                    {item.children?.map((child) => (
+                      <MenuItem
+                        key={child.label}
+                        onClick={() => {
+                          navigate(child.path);
+                          setMobileAnchor(null);
+                        }}
+                        sx={{ fontSize: "1.2rem", pl: 4 }}
+                      >
+                        {child.label}
+                      </MenuItem>
+                    ))}
+                  </React.Fragment>
                 ))}
                 {loggedIn ? (
                   <>
@@ -249,22 +271,84 @@ function Navbar({ scrollToContactBottom }) {
             </>
           ) : (
             <div className="d-flex align-items-center" style={{ gap: 24 }}>
-              {visibleNavItems.map((item) => (
-                <div
-                  key={item.key}
-                  style={{
-                    cursor: "pointer",
-                    color:
-                      location.pathname === item.path ? "#8AC642" : "white",
-                    fontWeight: location.pathname === item.path ? "600" : "400",
-                    fontSize: "1.7rem",
-                    padding: "4px 10px",
-                  }}
-                  onClick={() => handleNavigation(item)}
-                >
-                  {item.label}
-                </div>
-              ))}
+              {visibleNavItems.map((item) => {
+                if (item.children) {
+                  return (
+                    <div key={item.key}>
+                      <div
+                        style={{
+                          cursor: "pointer",
+                          color:
+                            location.pathname === item.path
+                              ? "#8AC642"
+                              : "white",
+                          fontWeight:
+                            location.pathname === item.path ? "600" : "400",
+                          fontSize: "1.7rem",
+                          padding: "4px 10px",
+                        }}
+                        onClick={(e) => setSubmenuAnchor(e.currentTarget)}
+                      >
+                        {item.label}
+                      </div>
+                      <DarkMenu
+                        anchorEl={submenuAnchor}
+                        open={Boolean(submenuAnchor)}
+                        onClose={() => setSubmenuAnchor(null)}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                        PaperProps={{ sx: { mt: 1 } }}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate(item.path); // main About Us
+                            setSubmenuAnchor(null);
+                          }}
+                          sx={{ fontSize: "1.3rem" }}
+                        >
+                          {item.label}
+                        </MenuItem>
+                        {item.children.map((child) => (
+                          <MenuItem
+                            key={child.label}
+                            onClick={() => {
+                              navigate(child.path);
+                              setSubmenuAnchor(null);
+                            }}
+                            sx={{ fontSize: "1.3rem" }}
+                          >
+                            {child.label}
+                          </MenuItem>
+                        ))}
+                      </DarkMenu>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div
+                    key={item.key}
+                    style={{
+                      cursor: "pointer",
+                      color:
+                        location.pathname === item.path ? "#8AC642" : "white",
+                      fontWeight:
+                        location.pathname === item.path ? "600" : "400",
+                      fontSize: "1.7rem",
+                      padding: "4px 10px",
+                    }}
+                    onClick={() => handleNavigation(item)}
+                  >
+                    {item.label}
+                  </div>
+                );
+              })}
               {loggedIn ? (
                 <>
                   <Badge

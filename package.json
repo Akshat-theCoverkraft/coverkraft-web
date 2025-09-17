@@ -28,6 +28,7 @@
     "dompurify": "^3.2.6",
     "firebase": "^11.10.0",
     "framer-motion": "^12.23.5",
+    "gsap": "^3.13.0",
     "html-react-parser": "^5.2.5",
     "i18next": "^23.11.3",
     "lucide-react": "^0.524.0",
