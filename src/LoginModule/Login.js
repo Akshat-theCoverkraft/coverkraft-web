@@ -504,15 +504,15 @@ const Login = () => {
                         Resend OTP in {resendCounter} second{resendCounter !== 1 ? "s" : ""}
                       </p>
                     ) : (
-                      <button
+                      <span
                         type="button"
                         onClick={handleResendOtp}
                         disabled={isLoading}
-                        className="btn btn-link text-decoration-none"
+                        className="btn btn-link text-decoration-none mt-0"
                         style={{
                           color: "#5A9E1E",
-                          fontWeight: 600,
-                          fontSize: "1rem",
+                          fontWeight: 700,
+                          fontSize: "1.5rem",
                           padding: 0,
                           border: "none",
                           background: "none",
@@ -520,7 +520,7 @@ const Login = () => {
                         }}
                       >
                         {isLoading ? "Sending..." : "Resend OTP"}
-                      </button>
+                      </span>
                     )}
                   </div>
                 </>

@@ -345,7 +345,13 @@ const BlogSection = () => {
           icon={<TravelExploreIcon />}
           label={
             post.type
-              ? post.type.charAt(0).toUpperCase() + post.type.slice(1)
+              ? post.type === "short"
+                ? "Shorts"
+                : post.type === "blog"
+                ? "Blogs"
+                : post.type === "video"
+                ? "Videos"
+                : post.type.charAt(0).toUpperCase() + post.type.slice(1)
               : "Content"
           }
           size="small"
