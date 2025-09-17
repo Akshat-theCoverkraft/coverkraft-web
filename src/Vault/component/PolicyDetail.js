@@ -75,60 +75,61 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   // Function to calculate progress based on policy completeness
- const calculatePolicyProgress = (policy) => {
-  if (!policy) return null;
+  const calculatePolicyProgress = (policy) => {
+    if (!policy) return null;
 
-  const requiredFields = [];
-  const policyType = policy.policyType;
+    const requiredFields = [];
+    const policyType = policy.policyType;
 
-  if (isMotorPolicy(policyType)) {
-    requiredFields.push(
-      policy.policyNumber,
-      policy.policyStartDate,
-      policy.policyEndDate,
-      policy.premiumPaid,
-      policy.insuredName,
-      policy.insuredCompany,
-      policy.policyDetails?.registrationNumber,
-      policy.policyDetails?.make,
-      policy.policyDetails?.model,
-      policy.policyDetails?.assetType,
-      policy.policyDetails?.vehicleEngineNumber,
-      policy.policyDetails?.idv
-    );
-  } else if (policyType === "health" || policyType === "other_health") {
-    requiredFields.push(
-      policy.policyNumber,
-      policy.policyStartDate,
-      policy.policyEndDate,
-      policy.policyDetails?.sumInsured,
-      policy.premiumPaid,
-      policy.insuredName,
-      policy.insuredCompany,
-      policy.policyDetails?.policyName
-    );
-  } else if (policyType === "life" || policyType === "accident") {
-    requiredFields.push(
-      policy.policyNumber,
-      policy.policyStartDate,
-      policy.premiumPaid,
-      policy.insuredName,
-      policy.insuredCompany,
-      policy.policyDetails?.policyName,
-      policy.policyDetails?.sumInsured
-    );
-  }
+    if (isMotorPolicy(policyType)) {
+      requiredFields.push(
+        policy.policyNumber,
+        policy.policyStartDate,
+        policy.policyEndDate,
+        policy.premiumPaid,
+        policy.insuredName,
+        policy.insuredCompany,
+        policy.policyDetails?.registrationNumber,
+        policy.policyDetails?.make,
+        policy.policyDetails?.model,
+        policy.policyDetails?.assetType,
+        policy.policyDetails?.vehicleEngineNumber,
+        policy.policyDetails?.idv
+      );
+    } else if (policyType === "health" || policyType === "other_health") {
+      requiredFields.push(
+        policy.policyNumber,
+        policy.policyStartDate,
+        policy.policyEndDate,
+        policy.policyDetails?.sumInsured,
+        policy.premiumPaid,
+        policy.insuredName,
+        policy.insuredCompany,
+        policy.policyDetails?.policyName
+      );
+    } else if (policyType === "life" || policyType === "accident") {
+      requiredFields.push(
+        policy.policyNumber,
+        policy.policyStartDate,
+        policy.premiumPaid,
+        policy.insuredName,
+        policy.insuredCompany,
+        policy.policyDetails?.policyName,
+        policy.policyDetails?.sumInsured
+      );
+    }
 
-  const filledFields = requiredFields.filter(field => field && field !== "").length;
-  const totalFields = requiredFields.length;
+    const filledFields = requiredFields.filter(
+      (field) => field && field !== ""
+    ).length;
+    const totalFields = requiredFields.length;
 
-  if (totalFields === 0) return null;
+    if (totalFields === 0) return null;
 
-  const progress = (filledFields / totalFields) * 100;
+    const progress = (filledFields / totalFields) * 100;
 
-  return progress === 100 ? null : progress;
-};
-
+    return progress === 100 ? null : progress;
+  };
 
   // Helper function to show toast only once
   const showToastOnce = (message, type = "success") => {
@@ -386,8 +387,8 @@ const PolicyDetail = ({ policyId }) => {
           action === "archive"
             ? "Policy archived successfully"
             : action === "unarchive"
-              ? "Policy removed from archive successfully"
-              : "Coming Soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
+            ? "Policy removed from archive successfully"
+            : "Coming Soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
         showToastOnce(message, "success");
       })
       .catch(() => {
@@ -491,7 +492,7 @@ const PolicyDetail = ({ policyId }) => {
           position="top-center"
           style={{
             zIndex: 100000,
-            top: '110px'
+            top: "110px",
           }}
           toastClassName="custom-toast"
           autoClose={3000}
@@ -531,7 +532,7 @@ const PolicyDetail = ({ policyId }) => {
         position="top-center"
         style={{
           zIndex: 100000,
-          top: '110px'
+          top: "110px",
         }}
         toastClassName="custom-toast"
         autoClose={3000}
@@ -544,7 +545,7 @@ const PolicyDetail = ({ policyId }) => {
         const status = getExpiryStatus(policy?.policyEndDate);
         const documentPath = policy?.documentDetails?.documentPath;
         const progress = calculatePolicyProgress(policy);
-        
+
         return (
           <Card
             key={index}
@@ -566,17 +567,17 @@ const PolicyDetail = ({ policyId }) => {
                 Policy Details
               </p>
 
-              <div className="d-flex align-items-center gap-3 mr-5">
-                {/* Add Progress Bar */}
-               {progress !== null && progress < 100 && (
-  <ProgressBarCircle
-    progress={progress}
-    color="#8AC642"
-    size={10} // Make it smaller for the detail view
-  />
-)}
-
-                
+              <div className="d-flex align-items-center gap-3 mr-3">
+                {progress !== null && progress < 100 && (
+                  <div className="mr-3">
+                    <ProgressBarCircle
+                      progress={progress}
+                      color="#8AC642"
+                      size={50}
+                      strokeWidth={5}
+                    />
+                  </div>
+                )}
                 <button
                   type="button"
                   style={{
@@ -607,7 +608,7 @@ const PolicyDetail = ({ policyId }) => {
             </div>
 
             <div className="d-flex justify-content-between align-items-start px-4">
-              <div>
+              <div style={{ flex: 1 }}>
                 <p
                   style={{
                     width: "400px",
@@ -620,7 +621,9 @@ const PolicyDetail = ({ policyId }) => {
                     marginTop: 0,
                     cursor: "default",
                   }}
-                  title={policy?.policyDetails?.make_Model || policy?.insuredName}
+                  title={
+                    policy?.policyDetails?.make_Model || policy?.insuredName
+                  }
                 >
                   {policy?.policyDetails?.make_Model || policy?.insuredName}
                 </p>
@@ -662,16 +665,20 @@ const PolicyDetail = ({ policyId }) => {
                 </p>
               </div>
 
-              <div>
-                <img
-                  src={getPolicyImage(policy?.policyType)}
-                  alt="Policy Type"
-                  style={{ maxWidth: "70px", height: "auto" }}
-                />
+              <div className="d-flex align-items-center">
+                {/* Progress Bar positioned to the left of car */}
+
+                <div>
+                  <img
+                    src={getPolicyImage(policy?.policyType)}
+                    alt="Policy Type"
+                    style={{ maxWidth: "70px", height: "auto" }}
+                  />
+                </div>
               </div>
             </div>
 
-            <div style={{ position: "relative", marginTop: -20 }}>
+            <div style={{ position: "relative", marginTop: -30 }}>
               {status && (
                 <>
                   <div
@@ -810,7 +817,8 @@ const PolicyDetail = ({ policyId }) => {
                       </p>
                       <p className="fw-bolder">
                         {policy?.policyDetails?.idv ||
-                          policy?.policyDetails?.sumInsured || 'Pending'}
+                          policy?.policyDetails?.sumInsured ||
+                          "Pending"}
                       </p>
                     </div>
                   </Grid>
@@ -835,7 +843,9 @@ const PolicyDetail = ({ policyId }) => {
                       >
                         Policy Start Date
                       </p>
-                      <p className="fw-bolder">{policy?.policyStartDate || "Pending"}</p>
+                      <p className="fw-bolder">
+                        {policy?.policyStartDate || "Pending"}
+                      </p>
                     </div>
                   </Grid>
 
@@ -859,7 +869,9 @@ const PolicyDetail = ({ policyId }) => {
                       >
                         Policy End Date
                       </p>
-                      <p className="fw-bolder">{policy?.policyEndDate || 'Pending'}</p>
+                      <p className="fw-bolder">
+                        {policy?.policyEndDate || "Pending"}
+                      </p>
                     </div>
                   </Grid>
                 </Grid>
