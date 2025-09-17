@@ -568,6 +568,16 @@ const PolicyDetail = ({ policyId }) => {
               </p>
 
               <div className="d-flex align-items-center gap-3 mr-3">
+                {progress !== null && progress < 100 && (
+                  <div className="mr-3">
+                    <ProgressBarCircle
+                      progress={progress}
+                      color="#8AC642"
+                      size={50}
+                      strokeWidth={5}
+                    />
+                  </div>
+                )}
                 <button
                   type="button"
                   style={{
@@ -598,7 +608,7 @@ const PolicyDetail = ({ policyId }) => {
             </div>
 
             <div className="d-flex justify-content-between align-items-start px-4">
-              <div>
+              <div style={{ flex: 1 }}>
                 <p
                   style={{
                     width: "400px",
@@ -657,15 +667,6 @@ const PolicyDetail = ({ policyId }) => {
 
               <div className="d-flex align-items-center">
                 {/* Progress Bar positioned to the left of car */}
-                {progress !== null && progress < 100 && (
-                  <div className="mr-3">
-                    <ProgressBarCircle
-                      progress={progress}
-                      color="#8AC642"
-                      size={10} // Make it smaller for the detail view
-                    />
-                  </div>
-                )}
 
                 <div>
                   <img

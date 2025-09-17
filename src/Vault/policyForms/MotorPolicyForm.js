@@ -112,9 +112,8 @@ const MotorPolicyForm = () => {
   const [model, setModel] = useState(
     responseData?.model || policyDetails?.policyDetails?.model || ""
   );
-   
-   const documentId =
-    localStorage.getItem("documentId") ;
+
+  const documentId = localStorage.getItem("documentId");
 
   const commonItemStyle = {
     maxWidth: 900,
@@ -389,7 +388,7 @@ const MotorPolicyForm = () => {
             </p>
             <div>
               <Grid container spacing={5}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={6} md={6}>
                   <CustomInput
                     type="text"
                     label="Policy Number"
@@ -402,13 +401,15 @@ const MotorPolicyForm = () => {
                     required
                   />
 
-                  <Grid container spacing={1} className="mb-2 mt-1">
-                    <Grid item xs={12} md={6} margin={0}>
-                      <label
-                        className="form-label fw-bold mb-0" // ensure tight spacing
-                        htmlFor="start-date"
-                      >
-                        Start date <span className="text-danger">*</span>
+                  <Grid
+                    container
+                    justifyContent={"space-between"}
+                    className="ml-1 mt-2"
+                  >
+                    <div className="form-outline mb-3">
+                      <label className="form-label fw-bold text-light mb-2 d-block">
+                        {"Start Date"}
+                        {<span className="text-danger">*</span>}
                       </label>
                       <DateTimePicker
                         id="start-date"
@@ -417,15 +418,13 @@ const MotorPolicyForm = () => {
                         label="DD/MM/YYYY"
                         value={formatDate(policyStartDate)}
                         onChange={handleStartDateChange}
-                        className="w-100" // full width and dark bg
+                        className={"w-100"}
                       />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <label
-                        className="form-label fw-bold mb-0"
-                        htmlFor="end-date"
-                      >
-                        End date <span className="text-danger">*</span>
+                    </div>
+                    <div className="form-outline mb-3">
+                      <label className="form-label fw-bold text-light mb-2 d-block">
+                        {"End Date"}
+                        {<span className="text-danger">*</span>}
                       </label>
                       <DateTimePicker
                         id="end-date"
@@ -434,9 +433,9 @@ const MotorPolicyForm = () => {
                         label="DD/MM/YYYY"
                         value={formatDate(policyEndDate)}
                         onChange={handleEndDateChange}
-                        className="w-100"
+                        className={"w-100"}
                       />
-                    </Grid>
+                    </div>
                   </Grid>
 
                   <CustomInput

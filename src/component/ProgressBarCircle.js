@@ -2,9 +2,6 @@ import React, { useEffect } from "react";
 import styled from "@emotion/styled";
 import { useSpring, animated } from "react-spring";
 
-const APP_COLOR = "#8AC642"; // Replace with your app color
-const APP_COLOR_SHADE = "#95a5a6"; // Replace with your app color shade
-
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -12,8 +9,8 @@ const Container = styled.div`
 `;
 
 const Svg = styled.svg`
-  width: 100px;
-  height: 100px;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
 `;
 
 const Circle = styled.circle`
@@ -23,16 +20,22 @@ const Circle = styled.circle`
 `;
 
 const Text = styled.text`
-  font-size: 14px;
-  fill: ${APP_COLOR};
+  font-size: ${(props) => props.fontSize}px;
+  fill: ${(props) => props.color};
   text-anchor: middle;
   dominant-baseline: middle;
 `;
 
-const ProgressBarCircle = ({ progress }) => {
-  const radius = 30;
+const ProgressBarCircle = ({
+  progress,
+  size = 80,
+  strokeWidth = 7,
+  fontSize = 14,
+  color = "#8AC642", // app color
+  shade = "#95a5a6", // background circle color
+}) => {
+  const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const strokeWidth = 7;
 
   const [animatedProps, setAnimatedProps] = useSpring(() => ({
     progress: 0,
@@ -47,20 +50,22 @@ const ProgressBarCircle = ({ progress }) => {
 
   return (
     <Container>
-      <Svg>
+      <Svg size={size}>
+        {/* Background circle */}
         <Circle
           cx="50%"
           cy="50%"
           r={radius}
-          stroke={APP_COLOR_SHADE}
+          stroke={shade}
           strokeWidth={strokeWidth}
           fill="none"
         />
+        {/* Animated progress circle */}
         <animated.circle
           cx="50%"
           cy="50%"
           r={radius}
-          stroke={APP_COLOR}
+          stroke={color}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           fill="none"
@@ -69,7 +74,8 @@ const ProgressBarCircle = ({ progress }) => {
             (val) => circumference - (val / 100) * circumference
           )}
         />
-        <Text x="50%" y="50%">
+        {/* Percentage text */}
+        <Text x="50%" y="50%" fontSize={fontSize} color={color}>
           {`${roundedProgress}%`}
         </Text>
       </Svg>
