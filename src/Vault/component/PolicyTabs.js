@@ -169,9 +169,9 @@ const POLICY_TYPE_FILTERS = [
 // Progress calculation logic from React Native version
 const getInputFieldsByPolicyType = (policy) => {
   switch (policy.policyType) {
-    case 'car_policy':
-    case 'bike_policy':
-    case 'other_vehicle':
+    case "car_policy":
+    case "bike_policy":
+    case "other_vehicle":
       return [
         policy?.policyNumber,
         policy?.policyStartDate,
@@ -185,8 +185,8 @@ const getInputFieldsByPolicyType = (policy) => {
         policy?.policyDetails?.assetType,
         policy?.policyDetails?.idv,
       ];
-    case 'life':
-    case 'accident':
+    case "life":
+    case "accident":
       return [
         policy?.policyNumber,
         policy?.policyStartDate,
@@ -197,8 +197,8 @@ const getInputFieldsByPolicyType = (policy) => {
         policy?.insuredCompany,
         policy?.policyDetails?.policyName,
       ];
-    case 'health':
-    case 'other_health':
+    case "health":
+    case "other_health":
       return [
         policy?.policyNumber,
         policy?.policyStartDate,
@@ -222,7 +222,7 @@ const getInputFieldsByPolicyType = (policy) => {
 const calculateProgress = (policy) => {
   const inputFields = getInputFieldsByPolicyType(policy);
   const filledFields = inputFields.filter(
-    field => field !== '' && field !== undefined && field !== null
+    (field) => field !== "" && field !== undefined && field !== null
   ).length;
   return Math.round((filledFields / inputFields.length) * 100);
 };
@@ -230,7 +230,7 @@ const calculateProgress = (policy) => {
 // Progress Bar Component
 const ProgressBarComponent = ({ progress, classes }) => {
   if (progress >= 100) return null;
-  
+
   return (
     <Box className={classes.progressContainer}>
       <LinearProgress
@@ -238,9 +238,7 @@ const ProgressBarComponent = ({ progress, classes }) => {
         value={progress}
         className={classes.progressBar}
       />
-      <Typography className={classes.progressText}>
-        {progress}%
-      </Typography>
+      <Typography className={classes.progressText}>{progress}%</Typography>
     </Box>
   );
 };
@@ -700,22 +698,22 @@ const PolicyCard = ({
               </Typography>
 
               {/* Don't show policy number for pending policies */}
-{!isPendingPolicy && (
-  <Typography
-    sx={{
-      fontSize: "1rem",
-      fontWeight: "600",
-      color: "#fff !important",
-      mb: 0.15,
-      wordBreak: "break-all",
-    }}
-  >
-    {getSafeValue(
-      policy.policyNumber,
-      "Policy number not available"
-    )}
-  </Typography>
-)}
+              {!isPendingPolicy && (
+                <Typography
+                  sx={{
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    color: "#fff !important",
+                    mb: 0.15,
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {getSafeValue(
+                    policy.policyNumber,
+                    "Policy number not available"
+                  )}
+                </Typography>
+              )}
 
               {/* Progress Bar - Only show for pending policies */}
               {showProgress && (
@@ -855,10 +853,10 @@ const CustomPagination = ({
   onPageChange,
   itemsPerPage = 3,
 }) => (
-  <Box sx={{ display: "flex", justifyContent: "center", mb: 0.5 }}>
+  <Box sx={{ display: "flex", justifyContent: "center", mb: 0 }}>
     <Pagination
       variant="outlined"
-      size="small"
+      size="medium"
       count={Math.ceil(totalItems / itemsPerPage)}
       page={currentPage}
       onChange={onPageChange}
@@ -969,7 +967,7 @@ export default function PolicyTabs({
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
     } else if (value === 3) {
-      fetchData("policy/getById", { policyType: "uncompleted" }, false, true); 
+      fetchData("policy/getById", { policyType: "uncompleted" }, false, true);
     } else {
       fetchData("policy/getById", { policyType: activeTab });
     }
@@ -1042,8 +1040,8 @@ export default function PolicyTabs({
                 minHeight: "450px",
               }}
             >
-              <Box 
-                sx={{ 
+              <Box
+                sx={{
                   flexGrow: 1,
                   overflowY: "auto",
                   mb: 2,
@@ -1065,16 +1063,16 @@ export default function PolicyTabs({
                       value={tabValue}
                       activeTab={activeTab}
                       classes={classes}
-                      showProgress={tabValue === 3} 
+                      showProgress={tabValue === 3}
                     />
                   );
                 })}
               </Box>
 
               {Math.ceil(filteredList.length / itemsPerPage) > 1 && (
-                <Box 
-                  sx={{ 
-                    display: "flex", 
+                <Box
+                  sx={{
+                    display: "flex",
                     justifyContent: "center",
                     mt: "auto",
                     py: 2,
