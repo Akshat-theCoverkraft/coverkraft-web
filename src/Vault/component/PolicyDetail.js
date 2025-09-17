@@ -40,6 +40,8 @@ const PolicyDetail = ({ policyId }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toastShownRef = useRef(new Set());
+    const [showComingSoonModal, setShowComingSoonModal] = useState(false); // Add this state
+
 
   useEffect(() => {
     const fetchPolicyDetails = async () => {
@@ -131,13 +133,54 @@ const PolicyDetail = ({ policyId }) => {
     return progress === 100 ? null : progress;
   };
 
+  // New Modal for Coming Soon
+  const ComingSoonModal = ({ visible, onClose }) => {
+    if (!visible) return null;
+  
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(0,0,0,0.6)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 10000,
+        }}
+      >
+        <div
+          style={{
+            background: "#1e1e1e",
+            padding: "2em",
+            borderRadius: "16px",
+            maxWidth: "450px",
+            textAlign: "center",
+            color: "#fff",
+            boxShadow: "0 0 20px rgba(0,0,0,0.7)",
+          }}
+        >
+          <h2 style={{ marginBottom: "1em", fontSize: "1.5em" }}>Coming Soon 🚀</h2>
+          <p style={{ marginBottom: "1.5em", color: "#ccc", lineHeight: 1.6 }}>
+            You may send your requirement to <b>Contact@thecoverkraft.com</b> and
+            our team will get in touch with you.
+          </p>
+          <Button text="OK" size="md" block={true} onClick={onClose} />
+        </div>
+      </div>
+    );
+  };
+
   // Helper function to show toast only once
   const showToastOnce = (message, type = "success") => {
     const toastKey = `${type}-${message}`;
     if (!toastShownRef.current.has(toastKey)) {
       toastShownRef.current.add(toastKey);
       if (type === "success") {
-        toast.success(message);
+        ComingSoonModal(message);
       } else if (type === "error") {
         toast.error(message);
       } else if (type === "info") {
@@ -145,7 +188,7 @@ const PolicyDetail = ({ policyId }) => {
       }
       setTimeout(() => {
         toastShownRef.current.delete(toastKey);
-      }, 3000);
+      }, 3000);u
     }
   };
 
@@ -375,6 +418,11 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   const handlePolicyAction = (action) => {
+     // Show ComingSoonModal for renew action
+    if (action === "renew") {
+      setShowComingSoonModal(true);
+      return;
+    }
     const userId = sessionStorage.getItem("userId");
     const formData = new FormData();
     formData.append("_id", policyId);
@@ -388,7 +436,7 @@ const PolicyDetail = ({ policyId }) => {
             ? "Policy archived successfully"
             : action === "unarchive"
             ? "Policy removed from archive successfully"
-            : "Coming Soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
+            : "Action completed successfully";
         showToastOnce(message, "success");
       })
       .catch(() => {
@@ -537,6 +585,14 @@ const PolicyDetail = ({ policyId }) => {
         toastClassName="custom-toast"
         autoClose={3000}
       />
+
+        {/* ComingSoonModal for renew action */}
+      <ComingSoonModal 
+        visible={showComingSoonModal} 
+        onClose={() => setShowComingSoonModal(false)} 
+      />
+
+
       <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
