@@ -11,9 +11,26 @@ const Carousel1 = () => {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [autoScrollPaused, setAutoScrollPaused] = useState(false);
-  const slidesPerPage = 3;
+  const [slidesPerPage, setSlidesPerPage] = useState(3);
   const videoRefs = useRef([]);
   const autoScrollRef = useRef(null);
+
+    // ✅ Responsive slidesPerPage
+    useEffect(() => {
+      const updateSlidesPerPage = () => {
+        if (window.innerWidth < 768) {
+          setSlidesPerPage(1); // Mobile
+        } else if (window.innerWidth < 1024) {
+          setSlidesPerPage(2); // Tablet
+        } else {
+          setSlidesPerPage(3); // Desktop
+        }
+      };
+  
+      updateSlidesPerPage();
+      window.addEventListener("resize", updateSlidesPerPage);
+      return () => window.removeEventListener("resize", updateSlidesPerPage);
+    }, []);
 
   useEffect(() => {
     const fetchData = async () => {

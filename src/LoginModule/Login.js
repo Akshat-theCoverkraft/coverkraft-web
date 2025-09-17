@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./CSS/login.css";
 import LoginImg from "../Images/img_phone_login.png";
-import logo from "../Images/CoverKraft-beta.png";
+import logo from "../Images/CKbig.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import CustomInput from "../component/CustomInput";
