@@ -12,26 +12,29 @@ const Carousel1 = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [autoScrollPaused, setAutoScrollPaused] = useState(false);
   const [slidesPerPage, setSlidesPerPage] = useState(3);
+
   const videoRefs = useRef([]);
+  const ytPlayers = useRef([]);
   const autoScrollRef = useRef(null);
 
-    // ✅ Responsive slidesPerPage
-    useEffect(() => {
-      const updateSlidesPerPage = () => {
-        if (window.innerWidth < 768) {
-          setSlidesPerPage(1); // Mobile
-        } else if (window.innerWidth < 1024) {
-          setSlidesPerPage(2); // Tablet
-        } else {
-          setSlidesPerPage(3); // Desktop
-        }
-      };
-  
-      updateSlidesPerPage();
-      window.addEventListener("resize", updateSlidesPerPage);
-      return () => window.removeEventListener("resize", updateSlidesPerPage);
-    }, []);
+  // ✅ Responsive slidesPerPage
+  useEffect(() => {
+    const updateSlidesPerPage = () => {
+      if (window.innerWidth < 768) {
+        setSlidesPerPage(1); // Mobile
+      } else if (window.innerWidth < 1024) {
+        setSlidesPerPage(2); // Tablet
+      } else {
+        setSlidesPerPage(3); // Desktop
+      }
+    };
 
+    updateSlidesPerPage();
+    window.addEventListener("resize", updateSlidesPerPage);
+    return () => window.removeEventListener("resize", updateSlidesPerPage);
+  }, []);
+
+  // ✅ Fetch videos
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -56,6 +59,7 @@ const Carousel1 = () => {
     fetchData();
   }, []);
 
+  // ✅ Auto scroll
   useEffect(() => {
     if (!loading && items.length > slidesPerPage && !autoScrollPaused) {
       autoScrollRef.current = setInterval(() => {
@@ -67,7 +71,38 @@ const Carousel1 = () => {
     }
 
     return () => clearInterval(autoScrollRef.current);
-  }, [loading, items.length, autoScrollPaused]);
+  }, [loading, items.length, autoScrollPaused, slidesPerPage]);
+
+  // ✅ YouTube API setup
+  useEffect(() => {
+    if (!window.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(tag);
+    }
+
+    window.onYouTubeIframeAPIReady = () => {
+      videoRefs.current.forEach((iframe, idx) => {
+        if (iframe && iframe.tagName === "IFRAME") {
+          ytPlayers.current[idx] = new window.YT.Player(iframe, {
+            events: {
+              onStateChange: (event) => {
+                if (event.data === window.YT.PlayerState.PLAYING) {
+                  handleVideoPlay(idx);
+                }
+                if (
+                  event.data === window.YT.PlayerState.PAUSED ||
+                  event.data === window.YT.PlayerState.ENDED
+                ) {
+                  handleVideoPause();
+                }
+              },
+            },
+          });
+        }
+      });
+    };
+  }, [items]);
 
   const totalPages = Math.ceil(items.length / slidesPerPage);
   const getCurrentPage = () => Math.floor(currentSlide / slidesPerPage);
@@ -88,37 +123,51 @@ const Carousel1 = () => {
     setCurrentSlide(pageStart);
   };
 
+  // ✅ Stop all other videos when one starts
   const handleVideoPlay = (playingIndex) => {
     setAutoScrollPaused(true);
+
+    // Stop other <video> tags
     videoRefs.current.forEach((video, idx) => {
-      if (video && idx !== playingIndex) {
+      if (video && video.tagName === "VIDEO" && idx !== playingIndex) {
         video.pause();
         video.currentTime = 0;
+      }
+    });
+
+    // Stop other YouTube players
+    ytPlayers.current.forEach((player, idx) => {
+      if (player && idx !== playingIndex) {
+        player.stopVideo();
       }
     });
   };
 
   const handleVideoPause = () => {
-    const isAnyPlaying = videoRefs.current.some(
-      (video) => video && !video.paused && !video.ended
-    );
+    const isAnyPlaying =
+      videoRefs.current.some(
+        (video) => video && video.tagName === "VIDEO" && !video.paused
+      ) ||
+      ytPlayers.current.some(
+        (player) => player && player.getPlayerState() === window.YT.PlayerState.PLAYING
+      );
+
     if (!isAnyPlaying) {
       setAutoScrollPaused(false);
     }
   };
 
-  const isYouTubeUrl = (url) => {
-    return url.includes("youtube.com") || url.includes("youtu.be");
-  };
+  const isYouTubeUrl = (url) =>
+    url.includes("youtube.com") || url.includes("youtu.be");
 
   const convertToEmbedUrl = (url) => {
     try {
       if (url.includes("youtu.be")) {
         const videoId = url.split("/").pop();
-        return `https://www.youtube.com/embed/${videoId}`;
+        return `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
       } else if (url.includes("youtube.com/watch?v=")) {
         const videoId = new URL(url).searchParams.get("v");
-        return `https://www.youtube.com/embed/${videoId}`;
+        return `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
       }
     } catch (err) {
       console.error("Error converting YouTube URL:", err);
@@ -166,7 +215,6 @@ const Carousel1 = () => {
               showArrows={false}
             >
               {items.map((item, idx) => {
-                // Fix: Handle string "null" properly
                 const videoSource =
                   item.video && item.video !== "null"
                     ? item.video
@@ -176,34 +224,12 @@ const Carousel1 = () => {
                   videoSource.trim() !== "" &&
                   videoSource !== "null";
 
-                // console.log(
-                //   "Video source for item:",
-                //   idx,
-                //   videoSource,
-                //   isYouTubeUrl(videoSource),
-                //   videoSource.toLowerCase().endsWith(".mp4")
-                // );
-                // console.log("Item data:", item);
-
                 return (
                   <div className="carousel__slide-item" key={idx}>
                     {hasVideoContent && isYouTubeUrl(videoSource) ? (
-                      // YouTube video
-                      <div
-                        className="carousel__slide-item-media"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: "12px",
-                          overflow: "hidden",
-                          background: "black",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: 0,
-                        }}
-                      >
+                      <div className="carousel__slide-item-media youtube">
                         <iframe
+                          ref={(el) => (videoRefs.current[idx] = el)}
                           src={convertToEmbedUrl(videoSource)}
                           title={`YouTube video player ${idx}`}
                           frameBorder="0"
@@ -213,13 +239,13 @@ const Carousel1 = () => {
                             width: "100%",
                             height: "100%",
                             border: "none",
-                            objectFit: "contain",
+                            borderRadius: "12px",
+                            background: "black",
                           }}
                         />
                       </div>
                     ) : hasVideoContent &&
                       videoSource.toLowerCase().endsWith(".mp4") ? (
-                      // MP4 video
                       <video
                         ref={(el) => (videoRefs.current[idx] = el)}
                         src={videoSource}
@@ -233,39 +259,11 @@ const Carousel1 = () => {
                           width: "100%",
                           height: "100%",
                           objectFit: "contain",
-                          objectPosition: "center",
                           background: "black",
                           borderRadius: "12px",
-                          padding: "0px",
-                        }}
-                      />
-                    ) : hasVideoContent &&
-                      (videoSource.toLowerCase().endsWith(".mov") ||
-                        videoSource.toLowerCase().endsWith(".avi") ||
-                        videoSource.toLowerCase().endsWith(".webm") ||
-                        videoSource.toLowerCase().endsWith(".mkv")) ? (
-                      // Other video formats
-                      <video
-                        ref={(el) => (videoRefs.current[idx] = el)}
-                        src={videoSource}
-                        controls
-                        controlsList="nodownload"
-                        className="carousel__slide-item-media"
-                        onPlay={() => handleVideoPlay(idx)}
-                        onPause={handleVideoPause}
-                        onEnded={handleVideoPause}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain",
-                          objectPosition: "center",
-                          background: "black",
-                          borderRadius: "12px",
-                          padding: "0px",
                         }}
                       />
                     ) : (
-                      // Fallback image
                       <img
                         src={require("../Images/CKanimation.gif")}
                         alt={item.subtitle || `Carousel item ${idx}`}
@@ -273,10 +271,8 @@ const Carousel1 = () => {
                           width: "100%",
                           height: "100%",
                           objectFit: "contain",
-                          objectPosition: "center",
                           background: "black",
                           borderRadius: "12px",
-                          padding: "0px",
                         }}
                         className="carousel__slide-item-media"
                       />

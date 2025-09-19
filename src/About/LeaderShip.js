@@ -92,15 +92,17 @@ const LeadershipTab = () => {
           <p
             style={{
               color: THEME_COLOR.SECONDARY_TEXT,
-              fontSize: "1.2rem",
-              lineHeight: 1.6,
+              fontSize: "1.9rem",
+              lineHeight: 1.2,
               maxWidth: "800px",
               margin: "0 auto",
               opacity: 0.9,
+              whiteSpace: "pre-line",
             }}
           >
             Meet the visionary leaders who drive our mission forward with decades of combined experience
-            in insurance, technology, and business innovation. Together, they shape the future of insurance solutions.
+            in insurance, technology, and business innovation.
+            Together, they shape the future of insurance solutions.
           </p>
         </div>
 
@@ -168,7 +170,7 @@ const LeadershipTab = () => {
                       style={{
                         color: "#8BC642",
                         fontWeight: 700,
-                        fontSize: "1.8rem",
+                        fontSize: "2.2rem",
                         marginBottom: "8px",
                         lineHeight: 1.2,
                       }}
@@ -181,10 +183,12 @@ const LeadershipTab = () => {
                       style={{
                         color: "#8BC642",
                         fontWeight: 600,
-                        fontSize: "1.1rem",
+                        fontSize: "1.3rem",
                         marginBottom: "20px",
                         opacity: 0.8,
                         lineHeight: 1.3,
+                        fontStyle: "italic",
+                        underline: "1px solid rgba(139,198,66,0.6)",
                       }}
                     >
                       {leader.title}
@@ -192,7 +196,7 @@ const LeadershipTab = () => {
                     <motion.p
                       style={{
                         color: THEME_COLOR.SECONDARY_TEXT,
-                        fontSize: "1rem",
+                        fontSize: "1.3rem",
                         lineHeight: 1.6,
                         margin: 0,
                         textAlign: "justify",
