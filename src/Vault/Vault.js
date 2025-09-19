@@ -232,12 +232,12 @@ const Vault = () => {
     if (!shareAllPolicy) setSelectedPolicies([]);
   };
 
-const handleSelectAll = () => {
-  setSelectedPolicies((prev) => {
-    const newSelections = allPolicyIds.filter((id) => !prev.includes(id));
-    return [...prev, ...newSelections];
-  });
-};
+  const handleSelectAll = () => {
+    setSelectedPolicies((prev) => {
+      const newSelections = allPolicyIds.filter((id) => !prev.includes(id));
+      return [...prev, ...newSelections];
+    });
+  };
 
   const handleCheckboxChange = (policyId) =>
     setSelectedPolicies((prev) =>
@@ -253,12 +253,12 @@ const handleSelectAll = () => {
 
 
   const handleExport = (exportFunc) => {
-  if (selectedPolicies.length === 0) {
-    toast.error("Please select at least one policy!");
-    return;
-  }
-  exportFunc();
-};
+    if (selectedPolicies.length === 0) {
+      toast.error("Please select at least one policy!");
+      return;
+    }
+    exportFunc();
+  };
 
   // Export functions
   const exportToExcel = async () => {
@@ -342,7 +342,7 @@ const exportToPDF = async () => {
 
 
 
-  const exportToImage= async () => {
+  const exportToImage = async () => {
     if (selectedPolicies.length === 0) {
       return toast.error("Please select at least one policy to export");
     }
@@ -569,25 +569,25 @@ const exportToPDF = async () => {
                   }}
                 />
 
-             {shareAllPolicy && (
-  <>
-    <StyledButton onClick={handleSelectAll}>
-  Select All ({selectedPolicies.length}/{allPolicyIds.length})
-</StyledButton>
+                {shareAllPolicy && (
+                  <>
+                    <StyledButton onClick={handleSelectAll}>
+                      Select All ({selectedPolicies.length}/{allPolicyIds.length})
+                    </StyledButton>
 
-    <StyledButton onClick={() => handleExport(exportToExcel)}>
-      Excel
-    </StyledButton>
+                    <StyledButton onClick={() => handleExport(exportToExcel)}>
+                      Excel
+                    </StyledButton>
 
-    <StyledButton onClick={() => handleExport(exportToPDF)}>
-      PDF
-    </StyledButton>
+                    <StyledButton onClick={() => handleExport(exportToPDF)}>
+                      PDF
+                    </StyledButton>
 
-    <StyledButton onClick={() => handleExport(exportToImage)}>
-      Image
-    </StyledButton>
-  </>
-)}
+                    <StyledButton onClick={() => handleExport(exportToImage)}>
+                      Image
+                    </StyledButton>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -618,7 +618,7 @@ const exportToPDF = async () => {
               selectedPolicies={selectedPolicies}
               handleCheckboxChange={handleCheckboxChange}
               onPolicyListLengthChange={setPolicyListLength}
-              onArchieveListLength={() => {}}
+              onArchieveListLength={() => { }}
               onAllPolicyIdsChange={setAllPolicyIds}
               searchQuery={searchQuery}
               selectedType={selectedType}
@@ -806,14 +806,18 @@ const exportToPDF = async () => {
               text="Upload"
               size="md"
               onClick={handleConfirm}
+              disabled={!files && !image}
               style={{
-                backgroundColor: "#8AC642",
+                backgroundColor: !files && !image ? "#ccc" : "#8AC642",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",
                 fontWeight: 600,
+                cursor: !files && !image ? "default" : "pointer",
+                opacity: !files && !image ? 0.6 : 1,
               }}
             />
+
           </div>
 
           <Card
