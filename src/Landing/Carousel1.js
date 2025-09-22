@@ -12,10 +12,10 @@ const Carousel1 = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [autoScrollPaused, setAutoScrollPaused] = useState(false);
   const [slidesPerPage, setSlidesPerPage] = useState(3);
+
   const videoRefs = useRef([]);
-  const youtubeIframeRefs = useRef([]);
+  const ytPlayers = useRef([]);
   const autoScrollRef = useRef(null);
-  const [playingIndex, setPlayingIndex] = useState(null); // Track the currently playing video index
 
   // ✅ Function to stop all videos
   const stopAllVideos = useCallback(() => {
@@ -64,6 +64,7 @@ const Carousel1 = () => {
     return () => window.removeEventListener("resize", updateSlidesPerPage);
   }, []);
 
+  // ✅ Fetch videos
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -88,10 +89,7 @@ const Carousel1 = () => {
     fetchData();
   }, []);
 
-<<<<<<< HEAD
-=======
   // ✅ Auto scroll with video check
->>>>>>> d5b66266e6abe329df09b7d2c7ea7708d680e122
   useEffect(() => {
     if (!loading && items.length > slidesPerPage && !autoScrollPaused) {
       autoScrollRef.current = setInterval(() => {
@@ -125,8 +123,6 @@ const Carousel1 = () => {
     return () => clearInterval(autoScrollRef.current);
   }, [loading, items.length, autoScrollPaused, slidesPerPage]);
 
-<<<<<<< HEAD
-=======
   // ✅ YouTube API setup
   useEffect(() => {
     if (!window.YT) {
@@ -170,7 +166,6 @@ const Carousel1 = () => {
     }
   }, [items]);
 
->>>>>>> d5b66266e6abe329df09b7d2c7ea7708d680e122
   const totalPages = Math.ceil(items.length / slidesPerPage);
   const getCurrentPage = () => Math.floor(currentSlide / slidesPerPage);
 
@@ -197,43 +192,23 @@ const Carousel1 = () => {
     setCurrentSlide(pageStart);
   };
 
-  // Centralized function to pause all videos
-  const pauseAllVideos = (exceptIndex = null) => {
+  // ✅ Stop all other videos when one starts
+  const handleVideoPlay = (playingIndex) => {
+    setAutoScrollPaused(true);
+
+    // Stop other <video> tags
     videoRefs.current.forEach((video, idx) => {
-<<<<<<< HEAD
-      if (video && idx !== exceptIndex) {
-=======
       if (
         video &&
         video.tagName === "VIDEO" &&
         idx !== playingIndex &&
         !video.paused
       ) {
->>>>>>> d5b66266e6abe329df09b7d2c7ea7708d680e122
         video.pause();
+        video.currentTime = 0;
       }
     });
-    youtubeIframeRefs.current.forEach((iframe, idx) => {
-      if (iframe && idx !== exceptIndex) {
-        // Use the YouTube Player API to pause the video
-        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-      }
-    });
-  };
 
-<<<<<<< HEAD
-  const handleVideoPlay = (index) => {
-    pauseAllVideos(index);
-    setAutoScrollPaused(true);
-    setPlayingIndex(index);
-  };
-
-  const handleVideoPause = () => {
-    // Only set autoScrollPaused to false if no videos are playing
-    const isAnyPlaying = videoRefs.current.some(
-      (video) => video && !video.paused
-    );
-=======
     // Stop other YouTube players
     ytPlayers.current.forEach((player, idx) => {
       if (
@@ -273,18 +248,11 @@ const Carousel1 = () => {
         return false;
       });
 
->>>>>>> d5b66266e6abe329df09b7d2c7ea7708d680e122
     if (!isAnyPlaying) {
       setAutoScrollPaused(false);
     }
-    setPlayingIndex(null);
   };
 
-<<<<<<< HEAD
-  const isYouTubeUrl = (url) => {
-    return url.includes("youtube.com") || url.includes("youtu.be");
-  };
-=======
   // ✅ Cleanup effect to stop all videos when component unmounts or items change
   useEffect(() => {
     return () => {
@@ -304,7 +272,6 @@ const Carousel1 = () => {
 
   const isYouTubeUrl = (url) =>
     url.includes("youtube.com") || url.includes("youtu.be");
->>>>>>> d5b66266e6abe329df09b7d2c7ea7708d680e122
 
   const convertToEmbedUrl = (url) => {
     try {
@@ -374,23 +341,9 @@ const Carousel1 = () => {
                 return (
                   <div className="carousel__slide-item" key={idx}>
                     {hasVideoContent && isYouTubeUrl(videoSource) ? (
-                      // YouTube video
-                      <div
-                        className="carousel__slide-item-media"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: "12px",
-                          overflow: "hidden",
-                          background: "black",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: 0,
-                        }}
-                      >
+                      <div className="carousel__slide-item-media youtube">
                         <iframe
-                          ref={(el) => (youtubeIframeRefs.current[idx] = el)}
+                          ref={(el) => (videoRefs.current[idx] = el)}
                           src={convertToEmbedUrl(videoSource)}
                           title={`YouTube video player ${idx}`}
                           frameBorder="0"
@@ -400,12 +353,13 @@ const Carousel1 = () => {
                             width: "100%",
                             height: "100%",
                             border: "none",
-                            objectFit: "contain",
+                            borderRadius: "12px",
+                            background: "black",
                           }}
                         />
                       </div>
-                    ) : hasVideoContent ? (
-                      // MP4 or other video format
+                    ) : hasVideoContent &&
+                      videoSource.toLowerCase().endsWith(".mp4") ? (
                       <video
                         ref={(el) => (videoRefs.current[idx] = el)}
                         src={videoSource}
@@ -419,14 +373,11 @@ const Carousel1 = () => {
                           width: "100%",
                           height: "100%",
                           objectFit: "contain",
-                          objectPosition: "center",
                           background: "black",
                           borderRadius: "12px",
-                          padding: "0px",
                         }}
                       />
                     ) : (
-                      // Fallback image
                       <img
                         src={require("../Images/CKanimation.gif")}
                         alt={item.subtitle || `Carousel item ${idx}`}
@@ -434,10 +385,8 @@ const Carousel1 = () => {
                           width: "100%",
                           height: "100%",
                           objectFit: "contain",
-                          objectPosition: "center",
                           background: "black",
                           borderRadius: "12px",
-                          padding: "0px",
                         }}
                         className="carousel__slide-item-media"
                       />
