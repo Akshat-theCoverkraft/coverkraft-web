@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 
@@ -11,7 +10,7 @@ const UniversalHomeButton = () => {
 
   return (
     <button
-      onClick={() => navigate("/")}
+      onClick={() => window.location.href = "/"}
       className="universal-home-button"
       type="button"
       title="Go to Home"
@@ -20,8 +19,7 @@ const UniversalHomeButton = () => {
     >
       <AiOutlineHome size={32} />
     </button>
-  );
-};
+)};
 
 const homeBtnStyle = {
   position: "fixed",
