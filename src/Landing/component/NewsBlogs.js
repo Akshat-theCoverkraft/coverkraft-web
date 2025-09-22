@@ -148,7 +148,6 @@ const BlogSection = () => {
     return () => {
       // don't remove the script (other components might rely on it)
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -219,7 +218,6 @@ const BlogSection = () => {
     }, 80);
 
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [latestPosts, featuredVideo, loading]);
 
   // Destroy YT players and pause on unmount
