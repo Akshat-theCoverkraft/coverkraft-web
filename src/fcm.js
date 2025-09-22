@@ -5,17 +5,17 @@ import toast from "react-hot-toast";
 
 // 🔑 Your Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyAuqyGKHe7E367WydQQGF98oGcAMr2v4Nw",
-  authDomain: "coverkraft-uat-7480d.firebaseapp.com",
-  projectId: "coverkraft-uat-7480d",
-  storageBucket: "coverkraft-uat-7480d.firebasestorage.app",
-  messagingSenderId: "907496635934",
-  appId: "1:907496635934:web:5c3c1a1bb6a99f7ad5f80f",
-  measurementId: "G-V19J2LMBD9"
+apiKey: "AIzaSyDsRJ8VAapehDLayHpN5Ho1fbjXZNvIr78",
+  authDomain: "coverkraft-uat-5a09e.firebaseapp.com",
+  projectId: "coverkraft-uat-5a09e",
+  storageBucket: "coverkraft-uat-5a09e.firebasestorage.app",
+  messagingSenderId: "1012907500859",
+  appId: "1:1012907500859:web:4245b7fd7728e3f4a8031e",
+  measurementId: "G-MLF92G82S6"
 };
 
 const VAPID_KEY =
-  "BKB3vqjp-OKQw7hgiy-vfbuAGe1un10xAe0osDrRzudUPAhpzPklVW3Q1SGSyqjtWy0A9m3awv6BVRWvcdkmpBQ";
+  "BNa_UwbasBOl2NINEfznuaSSvng-tqTTUzqf5RjGETsgxCfzRmI93akWSiWToBTACn0CDbqoEjqpzHilzoq103s";
 
 const app = initializeApp(firebaseConfig);
 export const messaging = getMessaging(app);

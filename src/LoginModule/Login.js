@@ -196,6 +196,7 @@ const Login = () => {
 
     try {
       // Try direct API call
+      console.log("FcmToken:", fcmToken);
       try {
         const directResponse = await axios.post(`${API_URL}user/loginUser`, {
           userPhone: phoneNumber,
