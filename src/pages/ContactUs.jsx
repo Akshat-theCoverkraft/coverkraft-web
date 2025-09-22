@@ -406,7 +406,7 @@ function ContactUs() {
                       Hours of Operation
                     </h3>
                     <p>
-                      Monday–Saturday
+                      Monday – Saturday
                       <br />
                       9:30 AM – 6:30 PM
                     </p>
