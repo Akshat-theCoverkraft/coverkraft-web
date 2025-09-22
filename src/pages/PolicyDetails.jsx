@@ -131,10 +131,7 @@ const PolicyDetails = () => {
     setBuying(true);
 
     try {
-      const policiesRes = await axios.get(
-        "https://api.thecoverkraft.com/policyType/getAll"
-      );
-
+      const policiesRes = await axios.get(`${API_URL}policyType/getAll`);
       const allPolicies = policiesRes.data?.data || [];
 
       const matchedPolicy = allPolicies.find(
@@ -153,7 +150,7 @@ const PolicyDetails = () => {
       }
 
       const autoLoginRes = await axios.post(
-        "https://api.thecoverkraft.com/autoLogin/auto-login-url",
+        `${API_URL}autoLogin/auto-login-url`,
         { type: matchedPolicy.policyNumber },
         {
           headers: {
