@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './CSS/login.css';
-import logo from '../Images/CoverKraft-beta.png';
+import logo from '../Images/CKbig.png';
 import { Link, useNavigate } from 'react-router-dom';
 import CustomInput from '../component/CustomInput';
 import Button from '../component/Button';

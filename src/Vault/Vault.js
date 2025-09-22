@@ -232,12 +232,12 @@ const Vault = () => {
     if (!shareAllPolicy) setSelectedPolicies([]);
   };
 
-const handleSelectAll = () => {
-  setSelectedPolicies((prev) => {
-    const newSelections = allPolicyIds.filter((id) => !prev.includes(id));
-    return [...prev, ...newSelections];
-  });
-};
+  const handleSelectAll = () => {
+    setSelectedPolicies((prev) => {
+      const newSelections = allPolicyIds.filter((id) => !prev.includes(id));
+      return [...prev, ...newSelections];
+    });
+  };
 
   const handleCheckboxChange = (policyId) =>
     setSelectedPolicies((prev) =>
@@ -253,12 +253,12 @@ const handleSelectAll = () => {
 
 
   const handleExport = (exportFunc) => {
-  if (selectedPolicies.length === 0) {
-    toast.error("Please select at least one policy!");
-    return;
-  }
-  exportFunc();
-};
+    if (selectedPolicies.length === 0) {
+      toast.error("Please select at least one policy!");
+      return;
+    }
+    exportFunc();
+  };
 
   // Export functions
   const exportToExcel = async () => {
@@ -299,44 +299,50 @@ const handleSelectAll = () => {
     }
   };
 
-  const exportToPDF = async () => {
-    if (selectedPolicies.length === 0) {
-      return toast.error("Please select at least one policy to export");
-    }
+const exportToPDF = async () => {
+  if (selectedPolicies.length === 0) {
+    return toast.error("Please select at least one policy to export");
+  }
 
-    try {
-      const token = sessionStorage.getItem("token");
-      const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
+  try {
+    const token = sessionStorage.getItem("token");
+    const queryParams = selectedPolicies.map((id) => `_id=${id}`).join("&");
 
-      // Step 1: Get the file URL from backend
-      const response = await axios.get(
-        `${API_URL}policy/pdfTable?${queryParams}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    // Step 1: Get fresh signed URL from backend
+    const response = await axios.get(`${API_URL}policy/pdfTable?${queryParams}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      const fileUrl = response?.data?.fileUrl;
-      if (!fileUrl) throw new Error("PDF file URL is missing in response.");
+    const fileUrl = response?.data?.fileUrl;
+    if (!fileUrl) throw new Error("PDF file URL is missing in response.");
 
-      const filename = fileUrl.split("/").pop() || "policies.pdf";
+    // Extract filename from URL
+    const filename = fileUrl.split("/").pop() || "policies.pdf";
 
-      // Step 2: Trigger download via anchor tag — no CORS issues here
-      const link = document.createElement("a");
-      link.href = fileUrl;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    // Step 2: Trigger download automatically (avoids CORS issues)
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = filename; // suggested filename
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      toast.success("PDF downloded successfully!");
-    } catch (error) {
-      console.error("Error exporting PDF:", error);
+    toast.success("PDF downloaded successfully!");
+  } catch (error) {
+    console.error("Error exporting PDF:", error);
+
+    // Handle access denied / expired URL gracefully
+    if (error.response?.status === 403) {
+      toast.error("Access denied or expired link. Please try again.");
+    } else {
       toast.error("Unable to export PDF. Try again later.");
     }
-  };
+  }
+};
 
-  const exportToImage= async () => {
+
+
+  const exportToImage = async () => {
     if (selectedPolicies.length === 0) {
       return toast.error("Please select at least one policy to export");
     }
@@ -563,25 +569,25 @@ const handleSelectAll = () => {
                   }}
                 />
 
-             {shareAllPolicy && (
-  <>
-    <StyledButton onClick={handleSelectAll}>
-  Select All ({selectedPolicies.length}/{allPolicyIds.length})
-</StyledButton>
+                {shareAllPolicy && (
+                  <>
+                    <StyledButton onClick={handleSelectAll}>
+                      Select All ({selectedPolicies.length}/{allPolicyIds.length})
+                    </StyledButton>
 
-    <StyledButton onClick={() => handleExport(exportToExcel)}>
-      Excel
-    </StyledButton>
+                    <StyledButton onClick={() => handleExport(exportToExcel)}>
+                      Excel
+                    </StyledButton>
 
-    <StyledButton onClick={() => handleExport(exportToPDF)}>
-      PDF
-    </StyledButton>
+                    <StyledButton onClick={() => handleExport(exportToPDF)}>
+                      PDF
+                    </StyledButton>
 
-    <StyledButton onClick={() => handleExport(exportToImage)}>
-      Image
-    </StyledButton>
-  </>
-)}
+                    <StyledButton onClick={() => handleExport(exportToImage)}>
+                      Image
+                    </StyledButton>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -612,7 +618,7 @@ const handleSelectAll = () => {
               selectedPolicies={selectedPolicies}
               handleCheckboxChange={handleCheckboxChange}
               onPolicyListLengthChange={setPolicyListLength}
-              onArchieveListLength={() => {}}
+              onArchieveListLength={() => { }}
               onAllPolicyIdsChange={setAllPolicyIds}
               searchQuery={searchQuery}
               selectedType={selectedType}
@@ -800,14 +806,18 @@ const handleSelectAll = () => {
               text="Upload"
               size="md"
               onClick={handleConfirm}
+              disabled={!files && !image}
               style={{
-                backgroundColor: "#8AC642",
+                backgroundColor: !files && !image ? "#ccc" : "#8AC642",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",
                 fontWeight: 600,
+                cursor: !files && !image ? "default" : "pointer",
+                opacity: !files && !image ? 0.6 : 1,
               }}
             />
+
           </div>
 
           <Card

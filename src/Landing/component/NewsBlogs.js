@@ -134,7 +134,104 @@ const BlogSection = () => {
       document.body.appendChild(tag);
     }
     window.onYouTubeIframeAPIReady = () => {
-      console.log("YouTube API loaded for BlogSection");
+
+      ytReadyRef.current = true;
+      initYouTubePlayers(); // initialize any iframes currently in DOM
+    };
+
+    // If YT already loaded
+    if (window.YT && window.YT.Player) {
+      ytReadyRef.current = true;
+    }
+
+    return () => {
+      // don't remove the script (other components might rely on it)
+    };
+  }, []);
+
+
+  // Initialize YT players for any iframes with id="youtube-<id>"
+  const initYouTubePlayers = () => {
+    if (!(window.YT && window.YT.Player)) return;
+    try {
+      const iframes = Array.from(document.querySelectorAll('iframe[id^="youtube-"]'));
+      iframes.forEach((iframe) => {
+        const domId = iframe.id;
+        const id = domId.replace(/^youtube-/, "");
+        if (!youtubePlayers.current[id]) {
+          try {
+            youtubePlayers.current[id] = new window.YT.Player(domId, {
+              events: {
+                onReady: () => {
+                  // console.debug(`YT player ready for ${id}`);
+                },
+                onStateChange: (event) => {
+                  try {
+                    if (event.data === window.YT.PlayerState.PLAYING) {
+                      handleVideoPlay(id);
+                    } else if (
+                      event.data === window.YT.PlayerState.PAUSED ||
+                      event.data === window.YT.PlayerState.ENDED
+                    ) {
+                      // small debounce: check if anything else playing
+                      setTimeout(() => {
+                        // if none playing, let things be (we're not auto-resuming)
+                      }, 100);
+                    }
+                  } catch (err) {
+                    console.error("YT state change error:", err);
+                  }
+                },
+              },
+            });
+          } catch (e) {
+            console.error("Failed to create YT player for", domId, e);
+          }
+        }
+      });
+    } catch (e) {
+      console.error("Error initializing YT players:", e);
+    }
+  };
+
+  // Re-init players whenever posts change (after DOM updated)
+  useEffect(() => {
+    // small delay to ensure iframes exist
+    const t = setTimeout(() => {
+      if (ytReadyRef.current) {
+        initYouTubePlayers();
+      } else {
+        // poll until ready (max few attempts)
+        let attempts = 0;
+        const poll = setInterval(() => {
+          attempts += 1;
+          if (window.YT && window.YT.Player) {
+            ytReadyRef.current = true;
+            initYouTubePlayers();
+            clearInterval(poll);
+          } else if (attempts > 15) {
+            clearInterval(poll);
+          }
+        }, 200);
+      }
+    }, 80);
+
+    return () => clearTimeout(t);
+  }, [latestPosts, featuredVideo, loading]);
+
+  // Destroy YT players and pause on unmount
+  useEffect(() => {
+    return () => {
+      pauseAllVideos();
+      try {
+        Object.entries(youtubePlayers.current).forEach(([id, player]) => {
+          if (player && typeof player.destroy === "function") {
+            try { player.destroy(); } catch (e) { /* ignore */ }
+          }
+        });
+      } catch (e) { /* ignore */ }
+      youtubePlayers.current = {};
+      videoRefs.current = {};
     };
   }, []);
 
@@ -345,7 +442,13 @@ const BlogSection = () => {
           icon={<TravelExploreIcon />}
           label={
             post.type
-              ? post.type.charAt(0).toUpperCase() + post.type.slice(1)
+              ? post.type === "short"
+                ? "Shorts"
+                : post.type === "blog"
+                ? "Blogs"
+                : post.type === "video"
+                ? "Videos"
+                : post.type.charAt(0).toUpperCase() + post.type.slice(1)
               : "Content"
           }
           size="small"

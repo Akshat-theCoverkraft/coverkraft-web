@@ -31,6 +31,7 @@ import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
 import { PolicyProvider } from "./store/policyContext.js";
+import LeaderShip from "./About/LeaderShip.js";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -133,6 +134,7 @@ function App() {
           <Route path="/policy-type" element={<PolicyType />} />
           <Route path="/policy-details/:id" element={<PolicyDetails />} />
           <Route path="/gmail-sync" element={<GmailSyncPage />} />
+          <Route path="/Our-LeaderShip" element={<LeaderShip />} />
         </Routes>
       </PolicyProvider>
     </HelmetProvider>

@@ -213,123 +213,129 @@ const WhyCoverKraft = () => {
   };
 
   return (
-    <Box
-      id="card"
-      sx={{
-        backgroundColor: "#121212",
-        px: 2,
-        py: 6,
-        scrollMarginTop: "100px",
-      }}
-    >
-      <Box textAlign="center" mb={4}>
-        <Typography variant="subtitle1" sx={headingStyle}>
-          Tips & Tricks
-        </Typography>
-      </Box>
-
-      {loading ? (
+  <>
+    {loading ? (
+      <Box
+        id="card"
+        sx={{
+          backgroundColor: "#121212",
+          px: 2,
+          py: 6,
+          scrollMarginTop: "100px",
+        }}
+      >
         <Box display="flex" justifyContent="center" gap={3} flexWrap="wrap">
           {[...Array(groupSize)].map((_, idx) => (
             <Loader key={idx} />
           ))}
         </Box>
-      ) : cardData.length === 0 ? (
-        <Box textAlign="center" color="#aaa" mt={4}>
-          <Typography variant="h6" color="white">
-            No tips & tricks available right now.
+      </Box>
+    ) : cardData.length > 0 ? (
+      <Box
+        id="card"
+        sx={{
+          backgroundColor: "#121212",
+          px: 2,
+          py: 6,
+          scrollMarginTop: "100px",
+        }}
+      >
+        <Box textAlign="center" mb={4}>
+          <Typography variant="subtitle1" sx={headingStyle}>
+            Tips & Tricks
           </Typography>
         </Box>
-      ) : (
-        <>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            position="relative"
+
+        {/* carousel + arrows UI */}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          position="relative"
+        >
+          <button
+            className="card-arrow-btn left-arrow"
+            onClick={handlePrev}
+            style={{
+              position: "absolute",
+              left: "10px",
+              zIndex: 5,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
           >
-            <button
-              className="card-arrow-btn left-arrow"
-              onClick={handlePrev}
-              style={{
-                position: "absolute",
-                left: "10px",
-                zIndex: 5,
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              <img src={TLeft} alt="Left" width={35} />
-            </button>
+            <img src={TLeft} alt="Left" width={35} />
+          </button>
 
-            <Carousel
-              selectedItem={currentSlide}
-              onChange={(index) => setCurrentSlide(index)}
-              showThumbs={false}
-              showStatus={false}
-              infiniteLoop
-              autoPlay={false}
-              showArrows={false}
-              swipeable
-            >
-              {groupedData.map((group, i) => (
-                <Box
-                  key={i}
-                  display="flex"
-                  justifyContent="center"
-                  flexWrap="nowrap"
-                >
-                  {group.map((card, j) => (
-                    <PolicyCard
-                      key={`${i}-${j}`}
-                      number={i * groupSize + j + 1}
-                      title={card.subtitle}
-                      description={card.description}
-                      onSeeMore={() => openPopup(card)}
-                    />
-                  ))}
-                </Box>
-              ))}
-            </Carousel>
-
-            <button
-              className="card-arrow-btn right-arrow"
-              onClick={handleNext}
-              style={{
-                position: "absolute",
-                right: "10px",
-                zIndex: 5,
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              <img src={TRight} alt="Right" width={35} />
-            </button>
-          </Box>
-
-          <Box display="flex" justifyContent="center" mt={3}>
-            {groupedData.map((_, index) => (
+          <Carousel
+            selectedItem={currentSlide}
+            onChange={(index) => setCurrentSlide(index)}
+            showThumbs={false}
+            showStatus={false}
+            infiniteLoop
+            autoPlay={false}
+            showArrows={false}
+            swipeable
+          >
+            {groupedData.map((group, i) => (
               <Box
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                sx={{
-                  width: 12,
-                  height: 12,
-                  borderRadius: "50%",
-                  mx: 1,
-                  cursor: "pointer",
-                  backgroundColor: currentSlide === index ? "#f39c12" : "#888",
-                  transition: "all 0.3s ease",
-                }}
-              />
+                key={i}
+                display="flex"
+                justifyContent="center"
+                flexWrap="nowrap"
+              >
+                {group.map((card, j) => (
+                  <PolicyCard
+                    key={`${i}-${j}`}
+                    number={i * groupSize + j + 1}
+                    title={card.subtitle}
+                    description={card.description}
+                    onSeeMore={() => openPopup(card)}
+                  />
+                ))}
+              </Box>
             ))}
-          </Box>
-        </>
-      )}
+          </Carousel>
 
-      <AnimatePresence>
+          <button
+            className="card-arrow-btn right-arrow"
+            onClick={handleNext}
+            style={{
+              position: "absolute",
+              right: "10px",
+              zIndex: 5,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            <img src={TRight} alt="Right" width={35} />
+          </button>
+        </Box>
+
+        {/* dots */}
+        <Box display="flex" justifyContent="center" mt={3}>
+          {groupedData.map((_, index) => (
+            <Box
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              sx={{
+                width: 12,
+                height: 12,
+                borderRadius: "50%",
+                mx: 1,
+                cursor: "pointer",
+                backgroundColor:
+                  currentSlide === index ? "#f39c12" : "#888",
+                transition: "all 0.3s ease",
+              }}
+            />
+          ))}
+        </Box>
+
+        {/* popup modal remains here */}
+        <AnimatePresence>
         {showPopup && (
           <Modal open={true} onClose={closePopup}>
             <Box
@@ -410,8 +416,11 @@ const WhyCoverKraft = () => {
           }
         }
       `}</style>
-    </Box>
-  );
+      </Box>
+    ) : null}
+  </>
+);
+
 };
 
 export default WhyCoverKraft;

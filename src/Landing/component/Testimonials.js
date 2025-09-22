@@ -136,6 +136,8 @@ export default function Testimonials() {
   return (
     <>
       <div id="testimonials" className="testimonials-container px-3">
+        {!loading && testimonials.length > 0 && (
+          <>
         <div className="text-center">
           <Typography variant="h3" sx={headingStyle}>
             Testimonials
@@ -343,6 +345,8 @@ export default function Testimonials() {
             )}
           </div>
         </section>
+        </>
+        )}
       </div>
 
       <Modal
