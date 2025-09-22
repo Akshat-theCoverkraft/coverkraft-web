@@ -38,8 +38,8 @@ const NAV_ITEMS = [
 ];
 
 const MORE_MENU_ITEMS = [
+    { key: "blog", label: "Blogs And News", id: "blog" },
   { key: "Card", label: "Tips And Tricks", id: "card" },
-  { key: "blog", label: "Blogs And News", id: "blog" },
   { key: "testimonials", label: "Testimonials", id: "testimonials" },
   { key: "faq", label: "FAQs", id: "faq" },
 ];
