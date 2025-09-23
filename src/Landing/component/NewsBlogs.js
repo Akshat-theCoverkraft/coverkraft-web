@@ -62,6 +62,8 @@ const BlogSection = () => {
 
   const videoRefs = useRef({});
   const youtubePlayers = useRef({});
+  const ytReadyRef = useRef(false);  // <-- Add this
+
 
   const registerVideo = (el, id) => {
     if (el && id) {
