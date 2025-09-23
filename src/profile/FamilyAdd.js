@@ -6,7 +6,7 @@ import backArrow from "../Images/ic_back_button.png";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
 import Dropdown from "../component/Dropdown";
-import { toast, ToastContainer } from "react-toastify";
+import AlertModal from "../component/AlertModal";
 import { THEME_COLOR } from "../constants";
 
 // ✅ Utility function to format Title Case
@@ -24,8 +24,10 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
   const [fullName, setFullName] = useState("");
   const [userPhone, setuserPhone] = useState("");
   const [useremail, setuserEmail] = useState("");
-
   const [errors, setErrors] = useState({});
+
+  // ✅ Modal state
+  const [alert, setAlert] = useState({ open: false, message: "", type: "success" });
 
   const familyOption = [
     { value: "Spouse", label: "Spouse" },
@@ -48,7 +50,6 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
   useEffect(() => {
     if (familyAdd && mode === "edit" && editData) {
       setFamilyMember(editData.familyMember || "");
-      // ✅ Apply Title Case formatting when setting fullName from editData
       setFullName(editData.fullName ? toTitleCase(editData.fullName) : "");
       setuserPhone(editData.mobile || "");
       setuserEmail(editData.email || "");
@@ -134,7 +135,7 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
 
     const formData = {
       userId,
-      fullName: toTitleCase(fullName), // ✅ Ensure Title Case before sending to API
+      fullName: toTitleCase(fullName),
       familyMember,
       mobile: userPhone,
       email: useremail,
@@ -158,134 +159,151 @@ const FamilyAdd = ({ familyAdd, onfamilyAddClose, onSuccess, mode = "add", editD
       }
 
       if (response.status === 200) {
-        toast.success(mode === "edit" ? "Member updated successfully" : "Member added successfully");
+        setAlert({
+          open: true,
+          message: mode === "edit" ? "Member updated successfully" : "Member added successfully",
+          type: "success",
+        });
         onSuccess();
         onfamilyAddClose();
         resetForm();
       } else {
-        toast.error("Something went wrong.");
+        setAlert({ open: true, message: "Something went wrong.", type: "error" });
       }
     } catch (err) {
-      toast.error(mode === "edit" ? "Failed to update member." : "Failed to save member.");
+      setAlert({
+        open: true,
+        message: mode === "edit" ? "Failed to update member." : "Failed to save member.",
+        type: "error",
+      });
     }
   };
 
   return (
-    <Drawer
-      anchor="right"
-      open={familyAdd}
-      onClose={onfamilyAddClose}
-      sx={{
-        "& .MuiPaper-root": {
-          backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-          color: THEME_COLOR.COLOR,
-          width: "35vw",
-          maxWidth: "400px",
-        },
-      }}
-    >
-      <ToastContainer />
-      <Box
+    <>
+      <Drawer
+        anchor="right"
+        open={familyAdd}
+        onClose={onfamilyAddClose}
         sx={{
-          marginTop: "20px",
-          height: "100%",
-          display: "flex",
-          width: "100%",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "flex-start",
-          marginLeft: "25px",
+          "& .MuiPaper-root": {
+            backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+            color: THEME_COLOR.COLOR,
+            width: "35vw",
+            maxWidth: "400px",
+          },
         }}
       >
-        <Box sx={{ width: "100%", maxWidth: "450px" }}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ cursor: "pointer", mr: 2 }}>
-              <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
+        <Box
+          sx={{
+            marginTop: "20px",
+            height: "100%",
+            display: "flex",
+            width: "100%",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            marginLeft: "25px",
+          }}
+        >
+          <Box sx={{ width: "100%", maxWidth: "450px" }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ cursor: "pointer", mr: 2 }}>
+                <img src={backArrow} alt="Back" onClick={onfamilyAddClose} />
+              </Box>
+              <Typography variant="h4">{mode === "edit" ? "Edit Member" : "Add New Member"}</Typography>
             </Box>
-            <Typography variant="h4">{mode === "edit" ? "Edit Member" : "Add New Member"}</Typography>
-          </Box>
 
-          <Box sx={{ mb: 3, mt: 5, width: "90%" }}>
-            <Dropdown
-              label="Family Member"
-              options={familyOption}
-              value={familyMember}
-              onChange={(e) => {
-                const value = e.target.value;
-                setFamilyMember(value);
-                validateField("familyMember", value);
-              }}
-              placeholder="Select"
-              backgroundColor={THEME_COLOR.FADE_BACKGROUND}
-              error={!!errors.familyMember}
-              helperText={errors.familyMember}
-              required
-            />
-            {errors.familyMember && (
-              <div className="invalid-feedback text-danger d-block">{errors.familyMember}</div>
-            )}
-          </Box>
+            <Box sx={{ mb: 3, mt: 5, width: "90%" }}>
+              <Dropdown
+                label="Family Member"
+                options={familyOption}
+                value={familyMember}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFamilyMember(value);
+                  validateField("familyMember", value);
+                }}
+                placeholder="Select"
+                backgroundColor={THEME_COLOR.FADE_BACKGROUND}
+                error={!!errors.familyMember}
+                helperText={errors.familyMember}
+                required
+              />
+              {errors.familyMember && (
+                <div className="invalid-feedback text-danger d-block">{errors.familyMember}</div>
+              )}
+            </Box>
 
-          <Box sx={{ mb: 3, width: "90%" }}>
-            <CustomInput
-              label="Full Name"
-              placeholder="Enter Full Name"
-              value={fullName}
-              onChange={(e) => {
-                setFullName(e.target.value);
-                validateField("fullName", e.target.value);
-              }}
-              inputStyle={commonInputStyle}
-              error={!!errors.fullName}
-              validationMessage={errors.fullName}
-              required
-            />
-          </Box>
+            <Box sx={{ mb: 3, width: "90%" }}>
+              <CustomInput
+                label="Full Name"
+                placeholder="Enter Full Name"
+                value={fullName}
+                onChange={(e) => {
+                  setFullName(e.target.value);
+                  validateField("fullName", e.target.value);
+                }}
+                inputStyle={commonInputStyle}
+                error={!!errors.fullName}
+                validationMessage={errors.fullName}
+                required
+              />
+            </Box>
 
-          <Box sx={{ mb: 3, width: "90%" }}>
-            <CustomInput
-              label="Phone Number"
-              placeholder="Enter Phone Number"
-              value={userPhone}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                setuserPhone(value);
-                validateField("userPhone", value);
-              }}
-              inputStyle={commonInputStyle}
-              error={!!errors.userPhone}
-              validationMessage={errors.userPhone}
-              required
-            />
-          </Box>
+            <Box sx={{ mb: 3, width: "90%" }}>
+              <CustomInput
+                label="Phone Number"
+                placeholder="Enter Phone Number"
+                value={userPhone}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  setuserPhone(value);
+                  validateField("userPhone", value);
+                }}
+                inputStyle={commonInputStyle}
+                error={!!errors.userPhone}
+                validationMessage={errors.userPhone}
+                required
+              />
+            </Box>
 
-          <Box sx={{ mb: 3, width: "90%" }}>
-            <CustomInput
-              label="Email"
-              placeholder="Enter Email"
-              value={useremail}
-              onChange={(e) => {
-                setuserEmail(e.target.value);
-                validateField("useremail", e.target.value);
-              }}
-              inputStyle={commonInputStyle}
-              error={!!errors.useremail}
-              validationMessage={errors.useremail}
-              required
-            />
-          </Box>
+            <Box sx={{ mb: 3, width: "90%" }}>
+              <CustomInput
+                label="Email"
+                placeholder="Enter Email"
+                value={useremail}
+                onChange={(e) => {
+                  setuserEmail(e.target.value);
+                  validateField("useremail", e.target.value);
+                }}
+                inputStyle={commonInputStyle}
+                error={!!errors.useremail}
+                validationMessage={errors.useremail}
+                required
+              />
+            </Box>
 
-          <Box sx={{ mb: 3, width: "90%" }}>
-            <Button
-              text={mode === "edit" ? "Update" : "Save"}
-              size="sm"
-              block={true}
-              onClick={handleSubmit}
-            />
+            <Box sx={{ mb: 3, width: "90%" }}>
+              <Button
+                text={mode === "edit" ? "Update" : "Save"}
+                size="sm"
+                block={true}
+                onClick={handleSubmit}
+              />
+            </Box>
           </Box>
         </Box>
-      </Box>
-    </Drawer>
+      </Drawer>
+
+      {/* ✅ Alert Modal */}
+      <AlertModal
+        open={alert.open}
+        onClose={() => setAlert({ ...alert, open: false })}
+        message={alert.message}
+        type={alert.type}
+      />
+    </>
   );
 };
 
