@@ -188,17 +188,27 @@ const Feeds = () => {
   }, [contentData]);
 
   // ✅ Handle when normal video plays
-  const handleVideoClick = (index) => {
+  const handleVideoPlayHover = (index) => {
+    // Pause all other videos
     Object.entries(videoRefs.current).forEach(([key, video]) => {
       if (parseInt(key) !== index && video) video.pause();
     });
 
-    // ✅ Pause all YouTube videos
+    // Pause all YouTube videos
     Object.values(youtubePlayers.current).forEach(player => {
       if (player && player.pauseVideo) {
         player.pauseVideo();
       }
     });
+
+    // Play this video
+    const currentVideo = videoRefs.current[index];
+    if (currentVideo) currentVideo.play();
+  };
+
+  const handleVideoPauseHover = (index) => {
+    const currentVideo = videoRefs.current[index];
+    if (currentVideo) currentVideo.pause();
   };
 
   const handleTabChange = (_, newValue) => {
@@ -329,13 +339,10 @@ const Feeds = () => {
                           <CardMedia
                             component="video"
                             src={mediaUrl}
-                            controls
-                            controlsList="nodownload"
-                            height="220"
                             ref={(el) => (videoRefs.current[index] = el)}
-                            onClick={(e) => e.stopPropagation()}
-                            onPlay={() => handleVideoClick(index)}
-                            sx={{ objectFit: "contain", transition: "transform 0.4s ease" }}
+                            onMouseEnter={() => handleVideoPlayHover(index)}
+                            onMouseLeave={() => handleVideoPauseHover(index)}
+                            sx={{ objectFit: "contain", height: 220, transition: "transform 0.4s ease" }}
                           />
                         ) : (
                           <CardMedia

@@ -13,7 +13,7 @@ import { getAllPolicyType } from "../../store/action/action";
 import API_URL from "../../ServiceModule/Service";
 import { useNavigate } from "react-router-dom";
 import "../component/CSS/policyType.css";
-import { headingStyle } from "../../theme/themeStyles";
+import { headingStyle, textStyle } from "../../theme/themeStyles";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -48,9 +48,7 @@ const PolicyType = () => {
 
   return (
     <Box sx={{ mx: "6%", my: 4, mt: 0, mb: 10 }}>
-      <Typography variant="h3" sx={headingStyle}>
-        Pick a Policy & Get Covered
-      </Typography>
+      
 
       <Box
         sx={{
@@ -62,53 +60,14 @@ const PolicyType = () => {
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
         }}
       >
-        {/* Heading and Buttons */}
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={3}
-        >
-          <Typography variant="h4" fontWeight="bold">
+        <Typography variant="h3" sx={headingStyle}>
+        Pick a Policy & Get Covered
+      </Typography>
+       <Typography variant="h4" sx={textStyle}>
             Let's get you & your family insured
           </Typography>
-
-          {policyType.length > ITEMS_PER_PAGE && (
-            <Box display="flex" gap={2}>
-              {visibleCount < policyType.length && (
-                <Typography
-                  onClick={handleSeeMore}
-                  sx={{
-                    color: "#5A9E1E",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontSize: "1.2rem",
-                    textTransform: "uppercase",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                >
-                  See More
-                </Typography>
-              )}
-              {visibleCount > ITEMS_PER_PAGE && (
-                <Typography
-                  onClick={handleSeeLess}
-                  sx={{
-                    color: "#5A9E1E",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontSize: "1.2rem",
-                    textTransform: "uppercase",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                >
-                  See Less
-                </Typography>
-              )}
-            </Box>
-          )}
-        </Box>
-
+        {/* Heading and Buttons */}
+       
         <Grid container spacing={3}>
           {policyType.slice(0, visibleCount).map((policy, index) => (
             <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
@@ -185,6 +144,51 @@ const PolicyType = () => {
             </Grid>
           ))}
         </Grid>
+         <Box
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="end"
+          mb={3}
+          sx={{marginTop: 3}}
+        >
+          
+
+          {policyType.length > ITEMS_PER_PAGE && (
+            <Box display="flex" gap={2}>
+              {visibleCount < policyType.length && (
+                <Typography
+                  onClick={handleSeeMore}
+                  sx={{
+                    color: "#5A9E1E",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    fontSize: "1.2rem",
+                    textTransform: "uppercase",
+                    "&:hover": { textDecoration: "underline" },
+                  }}
+                >
+                  See More
+                </Typography>
+              )}
+              {visibleCount > ITEMS_PER_PAGE && (
+                <Typography
+                  onClick={handleSeeLess}
+                  sx={{
+                    color: "#5A9E1E",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    fontSize: "1.2rem",
+                    textTransform: "uppercase",
+                    "&:hover": { textDecoration: "underline" },
+                  }}
+                >
+                  See Less
+                </Typography>
+              )}
+            </Box>
+          )}
+        </Box>
+
       </Box>
     </Box>
   );

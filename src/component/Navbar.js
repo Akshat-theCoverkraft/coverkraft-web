@@ -9,12 +9,17 @@ import {
   useMediaQuery,
   useTheme,
   Badge,
+  Divider,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import LogoutIcon from "@mui/icons-material/Logout";
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  MoreVert as MoreVertIcon,
+  AccountCircleOutlined as AccountCircleOutlinedIcon,
+  Logout as LogoutIcon,
+  Notifications as NotificationsIcon,
+  Security as VaultIcon,
+} from "@mui/icons-material";
 import Logo from "../Images/CKbig.png";
 import profileIcon from "../Images/ic-profile.png";
 import notificationIcon from "../Images/ic-notification.png";
@@ -25,18 +30,24 @@ import API_URL from "../ServiceModule/Service";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/" },
-  { key: "about", label: "About Us", path: "/about", auth: true },
+  {
+    key: "about",
+    label: "About Us",
+    path: "/about",
+    auth: true,
+    children: [{ label: "Our Leaders", path: "/Our-LeaderShip" }],
+  },
   { key: "contact", label: "Contact Us", path: "/contactus", auth: true },
 ];
 
 const MORE_MENU_ITEMS = [
-  { key: "Card", label: "Tips And Tricks", id: "card" },
   { key: "blog", label: "Blogs And News", id: "blog" },
+  { key: "Card", label: "Tips And Tricks", id: "card" },
   { key: "testimonials", label: "Testimonials", id: "testimonials" },
   { key: "faq", label: "FAQs", id: "faq" },
 ];
 
-export const StyledButton = styled("button")(() => ({
+const StyledButton = styled("button")(() => ({
   backgroundColor: "transparent",
   color: "#8AC642",
   border: "1.5px solid #8AC642",
@@ -52,6 +63,11 @@ export const StyledButton = styled("button")(() => ({
     backgroundColor: "#8AC642",
     color: "#000",
   },
+  "@media (max-width: 768px)": {
+    fontSize: "1.2rem",
+    padding: "6px 12px",
+    minWidth: "80px",
+  },
 }));
 
 const DarkMenu = styled(Menu)(({ theme }) => ({
@@ -63,8 +79,36 @@ const DarkMenu = styled(Menu)(({ theme }) => ({
     minWidth: 150,
   },
   "& .MuiModal-root": {
-    zIndex: 1,
+    zIndex: 1300,
   },
+}));
+
+const NavItem = styled("div")(({ active }) => ({
+  cursor: "pointer",
+  color: active ? "#8AC642" : "white",
+  fontWeight: active ? "600" : "400",
+  fontSize: "1.7rem",
+  padding: "4px 10px",
+  transition: "all 0.2s ease",
+  "&:hover": {
+    color: "#8AC642",
+  },
+  "@media (max-width: 1024px)": {
+    fontSize: "1.5rem",
+  },
+}));
+
+const MenuSection = styled("div")(() => ({
+  padding: "8px 0",
+}));
+
+const SectionTitle = styled("div")(() => ({
+  padding: "8px 16px 4px",
+  fontSize: "0.9rem",
+  fontWeight: "600",
+  color: "#8AC642",
+  textTransform: "uppercase",
+  letterSpacing: "0.5px",
 }));
 
 function Navbar({ scrollToContactBottom }) {
@@ -72,46 +116,22 @@ function Navbar({ scrollToContactBottom }) {
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const [profileAnchor, setProfileAnchor] = useState(null);
-  const [mobileAnchor, setMobileAnchor] = useState(null);
-  const [moreAnchor, setMoreAnchor] = useState(null);
+  const [anchorEls, setAnchorEls] = useState({
+    profile: null,
+    mobile: null,
+    more: null,
+    submenu: null,
+  });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
 
+  // Memoized values
   const userId = useMemo(() => sessionStorage.getItem("userId"), []);
   const userEmail = useMemo(() => sessionStorage.getItem("userEmail"), []);
-  const loggedIn = useMemo(
-    () => sessionStorage.getItem("isLoggedIn") === "true",
-    []
-  );
-  const isHomePage = useMemo(
-    () => location.pathname === "/",
-    [location.pathname]
-  );
-
-  const fetchUnreadPolicyCount = async () => {
-    try {
-      const res = await axios.get(`${API_URL}notification/getAll`, {
-        params: { userId: userId, type: "policy", status: "active" },
-      });
-
-      if (res.data?.data) {
-        const count = res.data.data.filter(
-          (n) => n.notificationStatus !== "seen"
-        ).length;
-        setUnreadPolicyCount(count);
-      }
-    } catch (error) {
-      console.error("Failed to fetch unread notifications:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (loggedIn) {
-      fetchUnreadPolicyCount();
-    }
-  }, [loggedIn]);
+  const loggedIn = useMemo(() => sessionStorage.getItem("isLoggedIn") === "true", []);
+  const isHomePage = useMemo(() => location.pathname === "/", [location.pathname]);
 
   const visibleNavItems = useMemo(() => {
     return NAV_ITEMS.filter((item) => {
@@ -120,29 +140,210 @@ function Navbar({ scrollToContactBottom }) {
     });
   }, [loggedIn, isHomePage]);
 
-  const handleNavigation = useCallback(
-    (item) => {
-      if (item.auth && !loggedIn) return navigate("/login");
-      navigate(item.path);
-    },
-    [loggedIn, navigate]
-  );
+  // Fetch unread notifications
+  const fetchUnreadPolicyCount = useCallback(async () => {
+    if (!loggedIn || !userId) return;
+    
+    try {
+      const res = await axios.get(`${API_URL}notification/getAll`, {
+        params: { userId, type: "policy", status: "active" },
+      });
 
-  const handleMoreItemClick = (id) => {
-    setMoreAnchor(null);
+      if (res.data?.data) {
+        const count = res.data.data.filter(n => n.notificationStatus !== "seen").length;
+        setUnreadPolicyCount(count);
+      }
+    } catch (error) {
+      console.error("Failed to fetch unread notifications:", error);
+    }
+  }, [loggedIn, userId]);
+
+  useEffect(() => {
+    fetchUnreadPolicyCount();
+  }, [fetchUnreadPolicyCount]);
+
+  // Generic anchor handler
+  const setAnchor = useCallback((type, value) => {
+    setAnchorEls(prev => ({ ...prev, [type]: value }));
+  }, []);
+
+  // Navigation handlers
+  const handleNavigation = useCallback((item) => {
+    if (item.auth && !loggedIn) return navigate("/login");
+    navigate(item.path);
+  }, [loggedIn, navigate]);
+
+  const handleHomeClick = useCallback(() => {
+    if (isHomePage) {
+      window.location.reload();
+    } else {
+      navigate("/");
+    }
+  }, [isHomePage, navigate]);
+
+  const handleMoreItemClick = useCallback((id) => {
+    setAnchor('more', null);
     const element = document.getElementById(id);
     if (element) element.scrollIntoView({ behavior: "smooth" });
-  };
+  }, [setAnchor]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     sessionStorage.clear();
-    setProfileAnchor(null);
+    setAnchor('profile', null);
+    setAnchor('mobile', null);
     navigate("/");
     setTimeout(() => window.location.reload(), 100);
-  };
+  }, [navigate, setAnchor]);
 
-  const handleVault = () => {
+  const handleVault = useCallback(() => {
     navigate(sessionStorage.getItem("token") ? "/vault" : "/login");
+  }, [navigate]);
+
+  const closeAllMenus = useCallback(() => {
+    setAnchorEls({
+      profile: null,
+      mobile: null,
+      more: null,
+      submenu: null,
+    });
+  }, []);
+
+  // Mobile Menu Sections
+  const renderMobileMenuSections = () => {
+    const sections = [];
+
+    if (loggedIn) {
+      // Quick Actions Section
+      sections.push(
+        <MenuSection key="quick-actions">
+          <SectionTitle>Quick Actions</SectionTitle>
+          <MenuItem
+            onClick={() => {
+              handleVault();
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            <VaultIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+            Policy Vault
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              navigate("/notification");
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            <Badge
+              badgeContent={unreadPolicyCount}
+              color="success"
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: "#8AC642",
+                  color: "black",
+                  fontSize: "0.7rem",
+                },
+              }}
+            >
+              <NotificationsIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+            </Badge>
+            Notifications
+          </MenuItem>
+        </MenuSection>
+      );
+
+      sections.push(<Divider key="divider1" sx={{ borderColor: "#333" }} />);
+
+      // Account Section
+      sections.push(
+        <MenuSection key="account">
+          <SectionTitle>Account</SectionTitle>
+          <MenuItem
+            onClick={() => {
+              setDrawerOpen(true);
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            <AccountCircleOutlinedIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+            My Profile
+          </MenuItem>
+          <MenuItem
+            onClick={handleLogout}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            <LogoutIcon sx={{ mr: 1.5, color: "#f44336" }} />
+            Logout
+          </MenuItem>
+        </MenuSection>
+      );
+
+      sections.push(<Divider key="divider2" sx={{ borderColor: "#333" }} />);
+    } else {
+      // Guest Actions
+      sections.push(
+        <MenuSection key="guest-actions">
+          <SectionTitle>Get Started</SectionTitle>
+          <MenuItem
+            onClick={() => {
+              navigate("/login");
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            Login
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleVault();
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            <VaultIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+            Policy Vault
+          </MenuItem>
+        </MenuSection>
+      );
+
+      sections.push(<Divider key="divider3" sx={{ borderColor: "#333" }} />);
+    }
+
+    // Navigation Section
+    if (visibleNavItems.length > 0) {
+      sections.push(
+        <MenuSection key="navigation">
+          <SectionTitle>Navigation</SectionTitle>
+          {visibleNavItems.map((item) => (
+            <React.Fragment key={item.key}>
+              <MenuItem
+                onClick={() => {
+                  handleNavigation(item);
+                  closeAllMenus();
+                }}
+                sx={{ fontSize: "1.3rem", py: 1.5 }}
+              >
+                {item.label}
+              </MenuItem>
+              {item.children?.map((child) => (
+                <MenuItem
+                  key={child.label}
+                  onClick={() => {
+                    navigate(child.path);
+                    closeAllMenus();
+                  }}
+                  sx={{ fontSize: "1.2rem", pl: 4, py: 1 }}
+                >
+                  {child.label}
+                </MenuItem>
+              ))}
+            </React.Fragment>
+          ))}
+        </MenuSection>
+      );
+    }
+
+    return sections;
   };
 
   return (
@@ -153,7 +354,7 @@ function Navbar({ scrollToContactBottom }) {
           top: 0,
           left: 0,
           right: 0,
-          zIndex: 1000,
+          zIndex: 1200,
           padding: isMobile ? "10px 20px" : "10px 70px",
           backgroundColor: "black",
           boxShadow: "0px 4px 6px rgba(0,0,0,0.3)",
@@ -163,108 +364,93 @@ function Navbar({ scrollToContactBottom }) {
           <img
             src={Logo}
             alt="Logo"
-            height={70}
-            width={280}
+            height={isMobile ? 50 : 70}
+            width={isMobile ? 200 : 280}
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("/")}
+            onClick={handleHomeClick}
           />
+
           {isMobile ? (
             <>
-              <IconButton onClick={(e) => setMobileAnchor(e.currentTarget)}>
-                {mobileAnchor ? (
+              <IconButton onClick={(e) => setAnchor('mobile', anchorEls.mobile ? null : e.currentTarget)}>
+                {anchorEls.mobile ? (
                   <CloseIcon sx={{ color: THEME_COLOR.COLOR }} />
                 ) : (
                   <MenuIcon sx={{ color: THEME_COLOR.COLOR }} />
                 )}
               </IconButton>
               <DarkMenu
-                anchorEl={mobileAnchor}
-                open={Boolean(mobileAnchor)}
-                onClose={() => setMobileAnchor(null)}
+                anchorEl={anchorEls.mobile}
+                open={Boolean(anchorEls.mobile)}
+                onClose={() => setAnchor('mobile', null)}
+                PaperProps={{
+                  sx: {
+                    maxHeight: "80vh",
+                    width: "280px",
+                    overflowY: "auto",
+                  },
+                }}
               >
-                {visibleNavItems.map((item) => (
-                  <MenuItem
-                    key={item.key}
-                    onClick={() => {
-                      handleNavigation(item);
-                      setMobileAnchor(null);
-                    }}
-                    sx={{ fontSize: "1.3rem" }}
-                  >
-                    {item.label}
-                  </MenuItem>
-                ))}
-                {loggedIn ? (
-                  <>
-                    <MenuItem
-                      key="profile"
-                      onClick={() => {
-                        setDrawerOpen(true);
-                        setMobileAnchor(null);
-                      }}
-                      sx={{ fontSize: "1.3rem" }}
-                    >
-                      My Profile
-                    </MenuItem>
-                    <MenuItem
-                      key="notify"
-                      onClick={() => {
-                        navigate("/notification");
-                        setMobileAnchor(null);
-                      }}
-                      sx={{ fontSize: "1.3rem" }}
-                    >
-                      Notification
-                    </MenuItem>
-                    <MenuItem
-                      key="logout"
-                      onClick={handleLogout}
-                      sx={{ fontSize: "1.3rem" }}
-                    >
-                      Logout
-                    </MenuItem>
-                  </>
-                ) : (
-                  <MenuItem
-                    onClick={() => {
-                      navigate("/login");
-                      setMobileAnchor(null);
-                    }}
-                    sx={{ fontSize: "1.3rem" }}
-                  >
-                    Login
-                  </MenuItem>
-                )}
-                <MenuItem
-                  key="policy-vault"
-                  onClick={() => {
-                    handleVault();
-                    setMobileAnchor(null);
-                  }}
-                  sx={{ fontSize: "1.3rem" }}
-                >
-                  Policy Vault
-                </MenuItem>
+                {renderMobileMenuSections()}
               </DarkMenu>
             </>
           ) : (
-            <div className="d-flex align-items-center" style={{ gap: 24 }}>
-              {visibleNavItems.map((item) => (
-                <div
-                  key={item.key}
-                  style={{
-                    cursor: "pointer",
-                    color:
-                      location.pathname === item.path ? "#8AC642" : "white",
-                    fontWeight: location.pathname === item.path ? "600" : "400",
-                    fontSize: "1.7rem",
-                    padding: "4px 10px",
-                  }}
-                  onClick={() => handleNavigation(item)}
-                >
-                  {item.label}
-                </div>
-              ))}
+            <div className="d-flex align-items-center" style={{ gap: isTablet ? 16 : 24 }}>
+              {visibleNavItems.map((item) => {
+                if (item.children) {
+                  return (
+                    <div key={item.key}>
+                      <NavItem
+                        active={location.pathname === item.path}
+                        onClick={(e) => setAnchor('submenu', e.currentTarget)}
+                      >
+                        {item.label}
+                      </NavItem>
+                      <DarkMenu
+                        anchorEl={anchorEls.submenu}
+                        open={Boolean(anchorEls.submenu)}
+                        onClose={() => setAnchor('submenu', null)}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                        transformOrigin={{ vertical: "top", horizontal: "left" }}
+                        PaperProps={{ sx: { mt: 1 } }}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate(item.path);
+                            setAnchor('submenu', null);
+                          }}
+                          sx={{ fontSize: "1.3rem" }}
+                        >
+                          {item.label}
+                        </MenuItem>
+                        {item.children.map((child) => (
+                          <MenuItem
+                            key={child.label}
+                            onClick={() => {
+                              navigate(child.path);
+                              setAnchor('submenu', null);
+                            }}
+                            sx={{ fontSize: "1.3rem" }}
+                          >
+                            {child.label}
+                          </MenuItem>
+                        ))}
+                      </DarkMenu>
+                    </div>
+                  );
+                }
+
+                return (
+                  <NavItem
+                    key={item.key}
+                    active={location.pathname === item.path}
+                    onClick={() => handleNavigation(item)}
+                  >
+                    {item.label}
+                  </NavItem>
+                );
+              })}
+
               {loggedIn ? (
                 <>
                   <Badge
@@ -286,7 +472,9 @@ function Navbar({ scrollToContactBottom }) {
                       onClick={() => navigate("/notification")}
                     />
                   </Badge>
+                  
                   <Tooltip
+                    title={!!userEmail ? "" : "Please update email."}
                     PopperProps={{
                       sx: {
                         "& .MuiTooltip-tooltip": {
@@ -295,7 +483,6 @@ function Navbar({ scrollToContactBottom }) {
                         },
                       },
                     }}
-                    title={!!userEmail ? "" : "Please update email."}
                   >
                     <Badge
                       color="error"
@@ -315,88 +502,67 @@ function Navbar({ scrollToContactBottom }) {
                         src={profileIcon}
                         alt="profile"
                         style={{ height: 28, width: 28, cursor: "pointer" }}
-                        onClick={(e) => setProfileAnchor(e.currentTarget)}
+                        onClick={(e) => setAnchor('profile', e.currentTarget)}
                       />
                     </Badge>
                   </Tooltip>
+
                   <DarkMenu
-                    anchorEl={profileAnchor}
-                    open={Boolean(profileAnchor)}
-                    onClose={() => setProfileAnchor(null)}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
+                    anchorEl={anchorEls.profile}
+                    open={Boolean(anchorEls.profile)}
+                    onClose={() => setAnchor('profile', null)}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    transformOrigin={{ vertical: "top", horizontal: "right" }}
                     PaperProps={{ sx: { mt: 1.2 } }}
                   >
                     <MenuItem
                       onClick={() => {
                         setDrawerOpen(true);
-                        setProfileAnchor(null);
+                        setAnchor('profile', null);
                       }}
                       sx={{ fontSize: "1.3rem" }}
                     >
                       <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
                     </MenuItem>
-                    <MenuItem
-                      onClick={handleLogout}
-                      sx={{ fontSize: "1.3rem" }}
-                    >
+                    <MenuItem onClick={handleLogout} sx={{ fontSize: "1.3rem" }}>
                       <LogoutIcon sx={{ mr: 1 }} /> Logout
                     </MenuItem>
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton
-                  style={{ fontSize: "1.3rem" }}
-                  onClick={() => navigate("/login")}
-                >
+                <StyledButton onClick={() => navigate("/login")}>
                   Login
                 </StyledButton>
               )}
-              <StyledButton
-                style={{ fontSize: "1.3rem" }}
-                onClick={handleVault}
-              >
+
+              <StyledButton onClick={handleVault}>
                 Policy Vault
               </StyledButton>
+
               {isHomePage && (
                 <IconButton
-                  onClick={(e) => setMoreAnchor(e?.currentTarget)}
+                  onClick={(e) => setAnchor('more', e.currentTarget)}
                   sx={{ color: THEME_COLOR.COLOR }}
                 >
                   <MoreVertIcon />
                 </IconButton>
               )}
+
               <DarkMenu
-                anchorEl={moreAnchor}
-                open={Boolean(moreAnchor)}
-                onClose={() => setMoreAnchor(null)}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                PaperProps={{
-                  sx: {
-                    mt: 1.2,
-                  },
-                }}
+                anchorEl={anchorEls.more}
+                open={Boolean(anchorEls.more)}
+                onClose={() => setAnchor('more', null)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                PaperProps={{ sx: { mt: 1.2 } }}
               >
                 {MORE_MENU_ITEMS.map((item) => (
                   <MenuItem
-                    key={item?.key}
-                    onClick={() => handleMoreItemClick(item?.id)}
+                    key={item.key}
+                    onClick={() => handleMoreItemClick(item.id)}
                     sx={{ fontSize: "1.3rem" }}
                   >
-                    {item?.label}
+                    {item.label}
                   </MenuItem>
                 ))}
               </DarkMenu>
@@ -404,8 +570,13 @@ function Navbar({ scrollToContactBottom }) {
           )}
         </div>
       </div>
-      <div style={{ height: "95px" }} />
-      <ProfileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+
+      <div style={{ height: isMobile ? "80px" : "95px" }} />
+      
+      <ProfileDrawer 
+        open={drawerOpen} 
+        onClose={() => setDrawerOpen(false)} 
+      />
     </>
   );
 }

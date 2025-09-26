@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./CSS/login.css";
 import LoginImg from "../Images/img_phone_login.png";
-import logo from "../Images/CoverKraft-beta.png";
+import logo from "../Images/CKbig.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import CustomInput from "../component/CustomInput";
@@ -505,15 +505,15 @@ const Login = () => {
                         Resend OTP in {resendCounter} second{resendCounter !== 1 ? "s" : ""}
                       </p>
                     ) : (
-                      <button
+                      <span
                         type="button"
                         onClick={handleResendOtp}
                         disabled={isLoading}
-                        className="btn btn-link text-decoration-none"
+                        className="btn btn-link text-decoration-none mt-0"
                         style={{
                           color: "#5A9E1E",
-                          fontWeight: 600,
-                          fontSize: "1rem",
+                          fontWeight: 700,
+                          fontSize: "1.5rem",
                           padding: 0,
                           border: "none",
                           background: "none",
@@ -521,7 +521,7 @@ const Login = () => {
                         }}
                       >
                         {isLoading ? "Sending..." : "Resend OTP"}
-                      </button>
+                      </span>
                     )}
                   </div>
                 </>

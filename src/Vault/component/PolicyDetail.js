@@ -40,6 +40,8 @@ const PolicyDetail = ({ policyId }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toastShownRef = useRef(new Set());
+    const [showComingSoonModal, setShowComingSoonModal] = useState(false); // Add this state
+
 
   useEffect(() => {
     const fetchPolicyDetails = async () => {
@@ -75,60 +77,102 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   // Function to calculate progress based on policy completeness
- const calculatePolicyProgress = (policy) => {
-  if (!policy) return null;
+  const calculatePolicyProgress = (policy) => {
+    if (!policy) return null;
 
-  const requiredFields = [];
-  const policyType = policy.policyType;
+    const requiredFields = [];
+    const policyType = policy.policyType;
 
-  if (isMotorPolicy(policyType)) {
-    requiredFields.push(
-      policy.policyNumber,
-      policy.policyStartDate,
-      policy.policyEndDate,
-      policy.premiumPaid,
-      policy.insuredName,
-      policy.insuredCompany,
-      policy.policyDetails?.registrationNumber,
-      policy.policyDetails?.make,
-      policy.policyDetails?.model,
-      policy.policyDetails?.assetType,
-      policy.policyDetails?.vehicleEngineNumber,
-      policy.policyDetails?.idv
+    if (isMotorPolicy(policyType)) {
+      requiredFields.push(
+        policy.policyNumber,
+        policy.policyStartDate,
+        policy.policyEndDate,
+        policy.premiumPaid,
+        policy.insuredName,
+        policy.insuredCompany,
+        policy.policyDetails?.registrationNumber,
+        policy.policyDetails?.make,
+        policy.policyDetails?.model,
+        policy.policyDetails?.assetType,
+        policy.policyDetails?.vehicleEngineNumber,
+        policy.policyDetails?.idv
+      );
+    } else if (policyType === "health" || policyType === "other_health") {
+      requiredFields.push(
+        policy.policyNumber,
+        policy.policyStartDate,
+        policy.policyEndDate,
+        policy.policyDetails?.sumInsured,
+        policy.premiumPaid,
+        policy.insuredName,
+        policy.insuredCompany,
+        policy.policyDetails?.policyName
+      );
+    } else if (policyType === "life" || policyType === "accident") {
+      requiredFields.push(
+        policy.policyNumber,
+        policy.policyStartDate,
+        policy.premiumPaid,
+        policy.insuredName,
+        policy.insuredCompany,
+        policy.policyDetails?.policyName,
+        policy.policyDetails?.sumInsured
+      );
+    }
+
+    const filledFields = requiredFields.filter(
+      (field) => field && field !== ""
+    ).length;
+    const totalFields = requiredFields.length;
+
+    if (totalFields === 0) return null;
+
+    const progress = (filledFields / totalFields) * 100;
+
+    return progress === 100 ? null : progress;
+  };
+
+  // New Modal for Coming Soon
+  const ComingSoonModal = ({ visible, onClose }) => {
+    if (!visible) return null;
+  
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(0,0,0,0.6)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 10000,
+        }}
+      >
+        <div
+          style={{
+            background: "#1e1e1e",
+            padding: "2em",
+            borderRadius: "16px",
+            maxWidth: "450px",
+            textAlign: "center",
+            color: "#fff",
+            boxShadow: "0 0 20px rgba(0,0,0,0.7)",
+          }}
+        >
+          <h2 style={{ marginBottom: "1em", fontSize: "1.5em" }}>Coming Soon 🚀</h2>
+          <p style={{ marginBottom: "1.5em", color: "#ccc", lineHeight: 1.6 }}>
+            You may send your requirement to <b>Contact@thecoverkraft.com</b> and
+            our team will get in touch with you.
+          </p>
+          <Button text="OK" size="md" block={true} onClick={onClose} />
+        </div>
+      </div>
     );
-  } else if (policyType === "health" || policyType === "other_health") {
-    requiredFields.push(
-      policy.policyNumber,
-      policy.policyStartDate,
-      policy.policyEndDate,
-      policy.policyDetails?.sumInsured,
-      policy.premiumPaid,
-      policy.insuredName,
-      policy.insuredCompany,
-      policy.policyDetails?.policyName
-    );
-  } else if (policyType === "life" || policyType === "accident") {
-    requiredFields.push(
-      policy.policyNumber,
-      policy.policyStartDate,
-      policy.premiumPaid,
-      policy.insuredName,
-      policy.insuredCompany,
-      policy.policyDetails?.policyName,
-      policy.policyDetails?.sumInsured
-    );
-  }
-
-  const filledFields = requiredFields.filter(field => field && field !== "").length;
-  const totalFields = requiredFields.length;
-
-  if (totalFields === 0) return null;
-
-  const progress = (filledFields / totalFields) * 100;
-
-  return progress === 100 ? null : progress;
-};
-
+  };
 
   // Helper function to show toast only once
   const showToastOnce = (message, type = "success") => {
@@ -136,7 +180,7 @@ const PolicyDetail = ({ policyId }) => {
     if (!toastShownRef.current.has(toastKey)) {
       toastShownRef.current.add(toastKey);
       if (type === "success") {
-        toast.success(message);
+        ComingSoonModal(message);
       } else if (type === "error") {
         toast.error(message);
       } else if (type === "info") {
@@ -144,7 +188,7 @@ const PolicyDetail = ({ policyId }) => {
       }
       setTimeout(() => {
         toastShownRef.current.delete(toastKey);
-      }, 3000);
+      }, 3000);u
     }
   };
 
@@ -215,165 +259,85 @@ const PolicyDetail = ({ policyId }) => {
     }
   };
 
-  const handleDocument = async (documentPath, action) => {
-    if (!documentPath) {
-      console.error("Document path is missing");
-      showToastOnce("Document not available", "error");
-      return;
-    }
+const handleDocument = async (documentPath, action) => {
+  if (!documentPath) {
+    console.error("Document path is missing");
 
-    const isGmailSync =
-      documentPath.startsWith("https://") || documentPath.startsWith("http://");
+    return;
+  }
 
+  // Determine full URL for API or external links
+  const fullPath = documentPath.startsWith("http")
+    ? documentPath
+    : `${API_URL}${documentPath.startsWith("/") ? documentPath : `/${documentPath}`}`;
+
+  // Extract filename for download
+  const fileName = documentPath.split("/").pop() || "policy_document.pdf";
+
+  try {
     if (action === "view") {
-      try {
-        if (isGmailSync) {
-          const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
-            documentPath
-          )}`;
-          window.open(googleViewerUrl, "_blank");
-        } else {
-          const fullPath = documentPath.startsWith("/")
-            ? documentPath
-            : `/${documentPath}`;
-          const viewUrl = `${IMAGE_PATH}${fullPath}`;
-          const googleViewerUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(
-            viewUrl
-          )}`;
-          window.open(googleViewerUrl, "_blank");
-        }
-      } catch (error) {
-        console.error("Error opening document for viewing:", error);
-        showToastOnce("Unable to open document for viewing", "error");
-      }
+      // Open PDF directly in browser
+      window.open(fullPath, "_blank");
       return;
     }
 
     if (action === "download") {
-      try {
-        if (isGmailSync) {
-          window.open(documentPath, "_blank");
-          showToastOnce(
-            "Document opened in new tab. You can download it from there.",
-            "success"
-          );
-        } else {
-          const fullPath = documentPath.startsWith("/")
-            ? documentPath
-            : `/${documentPath}`;
-          const downloadUrl = `${API_URL}${fullPath}`;
+      // Direct download without fetch (avoids CORS issues)
+      const link = document.createElement("a");
+      link.href = fullPath;
+      link.download = fileName; // suggested filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-          const response = await fetch(downloadUrl);
-          if (!response.ok) {
-            throw new Error(`Download failed: ${response.status}`);
-          }
 
-          const blob = await response.blob();
-          const fileName =
-            documentPath.split("/").pop() || "policy_document.pdf";
-
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-
-          showToastOnce("Document downloaded successfully", "success");
-        }
-      } catch (error) {
-        console.error("Error downloading document:", error);
-        showToastOnce(
-          "Unable to download document. Please try again.",
-          "error"
-        );
-      }
       return;
     }
 
-    if (action === "share") {
-      try {
-        if (isGmailSync) {
-          if (navigator.share) {
-            try {
-              await navigator.share({
-                title: "Policy Document",
-                text: "Here is your policy document.",
-                url: documentPath,
-              });
-              showToastOnce("Document shared successfully", "success");
-            } catch (shareError) {
-              if (navigator.clipboard) {
-                await navigator.clipboard.writeText(documentPath);
-                showToastOnce("Document link copied to clipboard", "success");
-              } else {
-                window.open(documentPath, "_blank");
-                showToastOnce("Document opened in new tab", "info");
-              }
-            }
-          } else {
-            if (navigator.clipboard) {
-              await navigator.clipboard.writeText(documentPath);
-              showToastOnce("Document link copied to clipboard", "success");
-            } else {
-              window.open(documentPath, "_blank");
-              showToastOnce("Document opened in new tab", "info");
-            }
-          }
-        } else {
-          const fullPath = documentPath.startsWith("/")
-            ? documentPath
-            : `/${documentPath}`;
-          const shareUrl = `${API_URL}${fullPath}`;
-
-          const response = await fetch(shareUrl);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch file: ${response.status}`);
-          }
-
-          const blob = await response.blob();
-          const fileName =
-            documentPath.split("/").pop() || "policy_document.pdf";
-          const file = new File([blob], fileName, { type: "application/pdf" });
-
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              title: "Policy Document",
-              text: "Here is your policy document.",
-              files: [file],
-            });
-            showToastOnce("Document shared successfully", "success");
-          } else {
-            const blobUrl = window.URL.createObjectURL(blob);
-            if (navigator.clipboard) {
-              await navigator.clipboard.writeText(shareUrl);
-              showToastOnce("Document link copied to clipboard", "success");
-            } else {
-              const link = document.createElement("a");
-              link.href = blobUrl;
-              link.download = fileName;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              showToastOnce(
-                "Document downloaded (sharing not supported)",
-                "info"
-              );
-            }
-            window.URL.revokeObjectURL(blobUrl);
-          }
-        }
-      } catch (error) {
-        console.error("Error sharing document:", error);
-        showToastOnce("Unable to share document. Please try again.", "error");
-      }
-      return;
+  if (action === "share") {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "Policy Document",
+        text: "Here is your policy document.",
+        url: fullPath, // just share the link
+      });
+      showToastOnce("Document link shared successfully", "success");
+    } catch (err) {
+      console.warn("Share failed, copying to clipboard", err);
+      if (navigator.clipboard) await navigator.clipboard.writeText(fullPath);
+      showToastOnce("Document link copied to clipboard", "success");
     }
-  };
+  } else {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(fullPath);
+      showToastOnce("Document link copied to clipboard", "success");
+    } else {
+      window.open(fullPath, "_blank");
+      showToastOnce("Document opened in new tab", "info");
+    }
+  }
+  return;
+}
+
+
+    // Unknown action
+    console.warn(`Unknown action: ${action}`);
+
+  } catch (error) {
+    console.error(`Error handling document (${action}):`, error);
+
+  }
+};
+
+
 
   const handlePolicyAction = (action) => {
+     // Show ComingSoonModal for renew action
+    if (action === "renew") {
+      setShowComingSoonModal(true);
+      return;
+    }
     const userId = sessionStorage.getItem("userId");
     const formData = new FormData();
     formData.append("_id", policyId);
@@ -386,8 +350,8 @@ const PolicyDetail = ({ policyId }) => {
           action === "archive"
             ? "Policy archived successfully"
             : action === "unarchive"
-              ? "Policy removed from archive successfully"
-              : "Coming Soon - You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
+            ? "Policy removed from archive successfully"
+            : "Action completed successfully";
         showToastOnce(message, "success");
       })
       .catch(() => {
@@ -491,7 +455,7 @@ const PolicyDetail = ({ policyId }) => {
           position="top-center"
           style={{
             zIndex: 100000,
-            top: '110px'
+            top: "110px",
           }}
           toastClassName="custom-toast"
           autoClose={3000}
@@ -531,11 +495,19 @@ const PolicyDetail = ({ policyId }) => {
         position="top-center"
         style={{
           zIndex: 100000,
-          top: '110px'
+          top: "110px",
         }}
         toastClassName="custom-toast"
         autoClose={3000}
       />
+
+        {/* ComingSoonModal for renew action */}
+      <ComingSoonModal 
+        visible={showComingSoonModal} 
+        onClose={() => setShowComingSoonModal(false)} 
+      />
+
+
       <SessionExpiredModal
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
@@ -544,7 +516,7 @@ const PolicyDetail = ({ policyId }) => {
         const status = getExpiryStatus(policy?.policyEndDate);
         const documentPath = policy?.documentDetails?.documentPath;
         const progress = calculatePolicyProgress(policy);
-        
+
         return (
           <Card
             key={index}
@@ -566,17 +538,17 @@ const PolicyDetail = ({ policyId }) => {
                 Policy Details
               </p>
 
-              <div className="d-flex align-items-center gap-3 mr-5">
-                {/* Add Progress Bar */}
-               {progress !== null && progress < 100 && (
-  <ProgressBarCircle
-    progress={progress}
-    color="#8AC642"
-    size={10} // Make it smaller for the detail view
-  />
-)}
-
-                
+              <div className="d-flex align-items-center gap-3 mr-3">
+                {progress !== null && progress < 100 && (
+                  <div className="mr-3">
+                    <ProgressBarCircle
+                      progress={progress}
+                      color="#8AC642"
+                      size={50}
+                      strokeWidth={5}
+                    />
+                  </div>
+                )}
                 <button
                   type="button"
                   style={{
@@ -607,7 +579,7 @@ const PolicyDetail = ({ policyId }) => {
             </div>
 
             <div className="d-flex justify-content-between align-items-start px-4">
-              <div>
+              <div style={{ flex: 1 }}>
                 <p
                   style={{
                     width: "400px",
@@ -620,7 +592,9 @@ const PolicyDetail = ({ policyId }) => {
                     marginTop: 0,
                     cursor: "default",
                   }}
-                  title={policy?.policyDetails?.make_Model || policy?.insuredName}
+                  title={
+                    policy?.policyDetails?.make_Model || policy?.insuredName
+                  }
                 >
                   {policy?.policyDetails?.make_Model || policy?.insuredName}
                 </p>
@@ -662,16 +636,20 @@ const PolicyDetail = ({ policyId }) => {
                 </p>
               </div>
 
-              <div>
-                <img
-                  src={getPolicyImage(policy?.policyType)}
-                  alt="Policy Type"
-                  style={{ maxWidth: "70px", height: "auto" }}
-                />
+              <div className="d-flex align-items-center">
+                {/* Progress Bar positioned to the left of car */}
+
+                <div>
+                  <img
+                    src={getPolicyImage(policy?.policyType)}
+                    alt="Policy Type"
+                    style={{ maxWidth: "70px", height: "auto" }}
+                  />
+                </div>
               </div>
             </div>
 
-            <div style={{ position: "relative", marginTop: -20 }}>
+            <div style={{ position: "relative", marginTop: -30 }}>
               {status && (
                 <>
                   <div
@@ -810,7 +788,8 @@ const PolicyDetail = ({ policyId }) => {
                       </p>
                       <p className="fw-bolder">
                         {policy?.policyDetails?.idv ||
-                          policy?.policyDetails?.sumInsured || 'Pending'}
+                          policy?.policyDetails?.sumInsured ||
+                          "Pending"}
                       </p>
                     </div>
                   </Grid>
@@ -835,7 +814,9 @@ const PolicyDetail = ({ policyId }) => {
                       >
                         Policy Start Date
                       </p>
-                      <p className="fw-bolder">{policy?.policyStartDate || "Pending"}</p>
+                      <p className="fw-bolder">
+                        {policy?.policyStartDate || "Pending"}
+                      </p>
                     </div>
                   </Grid>
 
@@ -859,7 +840,9 @@ const PolicyDetail = ({ policyId }) => {
                       >
                         Policy End Date
                       </p>
-                      <p className="fw-bolder">{policy?.policyEndDate || 'Pending'}</p>
+                      <p className="fw-bolder">
+                        {policy?.policyEndDate || "Pending"}
+                      </p>
                     </div>
                   </Grid>
                 </Grid>

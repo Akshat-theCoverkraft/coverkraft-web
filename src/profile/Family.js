@@ -82,10 +82,22 @@ const Family = ({ family, onfamilyclose }) => {
       await axios.post(`${API_URL}family/delete`, { _id: deleteId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success("Member deleted successfully");
+      toast.success("Member deleted successfully",{
+        autoClose: 2000,
+        closeButton: true,          // show the ❌ button
+        closeOnClick: true,                // allow click on toast to close it
+        draggable: true,                   // allow drag to dismiss
+        pauseOnHover: true,                // (optional, default: true)
+      });
       fetchFamilyDetails();
     } catch (error) {
-      toast.error("Failed to delete member");
+      toast.error("Failed to delete member",{
+        autoClose: 2000,
+        closeButton: true,          // show the ❌ button
+        closeOnClick: true,                // allow click on toast to close it
+        draggable: true,                   // allow drag to dismiss
+        pauseOnHover: true,                // (optional, default: true)
+      });
     } finally {
       setShowDeleteModal(false);
       setDeleteId(null);
@@ -122,7 +134,11 @@ const Family = ({ family, onfamilyclose }) => {
         visible={showSessionExpired}
         onConfirm={handleSessionExpiredOk}
       />
-      <ToastContainer position="top-left" style={{ zIndex: 99999 }} />
+      <ToastContainer position="top-left" style={{ zIndex: 99999 }}closeButton={true}          // show the ❌ button
+  closeOnClick                // allow click on toast to close it
+  draggable                   // allow drag to dismiss
+  pauseOnHover                // (optional, default: true)
+  autoClose={2000}  />
 
       <Box sx={{ width: "100%", padding: 0 }}>
         {/* Header */}

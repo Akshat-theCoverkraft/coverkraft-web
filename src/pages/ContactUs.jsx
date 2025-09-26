@@ -39,7 +39,14 @@ const Spinner = styled("div")({
   },
 });
 
-const Input = ({ type = "text", name, value, onChange, placeholder, ...props }) => (
+const Input = ({
+  type = "text",
+  name,
+  value,
+  onChange,
+  placeholder,
+  ...props
+}) => (
   <input
     type={type}
     name={name}
@@ -52,7 +59,12 @@ const Input = ({ type = "text", name, value, onChange, placeholder, ...props }) 
 );
 
 function ContactUs() {
-  const [form, setForm] = useState({ name: "", email: "", message: "", attachments: [] });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+    attachments: [],
+  });
   const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -62,34 +74,45 @@ function ContactUs() {
 
     setForm((prev) => ({ ...prev, [name]: value }));
 
-    if (name === 'email') {
+    if (name === "email") {
       const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
       setFormErrors((prev) => ({
         ...prev,
-        [name]: isValidEmail ? '' : 'Enter a valid email address',
+        [name]: isValidEmail ? "" : "Enter a valid email address",
       }));
-    } else if (name === 'name') {
+    } else if (name === "name") {
       const isValidName = /^[a-zA-Z\s]+$/.test(value);
       setFormErrors((prev) => ({
         ...prev,
-        [name]: isValidName ? '' : 'Invalid name. Only letters and spaces are allowed.',
+        [name]: isValidName
+          ? ""
+          : "Invalid name. Only letters and spaces are allowed.",
       }));
-    }
-    else {
-      setFormErrors((prev) => ({ ...prev, [name]: '' }));
+    } else {
+      setFormErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const allowedTypes = ["image/jpeg", "image/png", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-    const invalidFiles = files.filter(file => !allowedTypes.includes(file.type));
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    const invalidFiles = files.filter(
+      (file) => !allowedTypes.includes(file.type)
+    );
 
     if (invalidFiles.length > 0) {
-      setFormErrors({ ...formErrors, attachments: "Only JPG, PNG, PDF, DOC, or DOCX files are allowed." });
+      setFormErrors({
+        ...formErrors,
+        attachments: "Only JPG, PNG, PDF, DOC, or DOCX files are allowed.",
+      });
     } else {
-      setForm(prev => ({ ...prev, attachments: files }));
+      setForm((prev) => ({ ...prev, attachments: files }));
       setFormErrors({ ...formErrors, attachments: "" });
     }
   };
@@ -99,8 +122,8 @@ function ContactUs() {
     setForm({ ...form, attachments: newAttachments });
   };
 
-  const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isValidName =value=> /^[a-zA-Z\s]+$/.test(value);
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidName = (value) => /^[a-zA-Z\s]+$/.test(value);
 
   const validateForm = () => {
     const errors = {};
@@ -109,8 +132,7 @@ function ContactUs() {
       errors.email = "Email is required.";
     } else if (!isValidEmail(form.email)) {
       errors.email = "Invalid email address.";
-    }
-    else if (!isValidName(form.name)) {
+    } else if (!isValidName(form.name)) {
       errors.name = "Invalid name. Only letters and spaces are allowed.";
     }
     if (!form.message.trim()) errors.message = "Message is required.";
@@ -130,8 +152,10 @@ function ContactUs() {
     setLoading(true);
     try {
       const formData = new FormData();
-      ["name", "email", "message"].forEach(key => formData.append(key, form[key]));
-      form.attachments.forEach(file => formData.append("attachments", file));
+      ["name", "email", "message"].forEach((key) =>
+        formData.append(key, form[key])
+      );
+      form.attachments.forEach((file) => formData.append("attachments", file));
 
       const res = await fetch(`${API_URL}api/contact`, {
         method: "POST",
@@ -159,37 +183,47 @@ function ContactUs() {
       <div className="container-fluid text-light">
         <Navbar />
 
-        <div className="text-center my-5 p-8" >
-          <h1 className="fw-bold text-size-xxl" style={{ color: "#8bc642" }}>Contact Us</h1>
-          <h3 className="text-size-md" style={{ color: "#ccc", alignSelf: 'center' }}>We'd love to hear from you!</h3>
+        <div className="text-center my-5 p-8">
+          <h1 className="fw-bold text-size-xxl" style={{ color: "#8bc642" }}>
+            Contact Us
+          </h1>
+          <h3
+            className="text-size-md"
+            style={{ color: "#ccc", alignSelf: "center" }}
+          >
+            We'd love to hear from you!
+          </h3>
 
           <div className="d-flex justify-content-center my-5">
             <div
               className="rounded-4 shadow-lg p-2 w-100"
               style={{
                 maxWidth: "1000px",
-                backgroundColor: "#212121", 
+                backgroundColor: "#212121",
                 fontSize: "1.6rem",
-                paddingLeft:'30px',
-                color: "#8bc642"
+                paddingLeft: "30px",
+                color: "#8bc642",
               }}
             >
               <div className="row g-4">
-
-                <div className="col-md-6" style={{padding:25}}>
+                <div className="col-md-6" style={{ padding: 25 }}>
                   <form onSubmit={handleSubmit} encType="multipart/form-data">
-
                     <div className="mb-3 rounded-5">
                       <Input
-                        
                         name="name"
                         value={form.name}
                         onChange={handleChange}
                         placeholder="Your name"
-                        style={{ height: "40px", fontSize: "1.25rem", borderRadius: "20px" }}
+                        style={{
+                          height: "40px",
+                          fontSize: "1.25rem",
+                          borderRadius: "20px",
+                        }}
                       />
                       {formErrors.name && (
-                        <small className="text-danger d-block mt-1">{formErrors.name}</small>
+                        <small className="text-danger d-block mt-1">
+                          {formErrors.name}
+                        </small>
                       )}
                     </div>
 
@@ -199,10 +233,16 @@ function ContactUs() {
                         value={form.email}
                         onChange={handleChange}
                         placeholder="Your email"
-                        style={{ height: "40px", fontSize: "1.25rem", borderRadius: "20px" }}
+                        style={{
+                          height: "40px",
+                          fontSize: "1.25rem",
+                          borderRadius: "20px",
+                        }}
                       />
                       {formErrors.email && (
-                        <small className="text-danger d-block mt-1">{formErrors.email}</small>
+                        <small className="text-danger d-block mt-1">
+                          {formErrors.email}
+                        </small>
                       )}
                     </div>
 
@@ -211,13 +251,19 @@ function ContactUs() {
                         name="message"
                         placeholder="Write your query..."
                         className="form-control bg-dark text-light border-secondary text-size-md"
-                        style={{ height: "150px", resize: "none", fontSize: "1.3rem", borderRadius: "20px"
- }}
+                        style={{
+                          height: "150px",
+                          resize: "none",
+                          fontSize: "1.3rem",
+                          borderRadius: "20px",
+                        }}
                         value={form.message}
                         onChange={handleChange}
                       />
                       {formErrors.message && (
-                        <small className="text-danger d-block mt-1">{formErrors.message}</small>
+                        <small className="text-danger d-block mt-1">
+                          {formErrors.message}
+                        </small>
                       )}
                     </div>
 
@@ -238,7 +284,11 @@ function ContactUs() {
                           onChange={handleFileChange}
                           multiple
                           className="d-none"
-                          style={{ height: "40px", fontSize: "1.25rem", borderRadius: "20px" }}
+                          style={{
+                            height: "40px",
+                            fontSize: "1.25rem",
+                            borderRadius: "20px",
+                          }}
                         />
 
                         <input
@@ -246,12 +296,16 @@ function ContactUs() {
                           className="form-control bg-dark text-light border-secondary text-size-md pe-5"
                           value={
                             form.attachments.length > 0
-                              ? form.attachments.map((file) => file.name).join(", ")
+                              ? form.attachments
+                                  .map((file) => file.name)
+                                  .join(", ")
                               : ""
                           }
                           placeholder="📁 No file chosen"
                           readOnly
-                          onClick={() => document.getElementById("file-upload").click()}
+                          onClick={() =>
+                            document.getElementById("file-upload").click()
+                          }
                           style={{
                             cursor: "pointer",
                             height: "40px",
@@ -262,7 +316,9 @@ function ContactUs() {
                       </div>
 
                       {formErrors.attachments && (
-                        <small className="text-danger d-block mt-1">{formErrors.attachments}</small>
+                        <small className="text-danger d-block mt-1">
+                          {formErrors.attachments}
+                        </small>
                       )}
 
                       {form.attachments.length > 0 && (
@@ -298,7 +354,9 @@ function ContactUs() {
                     </div>
 
                     {formErrors.api && (
-                      <div className="text-danger mb-3 text-start">{formErrors.api}</div>
+                      <div className="text-danger mb-3 text-start">
+                        {formErrors.api}
+                      </div>
                     )}
 
                     <StyledSubmitButton
@@ -309,12 +367,15 @@ function ContactUs() {
                       {loading ? <Spinner /> : "Send Message"}
                     </StyledSubmitButton>
                   </form>
-
-
                 </div>
 
                 <div className="col-md-6 d-flex flex-column align-items-center justify-content-center text-light text-center">
-                  <img src={require("../Images/objects.png")} alt="Decor" className="img-fluid mb-4" style={{ maxWidth: "230px" }} />
+                  <img
+                    src={require("../Images/objects.png")}
+                    alt="Decor"
+                    className="img-fluid mb-4"
+                    style={{ maxWidth: "230px" }}
+                  />
                   <div>
                     <p className="text-size-md">
                       <a
@@ -328,12 +389,27 @@ function ContactUs() {
                       </a>
                     </p>
 
-
-                    <p><CallIcon className="me-2 text-success text-size-md" />+91 7247724735</p>
-                    <p><MailIcon className="me-2 text-success" /><a href="mailto:contact@thecoverkraft.com" className="text-decoration-underline text-light text-size-md">contact@thecoverkraft.com</a></p>
-                                        <h3 style={{ color: "#8bc642", fontWeight: "600"}}>Hours of Operation</h3>
-<p>Monday–Saturday | 9:30 AM – 6:30 PM</p>
-
+                    <p>
+                      <CallIcon className="me-2 text-success text-size-md" />
+                      +91 7247724735
+                    </p>
+                    <p>
+                      <MailIcon className="me-2 text-success" />
+                      <a
+                        href="mailto:contact@thecoverkraft.com"
+                        className="text-decoration-underline text-light text-size-md"
+                      >
+                        contact@thecoverkraft.com
+                      </a>
+                    </p>
+                    <h3 style={{ color: "#8bc642", fontWeight: "600" }}>
+                      Hours of Operation
+                    </h3>
+                    <p>
+                      Monday – Saturday
+                      <br />
+                      9:30 AM – 6:30 PM
+                    </p>
                   </div>
                 </div>
               </div>
@@ -345,21 +421,23 @@ function ContactUs() {
       <Footer />
 
       <Modal open={modalOpen} onClose={closeModal}>
-        <Box sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "90%",
-          maxWidth: "600px",
-          bgcolor: "#121212",
-          border: "2px solid #8bc642",
-          boxShadow: 24,
-          borderRadius: 3,
-          p: 4,
-          textAlign: "center",
-          color: "#ccc"
-        }}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "90%",
+            maxWidth: "600px",
+            bgcolor: "#121212",
+            border: "2px solid #8bc642",
+            boxShadow: 24,
+            borderRadius: 3,
+            p: 4,
+            textAlign: "center",
+            color: "#ccc",
+          }}
+        >
           <span
             onClick={closeModal}
             style={{
@@ -370,23 +448,33 @@ function ContactUs() {
               cursor: "pointer",
               color: "#ccc",
               fontWeight: "bold",
-              zIndex: 10
+              zIndex: 10,
             }}
-            onMouseEnter={e => (e.target.style.color = "#7BC043")}
-            onMouseLeave={e => (e.target.style.color = "#ccc")}
+            onMouseEnter={(e) => (e.target.style.color = "#7BC043")}
+            onMouseLeave={(e) => (e.target.style.color = "#ccc")}
           >
             &times;
           </span>
-          <Typography variant="h5" sx={{ mb: 2, color: "#8bc642", fontWeight: 700, fontSize: 20 }}>
+          <Typography
+            variant="h5"
+            sx={{ mb: 2, color: "#8bc642", fontWeight: 700, fontSize: 20 }}
+          >
             Thank you for letting us know your requirement!
           </Typography>
           <Typography variant="body1" sx={{ mb: 2, fontSize: 16 }}>
             We will get back to you with a resolution soon.
           </Typography>
-          <Typography variant="body2" sx={{ fontStyle: "italic", mb: 3, fontSize: 16 }}>
+          <Typography
+            variant="body2"
+            sx={{ fontStyle: "italic", mb: 3, fontSize: 16 }}
+          >
             Regards, <br /> Team CoverKraft
           </Typography>
-          <img src={Logo} alt="CoverKraft Logo" style={{ width: "250px", margin: "auto" }} />
+          <img
+            src={Logo}
+            alt="CoverKraft Logo"
+            style={{ width: "250px", margin: "auto" }}
+          />
         </Box>
       </Modal>
 

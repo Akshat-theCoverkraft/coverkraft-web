@@ -55,6 +55,7 @@ const Footer = () => {
 
   const companyLinks = [
     { label: "About Us", to: "/about" },
+    {label: "Our-Leaders", to: "/Our-LeaderShip" },
     { label: "Privacy Policy", to: "/legal#PrivacyPolicy" },
     { label: "Legal And Admin Policies", to: "/legal" },
     { label: "Disclaimer", to: "/legal#disclaimer" },
@@ -264,7 +265,9 @@ const Footer = () => {
                 className="me-3 mt-1"
               />
               <span style={{ fontSize: "1.2rem" }}>
-                Monday–Saturday | 9:30 AM – 6:30 PM
+                Monday – Saturday
+                <br />
+                9:30 AM  –  6:30 PM
               </span>
             </div>
           </div>
