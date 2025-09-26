@@ -190,6 +190,7 @@ const Login = () => {
     try {
       const registration = await registerFirebaseSW();
       fcmToken = await requestFCMPermission(registration);
+      console.log("FCM Token:", fcmToken);
     } catch (fcmError) {
       console.log("FCM Error (continuing):", fcmError);
     }
