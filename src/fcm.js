@@ -6,20 +6,20 @@ import toast from "react-hot-toast";
 // 🔑 Your Firebase Config
 const firebaseConfig = {
   //Dev Environment
-   apiKey: "AIzaSyBfct4vLSD8_FsPqblZlvK4HtUZIp0Ix1I",
-  authDomain: "coverkraft-dev-8e115.firebaseapp.com",
-  projectId: "coverkraft-dev-8e115",
-  storageBucket: "coverkraft-dev-8e115.firebasestorage.app",
-  messagingSenderId: "716611850735",
-  appId: "1:716611850735:web:74e6b57410be2e0ce3261a",
-  measurementId: "G-5WETG0HT4H"
+apiKey: "AIzaSyDnwNulEZC1FCtxckUiQ_x637oD74Bp2QI",
+  authDomain: "coverkraft-dev-2082b.firebaseapp.com",
+  projectId: "coverkraft-dev-2082b",
+  storageBucket: "coverkraft-dev-2082b.firebasestorage.app",
+  messagingSenderId: "946812362760",
+  appId: "1:946812362760:web:853df53b3de23be699f1bd",
+  measurementId: "G-K71X2MTYQ5"
 };
 
 // const VAPID_KEY =
 //   "BN14UPx0ybch34v5sPNPOxAD4qOgS4etqCcG8oqOJgz_mRyAPelycwkdMU4wfKch1u9GJuah7kpuOtzczwINoNg";
 
 const VAPID_KEY =
-  "BKfebvRd1AMh4nyrd7i0TqJ6esGKvh9zQkgvZt6_ChhMf619F40uy48a2R9AOCOH16Wt6mIE10y6fvKJmWEm7HA";
+  "BK62hZgfU1GrZJAsVdBs-s3MHOWVsbXXiEDfQ2tReZl3jwZUjQx0X8jcxIXd98tRljSzkUUQWWWu91TFnYQLVLM";
 const app = initializeApp(firebaseConfig);
 export const messaging = getMessaging(app);
 
