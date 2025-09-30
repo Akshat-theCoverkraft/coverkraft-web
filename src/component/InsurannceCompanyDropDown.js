@@ -5,15 +5,16 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import debounce from "lodash.debounce";
-import { Box, Typography } from "@mui/material";
+import { Box, Avatar } from "@mui/material";
 
 const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
   const [options, setOptions] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  console.log("initt", initialValue);
+  
   const normalizeString = (str = "") => str.replace(/\s+/g, "").toLowerCase();
+  
   // Debounced fetch
   const fetchCompanies = useMemo(
     () =>
@@ -75,49 +76,54 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
     }
   };
 
+  // Get initials for avatar
+  const getInitials = (name) => {
+    if (!name) return "IC";
+    const words = name.trim().split(" ");
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
   return (
-    <>
-      <Box sx={{ width: "100%" }}>
-        {/* <Typography
-          variant="h6"
-          sx={{
-            color: "#fff",
-            marginBottom: 1,
-            fontWeight: 600,
-            fontSize: "1.4rem",
-          }}
-        >
-          Select Insurance Company <span style={{ color: "#f44336" }}>*</span>
-        </Typography> */}
-        <label
-          className="form-label fw-bold text-light mb-2 d-block" // ensure tight spacing
-          htmlFor="start-date"
-        >
-          Select Insurance Company <span className="text-danger">*</span>
-        </label>
-      </Box>
+    <Box sx={{ width: "100%" }}>
+      <label
+        className="form-label fw-bold text-light mb-2 d-block"
+        htmlFor="insurance-company-autocomplete"
+      >
+        Select Insurance Company <span className="text-danger">*</span>
+      </label>
 
       <Autocomplete
         id="insurance-company-autocomplete"
         sx={{
           width: "100%",
           ".MuiInputBase-root": {
-            backgroundColor: "#2c2c2c",
+            backgroundColor: "rgb(44, 44, 44)",
             color: "#fff",
-            borderRadius: "40px",
-            fontSize: "1rem",
-            paddingX: 1.5,
-            marginBottom: 2,
+            borderRadius: "42px",
+            fontSize: "1.222rem",
+            paddingLeft: "0.5rem",
+            paddingRight: "0.5rem",
+            height: "48px",
+            border: "none",
+            outline: "none",
           },
           ".MuiOutlinedInput-notchedOutline": {
-            borderColor: "#333",
-            borderRadius: "40px",
+            border: "none",
           },
           "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#00bcd4",
+            border: "none",
           },
           "& .MuiInputLabel-root": {
-            display: "none", // Hide floating label
+            display: "none",
+          },
+          "& .MuiAutocomplete-popupIndicator": {
+            color: "#fff",
+          },
+          "& .MuiAutocomplete-clearIndicator": {
+            color: "#fff",
           },
         }}
         getOptionLabel={(option) => option.label || ""}
@@ -127,18 +133,70 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
         onChange={handleChange}
         inputValue={inputValue}
         onInputChange={handleInputChange}
+        renderOption={(props, option) => (
+          <Box
+            component="li"
+            {...props}
+            sx={{
+              display: "flex !important",
+              alignItems: "center",
+              gap: 1.5,
+              padding: "8px 16px !important",
+              backgroundColor: "#2c2c2c !important",
+              color: "#fff !important",
+              "&:hover": {
+                backgroundColor: "#3a3a3a !important",
+              },
+            }}
+          >
+            <Avatar
+              variant="rounded"
+              sx={{
+                width: 32,
+                height: 32,
+                backgroundColor: "#00bcd4",
+                fontSize: "0.875rem",
+                fontWeight: "600",
+              }}
+            >
+              {getInitials(option.label)}
+            </Avatar>
+            <span style={{ fontSize: "1.222rem", fontWeight: "100" }}>
+              {option.label}
+            </span>
+          </Box>
+        )}
         renderInput={(params) => (
           <TextField
             {...params}
+            placeholder="Select an insurance company"
             variant="outlined"
             InputProps={{
               ...params.InputProps,
               style: {
                 color: "#fff",
                 fontSize: "1.222rem",
-                borderRadius: "40px",
                 fontWeight: "100",
+                paddingLeft: "8px",
               },
+              startAdornment: (
+                <>
+                  <Avatar
+                    variant="rounded"
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      backgroundColor: selectedOption ? "#00bcd4" : "#555",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      marginRight: 1,
+                    }}
+                  >
+                    {selectedOption ? getInitials(selectedOption.label) : "IC"}
+                  </Avatar>
+                  {params.InputProps.startAdornment}
+                </>
+              ),
               endAdornment: (
                 <>
                   {loading && <CircularProgress color="inherit" size={20} />}
@@ -148,8 +206,18 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
             }}
           />
         )}
+        ListboxProps={{
+          sx: {
+            backgroundColor: "#2c2c2c",
+            border: "1px solid #444",
+            maxHeight: "300px",
+            "& .MuiAutocomplete-option": {
+              backgroundColor: "#2c2c2c !important",
+            },
+          },
+        }}
       />
-    </>
+    </Box>
   );
 };
 

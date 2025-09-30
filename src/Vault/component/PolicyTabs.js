@@ -628,27 +628,71 @@ const PolicyCard = ({
             </Grid>
           )}
 
-          <Grid item xs={12} sm={shareAllPolicy ? 2 : 3}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                mb: { xs: 2, sm: 0 },
-              }}
-            >
-              <img
-                src={config.image}
-                alt="Policy"
-                style={{
-                  width: "100%",
-                  maxWidth: "80px",
-                  height: "auto",
-                  objectFit: "contain",
-                  maxHeight: "60px",
-                }}
-              />
-            </Box>
-          </Grid>
+         <Grid item xs={12} sm={shareAllPolicy ? 2 : 3}>
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      mb: { xs: 2, sm: 0 },
+      width: "100%",
+    }}
+  >
+    {/* Image / Placeholder */}
+    {config.image ? (
+      <img
+        src="https://img.freepik.com/free-vector/creative-gradient-code-logo_23-2148820572.jpg?semt=ais_hybrid&w=740&q=80"
+        alt="Policy"
+        style={{
+          width: "80px",
+          height: "60px",
+          objectFit: "contain",
+          borderRadius: "6px",
+        }}
+      />
+    ) : (
+      <Box
+        sx={{
+          width: "80px",
+          height: "60px",
+          backgroundColor: "#e0e0e0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "6px",
+        }}
+      >
+        <Typography
+          sx={{ fontSize: "0.8rem", color: "#555", fontWeight: 500 }}
+        >
+          No Image
+        </Typography>
+      </Box>
+    )}
+
+    {/* Company name */}
+    <Typography
+      sx={{
+        fontSize: "0.9rem",
+        fontWeight: 600,
+        color: "#fff",
+        textAlign: "center",
+        mt: 0.5,
+        maxWidth: "100px", // ✅ keeps consistent width
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        display: "-webkit-box",
+        WebkitLineClamp: 2, // ✅ max 2 lines
+        WebkitBoxOrient: "vertical",
+        lineHeight: 1.3,
+      }}
+    >
+      {config.companyName || "Static Company NameStatic Company NameStatic Company Name"}
+    </Typography>
+  </Box>
+</Grid>
+
+
 
           <Grid item xs={12} sm={7} sx={6}>
             <Box
