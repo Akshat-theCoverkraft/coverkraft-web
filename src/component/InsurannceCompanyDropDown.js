@@ -12,9 +12,9 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  
+
   const normalizeString = (str = "") => str.replace(/\s+/g, "").toLowerCase();
-  
+
   // Debounced fetch
   const fetchCompanies = useMemo(
     () =>
@@ -28,6 +28,7 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
           const formatted = response.data.data.map((company) => ({
             label: company.label,
             value: company._id,
+            icon: company.icon || null, // ✅ include icon from API
           }));
 
           setOptions(formatted);
@@ -110,21 +111,11 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
             border: "none",
             outline: "none",
           },
-          ".MuiOutlinedInput-notchedOutline": {
-            border: "none",
-          },
-          "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-            border: "none",
-          },
-          "& .MuiInputLabel-root": {
-            display: "none",
-          },
-          "& .MuiAutocomplete-popupIndicator": {
-            color: "#fff",
-          },
-          "& .MuiAutocomplete-clearIndicator": {
-            color: "#fff",
-          },
+          ".MuiOutlinedInput-notchedOutline": { border: "none" },
+          "& .Mui-focused .MuiOutlinedInput-notchedOutline": { border: "none" },
+          "& .MuiInputLabel-root": { display: "none" },
+          "& .MuiAutocomplete-popupIndicator": { color: "#fff" },
+          "& .MuiAutocomplete-clearIndicator": { color: "#fff" },
         }}
         getOptionLabel={(option) => option.label || ""}
         options={options}
@@ -144,22 +135,21 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
               padding: "8px 16px !important",
               backgroundColor: "#2c2c2c !important",
               color: "#fff !important",
-              "&:hover": {
-                backgroundColor: "#3a3a3a !important",
-              },
+              "&:hover": { backgroundColor: "#3a3a3a !important" },
             }}
           >
             <Avatar
               variant="rounded"
+              src={option?.icon || undefined} // ✅ icon if available
               sx={{
                 width: 32,
                 height: 32,
-                backgroundColor: "#00bcd4",
+                backgroundColor: option?.icon ? "transparent" : "#00bcd4",
                 fontSize: "0.875rem",
                 fontWeight: "600",
               }}
             >
-              {getInitials(option.label)}
+              {!option?.icon && getInitials(option.label)}
             </Avatar>
             <span style={{ fontSize: "1.222rem", fontWeight: "100" }}>
               {option.label}
@@ -183,16 +173,24 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
                 <>
                   <Avatar
                     variant="rounded"
+                    src={selectedOption?.icon || undefined}
                     sx={{
                       width: 32,
                       height: 32,
-                      backgroundColor: selectedOption ? "#00bcd4" : "#555",
+                      backgroundColor: selectedOption?.icon
+                        ? "transparent"
+                        : selectedOption
+                        ? "#00bcd4"
+                        : "#555",
                       fontSize: "0.875rem",
                       fontWeight: "600",
                       marginRight: 1,
                     }}
                   >
-                    {selectedOption ? getInitials(selectedOption.label) : "IC"}
+                    {!selectedOption?.icon &&
+                      (selectedOption
+                        ? getInitials(selectedOption.label)
+                        : "IC")}
                   </Avatar>
                   {params.InputProps.startAdornment}
                 </>
