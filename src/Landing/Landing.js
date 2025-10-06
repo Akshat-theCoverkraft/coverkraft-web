@@ -17,6 +17,8 @@ import Service from "./component/service";
 import { ToastContainer } from "react-toastify";
 import BlogSection from "./component/NewsBlogs";
 import { useEffect } from "react";
+import BrandCarousel from "./component/insurancePartners/InsurancePartners";
+import LogoCarousel from "./component/insurancePartners/InsurancePartners";
 const Landing = () => {
   useEffect(() => {
     const scrollY = sessionStorage.getItem("scroll-position");
@@ -27,7 +29,7 @@ const Landing = () => {
       sessionStorage.setItem("scroll-position", window.scrollY);
     };
     window.addEventListener("scroll", handleScroll);
-    return () => {
+    return () => { 
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
@@ -47,8 +49,8 @@ const Landing = () => {
       {/* <Count /> */}
       <Coverkraft />
       <Testimonials />
+      <LogoCarousel/>
       <Faq />
-      {/* <Carousel/> */}
       {/* <Service /> */}
       <Footer />
     </div>
