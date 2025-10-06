@@ -28,7 +28,7 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
           const formatted = response.data.data.map((company) => ({
             label: company.label,
             value: company._id,
-            icon: company.icon || null, // ✅ include icon from API
+            icon: company.icon || null,
           }));
 
           setOptions(formatted);
@@ -50,9 +50,9 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
       const normalizedInitial = normalizeString(initialValue);
 
       const match =
-        options.find((opt) => opt.value === initialValue) || // id match
+        options.find((opt) => opt.value === initialValue) ||
         options.find(
-          (opt) => normalizeString(opt.label).includes(normalizedInitial) // partial match
+          (opt) => normalizeString(opt.label).includes(normalizedInitial)
         ) ||
         null;
 
@@ -69,9 +69,8 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
     setSelectedOption(newValue);
 
     if (newValue) {
-      onCompanySelect(newValue.value); // pass id
+      onCompanySelect(newValue.label); // ✅ pass company name instead of id
     } else {
-      // keep typed text visible instead of blacking out
       setInputValue(initialValue || "");
       onCompanySelect("");
     }
@@ -140,7 +139,7 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
           >
             <Avatar
               variant="rounded"
-              src={option?.icon || undefined} // ✅ icon if available
+              src={option?.icon || undefined}
               sx={{
                 width: 32,
                 height: 32,
