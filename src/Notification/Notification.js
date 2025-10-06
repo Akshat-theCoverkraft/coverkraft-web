@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
+import IMAGE_PATH from '../ServiceModule/imagePath';
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
 import SessionExpiredModal from "../utils/sessionExpireModal";
@@ -27,6 +28,7 @@ const Notification = () => {
     totalPages: 1,
     limit: 10
   });
+  console.log("imagePath=======>", notifications)
   const [activeTab, setActiveTab] = useState(0); // 0=General, 1=Policy
   const [loading, setLoading] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
@@ -297,7 +299,7 @@ const Notification = () => {
             alt="Notification"
             style={{
               width: "100%",
-              height: "250px",
+              height: "350px",
               objectFit: "cover",
               borderRadius: "8px",
               marginBottom: "16px"

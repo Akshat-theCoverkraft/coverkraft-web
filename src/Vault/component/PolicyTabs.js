@@ -310,6 +310,7 @@ const filterPolicies = (
       category: "other",
     };
 
+
     let matchesTypeFilter;
 
     if (isPendingTab) {
@@ -455,6 +456,7 @@ const PolicyCard = ({
     image: scooty,
   };
 
+  console.log("policu" , policy)
   const getSafeValue = (value, fallback = "Not Available") => {
     if (
       value === null ||
@@ -628,27 +630,75 @@ const PolicyCard = ({
             </Grid>
           )}
 
-          <Grid item xs={12} sm={shareAllPolicy ? 2 : 3}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                mb: { xs: 2, sm: 0 },
-              }}
-            >
-              <img
-                src={config.image}
-                alt="Policy"
-                style={{
-                  width: "100%",
-                  maxWidth: "80px",
-                  height: "auto",
-                  objectFit: "contain",
-                  maxHeight: "60px",
-                }}
-              />
-            </Box>
-          </Grid>
+         <Grid item xs={12} sm={shareAllPolicy ? 2 : 3}>
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      mb: { xs: 2, sm: 0 },
+      width: "100%",
+    }}
+  >
+    {/* Image / Placeholder */}
+    {policy.companyDetails ? (
+      <img
+        src={
+    policy?.companyDetails?.icon
+      ? policy.companyDetails.icon
+      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASgAAAEoCAMAAADc2ZwrAAAAMFBMVEX07/PJycn18fLZ19jx7/DU09T28vXLzMzGxsbh3+DR0dHu6+zJx8jW1tbc3Nzn5Ob1FF5lAAADpElEQVR4nO3cgVKjMBRA0RIeECCU///bhZZCIFGDUt3Ju2ccdSsyy50EKaXcbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPip+hf89TZewLTDL2jNX2/nj5nSFm9nyxxCvb9TURCKUIQ6IFSiJVQzVF11uWmVTWahKjO5TZszfzy+eX31Pvwf+w+8/rU8ZrbHRKr8Qr1j7YRKRKhEhEqUa6hp53udeYW5hpKiuUwht2xDibjrjjGdSLahjLnwTIJ9picUoWIbTaiEUPZ7w0xZKGu7ezu2w/lBpSuUG/p6/kEtbXPyL6KqUM34OKlwk+lz350bVJpCuX63ZHWqlKJQdv8ikwgjKh6qq3ebZ0x7ZkjpCWXH4IxCQ6jYiHqeAPDUw4khpSdUE2xcfWbu6Qk1hJdWjOmd9ISyXRiKERWdeuGyd0ZUbGfeB8t2hIqFao34S0rsiNNWhHLFIVT0MoX+o2sX9IQqXCleKZE+sivvTOxRZaGmJ3tbqalTrMbdyAdDSlOoeUy9lpPoMZTtpz1XfEipClW4ru2NqY2MQ7RGN4Ws40NKV6j5dYWuqromfirY3ucRF99LaQv1Kfs41DLRQwRCebrHGqJ/Dgnlt7g/1iB1bAdGqM16Tj165ECo1XrGykTO6BFq5e5rqMiQItSWYj1ul8h5BUKtGrOFCk/pEWpVeqdAw7lHqLWEf2IvnHuEemn8c+rhCzSEeoVody8+9MeLXQg1R7BNOcoulBznnvpQ1rq50nHL5Tj3tId6jKXnVVM7wTNj3aGCGec5zD21oawthqlSMOdWh7mnNNRcyZjIlNsIoSbh3jtc037u6QzVy9dvUzs831MYyoVXIcTI/phTYai0TsdzLepCOTcmbuV+7mkL5VyffFOj3dUu2kIVY/rNn2r/kn1doVyROu8e/LeB6AqVuB9fiMhWSlEo59ypTvtSikIVbjy9uq2UplD9+c3bxlTOoUR2dy448ffOX6F0z1/P+O388/WHLxK8EyZ1hctKJOMbRNwuuUHLEngpn2eoyxEqUYahrrzPjy+3UKURcz0xy8V4+YRqrr9l4lNud018M0IRilAHhErE/cwTSVuWy23sy+VzuXz7+uo96C0ybEsdf2vYfvv5eNnK1/+T/9z0HPYNB1DH46lvPsEGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATvsH7TdBHJKMQmQAAAAASUVORK5CYII="
+  }
+  alt="Policy"
+        style={{
+          width: "80px",
+          height: "60px",
+          objectFit: "contain",
+          borderRadius: "6px",
+        }}
+      />
+    ) : (
+      <Box
+        sx={{
+          width: "80px",
+          height: "60px",
+          backgroundColor: "#e0e0e0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "6px",
+        }}
+      >
+        <Typography
+          sx={{ fontSize: "0.8rem", color: "#555", fontWeight: 500 }}
+        >
+          No Image
+        </Typography>
+      </Box>
+    )}
+
+    {/* Company name */}
+    <Typography
+      sx={{
+        fontSize: "0.9rem",
+        fontWeight: 600,
+        color: "#fff",
+        textAlign: "center",
+        mt: 0.5,
+        maxWidth: "100px", // ✅ keeps consistent width
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        display: "-webkit-box",
+        WebkitLineClamp: 2, // ✅ max 2 lines
+        WebkitBoxOrient: "vertical",
+        lineHeight: 1.3,
+      }}
+    >
+      {policy.companyDetails?.label || "No Company Found"}
+    </Typography>
+  </Box>
+</Grid>
+
+
 
           <Grid item xs={12} sm={7} sx={6}>
             <Box
@@ -1004,6 +1054,8 @@ export default function PolicyTabs({
     );
 
     const hasFilters = searchTerm.trim() || selectedTypeFilter !== "all";
+
+    console.log("M" , paginatedData)
 
     return (
       <TabPanel
