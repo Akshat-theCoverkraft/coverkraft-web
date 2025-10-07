@@ -71,10 +71,11 @@ const HealthPolicyForm = () => {
   const [insuredName, setInsuredName] = useState(
     responseData?.insuredName || policyDetails?.insuredName || ""
   );
+ 
   const normalizeString = (str = "") => str.replace(/\s+/g, "").toLowerCase();
 
   const [insuredCompany, setInsuredCompany] = useState(
-    responseData?.insuranceCompany || policyDetails?.insuredCompany || ""
+    responseData?.insuredCompany || responseData?.insuranceCompany || policyDetails?.insuredCompany || ""
   );
   const [dob, setDob] = useState(responseData?.dob || "");
   const [policyName, setPolicyName] = useState(
@@ -155,6 +156,7 @@ const HealthPolicyForm = () => {
         policyName,
       };
       if (validateFields(payload)) {
+        console.log("-paylod",payload )
         if (mode === "edit") {
           // Make API call to update the existing policy
           await updatePolicy(payload);
@@ -163,7 +165,7 @@ const HealthPolicyForm = () => {
           await createPolicy(payload);
         }
       } else {
-        toast.error("Please fill all required fields!");
+        toast.error("Please fill all required fields--------------------!");
       }
     } catch (error) {
       console.error("Failed to save policy:", error);
@@ -172,6 +174,7 @@ const HealthPolicyForm = () => {
     }
   };
   const validateFields = (payload) => {
+    console.log("payload", payload)
     // Implement your validation logic here
     return (
       payload.policyNumber &&
