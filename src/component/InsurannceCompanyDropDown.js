@@ -69,7 +69,7 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
     setSelectedOption(newValue);
 
     if (newValue) {
-      onCompanySelect(newValue.value); // pass id
+      onCompanySelect(newValue.label); // pass id
     } else {
       // keep typed text visible instead of blacking out
       setInputValue(initialValue || "");

@@ -80,7 +80,7 @@ const HealthPolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
-  const documentId = localStorage.getItem("documentId");
+  // const documentId = localStorage.getItem("documentId");
   // const [idv, setIdv] = useState(responseData.idv || "");
   const commonItemStyle = {
     maxWidth: 900,
@@ -186,6 +186,7 @@ const HealthPolicyForm = () => {
   };
 
   const createPolicy = (payload) => {
+    const documentId = localStorage.getItem("documentId");
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("documentId", documentId);
@@ -198,7 +199,7 @@ const HealthPolicyForm = () => {
     formData.append("premiumPaid", premiumPaid);
     formData.append("netPremium", netPremium);
     formData.append("insuredName", insuredName);
-    formData.append("insuranceCompany", insuredCompany);
+    formData.append("insuredCompany", insuredCompany);
     formData.append("dob", dob);
     formData.append("policyName", policyName);
     dispatch(saveDocument(API_URL, formData))
@@ -211,6 +212,7 @@ const HealthPolicyForm = () => {
       });
   };
   const updatePolicy = (payload) => {
+    const documentId = sessionStorage.getItem("documentId");
     // console.log("================");
     const formData = new FormData();
     formData.append("_id", policyId);
@@ -225,7 +227,7 @@ const HealthPolicyForm = () => {
     formData.append("totalPremium", premiumPaid);
     formData.append("netPremium", netPremium);
     formData.append("insuredName", insuredName);
-    formData.append("insuranceCompany", insuredCompany);
+    formData.append("insuredCompany", insuredCompany);
     formData.append("dob", dob);
     formData.append("policyName", policyName);
 
