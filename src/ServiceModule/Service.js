@@ -1,7 +1,7 @@
 
 const API_URL = "https://api.thecoverkraft.com/"; //--------uat------
 
-
+//
 // const API_URL = "https://devapi.thecoverkraft.com/"; //--------dev------
 
 //const API_URL = "http://52.52.154.65:5242/";
