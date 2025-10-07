@@ -55,8 +55,12 @@ const PolicyDetail = ({ policyId }) => {
         );
 
         const data = response.data?.data;
+        console.log("data", data)
         setPolicyDetails(Array.isArray(data) ? data : []);
         sessionStorage.setItem("policyId", policyId);
+         const documentId = data[0]?.documentDetails?._id;
+        console.log("documentId", documentId);
+        sessionStorage.setItem("documentId", documentId )
       } catch (error) {
         if (error.response?.status === 401) {
           setShowSessionExpired(true);
