@@ -12,6 +12,7 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const normalizeString = (str = "") => str.replace(/\s+/g, "").toLowerCase();
 
@@ -34,6 +35,7 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
           setOptions(formatted);
         } catch (err) {
           console.error("Error fetching companies:", err);
+          setOptions([]);
         } finally {
           setLoading(false);
         }
@@ -41,42 +43,66 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
     []
   );
 
+  // Initial fetch
   useEffect(() => {
     fetchCompanies("");
-  }, []);
+  }, [fetchCompanies]);
 
+  // Match and set initial value
   useEffect(() => {
-    if (initialValue && options.length > 0) {
+    if (initialValue && options.length > 0 && !isInitialized) {
+      console.log("Matching initialValue:", initialValue);
       const normalizedInitial = normalizeString(initialValue);
 
-      const match =
-        options.find((opt) => opt.value === initialValue) ||
-        options.find(
-          (opt) => normalizeString(opt.label).includes(normalizedInitial)
-        ) ||
-        null;
+      // Try multiple matching strategies
+      let match = options.find((opt) => normalizeString(opt.label) === normalizedInitial);
+      
+      if (!match) {
+        match = options.find((opt) => 
+          normalizeString(opt.label).includes(normalizedInitial)
+        );
+      }
+      
+      if (!match) {
+        match = options.find((opt) => 
+          normalizedInitial.includes(normalizeString(opt.label))
+        );
+      }
 
-      setSelectedOption(match);
+      if (match) {
+        console.log("Found match:", match.label);
+        setSelectedOption(match);
+        setInputValue(match.label);
+        onCompanySelect(match.label); // Send matched label to parent
+      } else {
+        console.log("No match found, using initial value as-is");
+        setInputValue(initialValue);
+      }
+      
+      setIsInitialized(true);
     }
-  }, [initialValue, options]);
+  }, [initialValue, options, isInitialized, onCompanySelect]);
 
   const handleInputChange = (event, newInputValue) => {
     setInputValue(newInputValue);
-    fetchCompanies(newInputValue);
+    if (newInputValue) {
+      fetchCompanies(newInputValue);
+    }
   };
 
   const handleChange = (event, newValue) => {
+    console.log("Dropdown changed to:", newValue);
     setSelectedOption(newValue);
 
     if (newValue) {
-      onCompanySelect(newValue.label); // ✅ pass company name instead of id
+      setInputValue(newValue.label);
+      onCompanySelect(newValue.label);
     } else {
-      setInputValue(initialValue || "");
+      setInputValue("");
       onCompanySelect("");
     }
   };
 
-  // Get initials for avatar
   const getInitials = (name) => {
     if (!name) return "IC";
     const words = name.trim().split(" ");
@@ -119,14 +145,16 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
         getOptionLabel={(option) => option.label || ""}
         options={options}
         loading={loading}
-        value={selectedOption || { label: inputValue, value: "" }}
+        value={selectedOption}
         onChange={handleChange}
         inputValue={inputValue}
         onInputChange={handleInputChange}
+        isOptionEqualToValue={(option, value) => option.value === value.value}
         renderOption={(props, option) => (
           <Box
             component="li"
             {...props}
+            key={option.value}
             sx={{
               display: "flex !important",
               alignItems: "center",
