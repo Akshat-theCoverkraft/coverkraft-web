@@ -166,3 +166,9 @@ export const usePolicyContext = () => {
   if (!ctx) throw new Error("usePolicyContext must be used within PolicyProvider");
   return ctx;
 };
+
+const switchToArchiveTab = () => {
+  setValue(2); // 2 is the Archive tab value
+  setActiveTab("archive");
+  sessionStorage.setItem("selectedTab", "2");
+};
