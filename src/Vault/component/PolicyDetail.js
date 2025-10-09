@@ -192,7 +192,7 @@ const PolicyDetail = ({ policyId }) => {
       }
       setTimeout(() => {
         toastShownRef.current.delete(toastKey);
-      }, 3000);u
+      }, 3000);
     }
   };
 

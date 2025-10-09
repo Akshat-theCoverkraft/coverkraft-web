@@ -934,7 +934,6 @@ const CustomPagination = ({
     />
   </Box>
 );
-
 export default function PolicyTabs({
   handleCardClick,
   shareAllPolicy,
@@ -943,7 +942,6 @@ export default function PolicyTabs({
 }) {
   const {
     value,
-    pages,
     policyList,
     activeTab,
     loading,
@@ -954,12 +952,10 @@ export default function PolicyTabs({
     setSelectedPolicyId,
     setSearchTerm,
     setSelectedTypeFilter,
-    setPages,
     fetchData,
     handleTabChange,
     handleClearAll,
     handleSessionExpiredOk,
-    itemsPerPage,
     setActiveTab,
     archieveList,
     pendingList,
@@ -968,10 +964,12 @@ export default function PolicyTabs({
 
   const classes = useStyles();
 
+  // Restore selected policy & tab
   useEffect(() => {
     setActiveTab("active");
     const savedPolicyId = sessionStorage.getItem("selectedPolicyId");
     const savedTab = sessionStorage.getItem("selectedTab");
+
     if (savedPolicyId) setSelectedPolicyId(savedPolicyId);
     if (savedTab) {
       const tabValue = parseInt(0);
@@ -980,9 +978,11 @@ export default function PolicyTabs({
     }
   }, []);
 
+  // Select correct policy when filters change
   useEffect(() => {
     const currentList =
       value === 2 ? archieveList : value === 3 ? pendingList : policyList;
+
     const filteredList = filterPolicies(
       currentList,
       searchTerm,
@@ -1017,12 +1017,7 @@ export default function PolicyTabs({
     selectedTypeFilter,
   ]);
 
-  const handleCardClickWithState = (id) => {
-    setSelectedPolicyId(id);
-    sessionStorage.setItem("selectedPolicyId", id);
-    handleCardClick(id);
-  };
-
+  // Fetch data based on tab
   useEffect(() => {
     if (value === 2) {
       fetchData("policy/archiveData", { status: "archive" }, true);
@@ -1033,10 +1028,16 @@ export default function PolicyTabs({
     }
   }, [value, activeTab]);
 
+  const handleCardClickWithState = (id) => {
+    setSelectedPolicyId(id);
+    sessionStorage.setItem("selectedPolicyId", id);
+    handleCardClick(id);
+  };
+
+  // Renders tab contents
   const renderTabContent = (
     tabValue,
     dataList,
-    pageKey,
     showStatus = false,
     isExpired = false
   ) => {
@@ -1056,106 +1057,70 @@ export default function PolicyTabs({
       selectedTypeFilter,
       tabValue === 3
     );
-    const currentPage = pages[pageKey];
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = filteredList.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
 
     const hasFilters = searchTerm.trim() || selectedTypeFilter !== "all";
 
-    console.log("M" , paginatedData)
-
-    return (
-      <TabPanel
-        value={tabValue}
+   return (
+  <TabPanel
+    value={tabValue}
+    sx={{
+      flex: 1,
+      borderRadius: "12px !important",
+      zIndex: 1,
+      position: "relative !important",
+      paddingTop: 2,
+      width: "100%",
+      height: "600px",
+      overflowY: "auto", // ✅ Enables scrolling
+      scrollbarWidth: "thin",
+      "&::-webkit-scrollbar": {
+        width: "6px",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        backgroundColor: "#555",
+        borderRadius: "6px",
+      },
+    }}
+  >
+    {filteredList.length === 0 ? (
+      <EmptyState
+        hasFilters={hasFilters}
+        onClearFilters={handleClearAll}
+        isPendingTab={tabValue === 3}
+      />
+    ) : (
+      <Box
         sx={{
-          flex: 1,
-          borderRadius: "12px !important",
-          zIndex: 1,
-          position: "relative  !important",
-          paddingTop: 2,
-          width: "100%",
-          minHeight: "600px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          pb: 12, // ✅ Increased bottom padding (more space below last card)
+          pr: 1,  // optional spacing from scrollbar
         }}
       >
-        <Box
-          sx={{
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 5,
-          }}
-        >
-          {filteredList.length === 0 ? (
-            <EmptyState
-              hasFilters={hasFilters}
-              onClearFilters={handleClearAll}
-              isPendingTab={tabValue === 3}
-            />
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-                minHeight: "450px",
-              }}
-            >
-              <Box
-                sx={{
-                  flexGrow: 1,
-                  overflowY: "auto",
-                  mb: 2,
-                }}
-              >
-                {paginatedData.map((policy, index) => {
-                  return (
-                    <PolicyCard
-                      key={policy._id}
-                      policy={policy}
-                      shareAllPolicy={shareAllPolicy}
-                      selectedPolicies={selectedPolicies}
-                      handleCheckboxChange={handleCheckboxChange}
-                      handleCardClick={handleCardClickWithState}
-                      showStatus={showStatus}
-                      isExpired={isExpired}
-                      isSelected={policy._id === selectedPolicyId}
-                      fetchData={fetchData}
-                      value={tabValue}
-                      activeTab={activeTab}
-                      classes={classes}
-                      showProgress={tabValue === 3}
-                    />
-                  );
-                })}
-              </Box>
+        {filteredList.map((policy) => (
+          <PolicyCard
+            key={policy._id}
+            policy={policy}
+            shareAllPolicy={shareAllPolicy}
+            selectedPolicies={selectedPolicies}
+            handleCheckboxChange={handleCheckboxChange}
+            handleCardClick={handleCardClickWithState}
+            showStatus={showStatus}
+            isExpired={isExpired}
+            isSelected={policy._id === selectedPolicyId}
+            fetchData={fetchData}
+            value={tabValue}
+            activeTab={activeTab}
+            classes={classes}
+            showProgress={tabValue === 3}
+          />
+        ))}
+      </Box>
+    )}
+  </TabPanel>
+);
 
-              {Math.ceil(filteredList.length / itemsPerPage) > 1 && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    mt: "auto",
-                    py: 2,
-                    borderTop: "1px solid #444",
-                  }}
-                >
-                  <CustomPagination
-                    totalItems={filteredList.length}
-                    currentPage={currentPage}
-                    onPageChange={(event, newPage) =>
-                      setPages((prev) => ({ ...prev, [pageKey]: newPage }))
-                    }
-                    itemsPerPage={itemsPerPage}
-                  />
-                </Box>
-              )}
-            </Box>
-          )}
-        </Box>
-      </TabPanel>
-    );
   };
 
   const expiredCount = policyList.filter(
@@ -1193,7 +1158,7 @@ export default function PolicyTabs({
 
             <Box
               sx={{
-                width: { xs: "100%", sm: "100%" },
+                width: "100%",
                 backgroundColor: "#929292",
                 mx: "auto",
                 mt: 1,
@@ -1209,7 +1174,6 @@ export default function PolicyTabs({
                   display: "flex",
                   justifyContent: "space-between",
                   backgroundColor: "#3E3E3E",
-                  padding: 0,
                   borderRadius: "35px",
                   px: 1,
                 }}
@@ -1223,7 +1187,6 @@ export default function PolicyTabs({
                           display: "flex",
                           alignItems: "center",
                           gap: 1,
-                          px: { xs: 1, sm: 2 },
                         }}
                       >
                         <span style={{ fontSize: "1.4rem" }}>{tab.label}</span>
@@ -1240,7 +1203,6 @@ export default function PolicyTabs({
                               fontWeight: "bold",
                               minWidth: "20px",
                               minHeight: "20px",
-                              lineHeight: "1",
                             }}
                           >
                             {expiredCount}
@@ -1255,11 +1217,10 @@ export default function PolicyTabs({
                         value === tab.value ? "white" : "inherit",
                       textTransform: "capitalize",
                       borderRadius: "25px",
-                      fontSize: { xs: "1.2rem", sm: "1.2rem" },
+                      fontSize: "1.2rem",
                       fontWeight: "700",
-                      minWidth: "unset",
                       flex: 1,
-                      px: { xs: 1, sm: 2 },
+                      px: 1,
                     }}
                     onClick={() => tab.value < 2 && setActiveTab(tab.key)}
                   />
@@ -1280,12 +1241,12 @@ export default function PolicyTabs({
               <Loader sx={{ color: "#8AC642" }} />
             </Box>
           ) : (
-            <div style={{ height: "100%" }}>
-              {renderTabContent(0, policyList, "active", true, false)}
-              {renderTabContent(1, policyList, "expired", false, true)}
-              {renderTabContent(2, archieveList, "archive", false, false)}
-              {renderTabContent(3, pendingList, "pending", true, false)}
-            </div>
+            <>
+              {renderTabContent(0, policyList, true, false)}
+              {renderTabContent(1, policyList, false, true)}
+              {renderTabContent(2, archieveList, false, false)}
+              {renderTabContent(3, pendingList, true, false)}
+            </>
           )}
         </TabContext>
       </Card>
