@@ -68,25 +68,40 @@ const LogoCarousel = () => {
         >
           {/* Repeat logos twice for perfect infinite loop */}
           {[...logos, ...logos].map((item, index) => (
-            <div key={index} className="mx-5 flex-shrink-0">
-              <img
-                src={item.icon}
-                alt={item.label || "logo"}
-                className="img-fluid"
-                style={{
-                  height: "100px",
-                  width: "auto",
-                  transition: "transform 0.3s ease",
-                  filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.2))",
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.1)")
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              />
-            </div>
+         <div
+  key={index}
+  className="mx-5 flex-shrink-0"
+  style={{
+    width: "240px", // fixed width for all icons
+    height: "140px", // fixed height for all icons
+    backgroundColor: "rgba(255, 255, 255, 0.25)", // bright transparent background
+    backdropFilter: "blur(8px)",
+    borderRadius: "16px",
+    padding: "20px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+  <img
+    src={item.icon}
+    alt={item.label || "logo"}
+    className="img-fluid"
+    style={{
+      height: "80px", // consistent icon size
+      width: "auto",
+      transition: "transform 0.3s ease",
+      filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.2))",
+    }}
+    onMouseOver={(e) =>
+      (e.currentTarget.style.transform = "scale(1.1)")
+    }
+    onMouseOut={(e) =>
+      (e.currentTarget.style.transform = "scale(1)")
+    }
+  />
+</div>
+
           ))}
         </div>
       </div>
