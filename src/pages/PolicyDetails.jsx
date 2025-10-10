@@ -6,13 +6,17 @@ import API_URL from "../ServiceModule/Service";
 import Button from "../component/Button";
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import SessionExpiredModal from "../utils/sessionExpireModal";
+import ProfileDrawer from "../component/profile";
 import "react-toastify/dist/ReactToastify.css";
 
-// New Modal for Coming Soon
-const ComingSoonModal = ({ visible, onClose }) => {
+// Enhanced Modal for Coming Soon
+const ComingSoonModal = ({ visible, onClose, message, contactEmail }) => {
   if (!visible) return null;
+
+  const defaultMessage = "You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.";
+  const email = contactEmail || "Contact@thecoverkraft.com";
 
   return (
     <div
@@ -42,10 +46,110 @@ const ComingSoonModal = ({ visible, onClose }) => {
       >
         <h2 style={{ marginBottom: "1em", fontSize: "1.5em" }}>Coming Soon 🚀</h2>
         <p style={{ marginBottom: "1.5em", color: "#ccc", lineHeight: 1.6 }}>
-          You may send your requirement to <b>Contact@thecoverkraft.com</b> and
-          our team will get in touch with you.
+          {message || defaultMessage}
+          {!message && (
+            <>
+              <br />
+              <b>{email}</b>
+            </>
+          )}
         </p>
         <Button text="OK" size="md" block={true} onClick={onClose} />
+      </div>
+    </div>
+  );
+};
+
+// New Modal for Profile Completion - FIXED VERSION
+const ProfileIncompleteModal = ({ 
+  visible, 
+  onClose, 
+  message, 
+  missingFields,
+  onCompleteProfile  // Add this prop
+}) => {
+  if (!visible) return null;
+
+  const handleCompleteProfile = () => {
+    onClose(); // Close the modal first
+    if (onCompleteProfile) {
+      onCompleteProfile(); // Then call the function to open ProfileDrawer
+    }
+  };
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        background: "rgba(0,0,0,0.6)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10000,
+      }}
+    >
+      <div
+        style={{
+          background: "#1e1e1e",
+          padding: "2em",
+          borderRadius: "16px",
+          maxWidth: "450px",
+          textAlign: "center",
+          color: "#fff",
+          boxShadow: "0 0 20px rgba(0,0,0,0.7)",
+        }}
+      >
+        <div style={{ fontSize: "3em", marginBottom: "0.5em" }}>👤</div>
+        <h2 style={{ marginBottom: "1em", fontSize: "1.5em" }}>Complete Your Profile</h2>
+        <p style={{ marginBottom: "1em", color: "#ccc", lineHeight: 1.6 }}>
+          {message || "Please complete your profile to continue purchasing insurance."}
+        </p>
+        {missingFields && missingFields.length > 0 && (
+          <div style={{ 
+            marginBottom: "1.5em", 
+            padding: "1em", 
+            background: "#2a2a2a", 
+            borderRadius: "8px",
+            textAlign: "left"
+          }}>
+            <p style={{ fontSize: "0.9em", color: "#ff9800", marginBottom: "0.5em" }}>
+              <b>Missing Information:</b>
+            </p>
+            <ul style={{ margin: 0, paddingLeft: "1.5em", color: "#ccc" }}>
+              {missingFields.map((field, index) => (
+                <li key={index} style={{ textTransform: "capitalize" }}>{field}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div style={{ display: "flex", gap: "1em", justifyContent: "center" }}>
+          <Button 
+            text="Complete Profile" 
+            size="md" 
+            onClick={handleCompleteProfile}
+            style={{ flex: 1 }}
+          />
+          <button
+            onClick={onClose}
+            style={{
+              flex: 1,
+              padding: "0.8em 1.5em",
+              background: "transparent",
+              border: "2px solid #555",
+              color: "#ccc",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontSize: "1em",
+              fontWeight: "600",
+            }}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -80,10 +184,44 @@ const PolicyDetails = () => {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   const [isFooterVisible, setIsFooterVisible] = useState(false);
   const [buying, setBuying] = useState(false);
-  const [showComingSoon, setShowComingSoon] = useState(false);
+  
+  // FIXED: Move drawerOpen state here inside PolicyDetails component
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+  
+  // Enhanced state for different modals
+  const [comingSoonModal, setComingSoonModal] = useState({
+    visible: false,
+    message: "",
+    contactEmail: ""
+  });
+  const [profileModal, setProfileModal] = useState({
+    visible: false,
+    message: "",
+    missingFields: []
+  });
 
   const footerRef = useRef(null);
   const navigate = useNavigate();
+
+  // Fetch user data to get userName
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userId = sessionStorage.getItem("userId");
+        if (userId) {
+          const response = await axios.get(`${API_URL}user/getById?_id=${userId}`);
+          if (response.data?.data?.userName) {
+            setUserName(response.data.data.userName);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     axios
@@ -139,7 +277,11 @@ const PolicyDetails = () => {
       );
 
       if (!matchedPolicy) {
-        setShowComingSoon(true);
+        setComingSoonModal({
+          visible: true,
+          message: "This insurance type is not available yet. You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you.",
+          contactEmail: "Contact@thecoverkraft.com"
+        });
         return;
       }
 
@@ -160,17 +302,110 @@ const PolicyDetails = () => {
         }
       );
 
-      if (autoLoginRes.data?.success && autoLoginRes.data.redirect_url) {
-        window.location.href = autoLoginRes.data.redirect_url;
-      } else {
-        setShowComingSoon(true);
+      const responseData = autoLoginRes.data;
+
+      // Handle success with redirect URL
+      if (responseData?.success && responseData.redirect_url) {
+        window.location.href = responseData.redirect_url;
+        return;
       }
+
+      // Handle different error scenarios from backend
+      if (!responseData?.success) {
+        // Check for specific action types
+        if (responseData.action === 'complete_profile') {
+          // Profile incomplete
+          setProfileModal({
+            visible: true,
+            message: responseData.message || "Please complete your profile to continue.",
+            missingFields: responseData.missingFields || []
+          });
+          return;
+        }
+
+        if (responseData.status === 'coming_soon') {
+          // Coming soon feature
+          setComingSoonModal({
+            visible: true,
+            message: responseData.message,
+            contactEmail: responseData.contact_email || "Contact@thecoverkraft.com"
+          });
+          return;
+        }
+
+        // Invalid type or other validation errors
+        if (responseData.errors_fields?.type) {
+          toast.error("Please select a valid insurance type", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          return;
+        }
+
+        // Generic error message from backend
+        toast.error(responseData.message || "Unable to process your request. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        return;
+      }
+
+      // Fallback if response structure is unexpected
+      setComingSoonModal({
+        visible: true,
+        message: "Service temporarily unavailable. Please try again later.",
+        contactEmail: "Contact@thecoverkraft.com"
+      });
+
     } catch (error) {
+      console.error("Buy Now Error:", error);
+
+      // Handle 401 Unauthorized
       if (error.response?.status === 401) {
         setShowSessionExpired(true);
-      } else {
-        setShowComingSoon(true);
+        return;
       }
+
+      // Handle backend error responses
+      if (error.response?.data) {
+        const errorData = error.response.data;
+
+        // Profile incomplete
+        if (errorData.action === 'complete_profile') {
+          setProfileModal({
+            visible: true,
+            message: errorData.message || "Please complete your profile to continue.",
+            missingFields: errorData.missingFields || []
+          });
+          return;
+        }
+
+        // Coming soon
+        if (errorData.status === 'coming_soon') {
+          setComingSoonModal({
+            visible: true,
+            message: errorData.message,
+            contactEmail: errorData.contact_email || "Contact@thecoverkraft.com"
+          });
+          return;
+        }
+
+        // Show specific error message from backend
+        if (errorData.message) {
+          toast.error(errorData.message, {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          return;
+        }
+      }
+
+      // Network or unknown error
+      toast.error("Network error. Please check your connection and try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
     } finally {
       setBuying(false);
     }
@@ -191,8 +426,30 @@ const PolicyDetails = () => {
         onConfirm={handleSessionExpiredOk}
       />
       <ComingSoonModal
-        visible={showComingSoon}
-        onClose={() => setShowComingSoon(false)}
+        visible={comingSoonModal.visible}
+        message={comingSoonModal.message}
+        contactEmail={comingSoonModal.contactEmail}
+        onClose={() => setComingSoonModal({ visible: false, message: "", contactEmail: "" })}
+      />
+      
+      {/* FIXED: Pass onCompleteProfile prop */}
+      <ProfileIncompleteModal
+        visible={profileModal.visible}
+        message={profileModal.message}
+        missingFields={profileModal.missingFields}
+        onClose={() => setProfileModal({ visible: false, message: "", missingFields: [] })}
+        onCompleteProfile={() => {
+          // Close the modal and open the drawer
+          setProfileModal({ visible: false, message: "", missingFields: [] });
+          setDrawerOpen(true);
+        }}
+      />
+
+      {/* FIXED: Add ProfileDrawer component here */}
+      <ProfileDrawer 
+        open={drawerOpen} 
+        onClose={() => setDrawerOpen(false)}
+        userName={userName}
       />
 
       <div
