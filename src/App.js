@@ -32,6 +32,7 @@ import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
 import { PolicyProvider } from "./store/policyContext.js";
 import LeaderShip from "./About/LeaderShip.js";
+import JoinUs from "./pages/JoinUs.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -117,6 +118,7 @@ function App() {
           <Route path="" element={<Landing />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/joinUs" element={<JoinUs />} />
           <Route path="/vault" element={<Vault />} />
           <Route path="/motor-policy" element={<MotorPolicyForm />} />
           <Route path="/health-policy" element={<HealthPolicyForm />} />
