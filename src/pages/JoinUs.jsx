@@ -1,30 +1,12 @@
 import React, { useState } from "react";
-import Button from "../component/Button";
+import Navbar from "../component/Navbar";
+import Footer from "../Landing/component/Footer";
 import FormField from "../component/Components/FormField";
 import LoaderOverlay from "../component/Components/LoaderOverlay";
-import {
-  validateEmail,
-  validatePhoneNumber,
-  validatePinCode,
-  validateFullName,
-  validateDOB,
-  validateAddress,
-  validateState,
-  validateGender,
-  validateApplyingFor,
-  validateFile,
-  validateForm,
-} from "../utils/formValidation";
-import Footer from "../Landing/component/Footer";
-import Navbar from "../component/Navbar";
-import API_URL from "../ServiceModule/Service";
-import { submitAgent } from "../store/action/action";
-import { useDispatch } from "react-redux";
+import Button from "../component/Button";
 import Popup from "../component/Components/Popup";
 
 const JoinUs = () => {
-  const dispatch = useDispatch();
-
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "",
@@ -38,13 +20,147 @@ const JoinUs = () => {
   });
 
   const [resumeFile, setResumeFile] = useState(null);
-  const [dragActive, setDragActive] = useState(false);
+  // ADD: POS Documents state
+  const [posDocuments, setPosDocuments] = useState({
+    panCard: null,
+    aadharFront: null,
+    aadharBack: null,
+    educationCertificate: null,
+  });
+  
+  // MODIFY: dragActive to handle multiple upload sections
+  const [dragActive, setDragActive] = useState({
+    resume: false,
+    panCard: false,
+    aadharFront: false,
+    aadharBack: false,
+    educationCertificate: false,
+  });
+  
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
-  // ✅ Form field helpers
+  // Simple validation functions
+  const validateFullName = (name) => {
+    if (!name || name.trim().length < 2) {
+      return { error: "Please enter a valid full name" };
+    }
+    return { error: "" };
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { error: "Please enter a valid email address" };
+    }
+    return { error: "" };
+  };
+
+  const validatePhoneNumber = (phone) => {
+    if (!phone || phone.replace(/\D/g, "").length < 10) {
+      return { error: "Please enter a valid phone number" };
+    }
+    return { error: "" };
+  };
+
+  const validatePinCode = (pin) => {
+    if (!pin || pin.length < 5) {
+      return { error: "Please enter a valid pin code" };
+    }
+    return { error: "" };
+  };
+
+  const validateDOB = (dob) => {
+    if (!dob) {
+      return { error: "Please select your date of birth" };
+    }
+    return { error: "" };
+  };
+
+  const validateAddress = (address) => {
+    if (!address || address.trim().length < 5) {
+      return { error: "Please enter a valid address" };
+    }
+    return { error: "" };
+  };
+
+  const validateState = (state) => {
+    if (!state || state.trim().length < 2) {
+      return { error: "Please enter a valid state" };
+    }
+    return { error: "" };
+  };
+
+  const validateGender = (gender) => {
+    if (!gender) {
+      return { error: "Please select your gender" };
+    }
+    return { error: "" };
+  };
+
+  const validateApplyingFor = (applyingFor) => {
+    if (!applyingFor) {
+      return { error: "Please select applying for" };
+    }
+    return { error: "" };
+  };
+
+  // MODIFY: validateFile to accept image files for POS documents
+  const validateFile = (file, allowImages = false) => {
+    if (!file) {
+      return { valid: false, error: "Please upload a file" };
+    }
+    
+    let validTypes;
+    if (allowImages) {
+      validTypes = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+    } else {
+      validTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+    }
+    
+    if (!validTypes.includes(file.type)) {
+      return { 
+        valid: false, 
+        error: allowImages 
+          ? "Only PDF, JPG, JPEG, and PNG files are allowed" 
+          : "Only PDF, DOC, and DOCX files are allowed" 
+      };
+    }
+    return { valid: true, error: "" };
+  };
+
+  // MODIFY: validateForm to include POS documents validation
+  const validateForm = (data, file, isPOS, posFiles) => {
+    const errors = {};
+    if (validateFullName(data.fullName).error) errors.fullName = validateFullName(data.fullName).error;
+    if (validateEmail(data.email).error) errors.email = validateEmail(data.email).error;
+    if (validatePhoneNumber(data.contactNumber).error) errors.contactNumber = validatePhoneNumber(data.contactNumber).error;
+    if (validatePinCode(data.pinCode).error) errors.pinCode = validatePinCode(data.pinCode).error;
+    if (validateDOB(data.dob).error) errors.dob = validateDOB(data.dob).error;
+    if (validateAddress(data.address).error) errors.address = validateAddress(data.address).error;
+    if (validateState(data.stateAgent).error) errors.stateAgent = validateState(data.stateAgent).error;
+    if (validateGender(data.gender).error) errors.gender = validateGender(data.gender).error;
+    if (validateApplyingFor(data.applyingFor).error) errors.applyingFor = validateApplyingFor(data.applyingFor).error;
+    if (!validateFile(file, false).valid) errors.resume = validateFile(file, false).error;
+
+    // ADD: Validate POS documents if applying for POS
+    if (isPOS) {
+      if (!validateFile(posFiles.panCard, true).valid) errors.panCard = validateFile(posFiles.panCard, true).error;
+      if (!validateFile(posFiles.aadharFront, true).valid) errors.aadharFront = validateFile(posFiles.aadharFront, true).error;
+      if (!validateFile(posFiles.aadharBack, true).valid) errors.aadharBack = validateFile(posFiles.aadharBack, true).error;
+      if (!validateFile(posFiles.educationCertificate, true).valid) errors.educationCertificate = validateFile(posFiles.educationCertificate, true).error;
+    }
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors,
+    };
+  };
+
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (fieldErrors[field]) {
@@ -54,51 +170,12 @@ const JoinUs = () => {
 
   const handleBlur = (field) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
-    validateField(field);
-  };
-
-  const validateField = (field) => {
-    let error = "";
-
-    switch (field) {
-      case "fullName":
-        error = validateFullName(formData.fullName).error;
-        break;
-      case "email":
-        error = validateEmail(formData.email).error;
-        break;
-      case "contactNumber":
-        error = validatePhoneNumber(formData.contactNumber).error;
-        break;
-      case "pinCode":
-        error = validatePinCode(formData.pinCode).error;
-        break;
-      case "dob":
-        error = validateDOB(formData.dob).error;
-        break;
-      case "address":
-        error = validateAddress(formData.address).error;
-        break;
-      case "stateAgent":
-        error = validateState(formData.stateAgent).error;
-        break;
-      case "gender":
-        error = validateGender(formData.gender).error;
-        break;
-      case "applyingFor":
-        error = validateApplyingFor(formData.applyingFor).error;
-        break;
-      default:
-        break;
-    }
-
-    setFieldErrors((prev) => ({ ...prev, [field]: error }));
   };
 
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const fileValidation = validateFile(file);
+      const fileValidation = validateFile(file, false);
 
       if (!fileValidation.valid) {
         setFieldErrors((prev) => ({ ...prev, resume: fileValidation.error }));
@@ -110,122 +187,301 @@ const JoinUs = () => {
     }
   };
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
-    else if (e.type === "dragleave") setDragActive(false);
+  // ADD: Handle POS document file selection
+  const handlePosFileSelect = (docType, e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const fileValidation = validateFile(file, true);
+
+      if (!fileValidation.valid) {
+        setFieldErrors((prev) => ({ ...prev, [docType]: fileValidation.error }));
+        return;
+      }
+
+      setPosDocuments((prev) => ({ ...prev, [docType]: file }));
+      setFieldErrors((prev) => ({ ...prev, [docType]: "" }));
+    }
   };
 
-  const handleDrop = (e) => {
+  // MODIFY: handleDrag to accept field parameter
+  const handleDrag = (e, field = "resume") => {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(false);
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive((prev) => ({ ...prev, [field]: true }));
+    } else if (e.type === "dragleave") {
+      setDragActive((prev) => ({ ...prev, [field]: false }));
+    }
+  };
+
+  // MODIFY: handleDrop to accept field parameter
+  const handleDrop = (e, field = "resume", isPosDoc = false) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive((prev) => ({ ...prev, [field]: false }));
     const files = e.dataTransfer.files;
-    if (files && files[0]) handleFileSelect({ target: { files } });
+    if (files && files[0]) {
+      if (isPosDoc) {
+        handlePosFileSelect(field, { target: { files } });
+      } else {
+        handleFileSelect({ target: { files } });
+      }
+    }
   };
 
-  // ✅ Final submit function
+  const handleWelcomeButtonClick = (applyingForValue) => {
+    setFormData((prev) => ({ ...prev, applyingFor: applyingForValue }));
+    setShowWelcomeModal(false);
+    setShowForm(true);
+  };
+
+  // MODIFY: handleSubmit to include POS documents in API payload
   const handleSubmit = async () => {
-  const allFields = [
-    "fullName",
-    "gender",
-    "dob",
-    "address",
-    "stateAgent",
-    "pinCode",
-    "contactNumber",
-    "email",
-    "applyingFor",
+    const allFields = [
+      "fullName",
+      "gender",
+      "dob",
+      "address",
+      "stateAgent",
+      "pinCode",
+      "contactNumber",
+      "email",
+      "applyingFor",
+    ];
+
+    setTouched(allFields.reduce((acc, field) => ({ ...acc, [field]: true }), {}));
+
+    const isPOS = formData.applyingFor === "POS";
+    const validation = validateForm(formData, resumeFile, isPOS, posDocuments);
+    
+    if (!validation.isValid) {
+      setFieldErrors(validation.errors);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // CREATE: FormData for API submission
+      const apiPayload = new FormData();
+      
+      // Append form fields
+      Object.keys(formData).forEach(key => {
+        apiPayload.append(key, formData[key]);
+      });
+      
+      // Append resume
+      apiPayload.append('resume', resumeFile);
+      
+      // Append POS documents if applicable
+      if (isPOS) {
+        apiPayload.append('panCard', posDocuments.panCard);
+        apiPayload.append('aadharFront', posDocuments.aadharFront);
+        apiPayload.append('aadharBack', posDocuments.aadharBack);
+        apiPayload.append('educationCertificate', posDocuments.educationCertificate);
+      }
+
+      // REPLACE THIS with your actual API call:
+      // const response = await fetch('YOUR_API_ENDPOINT', {
+      //   method: 'POST',
+      //   body: apiPayload,
+      // });
+      // const data = await response.json();
+
+      // Simulate API call
+      setTimeout(() => {
+        console.log("API Payload:", apiPayload);
+        setShowSuccessModal(true);
+        setShowForm(false);
+        setFormData({
+          fullName: "",
+          gender: "",
+          dob: "",
+          address: "",
+          stateAgent: "",
+          pinCode: "",
+          contactNumber: "",
+          email: "",
+          applyingFor: "",
+        });
+        setResumeFile(null);
+        setPosDocuments({
+          panCard: null,
+          aadharFront: null,
+          aadharBack: null,
+          educationCertificate: null,
+        });
+        setFieldErrors({});
+        setTouched({});
+        setLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Failed to submit. Please try again later.");
+      setLoading(false);
+    }
+  };
+
+  const { fullName, gender, dob, address, stateAgent, pinCode, contactNumber, email, applyingFor } = formData;
+
+  const welcomeButtons = [
+    {
+      label: "Employee",
+      onClick: () => handleWelcomeButtonClick("Employee"),
+      style: {
+        backgroundColor: "#8AC642",
+        color: "#fff",
+      },
+    },
+    {
+      label: "POS",
+      onClick: () => handleWelcomeButtonClick("POS"),
+      style: {
+        backgroundColor: "#8AC642",
+        color: "#fff",
+      },
+    },
   ];
 
-  // Mark all fields as touched
-  setTouched(allFields.reduce((acc, field) => ({ ...acc, [field]: true }), {}));
+  const successButtons = [
+    {
+      label: "OK",
+      onClick: () => setShowSuccessModal(false),
+      style: {
+        backgroundColor: "#8AC642",
+        color: "#fff",
+      },
+    },
+  ];
 
-  // Validate form
-  const validation = validateForm(formData, resumeFile);
-  if (!validation.isValid) {
-    setFieldErrors(validation.errors);
-    return;
-  }
+  // ADD: Reusable file upload component
+  const FileUploadBox = ({ 
+    id, 
+    label, 
+    file, 
+    error, 
+    onFileSelect, 
+    dragActiveState, 
+    icon = "📄",
+    accept = ".pdf,.jpg,.jpeg,.png"
+  }) => (
+    <div style={{ marginBottom: 24 }}>
+      <label
+        style={{
+          color: "#fff",
+          fontSize: "0.95rem",
+          marginBottom: 8,
+          fontWeight: 500,
+          display: "block",
+        }}
+      >
+        {label} <span style={{ color: "#f44336" }}>*</span>
+      </label>
 
-  // Prepare FormData
-  const data = new FormData();
-  data.append("fullName", formData.fullName);
-  data.append("gender", formData.gender);
-  data.append("dob", formData.dob);
-  data.append("address", formData.address);
-  data.append("state", formData.stateAgent);
-  data.append("pinCode", formData.pinCode);
-  data.append("contactNumber", formData.contactNumber);
-  data.append("email", formData.email);
-  data.append("applyingFor", formData.applyingFor);
-  data.append("resume", resumeFile);
+      <input
+        type="file"
+        id={id}
+        onChange={onFileSelect}
+        style={{ display: "none" }}
+        accept={accept}
+      />
 
-  setLoading(true);
+      <label
+        htmlFor={id}
+        onDragEnter={(e) => handleDrag(e, id)}
+        onDragLeave={(e) => handleDrag(e, id)}
+        onDragOver={(e) => handleDrag(e, id)}
+        onDrop={(e) => handleDrop(e, id, id !== "resumeUpload")}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          minHeight: "140px",
+          backgroundColor: dragActiveState ? "#2c2c2c" : "#1a1a1a",
+          border:
+            dragActiveState || error
+              ? dragActiveState
+                ? "2px dashed #8AC642"
+                : "2px dashed #f44336"
+              : "2px dashed #444",
+          borderRadius: "12px",
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+          padding: "20px",
+        }}
+      >
+        <div style={{ fontSize: "2.5rem", marginBottom: "8px" }}>{icon}</div>
+        {file ? (
+          <>
+            <span style={{ color: "#8AC642", fontWeight: 600 }}>
+              {file.name}
+            </span>
+            <span style={{ color: "#999", fontSize: "0.85rem" }}>
+              Click to change file
+            </span>
+          </>
+        ) : (
+          <>
+            <span style={{ color: "#8AC642", fontWeight: 600 }}>
+              Drag and drop your file here
+            </span>
+            <span style={{ color: "#999", fontSize: "0.85rem" }}>
+              or click to browse
+            </span>
+          </>
+        )}
+      </label>
 
-  try {
-    const res = await dispatch(submitAgent(API_URL, data));
-    console.log("Response:", res);
-
-    // ✅ Your backend sends: { status: true, message: "...", data: {...} }
-    if (res?.status === true) {
-      setShowSuccessModal(true);
-
-      // Reset form fields
-      setFormData({
-        fullName: "",
-        gender: "",
-        dob: "",
-        address: "",
-        stateAgent: "",
-        pinCode: "",
-        contactNumber: "",
-        email: "",
-        applyingFor: "",
-      });
-      setResumeFile(null);
-      setFieldErrors({});
-      setTouched({});
-    } else {
-      alert(`❌ ${res?.message || "Something went wrong."}`);
-    }
-  } catch (error) {
-    console.error("Submission error:", error);
-    alert("❌ Failed to submit. Please try again later.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-
-  const {
-    fullName,
-    gender,
-    dob,
-    address,
-    stateAgent,
-    pinCode,
-    contactNumber,
-    email,
-    applyingFor,
-  } = formData;
+      {error && (
+        <span
+          style={{
+            color: "#f44336",
+            fontSize: "0.85rem",
+            display: "block",
+            marginTop: 4,
+          }}
+        >
+          {error}
+        </span>
+      )}
+    </div>
+  );
 
   return (
     <>
       <Navbar />
-      {loading && <LoaderOverlay/>}
-     <Popup
-  visible={showSuccessModal}
-  title="Application Submitted 🎉"
-  message="Thank you for applying! Our team will review your application and contact you soon."
-  buttonText="OK"
-  onClose={() => setShowSuccessModal(false)}
-/>
+      {loading && <LoaderOverlay />}
 
+      <Popup
+        visible={showWelcomeModal}
+        title="Welcome to CoverCraft 👋"
+        message={`We are happy to know your interest to join CoverCraft. Please share your details below. We will get back to you once we verify your details and if it matches our requirement. Thank you for your time and interest.\n\nRegards,\nTeam CoverCraft`}
+        buttons={welcomeButtons}
+        onClose={() => setShowWelcomeModal(false)}
+      />
 
-      <div style={{ backgroundColor: "#000", minHeight: "100vh", padding: "40px 20px" }}>
+      <Popup
+        visible={showSuccessModal}
+        title="Application Submitted 🎉"
+        message="Thank you for applying! Our team will review your application and contact you soon."
+        buttons={successButtons}
+        onClose={() => setShowSuccessModal(false)}
+        navigateTo={'/'}
+      />
+
+      <div
+        style={{
+          backgroundColor: "#000",
+          minHeight: "100vh",
+          padding: "40px 20px",
+          filter: showWelcomeModal ? "blur(4px)" : "none",
+          opacity: showWelcomeModal ? 0.6 : 1,
+          pointerEvents: showWelcomeModal ? "none" : "auto",
+          transition: "all 0.3s ease",
+        }}
+      >
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div
             style={{
@@ -238,7 +494,6 @@ const JoinUs = () => {
               border: "1px solid #333",
             }}
           >
-            {/* Heading */}
             <div style={{ marginBottom: 32 }}>
               <h1
                 style={{
@@ -263,25 +518,22 @@ const JoinUs = () => {
               />
             </div>
 
-            {/* Applying For */}
-            <div style={{ marginBottom: 32, marginTop: 32 }}>
-              <FormField
-                label="Applying For"
-                field="applyingFor"
-                type="select"
-                value={applyingFor}
-                onChange={(val) => handleChange("applyingFor", val)}
-                onBlur={() => handleBlur("applyingFor")}
-                error={fieldErrors.applyingFor}
-                touched={touched.applyingFor}
-                options={[
-                  { value: "Employee", label: "Employee" },
-                  { value: "POS", label: "POS" },
-                ]}
-              />
+            <div
+              style={{
+                marginBottom: 32,
+                marginTop: 32,
+                padding: "16px",
+                backgroundColor: "#1a1a1a",
+                borderRadius: "8px",
+                border: "1px solid #333",
+              }}
+            >
+              <p style={{ color: "#8AC642", fontWeight: 600, margin: 0 }}>
+                Applying For:{" "}
+                <span style={{ color: "#fff" }}>{formData.applyingFor || "Not Selected"}</span>
+              </p>
             </div>
 
-            {/* Two-column layout */}
             <div
               style={{
                 display: "grid",
@@ -296,7 +548,7 @@ const JoinUs = () => {
                   field="fullName"
                   type="text"
                   placeholder="Enter your full name"
-                  value={fullName}
+                  value={formData.fullName}
                   onChange={(val) => handleChange("fullName", val)}
                   onBlur={() => handleBlur("fullName")}
                   error={fieldErrors.fullName}
@@ -306,7 +558,7 @@ const JoinUs = () => {
                   label="Date Of Birth"
                   field="dob"
                   type="date"
-                  value={dob}
+                  value={formData.dob}
                   onChange={(val) => handleChange("dob", val)}
                   onBlur={() => handleBlur("dob")}
                   error={fieldErrors.dob}
@@ -317,7 +569,7 @@ const JoinUs = () => {
                   field="address"
                   type="text"
                   placeholder="Enter your address"
-                  value={address}
+                  value={formData.address}
                   onChange={(val) => handleChange("address", val)}
                   onBlur={() => handleBlur("address")}
                   error={fieldErrors.address}
@@ -328,7 +580,7 @@ const JoinUs = () => {
                   field="stateAgent"
                   type="text"
                   placeholder="Enter your state"
-                  value={stateAgent}
+                  value={formData.stateAgent}
                   onChange={(val) => handleChange("stateAgent", val)}
                   onBlur={() => handleBlur("stateAgent")}
                   error={fieldErrors.stateAgent}
@@ -341,7 +593,7 @@ const JoinUs = () => {
                   label="Gender"
                   field="gender"
                   type="select"
-                  value={gender}
+                  value={formData.gender}
                   onChange={(val) => handleChange("gender", val)}
                   onBlur={() => handleBlur("gender")}
                   error={fieldErrors.gender}
@@ -357,7 +609,7 @@ const JoinUs = () => {
                   field="pinCode"
                   type="text"
                   placeholder="Enter your pin code"
-                  value={pinCode}
+                  value={formData.pinCode}
                   onChange={(val) => handleChange("pinCode", val)}
                   onBlur={() => handleBlur("pinCode")}
                   error={fieldErrors.pinCode}
@@ -368,7 +620,7 @@ const JoinUs = () => {
                   field="email"
                   type="email"
                   placeholder="Enter your email address"
-                  value={email}
+                  value={formData.email}
                   onChange={(val) => handleChange("email", val)}
                   onBlur={() => handleBlur("email")}
                   error={fieldErrors.email}
@@ -379,7 +631,7 @@ const JoinUs = () => {
                   field="contactNumber"
                   type="tel"
                   placeholder="Enter your contact number"
-                  value={contactNumber}
+                  value={formData.contactNumber}
                   onChange={(val) => handleChange("contactNumber", val)}
                   onBlur={() => handleBlur("contactNumber")}
                   error={fieldErrors.contactNumber}
@@ -388,89 +640,103 @@ const JoinUs = () => {
               </div>
             </div>
 
-            {/* Upload Resume */}
-            <div style={{ marginBottom: 32 }}>
-              <label
-                style={{
-                  color: "#fff",
-                  fontSize: "0.95rem",
-                  marginBottom: 8,
-                  fontWeight: 500,
-                  display: "block",
-                }}
-              >
-                Upload Resume <span style={{ color: "#f44336" }}>*</span>
-              </label>
+            {/* Resume Upload */}
+            <FileUploadBox
+              id="resumeUpload"
+              label="Upload Resume"
+              file={resumeFile}
+              error={fieldErrors.resume}
+              onFileSelect={handleFileSelect}
+              dragActiveState={dragActive.resume}
+              icon="📄"
+              accept=".pdf,.doc,.docx"
+            />
 
-              <input
-                type="file"
-                id="resumeUpload"
-                onChange={handleFileSelect}
-                style={{ display: "none" }}
-                accept=".pdf,.doc,.docx"
-              />
+            {/* ADD: POS Documents Section - Only show if POS is selected */}
+            {formData.applyingFor === "POS" && (
+              <>
+                <div style={{ marginTop: 48, marginBottom: 32 }}>
+                  <h2
+                    style={{
+                      color: "#8AC642",
+                      fontWeight: 600,
+                      fontSize: "1.5rem",
+                      marginBottom: 8,
+                    }}
+                  >
+                    Required Documents for POS
+                  </h2>
+                  <div
+                    style={{
+                      height: 3,
+                      width: 50,
+                      backgroundColor: "#8AC642",
+                      borderRadius: 2,
+                    }}
+                  />
+                </div>
 
-              <label
-                htmlFor="resumeUpload"
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                  minHeight: "140px",
-                  backgroundColor: dragActive ? "#2c2c2c" : "#1a1a1a",
-                  border:
-                    dragActive || fieldErrors.resume
-                      ? dragActive
-                        ? "2px dashed #8AC642"
-                        : "2px dashed #f44336"
-                      : "2px dashed #444",
-                  borderRadius: "12px",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                  padding: "20px",
-                }}
-              >
-                <div style={{ fontSize: "2.5rem", marginBottom: "8px" }}>📄</div>
-                {resumeFile ? (
-                  <>
-                    <span style={{ color: "#8AC642", fontWeight: 600 }}>
-                      {resumeFile.name}
-                    </span>
-                    <span style={{ color: "#999", fontSize: "0.85rem" }}>
-                      Click to change file
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span style={{ color: "#8AC642", fontWeight: 600 }}>
-                      Drag and drop your resume here
-                    </span>
-                    <span style={{ color: "#999", fontSize: "0.85rem" }}>
-                      or click to browse (PDF, DOC, DOCX)
-                    </span>
-                  </>
-                )}
-              </label>
-
-              {fieldErrors.resume && (
-                <span
+                {/* Two-column layout for POS documents */}
+                <div
                   style={{
-                    color: "#f44336",
-                    fontSize: "0.85rem",
-                    display: "block",
-                    marginTop: 4,
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                    gap: 24,
+                    marginBottom: 32,
                   }}
                 >
-                  {fieldErrors.resume}
-                </span>
-              )}
-            </div>
+                  {/* Left Column */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                    <FileUploadBox
+                      id="panCard"
+                      label="PAN Card"
+                      file={posDocuments.panCard}
+                      error={fieldErrors.panCard}
+                      onFileSelect={(e) => handlePosFileSelect("panCard", e)}
+                      dragActiveState={dragActive.panCard}
+                      icon="🆔"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+
+                    <FileUploadBox
+                      id="aadharBack"
+                      label="Aadhar Card (Back Side)"
+                      file={posDocuments.aadharBack}
+                      error={fieldErrors.aadharBack}
+                      onFileSelect={(e) => handlePosFileSelect("aadharBack", e)}
+                      dragActiveState={dragActive.aadharBack}
+                      icon="🪪"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                  </div>
+
+                  {/* Right Column */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                    <FileUploadBox
+                      id="aadharFront"
+                      label="Aadhar Card (Front Side)"
+                      file={posDocuments.aadharFront}
+                      error={fieldErrors.aadharFront}
+                      onFileSelect={(e) => handlePosFileSelect("aadharFront", e)}
+                      dragActiveState={dragActive.aadharFront}
+                      icon="🪪"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+
+                    <FileUploadBox
+                      id="educationCertificate"
+                      label="Education Certificate"
+                      file={posDocuments.educationCertificate}
+                      error={fieldErrors.educationCertificate}
+                      onFileSelect={(e) => handlePosFileSelect("educationCertificate", e)}
+                      dragActiveState={dragActive.educationCertificate}
+                      icon="🎓"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Buttons */}
             <div
@@ -483,7 +749,6 @@ const JoinUs = () => {
             >
               <Button
                 text="Save"
-                size="lg"
                 onClick={handleSubmit}
                 style={{
                   backgroundColor: "#8AC642",
@@ -497,8 +762,29 @@ const JoinUs = () => {
               />
               <Button
                 text="Cancel"
-                size="lg"
-                onClick={() => window.history.back()}
+                onClick={() => {
+                  setShowWelcomeModal(true);
+                  setFormData({
+                    fullName: "",
+                    gender: "",
+                    dob: "",
+                    address: "",
+                    stateAgent: "",
+                    pinCode: "",
+                    contactNumber: "",
+                    email: "",
+                    applyingFor: "",
+                  });
+                  setResumeFile(null);
+                  setPosDocuments({
+                    panCard: null,
+                    aadharFront: null,
+                    aadharBack: null,
+                    educationCertificate: null,
+                  });
+                  setFieldErrors({});
+                  setTouched({});
+                }}
                 style={{
                   backgroundColor: "transparent",
                   color: "#8AC642",
@@ -514,6 +800,7 @@ const JoinUs = () => {
           </div>
         </div>
       </div>
+
       <Footer />
     </>
   );
