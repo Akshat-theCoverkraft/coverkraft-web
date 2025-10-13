@@ -5,6 +5,11 @@ import FormField from "../component/Components/FormField";
 import LoaderOverlay from "../component/Components/LoaderOverlay";
 import Button from "../component/Button";
 import Popup from "../component/Components/Popup";
+import API_URL from "../ServiceModule/Service";
+import { submitAgent } from "../store/action/action";
+import { useDispatch } from "react-redux";
+import { validateFullName, validateEmail, validatePhoneNumber, validatePinCode, validateDOB, validateAddress, validateState, validateGender, validateApplyingFor, validateFile } from "../utils/formValidation";
+import { useNavigate } from "react-router-dom";
 
 const JoinUs = () => {
   const [formData, setFormData] = useState({
@@ -43,96 +48,8 @@ const JoinUs = () => {
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
-
-  // Simple validation functions
-  const validateFullName = (name) => {
-    if (!name || name.trim().length < 2) {
-      return { error: "Please enter a valid full name" };
-    }
-    return { error: "" };
-  };
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return { error: "Please enter a valid email address" };
-    }
-    return { error: "" };
-  };
-
-  const validatePhoneNumber = (phone) => {
-    if (!phone || phone.replace(/\D/g, "").length < 10) {
-      return { error: "Please enter a valid phone number" };
-    }
-    return { error: "" };
-  };
-
-  const validatePinCode = (pin) => {
-    if (!pin || pin.length < 5) {
-      return { error: "Please enter a valid pin code" };
-    }
-    return { error: "" };
-  };
-
-  const validateDOB = (dob) => {
-    if (!dob) {
-      return { error: "Please select your date of birth" };
-    }
-    return { error: "" };
-  };
-
-  const validateAddress = (address) => {
-    if (!address || address.trim().length < 5) {
-      return { error: "Please enter a valid address" };
-    }
-    return { error: "" };
-  };
-
-  const validateState = (state) => {
-    if (!state || state.trim().length < 2) {
-      return { error: "Please enter a valid state" };
-    }
-    return { error: "" };
-  };
-
-  const validateGender = (gender) => {
-    if (!gender) {
-      return { error: "Please select your gender" };
-    }
-    return { error: "" };
-  };
-
-  const validateApplyingFor = (applyingFor) => {
-    if (!applyingFor) {
-      return { error: "Please select applying for" };
-    }
-    return { error: "" };
-  };
-
-  // MODIFY: validateFile to accept image files for POS documents
-  const validateFile = (file, allowImages = false) => {
-    if (!file) {
-      return { valid: false, error: "Please upload a file" };
-    }
-    
-    let validTypes;
-    if (allowImages) {
-      validTypes = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
-    } else {
-      validTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-    }
-    
-    if (!validTypes.includes(file.type)) {
-      return { 
-        valid: false, 
-        error: allowImages 
-          ? "Only PDF, JPG, JPEG, and PNG files are allowed" 
-          : "Only PDF, DOC, and DOCX files are allowed" 
-      };
-    }
-    return { valid: true, error: "" };
-  };
-
+ const dispatch = useDispatch();
+ const navigate = useNavigate();
   // MODIFY: validateForm to include POS documents validation
   const validateForm = (data, file, isPOS, posFiles) => {
     const errors = {};
@@ -236,91 +153,109 @@ const JoinUs = () => {
   };
 
   // MODIFY: handleSubmit to include POS documents in API payload
-  const handleSubmit = async () => {
-    const allFields = [
-      "fullName",
-      "gender",
-      "dob",
-      "address",
-      "stateAgent",
-      "pinCode",
-      "contactNumber",
-      "email",
-      "applyingFor",
-    ];
+const handleSubmit = async () => {
+  const allFields = [
+    "fullName",
+    "gender",
+    "dob",
+    "address",
+    "stateAgent",
+    "pinCode",
+    "contactNumber",
+    "email",
+    "applyingFor",
+  ];
 
-    setTouched(allFields.reduce((acc, field) => ({ ...acc, [field]: true }), {}));
+  // Mark all fields as touched
+  setTouched(allFields.reduce((acc, field) => ({ ...acc, [field]: true }), {}));
 
-    const isPOS = formData.applyingFor === "POS";
-    const validation = validateForm(formData, resumeFile, isPOS, posDocuments);
-    
-    if (!validation.isValid) {
-      setFieldErrors(validation.errors);
-      return;
-    }
+  const isPOS = formData.applyingFor === "POS";
 
-    setLoading(true);
+  // Validate form
+  const validation = validateForm(formData, resumeFile, isPOS, posDocuments);
+  if (!validation.isValid) {
+    setFieldErrors(validation.errors);
+    return;
+  }
 
-    try {
-      // CREATE: FormData for API submission
-      const apiPayload = new FormData();
-      
-      // Append form fields
-      Object.keys(formData).forEach(key => {
-        apiPayload.append(key, formData[key]);
+  // Destructure form data
+  const {
+    fullName,
+    gender,
+    dob,
+    address,
+    stateAgent,
+    pinCode,
+    contactNumber,
+    email,
+    applyingFor,
+  } = formData;
+
+  // Prepare FormData for API
+  const data = new FormData();
+  data.append("fullName", fullName);
+  data.append("gender", gender);
+  data.append("dob", dob);
+  data.append("address", address);
+  data.append("state", stateAgent);
+  data.append("pinCode", pinCode);
+  data.append("contactNumber", contactNumber);
+  data.append("email", email);
+  data.append("applyingFor", applyingFor);
+  if (resumeFile) data.append("resume", resumeFile);
+
+  // Append POS documents (if applicable)
+  if (isPOS) {
+    if (posDocuments.panCard) data.append("panCard", posDocuments.panCard);
+    if (posDocuments.aadharFront) data.append("aadharFront", posDocuments.aadharFront);
+    if (posDocuments.aadharBack) data.append("aadharBack", posDocuments.aadharBack);
+    if (posDocuments.educationCertificate)
+      data.append("educationCertificate", posDocuments.educationCertificate);
+  }
+
+  setLoading(true);
+
+  try {
+
+    const res = await dispatch(submitAgent(API_URL, data));
+    console.log("Response:", res);
+
+    // ✅ Backend response: { status: true/false, message: "...", data: {...} }
+    if (res?.status === true) {
+      setShowSuccessModal(true);
+
+      // Reset form fields
+      setFormData({
+        fullName: "",
+        gender: "",
+        dob: "",
+        address: "",
+        stateAgent: "",
+        pinCode: "",
+        contactNumber: "",
+        email: "",
+        applyingFor: "",
       });
-      
-      // Append resume
-      apiPayload.append('resume', resumeFile);
-      
-      // Append POS documents if applicable
-      if (isPOS) {
-        apiPayload.append('panCard', posDocuments.panCard);
-        apiPayload.append('aadharFront', posDocuments.aadharFront);
-        apiPayload.append('aadharBack', posDocuments.aadharBack);
-        apiPayload.append('educationCertificate', posDocuments.educationCertificate);
-      }
-
-      // REPLACE THIS with your actual API call:
-      // const response = await fetch('YOUR_API_ENDPOINT', {
-      //   method: 'POST',
-      //   body: apiPayload,
-      // });
-      // const data = await response.json();
-
-      // Simulate API call
-      setTimeout(() => {
-        console.log("API Payload:", apiPayload);
-        setShowSuccessModal(true);
-        setShowForm(false);
-        setFormData({
-          fullName: "",
-          gender: "",
-          dob: "",
-          address: "",
-          stateAgent: "",
-          pinCode: "",
-          contactNumber: "",
-          email: "",
-          applyingFor: "",
-        });
-        setResumeFile(null);
-        setPosDocuments({
-          panCard: null,
-          aadharFront: null,
-          aadharBack: null,
-          educationCertificate: null,
-        });
-        setFieldErrors({});
-        setTouched({});
-        setLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.error("Submission error:", error);
-      alert("Failed to submit. Please try again later.");
-      setLoading(false);
+      setResumeFile(null);
+      setPosDocuments({
+        panCard: null,
+        aadharFront: null,
+        aadharBack: null,
+        educationCertificate: null,
+      });
+      setFieldErrors({});
+      setTouched({});
+    } else {
+      alert(`❌ ${res?.message || "Something went wrong."}`);
     }
-  };
+  } catch (error) {
+    console.error("Submission error:", error);
+    alert("❌ Failed to submit. Please try again later.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const { fullName, gender, dob, address, stateAgent, pinCode, contactNumber, email, applyingFor } = formData;
 
@@ -343,17 +278,19 @@ const JoinUs = () => {
     },
   ];
 
-  const successButtons = [
-    {
-      label: "OK",
-      onClick: () => setShowSuccessModal(false),
-      style: {
-        backgroundColor: "#8AC642",
-        color: "#fff",
-      },
+const successButtons = [
+  {
+    label: "OK",
+    onClick: () => {
+      setShowSuccessModal(false); // close popup
+      navigate("/"); // ✅ redirect to root
     },
-  ];
-
+    style: {
+      backgroundColor: "#8AC642",
+      color: "#fff",
+    },
+  },
+];
   // ADD: Reusable file upload component
   const FileUploadBox = ({ 
     id, 

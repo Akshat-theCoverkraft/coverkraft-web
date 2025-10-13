@@ -11,7 +11,7 @@ const Popup = ({
   buttons = [],
   buttonText = "OK",
   onClose,
-  navigateTo = -1, // ✅ default to navigate(-1)
+  navigateTo = -1, 
   leftIcon = <CheckCircleIcon sx={{ color: "#8AC642", fontSize: 28 }} />, // ✅ optional left icon
 }) => {
   const navigate = useNavigate();
