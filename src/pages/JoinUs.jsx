@@ -436,7 +436,7 @@ const JoinUs = () => {
       <Popup
         visible={showWelcomeModal}
         title="Welcome to CoverKraft 👋"
-        message={`We are happy to know your interest to join CoverKraft. Please share your details below. We will get back to you once we verify your details and if it matches our requirement. Thank you for your time and interest.\n\nRegards,\nTeam CoverKraft`}
+        message={`We are happy to know your interest to join CoverKraft. Please share your details below. We will get back to you once we verify your details and if it matches our requirement. Thank you for your time and interest.\n\nRegards,\nTeam The CoverKraft`}
         buttons={welcomeButtons}
         onClose={() => setShowWelcomeModal(false)}
       />
