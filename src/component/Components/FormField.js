@@ -22,7 +22,7 @@ const FormField = ({
 
   const baseInputStyle = {
     height: 48,
-    fontSize: "1rem",
+    fontSize: "1.2rem",
     borderRadius: 42,
     paddingLeft: leftIcon ? "45px" : "20px", // ✅ more space if icon
     paddingRight: rightIcon ? "35px" : "20px",
@@ -52,7 +52,7 @@ const FormField = ({
       <label
         style={{
           color: "#fff",
-          fontSize: "0.95rem",
+             fontSize: "1.05rem",
           marginBottom: 8,
           fontWeight: 500,
         }}

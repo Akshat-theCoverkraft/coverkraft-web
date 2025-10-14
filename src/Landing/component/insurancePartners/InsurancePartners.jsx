@@ -57,7 +57,7 @@ const LogoCarousel = () => {
       </Typography>
 
       {/* Infinite Scrolling Logos */}
-      <div className="overflow-hidden position-relative mt-5 py-6 w-100">
+      <div className="overflow-hidden position-relative mt-5 py-6 w-100 bg-white">
         <div
           className="d-flex align-items-center"
           style={{
@@ -74,8 +74,8 @@ const LogoCarousel = () => {
   style={{
     width: "240px", // fixed width for all icons
     height: "140px", // fixed height for all icons
-    backgroundColor: "rgba(255, 255, 255, 0.25)", // bright transparent background
-    backdropFilter: "blur(8px)",
+    backgroundColor: "white", // bright transparent background
+    // backdropFilter: "blur(8px)",
     borderRadius: "16px",
     padding: "20px",
     display: "flex",

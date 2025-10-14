@@ -8,7 +8,18 @@ import Popup from "../component/Components/Popup";
 import API_URL from "../ServiceModule/Service";
 import { submitAgent } from "../store/action/action";
 import { useDispatch } from "react-redux";
-import { validateFullName, validateEmail, validatePhoneNumber, validatePinCode, validateDOB, validateAddress, validateState, validateGender, validateApplyingFor, validateFile } from "../utils/formValidation";
+import {
+  validateFullName,
+  validateEmail,
+  validatePhoneNumber,
+  validatePinCode,
+  validateDOB,
+  validateAddress,
+  validateState,
+  validateGender,
+  validateApplyingFor,
+  validateFile,
+} from "../utils/formValidation";
 import { useNavigate } from "react-router-dom";
 
 const JoinUs = () => {
@@ -32,7 +43,7 @@ const JoinUs = () => {
     aadharBack: null,
     educationCertificate: null,
   });
-  
+
   // MODIFY: dragActive to handle multiple upload sections
   const [dragActive, setDragActive] = useState({
     resume: false,
@@ -41,35 +52,51 @@ const JoinUs = () => {
     aadharBack: false,
     educationCertificate: false,
   });
-  
+
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
- const dispatch = useDispatch();
- const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   // MODIFY: validateForm to include POS documents validation
   const validateForm = (data, file, isPOS, posFiles) => {
     const errors = {};
-    if (validateFullName(data.fullName).error) errors.fullName = validateFullName(data.fullName).error;
-    if (validateEmail(data.email).error) errors.email = validateEmail(data.email).error;
-    if (validatePhoneNumber(data.contactNumber).error) errors.contactNumber = validatePhoneNumber(data.contactNumber).error;
-    if (validatePinCode(data.pinCode).error) errors.pinCode = validatePinCode(data.pinCode).error;
+    if (validateFullName(data.fullName).error)
+      errors.fullName = validateFullName(data.fullName).error;
+    if (validateEmail(data.email).error)
+      errors.email = validateEmail(data.email).error;
+    if (validatePhoneNumber(data.contactNumber).error)
+      errors.contactNumber = validatePhoneNumber(data.contactNumber).error;
+    if (validatePinCode(data.pinCode).error)
+      errors.pinCode = validatePinCode(data.pinCode).error;
     if (validateDOB(data.dob).error) errors.dob = validateDOB(data.dob).error;
-    if (validateAddress(data.address).error) errors.address = validateAddress(data.address).error;
-    if (validateState(data.stateAgent).error) errors.stateAgent = validateState(data.stateAgent).error;
-    if (validateGender(data.gender).error) errors.gender = validateGender(data.gender).error;
-    if (validateApplyingFor(data.applyingFor).error) errors.applyingFor = validateApplyingFor(data.applyingFor).error;
-    if (!validateFile(file, false).valid) errors.resume = validateFile(file, false).error;
+    if (validateAddress(data.address).error)
+      errors.address = validateAddress(data.address).error;
+    if (validateState(data.stateAgent).error)
+      errors.stateAgent = validateState(data.stateAgent).error;
+    if (validateGender(data.gender).error)
+      errors.gender = validateGender(data.gender).error;
+    if (validateApplyingFor(data.applyingFor).error)
+      errors.applyingFor = validateApplyingFor(data.applyingFor).error;
+    if (!validateFile(file, false).valid)
+      errors.resume = validateFile(file, false).error;
 
     // ADD: Validate POS documents if applying for POS
     if (isPOS) {
-      if (!validateFile(posFiles.panCard, true).valid) errors.panCard = validateFile(posFiles.panCard, true).error;
-      if (!validateFile(posFiles.aadharFront, true).valid) errors.aadharFront = validateFile(posFiles.aadharFront, true).error;
-      if (!validateFile(posFiles.aadharBack, true).valid) errors.aadharBack = validateFile(posFiles.aadharBack, true).error;
-      if (!validateFile(posFiles.educationCertificate, true).valid) errors.educationCertificate = validateFile(posFiles.educationCertificate, true).error;
+      if (!validateFile(posFiles.panCard, true).valid)
+        errors.panCard = validateFile(posFiles.panCard, true).error;
+      if (!validateFile(posFiles.aadharFront, true).valid)
+        errors.aadharFront = validateFile(posFiles.aadharFront, true).error;
+      if (!validateFile(posFiles.aadharBack, true).valid)
+        errors.aadharBack = validateFile(posFiles.aadharBack, true).error;
+      if (!validateFile(posFiles.educationCertificate, true).valid)
+        errors.educationCertificate = validateFile(
+          posFiles.educationCertificate,
+          true
+        ).error;
     }
 
     return {
@@ -111,7 +138,10 @@ const JoinUs = () => {
       const fileValidation = validateFile(file, true);
 
       if (!fileValidation.valid) {
-        setFieldErrors((prev) => ({ ...prev, [docType]: fileValidation.error }));
+        setFieldErrors((prev) => ({
+          ...prev,
+          [docType]: fileValidation.error,
+        }));
         return;
       }
 
@@ -153,32 +183,112 @@ const JoinUs = () => {
   };
 
   // MODIFY: handleSubmit to include POS documents in API payload
-const handleSubmit = async () => {
-  const allFields = [
-    "fullName",
-    "gender",
-    "dob",
-    "address",
-    "stateAgent",
-    "pinCode",
-    "contactNumber",
-    "email",
-    "applyingFor",
-  ];
+  const handleSubmit = async () => {
+    const allFields = [
+      "fullName",
+      "gender",
+      "dob",
+      "address",
+      "stateAgent",
+      "pinCode",
+      "contactNumber",
+      "email",
+      "applyingFor",
+    ];
 
-  // Mark all fields as touched
-  setTouched(allFields.reduce((acc, field) => ({ ...acc, [field]: true }), {}));
+    // Mark all fields as touched
+    setTouched(
+      allFields.reduce((acc, field) => ({ ...acc, [field]: true }), {})
+    );
 
-  const isPOS = formData.applyingFor === "POS";
+    const isPOS = formData.applyingFor === "POS";
 
-  // Validate form
-  const validation = validateForm(formData, resumeFile, isPOS, posDocuments);
-  if (!validation.isValid) {
-    setFieldErrors(validation.errors);
-    return;
-  }
+    // Validate form
+    const validation = validateForm(formData, resumeFile, isPOS, posDocuments);
+    if (!validation.isValid) {
+      setFieldErrors(validation.errors);
+      return;
+    }
 
-  // Destructure form data
+    // Destructure form data
+    const {
+      fullName,
+      gender,
+      dob,
+      address,
+      stateAgent,
+      pinCode,
+      contactNumber,
+      email,
+      applyingFor,
+    } = formData;
+
+    // Prepare FormData for API
+    const data = new FormData();
+    data.append("fullName", fullName);
+    data.append("gender", gender);
+    data.append("dob", dob);
+    data.append("address", address);
+    data.append("state", stateAgent);
+    data.append("pinCode", pinCode);
+    data.append("contactNumber", contactNumber);
+    data.append("email", email);
+    data.append("applyingFor", applyingFor);
+    if (resumeFile) data.append("resume", resumeFile);
+
+    // Append POS documents (if applicable)
+    if (isPOS) {
+      if (posDocuments.panCard) data.append("panCard", posDocuments.panCard);
+      if (posDocuments.aadharFront)
+        data.append("aadharFront", posDocuments.aadharFront);
+      if (posDocuments.aadharBack)
+        data.append("aadharBack", posDocuments.aadharBack);
+      if (posDocuments.educationCertificate)
+        data.append("educationCertificate", posDocuments.educationCertificate);
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await dispatch(submitAgent(API_URL, data));
+      console.log("Response:", res);
+
+      // ✅ Backend response: { status: true/false, message: "...", data: {...} }
+      if (res?.status === true) {
+        setShowSuccessModal(true);
+
+        // Reset form fields
+        setFormData({
+          fullName: "",
+          gender: "",
+          dob: "",
+          address: "",
+          stateAgent: "",
+          pinCode: "",
+          contactNumber: "",
+          email: "",
+          applyingFor: "",
+        });
+        setResumeFile(null);
+        setPosDocuments({
+          panCard: null,
+          aadharFront: null,
+          aadharBack: null,
+          educationCertificate: null,
+        });
+        setFieldErrors({});
+        setTouched({});
+      } else {
+        alert(`❌ ${res?.message || "Something went wrong."}`);
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("❌ Failed to submit. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const {
     fullName,
     gender,
@@ -190,74 +300,6 @@ const handleSubmit = async () => {
     email,
     applyingFor,
   } = formData;
-
-  // Prepare FormData for API
-  const data = new FormData();
-  data.append("fullName", fullName);
-  data.append("gender", gender);
-  data.append("dob", dob);
-  data.append("address", address);
-  data.append("state", stateAgent);
-  data.append("pinCode", pinCode);
-  data.append("contactNumber", contactNumber);
-  data.append("email", email);
-  data.append("applyingFor", applyingFor);
-  if (resumeFile) data.append("resume", resumeFile);
-
-  // Append POS documents (if applicable)
-  if (isPOS) {
-    if (posDocuments.panCard) data.append("panCard", posDocuments.panCard);
-    if (posDocuments.aadharFront) data.append("aadharFront", posDocuments.aadharFront);
-    if (posDocuments.aadharBack) data.append("aadharBack", posDocuments.aadharBack);
-    if (posDocuments.educationCertificate)
-      data.append("educationCertificate", posDocuments.educationCertificate);
-  }
-
-  setLoading(true);
-
-  try {
-
-    const res = await dispatch(submitAgent(API_URL, data));
-    console.log("Response:", res);
-
-    // ✅ Backend response: { status: true/false, message: "...", data: {...} }
-    if (res?.status === true) {
-      setShowSuccessModal(true);
-
-      // Reset form fields
-      setFormData({
-        fullName: "",
-        gender: "",
-        dob: "",
-        address: "",
-        stateAgent: "",
-        pinCode: "",
-        contactNumber: "",
-        email: "",
-        applyingFor: "",
-      });
-      setResumeFile(null);
-      setPosDocuments({
-        panCard: null,
-        aadharFront: null,
-        aadharBack: null,
-        educationCertificate: null,
-      });
-      setFieldErrors({});
-      setTouched({});
-    } else {
-      alert(`❌ ${res?.message || "Something went wrong."}`);
-    }
-  } catch (error) {
-    console.error("Submission error:", error);
-    alert("❌ Failed to submit. Please try again later.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  const { fullName, gender, dob, address, stateAgent, pinCode, contactNumber, email, applyingFor } = formData;
 
   const welcomeButtons = [
     {
@@ -278,35 +320,35 @@ const handleSubmit = async () => {
     },
   ];
 
-const successButtons = [
-  {
-    label: "OK",
-    onClick: () => {
-      setShowSuccessModal(false); // close popup
-      navigate("/"); // ✅ redirect to root
+  const successButtons = [
+    {
+      label: "OK",
+      onClick: () => {
+        setShowSuccessModal(false); // close popup
+        navigate("/"); // ✅ redirect to root
+      },
+      style: {
+        backgroundColor: "#8AC642",
+        color: "#fff",
+      },
     },
-    style: {
-      backgroundColor: "#8AC642",
-      color: "#fff",
-    },
-  },
-];
+  ];
   // ADD: Reusable file upload component
-  const FileUploadBox = ({ 
-    id, 
-    label, 
-    file, 
-    error, 
-    onFileSelect, 
-    dragActiveState, 
+  const FileUploadBox = ({
+    id,
+    label,
+    file,
+    error,
+    onFileSelect,
+    dragActiveState,
     icon = "📄",
-    accept = ".pdf,.jpg,.jpeg,.png"
+    accept = ".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif", // ✅ Added more image formats
   }) => (
     <div style={{ marginBottom: 24 }}>
       <label
         style={{
           color: "#fff",
-          fontSize: "0.95rem",
+          fontSize: "1.05rem",
           marginBottom: 8,
           fontWeight: 500,
           display: "block",
@@ -393,8 +435,8 @@ const successButtons = [
 
       <Popup
         visible={showWelcomeModal}
-        title="Welcome to CoverCraft 👋"
-        message={`We are happy to know your interest to join CoverCraft. Please share your details below. We will get back to you once we verify your details and if it matches our requirement. Thank you for your time and interest.\n\nRegards,\nTeam CoverCraft`}
+        title="Welcome to CoverKraft 👋"
+        message={`We are happy to know your interest to join CoverKraft. Please share your details below. We will get back to you once we verify your details and if it matches our requirement. Thank you for your time and interest.\n\nRegards,\nTeam The CoverKraft`}
         buttons={welcomeButtons}
         onClose={() => setShowWelcomeModal(false)}
       />
@@ -405,7 +447,7 @@ const successButtons = [
         message="Thank you for applying! Our team will review your application and contact you soon."
         buttons={successButtons}
         onClose={() => setShowSuccessModal(false)}
-        navigateTo={'/'}
+        navigateTo={"/"}
       />
 
       <div
@@ -467,7 +509,9 @@ const successButtons = [
             >
               <p style={{ color: "#8AC642", fontWeight: 600, margin: 0 }}>
                 Applying For:{" "}
-                <span style={{ color: "#fff" }}>{formData.applyingFor || "Not Selected"}</span>
+                <span style={{ color: "#fff" }}>
+                  {formData.applyingFor || "Not Selected"}
+                </span>
               </p>
             </div>
 
@@ -479,7 +523,9 @@ const successButtons = [
                 marginBottom: 32,
               }}
             >
-              <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 24 }}
+              >
                 <FormField
                   label="Full Name"
                   field="fullName"
@@ -525,7 +571,9 @@ const successButtons = [
                 />
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 24 }}
+              >
                 <FormField
                   label="Gender"
                   field="gender"
@@ -586,7 +634,7 @@ const successButtons = [
               onFileSelect={handleFileSelect}
               dragActiveState={dragActive.resume}
               icon="📄"
-              accept=".pdf,.doc,.docx"
+              accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
             />
 
             {/* ADD: POS Documents Section - Only show if POS is selected */}
@@ -623,7 +671,13 @@ const successButtons = [
                   }}
                 >
                   {/* Left Column */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 24,
+                    }}
+                  >
                     <FileUploadBox
                       id="panCard"
                       label="PAN Card"
@@ -632,7 +686,7 @@ const successButtons = [
                       onFileSelect={(e) => handlePosFileSelect("panCard", e)}
                       dragActiveState={dragActive.panCard}
                       icon="🆔"
-                      accept=".pdf,.jpg,.jpeg,.png"
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
                     />
 
                     <FileUploadBox
@@ -643,21 +697,29 @@ const successButtons = [
                       onFileSelect={(e) => handlePosFileSelect("aadharBack", e)}
                       dragActiveState={dragActive.aadharBack}
                       icon="🪪"
-                      accept=".pdf,.jpg,.jpeg,.png"
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
                     />
                   </div>
 
                   {/* Right Column */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 24,
+                    }}
+                  >
                     <FileUploadBox
                       id="aadharFront"
                       label="Aadhar Card (Front Side)"
                       file={posDocuments.aadharFront}
                       error={fieldErrors.aadharFront}
-                      onFileSelect={(e) => handlePosFileSelect("aadharFront", e)}
+                      onFileSelect={(e) =>
+                        handlePosFileSelect("aadharFront", e)
+                      }
                       dragActiveState={dragActive.aadharFront}
                       icon="🪪"
-                      accept=".pdf,.jpg,.jpeg,.png"
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
                     />
 
                     <FileUploadBox
@@ -665,10 +727,12 @@ const successButtons = [
                       label="Education Certificate"
                       file={posDocuments.educationCertificate}
                       error={fieldErrors.educationCertificate}
-                      onFileSelect={(e) => handlePosFileSelect("educationCertificate", e)}
+                      onFileSelect={(e) =>
+                        handlePosFileSelect("educationCertificate", e)
+                      }
                       dragActiveState={dragActive.educationCertificate}
                       icon="🎓"
-                      accept=".pdf,.jpg,.jpeg,.png"
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
                     />
                   </div>
                 </div>
@@ -685,7 +749,7 @@ const successButtons = [
               }}
             >
               <Button
-                text="Save"
+                text="Submit"
                 onClick={handleSubmit}
                 style={{
                   backgroundColor: "#8AC642",
