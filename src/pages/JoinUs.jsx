@@ -485,7 +485,7 @@ const JoinUs = () => {
                   margin: 0,
                 }}
               >
-                Agent Details
+               Details
               </h1>
               <div
                 style={{
