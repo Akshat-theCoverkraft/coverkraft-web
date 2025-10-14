@@ -115,19 +115,29 @@ export const validateApplyingFor = (applyingFor) => {
   return { valid: true, error: "" };
 };
 
-export const validateFile = (file) => {
-  const allowedExtensions = [".pdf", ".doc", ".docx"];
+// ✅ FIXED: Added isPosDocument parameter to handle different file types
+export const validateFile = (file, isPosDocument = false) => {
+  // Different allowed extensions based on document type
+  const resumeExtensions = [".pdf", ".doc", ".docx"];
+  const posDocExtensions = [".pdf", ".jpg", ".jpeg", ".png"];
+  
+  const allowedExtensions = isPosDocument ? posDocExtensions : resumeExtensions;
   const maxFileSize = 5 * 1024 * 1024; // 5MB
 
   if (!file) {
-    return { valid: false, error: "Resume is required" };
+    return { 
+      valid: false, 
+      error: isPosDocument ? "Document is required" : "Resume is required" 
+    };
   }
 
   const fileExtension = "." + file.name.split(".").pop().toLowerCase();
   if (!allowedExtensions.includes(fileExtension)) {
     return {
       valid: false,
-      error: "Only PDF, DOC, and DOCX files are allowed",
+      error: isPosDocument 
+        ? "Only PDF, JPG, JPEG, and PNG files are allowed"
+        : "Only PDF, DOC, and DOCX files are allowed",
     };
   }
 

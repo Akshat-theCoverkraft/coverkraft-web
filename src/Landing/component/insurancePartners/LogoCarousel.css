@@ -1,0 +1,57 @@
+.logo-carousel-section {
+  background: rgba(255, 255, 255, 0.1); /* transparent glassy look */
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 80px 0; /* ⬅️ Added top & bottom spacing */
+  margin: 80px 0;  /* ⬅️ Adds space from other sections */
+}
+
+.logo-carousel-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 20px 0; /* ⬅️ Small internal space above/below logos */
+}
+
+.logo-carousel {
+  display: flex;
+  align-items: center;
+  animation: scrollLeft 25s linear infinite;
+  height: 150px; /* carousel height */
+}
+
+.logo-img {
+  height: 100px;
+  width: auto;
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.logo-img:hover {
+  transform: scale(1.1);
+}
+
+@keyframes scrollLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .logo-carousel-section {
+    padding: 60px 0;
+    margin: 40px 0;
+  }
+
+  .logo-carousel {
+    height: 120px;
+  }
+
+  .logo-img {
+    height: 80px;
+  }
+}
