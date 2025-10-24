@@ -59,6 +59,7 @@ const JoinUs = () => {
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // MODIFY: validateForm to include POS documents validation
@@ -300,25 +301,44 @@ const JoinUs = () => {
     email,
     applyingFor,
   } = formData;
+  
 
-  const welcomeButtons = [
+  // const welcomeButtons = [
+  //   {
+  //     label: "Employee",
+  //     onClick: () => handleWelcomeButtonClick("Employee"),
+  //     style: {
+  //       backgroundColor: "#8AC642",
+  //       color: "#fff",
+  //     },
+  //   },
+  //   {
+  //     label: "POS",
+  //     onClick: () => handleWelcomeButtonClick("POS"),
+  //     style: {
+  //       backgroundColor: "#8AC642",
+  //       color: "#fff",
+  //     },
+  //   },
+  // ];
+
+ const welcomeButtons = [
     {
-      label: "Employee",
-      onClick: () => handleWelcomeButtonClick("Employee"),
-      style: {
-        backgroundColor: "#8AC642",
-        color: "#fff",
+      label: "Continue",
+      onClick: () => {
+        if (selectedRole) {
+          handleWelcomeButtonClick(selectedRole);
+        }
       },
-    },
-    {
-      label: "POS",
-      onClick: () => handleWelcomeButtonClick("POS"),
       style: {
-        backgroundColor: "#8AC642",
+        backgroundColor: selectedRole ? "#8AC642" : "#666",
         color: "#fff",
+        opacity: selectedRole ? 1 : 0.5,
+        cursor: selectedRole ? "pointer" : "not-allowed",
       },
     },
   ];
+
 
   const successButtons = [
     {
@@ -434,9 +454,17 @@ const JoinUs = () => {
       {loading && <LoaderOverlay />}
 
       <Popup
-        visible={showWelcomeModal}
-        title="Welcome to CoverKraft 👋"
-        message={`We are happy to know your interest to join CoverKraft. Please share your details below. We will get back to you once we verify your details and if it matches our requirement. Thank you for your time and interest.\n\nRegards,\nTeam The CoverKraft`}
+               visible={showWelcomeModal}
+        title="👋 Welcome to CoverKraft"
+        message={`Thank you for choosing to partner with us.
+Please provide your details to begin.
+We will review and respond at the earliest.`}
+        radioOptions={[
+          { label: "Employee", value: "Employee" },
+          { label: "POS", value: "POS" },
+        ]}
+        selectedRadio={selectedRole}
+        onRadioChange={setSelectedRole}
         buttons={welcomeButtons}
         onClose={() => setShowWelcomeModal(false)}
       />

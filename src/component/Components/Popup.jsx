@@ -13,6 +13,9 @@ const Popup = ({
   onClose,
   navigateTo = -1, 
   leftIcon = <CheckCircleIcon sx={{ color: "#8AC642", fontSize: 28 }} />, // ✅ optional left icon
+ radioOptions = null, // ✅ NEW: Array of {label, value} for radio buttons
+  selectedRadio = "", // ✅ NEW: Currently selected radio value
+  onRadioChange = null,
 }) => {
   const navigate = useNavigate();
 
@@ -59,6 +62,7 @@ const Popup = ({
         justifyContent: "center",
         zIndex: 10000,
         backdropFilter: "blur(6px)",
+        padding: "20px",
       }}
     >
       <div
@@ -134,7 +138,7 @@ const Popup = ({
             marginBottom: "1em",
           }}
         >
-          {leftIcon && leftIcon}
+          {/* {leftIcon && leftIcon} */}
           <h2
             style={{
               fontSize: "1.5em",
@@ -157,6 +161,86 @@ const Popup = ({
         >
           {message}
         </p>
+
+          {/* ✅ NEW: Radio Button Section */}
+{/* ✅ NEW: Radio Button Section */}
+ {radioOptions && radioOptions.length > 0 && (
+  <div style={{ marginBottom: "2em", textAlign: "left" }}>
+    <p
+      style={{
+        color: "#fff",
+        fontWeight: 600,
+        marginBottom: "20px",
+        fontSize: "1.1rem",
+        textAlign: "left",
+      }}
+    >
+      Continue as:
+    </p>
+    <div
+      style={{
+        display: "flex",
+        gap: "32px",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        paddingLeft: "4px",
+      }}
+    >
+      {radioOptions.map((option) => {
+        const isSelected = selectedRadio === option.value;
+        return (
+          <label
+            key={option.value}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
+              gap: "12px",
+            }}
+            onClick={() => onRadioChange && onRadioChange(option.value)}
+          >
+            <span
+              style={{
+                width: "20px",
+                height: "20px",
+                borderRadius: "50%",
+                border: `2px solid ${isSelected ? "#8AC642" : "#666"}`,
+                backgroundColor: isSelected ? "#8AC642" : "transparent",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.3s ease",
+                flexShrink: 0,
+              }}
+            >
+              {isSelected && (
+                <span
+                  style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor: "#1e1e1e",
+                  }}
+                ></span>
+              )}
+            </span>
+
+            <span
+              style={{
+                color: "#fff",
+                fontWeight: 500,
+                fontSize: "1rem",
+              }}
+            >
+              {option.label}
+            </span>
+          </label>
+        );
+      })}
+    </div>
+  </div>
+)}
+
 
         {/* Buttons */}
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
