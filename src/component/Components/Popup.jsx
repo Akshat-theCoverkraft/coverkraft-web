@@ -164,15 +164,16 @@ const Popup = ({
 
           {/* ✅ NEW: Radio Button Section */}
 {/* ✅ NEW: Radio Button Section */}
- {radioOptions && radioOptions.length > 0 && (
-  <div style={{ marginBottom: "2em", textAlign: "left" }}>
+{/* ✅ Radio Button Section - CENTERED */}
+{radioOptions && radioOptions.length > 0 && (
+  <div style={{ marginBottom: "2em", textAlign: "center" }}>
     <p
       style={{
         color: "#fff",
         fontWeight: 600,
         marginBottom: "20px",
         fontSize: "1.1rem",
-        textAlign: "left",
+        textAlign: "center",
       }}
     >
       Continue as:
@@ -182,8 +183,8 @@ const Popup = ({
         display: "flex",
         gap: "32px",
         alignItems: "center",
-        justifyContent: "flex-start",
-        paddingLeft: "4px",
+        justifyContent: "center", // ✅ CHANGED: center instead of flex-start
+        paddingLeft: "0", // ✅ CHANGED: removed left padding
       }}
     >
       {radioOptions.map((option) => {
