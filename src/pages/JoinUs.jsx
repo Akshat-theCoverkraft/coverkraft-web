@@ -453,21 +453,19 @@ const JoinUs = () => {
       <Navbar />
       {loading && <LoaderOverlay />}
 
-      <Popup
-               visible={showWelcomeModal}
-        title="👋 Welcome to CoverKraft"
-        message={`Thank you for choosing to partner with us.
-Please provide your details to begin.
-We will review and respond at the earliest.`}
-        radioOptions={[
-          { label: "Employee", value: "Employee" },
-          { label: "POS", value: "POS" },
-        ]}
-        selectedRadio={selectedRole}
-        onRadioChange={setSelectedRole}
-        buttons={welcomeButtons}
-        onClose={() => setShowWelcomeModal(false)}
-      />
+     <Popup
+  visible={showWelcomeModal}
+  title="👋 Welcome to CoverKraft"
+  message="Thank you for choosing to partner with us. Please provide your details to begin. We will review and respond at the earliest."
+  radioOptions={[
+    { label: "Employee", value: "Employee" },
+    { label: "POS", value: "POS" },
+  ]}
+  selectedRadio={selectedRole}
+  onRadioChange={setSelectedRole}
+  buttons={welcomeButtons}
+  onClose={() => setShowWelcomeModal(false)}
+/>
 
       <Popup
         visible={showSuccessModal}
