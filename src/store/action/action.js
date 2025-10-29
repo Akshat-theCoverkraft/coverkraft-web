@@ -340,16 +340,30 @@ export const getAllPolicyType = (API_URL, data) => {
 export const getBYIDUsers = (API_URL, userId) => {
   return (dispatch) => {
     dispatch({ type: GETBYID_USERS_DATA_REQUEST });
+
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+
     axios
-      .get(API_URL + `user/getUserById`, {
+      .get(`${API_URL}user/getUserById`, {
         params: { _id: userId },
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
       })
       .then((response) => {
-        dispatch({ type: GETBYID_USERS_DATA_SUCCESS, payload: response.data });
+        dispatch({
+          type: GETBYID_USERS_DATA_SUCCESS,
+          payload: response.data,
+        });
         return response.data;
       })
       .catch((error) => {
-        dispatch({ type: GETBYID_USERS_DATA_FAILURE, payload: error.message });
+        dispatch({
+          type: GETBYID_USERS_DATA_FAILURE,
+          payload: error.message,
+        });
+        console.error("Error fetching user by ID:", error);
       });
   };
 };
