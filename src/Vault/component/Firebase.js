@@ -3,13 +3,13 @@
   import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-apiKey: "AIzaSyDsRJ8VAapehDLayHpN5Ho1fbjXZNvIr78",
-  authDomain: "coverkraft-uat-5a09e.firebaseapp.com",
-  projectId: "coverkraft-uat-5a09e",
-  storageBucket: "coverkraft-uat-5a09e.firebasestorage.app",
-  messagingSenderId: "1012907500859",
-  appId: "1:1012907500859:web:4245b7fd7728e3f4a8031e",
-  measurementId: "G-MLF92G82S6"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
   const app = initializeApp(firebaseConfig);

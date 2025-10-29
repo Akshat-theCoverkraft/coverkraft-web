@@ -4,18 +4,35 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import toast from "react-hot-toast";
 
 // 🔑 Your Firebase Config
+// const firebaseConfig = {
+// apiKey: "AIzaSyDsRJ8VAapehDLayHpN5Ho1fbjXZNvIr78",
+//   authDomain: "coverkraft-uat-5a09e.firebaseapp.com",
+//   projectId: "coverkraft-uat-5a09e",
+//   storageBucket: "coverkraft-uat-5a09e.firebasestorage.app",
+//   messagingSenderId: "1012907500859",
+//   appId: "1:1012907500859:web:4245b7fd7728e3f4a8031e",
+//   measurementId: "G-MLF92G82S6"
+// };
+
+// const VAPID_KEY =
+//   "BNa_UwbasBOl2NINEfznuaSSvng-tqTTUzqf5RjGETsgxCfzRmI93akWSiWToBTACn0CDbqoEjqpzHilzoq103s";
+console.debug('FCM env check', {
+  apiKey: process.env.REACT_APP_API_KEY,
+  senderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  vapid: process.env.REACT_APP_VAPID_KEY ? 'present' : 'missing',
+});
+
 const firebaseConfig = {
-apiKey: "AIzaSyDsRJ8VAapehDLayHpN5Ho1fbjXZNvIr78",
-  authDomain: "coverkraft-uat-5a09e.firebaseapp.com",
-  projectId: "coverkraft-uat-5a09e",
-  storageBucket: "coverkraft-uat-5a09e.firebasestorage.app",
-  messagingSenderId: "1012907500859",
-  appId: "1:1012907500859:web:4245b7fd7728e3f4a8031e",
-  measurementId: "G-MLF92G82S6"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-const VAPID_KEY =
-  "BNa_UwbasBOl2NINEfznuaSSvng-tqTTUzqf5RjGETsgxCfzRmI93akWSiWToBTACn0CDbqoEjqpzHilzoq103s";
+const VAPID_KEY = process.env.REACT_APP_VAPID_KEY;
 
 const app = initializeApp(firebaseConfig);
 export const messaging = getMessaging(app);
