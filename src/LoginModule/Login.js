@@ -216,10 +216,18 @@ const Login = () => {
               "userEmail",
               userData.userEmail || userData.email || ""
             );
-            sessionStorage.setItem(
-              "token",
-              userData.token || userData.accessToken || responseData.token || ""
-            );
+            const accessToken =
+  responseData?.tokens?.accessToken ||
+  userData?.token ||
+  userData?.accessToken ||
+  "";
+
+sessionStorage.setItem("token", accessToken);
+
+            // sessionStorage.setItem(
+            //   "token",
+            //   userData.token || userData.accessToken || responseData.token || ""
+            // );
             sessionStorage.setItem("loginTime", Date.now().toString());
             sessionStorage.setItem("isLoggedIn", "true");
             sessionStorage.setItem("loggedIn", "true");

@@ -342,7 +342,8 @@ export const getBYIDUsers = (API_URL, userId) => {
     dispatch({ type: GETBYID_USERS_DATA_REQUEST });
 
     // Get token from localStorage
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
+
 
     axios
       .get(`${API_URL}user/getUserById`, {
