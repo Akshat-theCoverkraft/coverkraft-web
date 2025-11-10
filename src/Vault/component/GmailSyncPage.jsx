@@ -17,7 +17,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import gmailImage from "../../Images/Gmail.png";
 import gmailIcon from "../../Images/logos_google-gmail.png";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth, provider } from "../component/Firebase";
+import { auth } from "../component/Firebase";
 import API_URL from "../../ServiceModule/Service";
 
 const GmailSyncPage = () => {
@@ -41,7 +41,6 @@ const GmailSyncPage = () => {
   };
 
   const showGlobalToast = (config, type) => {
-    // console.log(`Global Toast (${type}):`, config);
     showToast({
       message: `${config.title} - ${config.description}`,
       type: "info",
@@ -75,41 +74,79 @@ const GmailSyncPage = () => {
     setSigningIn(true);
 
     try {
+      // Sign out any existing user first
       if (auth.currentUser) {
         await auth.signOut();
+        // Wait a bit for signOut to complete
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
 
+      // Create a fresh provider instance with required scopes
+      const provider = new GoogleAuthProvider();
+      provider.addScope('https://www.googleapis.com/auth/gmail.readonly');
+      provider.addScope('https://www.googleapis.com/auth/gmail.modify');
+      
+      // Set custom parameters to force account selection
+      provider.setCustomParameters({
+        prompt: 'select_account',
+        access_type: 'offline'
+      });
+
+      // Attempt sign in with popup
       const result = await signInWithPopup(auth, provider);
-      // console.log("result", result);
+      
+      // Get credentials from result
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken;
       const user = result?.user;
 
+      // Validate we got what we need
       if (!token || !user) {
-        console.error("Missing token or user info:", { credential, user });
-        showToast({
-          type: "error",
-          message: "Google sign-in failed to retrieve credentials.",
-        });
-        return;
+        throw new Error("Missing authentication credentials");
       }
 
       const userEmail = user.email || user.providerData?.[0]?.email;
-      const userId = user.uid;
 
       if (!userEmail) {
-        console.error("User email not found:", user);
-        showToast({
-          type: "error",
-          message: "Could not fetch your email. Please try again.",
-        });
-        return;
+        throw new Error("Could not retrieve email address");
       }
 
-      // console.log("Authenticated user:", userEmail);
+      console.log("✅ Authentication successful for:", userEmail);
+      
+      // Proceed with Gmail sync
       await fetchGmailMessages(token, userEmail, userIds);
+      
     } catch (error) {
       console.error("Google sign-in error:", error);
+      
+      let errorMessage = "Sign-in failed. Please try again.";
+      
+      // Handle specific Firebase error codes
+      switch (error.code) {
+        case 'auth/popup-closed-by-user':
+          errorMessage = "Sign-in cancelled. Please try again.";
+          break;
+        case 'auth/popup-blocked':
+          errorMessage = "Pop-up was blocked by your browser. Please allow pop-ups and try again.";
+          break;
+        case 'auth/cancelled-popup-request':
+          errorMessage = "Another sign-in is in progress. Please wait.";
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = "Network error. Please check your connection.";
+          break;
+        case 'auth/unauthorized-domain':
+          errorMessage = "This domain is not authorized. Please contact support.";
+          break;
+        case 'auth/operation-not-allowed':
+          errorMessage = "Google sign-in is not enabled. Please contact support.";
+          break;
+        default:
+          if (error.message) {
+            errorMessage = error.message;
+          }
+      }
+      
       showToast({
         type: "error",
         message: `Please select email account to start sync.`,
@@ -128,7 +165,6 @@ const GmailSyncPage = () => {
       const tomorrowDate = new Date(currentDate);
       tomorrowDate.setDate(currentDate.getDate() + 1);
 
-      // -------commented out the below code to fetch all emails from the last 3 years------------------
       if (!lastFetchData || !lastFetchData.lastSyncedAt) {
         const threeYearsAgo = new Date();
         threeYearsAgo.setFullYear(currentDate.getFullYear() - 3);
@@ -137,18 +173,12 @@ const GmailSyncPage = () => {
         const toDate = formatDateForGmail(tomorrowDate);
 
         dateQuery = `after:${fromDate} before:${toDate}`;
-        // console.log(
-        //   `3 years fetch: Getting data from ${fromDate} to ${toDate}`
-        // );
       } else {
         const lastFetchDate = new Date(lastFetchData.lastSyncedAt);
         const fromDate = formatDateForGmail(lastFetchDate);
         const toDate = formatDateForGmail(currentDate);
 
         dateQuery = `after:${fromDate} before:${toDate}`;
-        // console.log(
-        //   `Incremental fetch: Getting data from ${fromDate} to ${toDate}`
-        // );
       }
 
       const senderDomains = [
@@ -367,7 +397,6 @@ const GmailSyncPage = () => {
         );
       };
 
-      // Simplified priority function - now all non-marketing emails get priority 1
       const getSubjectPriority = (subject) => {
         return isMarketingEmail(subject) ? 0 : 1;
       };
@@ -378,16 +407,14 @@ const GmailSyncPage = () => {
 
       const query = `(${domainQuery}) (label:spam OR label:inbox OR label:junk OR label: all mail) ${dateQuery}`;
 
-      // Function to fetch all messages with pagination
       const fetchAllMessages = async () => {
         let allMessages = [];
         let nextPageToken = null;
         let pageCount = 0;
-        const maxResults = 500; // Maximum allowed by Gmail API
+        const maxResults = 500;
 
         do {
           pageCount++;
-          // console.log(`Fetching page ${pageCount}...`);
 
           let gmailUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=${maxResults}&q=${encodeURIComponent(
             query
@@ -411,22 +438,14 @@ const GmailSyncPage = () => {
 
           if (data.messages && data.messages.length > 0) {
             allMessages = allMessages.concat(data.messages);
-            // console.log(
-            //   `Page ${pageCount}: Found ${data.messages.length} messages (Total: ${allMessages.length})`
-            // );
           }
 
           nextPageToken = data.nextPageToken;
 
-          // Add a small delay to avoid rate limiting
           if (nextPageToken) {
             await new Promise((resolve) => setTimeout(resolve, 100));
           }
         } while (nextPageToken);
-
-        // console.log(
-        //   `✅ Pagination complete. Total messages fetched: ${allMessages.length} across ${pageCount} pages`
-        // );
 
         return {
           messages: allMessages,
@@ -434,7 +453,6 @@ const GmailSyncPage = () => {
         };
       };
 
-      // Fetch all messages using pagination
       const data = await fetchAllMessages();
 
       if (
@@ -449,9 +467,6 @@ const GmailSyncPage = () => {
         });
         return;
       }
-
-      // console.log("📧 Gmail fetch complete");
-      // console.log(`📊 Total messages to process: ${data.messages.length}`);
 
       const domainHitCount = {};
 
@@ -469,8 +484,7 @@ const GmailSyncPage = () => {
 
       const emailsWithPriority = [];
 
-      // Process all emails from target domains, only excluding marketing ones
-      const processingBatchSize = 50; // Process emails in batches to avoid overwhelming the API
+      const processingBatchSize = 50;
 
       for (
         let batchStart = 0;
@@ -483,13 +497,6 @@ const GmailSyncPage = () => {
         );
         const currentBatch = data.messages.slice(batchStart, batchEnd);
 
-        // console.log(
-        //   `🔄 Processing batch ${
-        //     Math.floor(batchStart / processingBatchSize) + 1
-        //   }: emails ${batchStart + 1}-${batchEnd} of ${data.messages.length}`
-        // );
-
-        // Process current batch
         const batchPromises = currentBatch.map(async (msg, batchIndex) => {
           const globalIndex = batchStart + batchIndex;
 
@@ -520,7 +527,6 @@ const GmailSyncPage = () => {
             const senderEmail = emailMatch ? emailMatch[1] : fromHeader;
             const senderDomain = senderEmail.split("@")[1];
 
-            // Check if domain is in our whitelist
             if (!senderDomains.includes(senderDomain)) {
               skippedReasons.wrongDomain++;
               skippedSubjects.wrongDomain.push({
@@ -530,7 +536,6 @@ const GmailSyncPage = () => {
               return null;
             }
 
-            // Only exclude marketing emails - include all other subjects
             const isMarketing = isMarketingEmail(subject);
             if (isMarketing) {
               skippedReasons.marketing++;
@@ -541,7 +546,6 @@ const GmailSyncPage = () => {
               return null;
             }
 
-            // Check for attachments
             const parts = emailResponse.payload?.parts || [];
             const hasAttachment = parts.some((part) => part.body?.attachmentId);
 
@@ -554,7 +558,6 @@ const GmailSyncPage = () => {
               return null;
             }
 
-            // All non-marketing emails from whitelisted domains with attachments get priority 1
             const subjectPriority = 1;
 
             domainHitCount[senderDomain] =
@@ -567,43 +570,29 @@ const GmailSyncPage = () => {
               priority: subjectPriority,
             };
 
-            if (globalIndex % 10 === 0) {
-              // console.log(
-              //   `✅ Processed ${globalIndex + 1}/${
-              //     data.messages.length
-              //   }: "${subject}" from ${senderDomain}`
-              // );
-            }
-
             return emailData_processed;
           } catch (err) {
             console.error(
-              `❌ Error processing email ${msg.id} (${globalIndex + 1}/${
-                data.messages.length
-              }):`,
+              `Error processing email ${msg.id}:`,
               err.message
             );
             return null;
           }
         });
 
-        // Wait for current batch to complete
         const batchResults = await Promise.allSettled(batchPromises);
 
-        // Add successful results to emailsWithPriority
         batchResults.forEach((result) => {
           if (result.status === "fulfilled" && result.value) {
             emailsWithPriority.push(result.value);
           }
         });
 
-        // Add delay between batches to avoid rate limiting
         if (batchEnd < data.messages.length) {
           await new Promise((resolve) => setTimeout(resolve, 500));
         }
       }
 
-      // Sort by priority (though all non-marketing emails now have priority 1)
       emailsWithPriority.sort((a, b) => b.priority - a.priority);
 
       const finalMatchedEmails = emailsWithPriority.map((email) => email.id);
@@ -661,7 +650,6 @@ const GmailSyncPage = () => {
           await handleUploadDocFromGmail(validFiles, userEmail, userId);
         }
 
-        // console.log(`\n📈 Domain breakdown:`);
         Object.entries(domainHitCount).forEach(([domain, count]) =>
           console.log(`- ${domain}: ${count} email(s)`)
         );
@@ -703,8 +691,6 @@ const GmailSyncPage = () => {
       const attachmentUrl = `https://www.googleapis.com/gmail/v1/users/me/messages/${messageId}/attachments/${pdfAttachment.body.attachmentId}`;
       const attachmentResponse = await fetch(attachmentUrl, { headers });
 
-      // console.log("attachment response", attachmentResponse);
-
       if (!attachmentResponse.ok) throw new Error("Failed to fetch attachment");
 
       const attachmentData = await attachmentResponse.json();
@@ -714,12 +700,9 @@ const GmailSyncPage = () => {
         throw new Error("No attachment data found");
       }
 
-      // Convert URL-safe base64 to standard base64
       base64Data = base64Data.replace(/-/g, "+").replace(/_/g, "/");
 
       const fileName = `attachment_${messageId}.pdf`;
-
-      // console.log(`PDF processed: ${fileName}`);
 
       return {
         base64Data,
@@ -749,8 +732,6 @@ const GmailSyncPage = () => {
     if (emailId) formData.append("emailId", emailId);
     formData.append("fileType", fileType);
 
-    console.log("Preparing to append files to FormData:", files.length);
-
     files.forEach(({ base64Data, fileName }, index) => {
       const byteString = atob(base64Data);
       const byteArray = new Uint8Array(byteString.length);
@@ -766,18 +747,11 @@ const GmailSyncPage = () => {
   };
 
   const handleUploadDocFromGmail = async (files, userEmail, userId) => {
-    // console.log("userData from doc : ", files, userEmail, userId);
     return new Promise(async (resolve, reject) => {
       try {
         if (!files?.length) return reject("No files to upload");
 
-        // console.log(
-        //   `Starting batch upload of ${files.length} files for user: ${userEmail}`
-        // );
-
         const formData = createGmailUploadFormData(files, userId, userEmail);
-
-        // console.log("Uploading form data...", formData);
 
         const response = await fetch(`${API_URL}gmail-sync/sync`, {
           method: "POST",
@@ -785,7 +759,6 @@ const GmailSyncPage = () => {
         });
 
         const result = await response.json();
-        // console.log("Upload result:", result);
 
         if (result?.success) {
           showToast({
