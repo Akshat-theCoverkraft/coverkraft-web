@@ -46,10 +46,14 @@ const PolicyType = () => {
     setVisibleCount(ITEMS_PER_PAGE);
   };
 
+ const handlePolicyClick = (policy) => {
+  console.log("Clicked Policy:", policy);
+  navigate(`/policy-details/${policy._id}`, { 
+  });
+};
+
   return (
     <Box sx={{ mx: "6%", my: 4, mt: 0, mb: 10 }}>
-      
-
       <Box
         sx={{
           background: "linear-gradient(105deg, #3E3E3E 0%, #121212 100%)",
@@ -61,13 +65,13 @@ const PolicyType = () => {
         }}
       >
         <Typography variant="h3" sx={headingStyle}>
-        Pick a Policy & Get Covered
-      </Typography>
-       <Typography variant="h4" sx={textStyle}>
-            Let's get you & your family insured
-          </Typography>
-        {/* Heading and Buttons */}
-       
+          Pick a Policy & Get Covered
+        </Typography>
+        <Typography variant="h4" sx={textStyle}>
+          Let's get you & your family insured
+        </Typography>
+
+        {/* Policy Cards Grid */}
         <Grid container spacing={3}>
           {policyType.slice(0, visibleCount).map((policy, index) => (
             <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
@@ -85,10 +89,15 @@ const PolicyType = () => {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
+                  "&:hover": {
+                    transform: "translateY(-8px)",
+                    boxShadow: "0 8px 30px rgba(255, 153, 6, 0.3)",
+                    border: "1px solid #5A9E1E",
+                  },
                 }}
               >
                 <CardActionArea
-                  onClick={() => navigate(`/policy-details/${policy._id}`)}
+                  onClick={() => handlePolicyClick(policy)}
                   sx={{
                     height: "100%",
                     display: "flex",
@@ -144,15 +153,15 @@ const PolicyType = () => {
             </Grid>
           ))}
         </Grid>
-         <Box
+
+        {/* See More / See Less Buttons */}
+        <Box
           display="flex"
           justifyContent="flex-end"
           alignItems="end"
           mb={3}
-          sx={{marginTop: 3}}
+          sx={{ marginTop: 3 }}
         >
-          
-
           {policyType.length > ITEMS_PER_PAGE && (
             <Box display="flex" gap={2}>
               {visibleCount < policyType.length && (
@@ -188,7 +197,6 @@ const PolicyType = () => {
             </Box>
           )}
         </Box>
-
       </Box>
     </Box>
   );

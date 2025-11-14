@@ -26,7 +26,7 @@ import PrivacyPolicy from "./PrivacyPolicy";
 import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import PolicyType from './Landing/component/PolicyType';
-import PolicyDetails from './pages/PolicyDetails';
+import PolicyDetails from './pages/Policies/PolicyDetails.jsx';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
