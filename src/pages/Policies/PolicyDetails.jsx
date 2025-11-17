@@ -578,108 +578,158 @@ const PolicyDetails = () => {
 
       <Box sx={{ minHeight: "100vh", fontFamily: "DM Sans, sans-serif", overflow: "hidden" }}>
         {/* Hero Section */}
-        <MotionBox
-          style={{ opacity, scale }}
-          sx={{
-            position: "relative",
-            color: "#fff",
-            py: 8,
-            overflow: "hidden",
-            minHeight: "400px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <DecorativeCircles />
-          
-          <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, textAlign: "center" }}>
-            <MotionButton
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/')}
-              startIcon={<ArrowBackIcon />}
-              sx={{
-                position: "absolute",
-                top: { xs: -40, sm: -50, md: -60 },
-                left: 0,
-                color: "#fff",
-                px: { xs: 2, sm: 3 },
-                py: { xs: 1, sm: 1.5 },
-                fontSize: { xs: "13px", sm: "14px", md: "16px" },
-                fontWeight: 500,
-                borderRadius: "50px",
-                textTransform: "none",
-                backdropFilter: "blur(10px)",
-                transition: "all 0.3s ease",
-                "&:hover": { borderColor: "rgba(255, 255, 255, 0.5)" },
-              }}
-            >
-              Back to Policies
-            </MotionButton>
+      <MotionBox
+  variants={{
+    hidden: { opacity: 0, scale: 0.85 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.4, ease: "easeOut" }
+    },
+  }}
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, amount: 0.3 }}
+  sx={{
+    position: "relative",
+    color: "#fff",
+    py: 8,
+    overflow: "hidden",
+    minHeight: "400px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  <DecorativeCircles />
 
-            <Box sx={{ mb: 3 }}>
-              <MotionTypography
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                sx={{
-                  fontSize: { xs: "48px", sm: "56px", md: "64px" },
-                  fontWeight: 700,
-                  color: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 2,
-                  mb: 2,
-                }}
-              >
-                {policy.icon} {policy.name}
-              </MotionTypography>
+  <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+    
+    {/* Back Button */}
+    <MotionButton
+      variants={{
+        hidden: { opacity: 0, y: 10 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.4 }
+        }
+      }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={() => navigate('/')}
+      startIcon={<ArrowBackIcon />}
+      sx={{
+        position: "absolute",
+        top: { xs: -40, sm: -50, md: -60 },
+        left: 0,
+        color: "#fff",
+        px: { xs: 2, sm: 3 },
+        py: { xs: 1, sm: 1.5 },
+        fontSize: { xs: "13px", sm: "14px", md: "16px" },
+        fontWeight: 500,
+        borderRadius: "50px",
+        textTransform: "none",
+        backdropFilter: "blur(10px)",
+        transition: "all 0.3s ease",
+        "&:hover": { borderColor: "rgba(255, 255, 255, 0.5)" },
+      }}
+    >
+      Back to Policies
+    </MotionButton>
 
-              <MotionTypography
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                sx={{
-                  color: "#ccc",
-                  fontSize: { xs: "16px", sm: "18px", md: "20px" },
-                  fontWeight: 400,
-                  mb: 4,
-                }}
-              >
-                {policy.tagline}
-              </MotionTypography>
+    <Box sx={{ mb: 3 }}>
 
-              <MotionButton
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.9 }}
-                whileHover={{ scale: 1.05, boxShadow: "0 10px 40px rgba(90, 158, 30, 0.5)" }}
-                whileTap={{ scale: 0.95 }}
-                variant="contained"
-                onClick={handleBuyNow}
-                disabled={buying}
-                sx={{
-                  background: "linear-gradient(90deg, #8AC642 0%, #FFEB3B 100%)",
-                  color: "#000",
-                  px: { xs: 4, sm: 5, md: 6 },
-                  py: { xs: 1.5, md: 2 },
-                  fontSize: { xs: "14px", sm: "16px", md: "18px" },
-                  fontWeight: 700,
-                  borderRadius: "50px",
-                  textTransform: "none",
-                  boxShadow: "0 4px 20px rgba(90, 158, 30, 0.3)",
-                }}
-              >
-                {buying ? "Processing..." : "Get Insured Now →"}
-              </MotionButton>
-            </Box>
-          </Container>
-        </MotionBox>
+      {/* Main Title */}
+      <MotionTypography
+        variants={{
+          hidden: { opacity: 0, scale: 0.85 },
+          visible: {
+            opacity: 1,
+            scale: 1,
+            transition: { duration: 0.4 }
+          }
+        }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        sx={{
+          fontSize: { xs: "48px", sm: "56px", md: "64px" },
+          fontWeight: 700,
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 2,
+          mb: 2,
+        }}
+      >
+        {policy.icon} {policy.name}
+      </MotionTypography>
+
+      {/* Tagline */}
+      <MotionTypography
+        variants={{
+          hidden: { opacity: 0, y: 15 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.4 }
+          }
+        }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        sx={{
+          color: "#ccc",
+          fontSize: { xs: "16px", sm: "18px", md: "20px" },
+          fontWeight: 400,
+          mb: 4,
+        }}
+      >
+        {policy.tagline}
+      </MotionTypography>
+
+      {/* Buy Now Button */}
+      <MotionButton
+        variants={{
+          hidden: { opacity: 0, scale: 0.7 },
+          visible: {
+            opacity: 1,
+            scale: 1,
+            transition: { duration: 0.4 }
+          }
+        }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        whileHover={{ scale: 1.05, boxShadow: "0 10px 40px rgba(90, 158, 30, 0.5)" }}
+        whileTap={{ scale: 0.95 }}
+        variant="contained"
+        onClick={handleBuyNow}
+        disabled={buying}
+        sx={{
+          background: "linear-gradient(90deg, #8AC642 0%, #FFEB3B 100%)",
+          color: "#000",
+          px: { xs: 4, sm: 5, md: 6 },
+          py: { xs: 1.5, md: 2 },
+          fontSize: { xs: "14px", sm: "16px", md: "18px" },
+          fontWeight: 700,
+          borderRadius: "50px",
+          textTransform: "none",
+          boxShadow: "0 4px 20px rgba(90, 158, 30, 0.3)",
+        }}
+      >
+        {buying ? "Processing..." : "Get Insured Now →"}
+      </MotionButton>
+
+    </Box>
+  </Container>
+</MotionBox>
+
 
         <Container maxWidth="lg">
           {/* Why Choose */}
