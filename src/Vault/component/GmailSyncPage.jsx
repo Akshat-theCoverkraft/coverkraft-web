@@ -800,15 +800,31 @@ const GmailSyncPage = () => {
     }
   };
 
-  // Helper function to recursively find all PDF attachments in email parts
+  // Helper function to check if filename contains valid policy document keywords
+  const isValidPolicyFilename = (filename) => {
+    if (!filename) return false;
+    
+    // Convert to lowercase for case-insensitive matching
+    const lowerFilename = filename.toLowerCase();
+    
+    // Check if filename contains "Schedule", "Certificate", or "Policy" anywhere (start, middle, or end)
+    const validKeywords = ['schedule', 'certificate'];
+    
+    return validKeywords.some(keyword => lowerFilename.includes(keyword));
+  };
+
+  // Helper function to recursively find all PDF attachments in email parts (without filtering)
   const findAllPDFAttachments = (parts, attachments = []) => {
     if (!parts || !Array.isArray(parts)) return attachments;
     
     for (const part of parts) {
       if (part.mimeType === "application/pdf" && part.body?.attachmentId) {
+        const filename = part.filename || `attachment_${part.body.attachmentId}.pdf`;
+        
+        // Collect all PDF attachments without filtering (filtering will be done later based on count)
         attachments.push({
           attachmentId: part.body.attachmentId,
-          filename: part.filename || `attachment_${part.body.attachmentId}.pdf`,
+          filename: filename,
           size: part.body.size
         });
       } else if (part.parts && Array.isArray(part.parts)) {
@@ -840,23 +856,51 @@ const GmailSyncPage = () => {
       const message = await messageResponse.json();
       const parts = message.payload?.parts || [];
 
-      // Find all PDF attachments in the email
-      const pdfAttachments = findAllPDFAttachments(parts);
+      // Find all PDF attachments in the email (without filtering yet)
+      const allPdfAttachments = findAllPDFAttachments(parts);
       
-      if (pdfAttachments.length === 0) {
+      if (allPdfAttachments.length === 0) {
         // Fallback: check if the main body is a PDF
         if (message.payload?.mimeType === "application/pdf" && message.payload.body?.attachmentId) {
-          pdfAttachments.push({
+          // Single PDF as main body - include without filename check
+          allPdfAttachments.push({
             attachmentId: message.payload.body.attachmentId,
             filename: `attachment_${messageId}.pdf`,
             size: message.payload.body.size
           });
+          console.log(`ℹ️  Email ${messageId} has single PDF as main body - including without filename check`);
         } else {
           return null;
         }
       }
 
-      // Process all PDF attachments and return an array
+      // Filter attachments based on count:
+      // - Single attachment: Include without filename check (likely the policy document)
+      // - Multiple attachments: Filter by filename (only include those with Schedule/Certificate/Policy)
+      let pdfAttachments;
+      if (allPdfAttachments.length === 1) {
+        // Single attachment - include without filename check
+        pdfAttachments = allPdfAttachments;
+        console.log(`✅ Email ${messageId} has single PDF attachment "${allPdfAttachments[0].filename}" - including without filename check`);
+      } else {
+        // Multiple attachments - filter by filename
+        pdfAttachments = allPdfAttachments.filter(attachment => {
+          const isValid = isValidPolicyFilename(attachment.filename);
+          if (!isValid) {
+            console.log(`⏭️  Skipping attachment "${attachment.filename}" - filename doesn't contain Schedule, Certificate, or Policy`);
+          }
+          return isValid;
+        });
+        
+        if (pdfAttachments.length === 0) {
+          console.log(`⚠️  Email ${messageId} has ${allPdfAttachments.length} PDF attachments but none contain Schedule/Certificate/Policy in filename`);
+          return null;
+        }
+        
+        console.log(`✅ Email ${messageId} has ${allPdfAttachments.length} PDF attachments, filtering to ${pdfAttachments.length} with valid policy document filenames`);
+      }
+
+      // Process all filtered PDF attachments and return an array
       const processedFiles = [];
       
       for (let i = 0; i < pdfAttachments.length; i++) {
@@ -894,6 +938,8 @@ const GmailSyncPage = () => {
             ? `${attachment.filename.replace(/\.pdf$/i, '')}_${i + 1}_${messageId}.pdf`
             : attachment.filename || `attachment_${messageId}.pdf`;
 
+          console.log(`✅ Including attachment: "${attachment.filename}"`);
+          
           processedFiles.push({
             base64Data,
             fileName,
