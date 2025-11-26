@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import API_URL from "../../ServiceModule/Service";
 
-// Replace with your actual API_URL import
-// import API_URL from "../ServiceModule/Service";
-const API_URL = "https://devapi.thecoverkraft.com/";
+
 
 export default function CaseStudiesCarousel() {
   const trackRef = useRef(null);
   const wrapperRef = useRef(null);
   const videoRefs = useRef([]);
-  const ytPlayers = useRef([]);
-  const autoScrollRef = useRef(null);
+  const autoScrollTimer = useRef(null);
 
   const [caseStudies, setCaseStudies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,89 +19,46 @@ export default function CaseStudiesCarousel() {
   const totalPages = Math.ceil(totalSlides / cardsPerView);
   const showNavButtons = totalSlides > cardsPerView;
 
-  // ✅ Function to stop all videos
+  /* Stop all videos */
   const stopAllVideos = useCallback(() => {
-    // Stop all HTML5 videos
     videoRefs.current.forEach((video) => {
-      if (video && video.tagName === "VIDEO" && !video.paused) {
-        video.pause();
-        video.currentTime = 0;
-      }
+      if (video && video.pause) video.pause();
     });
-
-    // Stop all YouTube players
-    ytPlayers.current.forEach((player) => {
-      if (player && typeof player.stopVideo === "function") {
-        try {
-          const state = player.getPlayerState();
-          if (
-            state === window.YT?.PlayerState?.PLAYING ||
-            state === window.YT?.PlayerState?.BUFFERING
-          ) {
-            player.stopVideo();
-          }
-        } catch (error) {
-          console.warn("Error stopping YouTube player:", error);
-        }
-      }
-    });
-
-    setAutoScrollPaused(false);
   }, []);
 
-  // ✅ Fetch videos from API
+  /* Fetch data */
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${API_URL}featureVideo/getAll`);
-        const result = await response.json();
-
-        if (Array.isArray(result.data)) {
-          const activeItems = result.data.filter(
-            (item) => item.status === "active"
-          );
-          setCaseStudies(activeItems);
-        } else {
-          console.error("Invalid data format from backend");
-        }
-      } catch (error) {
-        console.error("Error fetching carousel data:", error);
+        const res = await fetch(`${API_URL}featureVideo/getAll`);
+        const json = await res.json();
+        const active = json?.data?.filter((x) => x.status === "active") || [];
+        setCaseStudies(active);
+      } catch (err) {
+        console.error("Fetch failed:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
+  /* Cards per view responsive */
   const updateCardsPerView = () => {
-    const width = window.innerWidth;
-    if (width < 640) {
-      setCardsPerView(1);
-    } else if (width < 768) {
-      setCardsPerView(2);
-    } else if (width < 1024) {
-      setCardsPerView(3);
-    } else if (width < 1280) {
-      setCardsPerView(4);
-    } else if (width < 1536) {
-      setCardsPerView(5);
-    } else {
-      setCardsPerView(6);
-    }
+    const w = window.innerWidth;
+    if (w < 640) setCardsPerView(1);
+    else if (w < 768) setCardsPerView(2);
+    else if (w < 1024) setCardsPerView(3);
+    else if (w < 1280) setCardsPerView(4);
+    else if (w < 1536) setCardsPerView(5);
+    else setCardsPerView(6);
   };
 
-  const updateCarousel = () => {
-    if (!trackRef.current || !wrapperRef.current) return;
-    const containerWidth = wrapperRef.current.offsetWidth;
-    const cardWidth = containerWidth / cardsPerView;
-
-    trackRef.current.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-  };
-
+  /* Move Carousel */
   const moveCarousel = (dir) => {
-    stopAllVideos(); // Stop all videos before moving
-    const maxIndex = totalSlides - cardsPerView;
+    stopAllVideos();
+
+    const maxIndex = Math.max(totalSlides - cardsPerView, 0);
     let newIndex = currentIndex + dir;
 
     if (newIndex < 0) newIndex = maxIndex;
@@ -112,246 +67,125 @@ export default function CaseStudiesCarousel() {
     setCurrentIndex(newIndex);
   };
 
+  /* Go to page */
   const goToPage = (page) => {
-    stopAllVideos(); // Stop all videos before changing page
+    stopAllVideos();
     let idx = page * cardsPerView;
-    if (idx > totalSlides - cardsPerView) {
+    if (idx > totalSlides - cardsPerView)
       idx = totalSlides - cardsPerView;
-    }
+
     setCurrentIndex(idx);
   };
 
-  // ✅ Handle video play
-  const handleVideoPlay = (playingIndex) => {
-    setAutoScrollPaused(true);
-
-    // Stop other <video> tags
-    videoRefs.current.forEach((video, idx) => {
-      if (
-        video &&
-        video.tagName === "VIDEO" &&
-        idx !== playingIndex &&
-        !video.paused
-      ) {
-        video.pause();
-        video.currentTime = 0;
-      }
-    });
-
-    // Stop other YouTube players
-    ytPlayers.current.forEach((player, idx) => {
-      if (
-        player &&
-        idx !== playingIndex &&
-        typeof player.stopVideo === "function"
-      ) {
-        try {
-          const state = player.getPlayerState();
-          if (
-            state === window.YT.PlayerState.PLAYING ||
-            state === window.YT.PlayerState.BUFFERING
-          ) {
-            player.stopVideo();
-          }
-        } catch (error) {
-          console.warn(`Error stopping YouTube player ${idx}:`, error);
-        }
-      }
-    });
-  };
-
-  // ✅ Handle video pause
-  const handleVideoPause = () => {
-    const isAnyPlaying =
-      videoRefs.current.some(
-        (video) => video && video.tagName === "VIDEO" && !video.paused
-      ) ||
-      ytPlayers.current.some((player) => {
-        if (player && typeof player.getPlayerState === "function") {
-          try {
-            return player.getPlayerState() === window.YT.PlayerState.PLAYING;
-          } catch (error) {
-            return false;
-          }
-        }
-        return false;
-      });
-
-    if (!isAnyPlaying) {
-      setAutoScrollPaused(false);
-    }
-  };
-
-  // ✅ YouTube API setup
-  useEffect(() => {
-    if (!window.YT) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      document.body.appendChild(tag);
-    }
-
-    window.onYouTubeIframeAPIReady = () => {
-      ytPlayers.current = [];
-
-      videoRefs.current.forEach((iframe, idx) => {
-        if (iframe && iframe.tagName === "IFRAME") {
-          try {
-            ytPlayers.current[idx] = new window.YT.Player(iframe, {
-              events: {
-                onStateChange: (event) => {
-                  if (event.data === window.YT.PlayerState.PLAYING) {
-                    handleVideoPlay(idx);
-                  }
-                  if (
-                    event.data === window.YT.PlayerState.PAUSED ||
-                    event.data === window.YT.PlayerState.ENDED
-                  ) {
-                    handleVideoPause();
-                  }
-                },
-              },
-            });
-          } catch (error) {
-            console.warn(`Error initializing YouTube player ${idx}:`, error);
-          }
-        }
-      });
-    };
-
-    if (window.YT && window.YT.Player) {
-      window.onYouTubeIframeAPIReady();
-    }
-  }, [caseStudies]);
-
-  // ✅ Utility functions for YouTube
+  /* Detect YouTube */
   const isYouTubeUrl = (url) =>
-    url && (url.includes("youtube.com") || url.includes("youtu.be"));
+    url?.includes("youtube.com") || url?.includes("youtu.be");
 
   const convertToEmbedUrl = (url) => {
     try {
       if (url.includes("youtu.be")) {
-        const videoId = url.split("/").pop().split("?")[0];
-        return `https://www.youtube.com/embed/${videoId}?enablejsapi=1&rel=0&modestbranding=1`;
-      } else if (url.includes("youtube.com/watch?v=")) {
-        const videoId = new URL(url).searchParams.get("v");
-        return `https://www.youtube.com/embed/${videoId}?enablejsapi=1&rel=0&modestbranding=1`;
+        const id = url.split("/").pop().split("?")[0];
+        return `https://www.youtube.com/embed/${id}`;
       }
-    } catch (err) {
-      console.error("Error converting YouTube URL:", err);
-    }
+      if (url.includes("watch?v=")) {
+        const id = new URL(url).searchParams.get("v");
+        return `https://www.youtube.com/embed/${id}`;
+      }
+    } catch {}
     return url;
   };
 
+  /* Handle video play */
+  const handleVideoPlay = () => {
+    setAutoScrollPaused(true);
+  };
+
+  /* Handle video pause */
+  const handleVideoPause = () => {
+    setAutoScrollPaused(false);
+  };
+
+  /* Handle video click */
+  const handleVideoClick = (e, index) => {
+    e.stopPropagation();
+    const video = videoRefs.current[index];
+    if (video) {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    }
+  };
+
+  /* Scroll transform */
   useEffect(() => {
-    updateCarousel();
+    if (!trackRef.current || !wrapperRef.current) return;
+
+    const cardWidth = wrapperRef.current.offsetWidth / cardsPerView;
+    trackRef.current.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
   }, [currentIndex, cardsPerView]);
 
-  // ✅ Auto scroll with video check
+  /* Auto scroll */
   useEffect(() => {
-    if (!loading && totalSlides > cardsPerView && !autoScrollPaused) {
-      autoScrollRef.current = setInterval(() => {
-        // Check if any video is playing before auto-scrolling
-        const isAnyVideoPlaying =
-          videoRefs.current.some(
-            (video) => video && video.tagName === "VIDEO" && !video.paused
-          ) ||
-          ytPlayers.current.some((player) => {
-            if (player && typeof player.getPlayerState === "function") {
-              try {
-                return (
-                  player.getPlayerState() === window.YT?.PlayerState?.PLAYING
-                );
-              } catch (error) {
-                return false;
-              }
-            }
-            return false;
-          });
+    if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
 
-        if (!isAnyVideoPlaying) {
-          moveCarousel(1);
-        }
-      }, 5000);
+    if (!loading && totalSlides > cardsPerView && !autoScrollPaused) {
+      autoScrollTimer.current = setInterval(() => moveCarousel(1), 5000);
     }
 
-    return () => clearInterval(autoScrollRef.current);
-  }, [loading, totalSlides, autoScrollPaused, cardsPerView, currentIndex]);
+    return () => clearInterval(autoScrollTimer.current);
+  }, [loading, cardsPerView, autoScrollPaused, currentIndex]);
 
+  /* Resize listener */
   useEffect(() => {
     updateCardsPerView();
-    const handleResize = () => {
-      updateCardsPerView();
-      updateCarousel();
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("resize", updateCardsPerView);
+    return () => window.removeEventListener("resize", updateCardsPerView);
   }, []);
 
-  useEffect(() => {
-    setCurrentIndex(0);
-  }, [cardsPerView]);
+  /* Reset index when cards per view changes */
+  useEffect(() => setCurrentIndex(0), [cardsPerView]);
 
-  // ✅ Cleanup effect to stop all videos when component unmounts
-  useEffect(() => {
-    return () => {
-      stopAllVideos();
-    };
-  }, [stopAllVideos]);
+  if (loading)
+    return <div className="py-20 text-center text-white bg-black">Loading…</div>;
 
-  // ✅ Effect to stop videos when currentSlide changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      stopAllVideos();
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [currentIndex, stopAllVideos]);
-
-  const cardWidthPercent = 100 / cardsPerView;
-
-  if (loading) {
+  if (!caseStudies.length)
     return (
-      <div className="py-20 px-4 bg-black">
-        <div className="max-w-[1600px] mx-auto text-center">
-          <div className="text-white text-2xl">Loading featured videos...</div>
-        </div>
+      <div className="py-20 text-center text-white bg-black">
+        No featured videos.
       </div>
     );
-  }
-
-  if (caseStudies.length === 0) {
-    return (
-      <div className="py-20 px-4 bg-black">
-        <div className="max-w-[1600px] mx-auto text-center">
-          <div className="text-white text-2xl">No featured videos available.</div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="py-20 px-4 bg-black">
-      <div className="max-w-[1600px] mx-auto text-center mb-24">
-        <h1 className="text-center font-bold leading-tight">
-          <span className="text-[#FF9906] text-3xl sm:text-4xl md:text-5xl">
-            Pick a Policy & Get Covered
-          </span>
+    <div className="py-20 px-4 bg-black/90 relative">
+
+      {/* BACKGROUND GRID OVERLAY – FIXED */}
+      <div
+        className="absolute inset-0 opacity-5 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+
+      <div className="max-w-[1600px] mx-auto text-center mb-24 relative z-10">
+        <h1 className="text-[#FF9906] text-3xl sm:text-4xl md:text-5xl font-bold drop-shadow-lg">
+          Pick a Policy & Get Covered
         </h1>
       </div>
 
-      <div className="relative px-4 sm:px-8 md:px-12 lg:px-16">
+      <div className="relative max-w-[1600px] mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
+
+        {/* LEFT ARROW */}
         {showNavButtons && (
           <button
             onClick={() => moveCarousel(-1)}
-            className="absolute left-0 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 bg-[#8bc34a]/90 hover:bg-[#7cb342] text-white w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-lg transition scale-100 hover:scale-110 z-30"
+            className="absolute left-0 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 bg-[#8bc34a]/90 hover:bg-[#7cb342] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition hover:scale-110 z-30"
           >
-            <svg
-              fill="none"
-              stroke="currentColor"
-              className="w-6 h-6 sm:w-7 sm:h-7"
-              viewBox="0 0 24 24"
-            >
-              <path d="M15 19l-7-7 7-7" strokeWidth="2" strokeLinecap="round" />
+            <svg fill="none" stroke="currentColor" className="w-6 h-6">
+              <path d="M15 19l-7-7 7-7" strokeWidth="2" />
             </svg>
           </button>
         )}
@@ -360,93 +194,59 @@ export default function CaseStudiesCarousel() {
           <div ref={wrapperRef} className="overflow-visible">
             <div
               ref={trackRef}
-              className="flex gap-4 sm:gap-5 md:gap-6 transition-all duration-500 ease-in-out"
-              style={{ width: `${(totalSlides * 100) / cardsPerView}%` }}
+              className="flex gap-6 transition-all duration-500 ease-in-out"
             >
               {caseStudies.map((card, i) => {
-                const videoSource =
-                  card.video && card.video !== "null"
-                    ? card.video
-                    : card.youTubeLink;
-                const hasVideoContent =
-                  videoSource &&
-                  videoSource.trim() !== "" &&
-                  videoSource !== "null";
+                const src = card.video !== "null" ? card.video : card.youTubeLink;
+                const isYT = isYouTubeUrl(src);
 
                 return (
                   <div
                     key={i}
-                    style={{
-                      width: `calc(${cardWidthPercent}% - ${(cardsPerView - 1) * (cardsPerView >= 4 ? 24 : 20) / cardsPerView}px)`
-                    }}
-                    className={`h-[380px] relative rounded-2xl overflow-hidden bg-white cursor-pointer transition-all duration-500 group ${
-                      i % 2 === 0 ? "mt-12 sm:mt-16 md:mt-20" : "mt-0"
-                    } hover:scale-105 hover:z-40 hover:shadow-2xl hover:shadow-[#8bc34a]/30`}
+                    onMouseEnter={() => setAutoScrollPaused(true)}
+                    onMouseLeave={() => setAutoScrollPaused(false)}
+                    onTouchStart={() => setAutoScrollPaused(true)}
+                    onTouchEnd={() => setAutoScrollPaused(false)}
+                    className={`flex-shrink-0 h-[380px] relative rounded-2xl overflow-hidden bg-white cursor-pointer transition-all duration-500 group 
+                    ${i % 2 === 0 ? "mt-16" : "mt-0"} 
+                    hover:scale-105 hover:z-40 hover:shadow-2xl hover:shadow-[#8bc34a]/30`}
+                    style={{ width: `${100 / cardsPerView}%` }}
                   >
-                    {/* Video/Image Content */}
-                    {hasVideoContent && isYouTubeUrl(videoSource) ? (
-                      <div className="absolute inset-0 bg-black">
-                        <iframe
-                          ref={(el) => (videoRefs.current[i] = el)}
-                          src={convertToEmbedUrl(videoSource)}
-                          title={`YouTube video player ${i}`}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          style={{ 
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            border: 'none'
-                          }}
-                        />
-                      </div>
-                    ) : hasVideoContent &&
-                      videoSource.toLowerCase().endsWith(".mp4") ? (
+                    {isYT ? (
+                      <iframe
+                        src={convertToEmbedUrl(src)}
+                        className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
+                        allow="autoplay; encrypted-media"
+                        title={card.title}
+                      ></iframe>
+                    ) : card.video?.endsWith(".mp4") ? (
                       <video
                         ref={(el) => (videoRefs.current[i] = el)}
-                        src={videoSource}
+                        src={src}
+                        className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
                         controls
-                        controlsList="nodownload"
-                        onPlay={() => handleVideoPlay(i)}
+                        playsInline
+                        onPlay={handleVideoPlay}
                         onPause={handleVideoPause}
-                        onEnded={handleVideoPause}
-                        style={{ 
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          backgroundColor: 'black'
-                        }}
+                        onClick={(e) => handleVideoClick(e, i)}
                       />
                     ) : (
                       <img
-                        src={card.image || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop"}
-                        alt={card.title || card.subtitle}
-                        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 brightness-100"
-                        style={{ filter: 'none' }}
+                        src={card.image}
+                        className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
+                        alt="cover"
                       />
                     )}
 
-                    {/* Minimal bottom overlay - only for text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
 
-                    {/* Text content - positioned at bottom */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 transform transition-all duration-500">
-                      <div className="relative inline-block">
-                        <h2 className="text-xl sm:text-2xl font-bold text-white relative z-10 drop-shadow-lg group-hover:text-[#8bc34a] transition-colors duration-300">
-                          {card.title || card.subtitle || `Featured Video ${i + 1}`}
-                        </h2>
-                        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#8bc34a]/60 to-[#558b2f]/60 rounded-sm transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-                      </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
+                      <h2 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg group-hover:text-[#8bc34a] transition-colors">
+                        {card.title}
+                      </h2>
 
-                      {/* Additional info on hover */}
                       {card.desc && (
-                        <p className="text-base text-white/90 mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 line-clamp-2">
+                        <p className="text-base text-white/90 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                           {card.desc}
                         </p>
                       )}
@@ -458,35 +258,32 @@ export default function CaseStudiesCarousel() {
           </div>
         </div>
 
+        {/* RIGHT ARROW */}
         {showNavButtons && (
           <button
             onClick={() => moveCarousel(1)}
-            className="absolute right-0 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 bg-[#8bc34a]/90 hover:bg-[#7cb342] text-white w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shadow-lg transition scale-100 hover:scale-110 z-30"
+            className="absolute right-0 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 bg-[#8bc34a]/90 hover:bg-[#7cb342] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition hover:scale-110 z-30"
           >
-            <svg
-              fill="none"
-              stroke="currentColor"
-              className="w-6 h-6 sm:w-7 sm:h-7"
-              viewBox="0 0 24 24"
-            >
-              <path d="M9 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" />
+            <svg fill="none" stroke="currentColor" className="w-6 h-6">
+              <path d="M9 5l7 7-7 7" strokeWidth="2" />
             </svg>
           </button>
         )}
       </div>
 
+      {/* DOTS */}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 sm:gap-3 mt-14">
-          {[...Array(totalPages)].map((_, i) => {
+        <div className="flex justify-center mt-10 gap-3">
+          {Array.from({ length: totalPages }).map((_, i) => {
             const active = Math.floor(currentIndex / cardsPerView) === i;
             return (
               <div
                 key={i}
                 onClick={() => goToPage(i)}
-                className={`transition-all cursor-pointer ${
+                className={`cursor-pointer transition-all ${
                   active
-                    ? "w-8 sm:w-10 h-3 sm:h-3.5 bg-[#3b9eff] rounded-md"
-                    : "w-3 sm:w-3.5 h-3 sm:h-3.5 bg-white/30 rounded-full hover:bg-white/50"
+                    ? "w-10 h-3 bg-[#3b9eff] rounded-md"
+                    : "w-3 h-3 bg-black/20 rounded-full"
                 }`}
               />
             );
