@@ -41,7 +41,7 @@ const HeroSection = () => {
         }}
       />
 
-      <div className="relative mx-auto px-[5%] py-10 mt-10">
+      <div className="relative mx-auto px-[5%] py-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
           {/* LEFT CONTENT */}
@@ -158,7 +158,7 @@ const HeroSection = () => {
                <img
 src={require("../../Images/landingimage.jpg")} // ⭐ Put your image path here
     alt="Family"
-    className="w-full h-[500px] object-cover"
+    className="w-full h-[540px] object-cover"
   />
               </motion.div>
 
@@ -238,7 +238,7 @@ src={require("../../Images/landingimage.jpg")} // ⭐ Put your image path here
   initial={{ opacity: 0, y: 20 }}
   animate={isInView ? { opacity: 1, y: 0 } : {}}
   transition={{ duration: 1, delay: 0.8 }}
-  className="mt-16"
+  className="mt-6"
 >
   <div className="flex flex-wrap justify-center gap-6 lg:gap-10 max-w-5xl mx-auto">
     {[
