@@ -274,6 +274,9 @@ const GmailSyncPage = () => {
         "starhealth.in",
         "trans.hdfcergo.email",
         "emailer.futuregenerali.in",
+        "bandhanlife.co.in",
+        "mailer.axismaxlife.com",
+        "policy.bond@bajajallianz.co.in"
       ];
 
       // Enhanced marketing exclusion patterns to catch more marketing emails
