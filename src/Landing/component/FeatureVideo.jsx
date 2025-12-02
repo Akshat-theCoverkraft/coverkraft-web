@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import API_URL from "../../ServiceModule/Service";
 
-
-
 export default function CaseStudiesCarousel() {
   const trackRef = useRef(null);
   const wrapperRef = useRef(null);
   const videoRefs = useRef([]);
+  const iframeRefs = useRef([]);
   const autoScrollTimer = useRef(null);
 
   const [caseStudies, setCaseStudies] = useState([]);
@@ -14,15 +13,54 @@ export default function CaseStudiesCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(6);
   const [autoScrollPaused, setAutoScrollPaused] = useState(false);
+  const [currentlyPlayingIndex, setCurrentlyPlayingIndex] = useState(null);
 
   const totalSlides = caseStudies.length;
   const totalPages = Math.ceil(totalSlides / cardsPerView);
   const showNavButtons = totalSlides > cardsPerView;
 
-  /* Stop all videos */
+  /* Stop all videos including YouTube iframes */
   const stopAllVideos = useCallback(() => {
+    // Stop HTML5 videos
     videoRefs.current.forEach((video) => {
-      if (video && video.pause) video.pause();
+      if (video && video.pause) {
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+    
+    // Stop YouTube iframes
+    iframeRefs.current.forEach((iframe) => {
+      if (iframe && iframe.contentWindow) {
+        try {
+          iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        } catch (e) {
+          console.log("Could not pause iframe");
+        }
+      }
+    });
+    
+    setCurrentlyPlayingIndex(null);
+  }, []);
+
+  /* Stop all videos except one */
+  const stopAllVideosExcept = useCallback((exceptIndex) => {
+    // Stop HTML5 videos
+    videoRefs.current.forEach((video, idx) => {
+      if (video && video.pause && idx !== exceptIndex) {
+        video.pause();
+      }
+    });
+    
+    // Stop YouTube iframes
+    iframeRefs.current.forEach((iframe, idx) => {
+      if (iframe && iframe.contentWindow && idx !== exceptIndex) {
+        try {
+          iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        } catch (e) {
+          console.log("Could not pause iframe");
+        }
+      }
     });
   }, []);
 
@@ -85,23 +123,28 @@ export default function CaseStudiesCarousel() {
     try {
       if (url.includes("youtu.be")) {
         const id = url.split("/").pop().split("?")[0];
-        return `https://www.youtube.com/embed/${id}`;
+        return `https://www.youtube.com/embed/${id}?enablejsapi=1`;
       }
       if (url.includes("watch?v=")) {
         const id = new URL(url).searchParams.get("v");
-        return `https://www.youtube.com/embed/${id}`;
+        return `https://www.youtube.com/embed/${id}?enablejsapi=1`;
       }
     } catch {}
     return url;
   };
 
-  /* Handle video play */
-  const handleVideoPlay = () => {
+  /* Handle video play - stops all other videos when one starts playing */
+  const handleVideoPlay = (index) => {
+    stopAllVideosExcept(index);
+    setCurrentlyPlayingIndex(index);
     setAutoScrollPaused(true);
   };
 
   /* Handle video pause */
-  const handleVideoPause = () => {
+  const handleVideoPause = (index) => {
+    if (currentlyPlayingIndex === index) {
+      setCurrentlyPlayingIndex(null);
+    }
     setAutoScrollPaused(false);
   };
 
@@ -111,11 +154,23 @@ export default function CaseStudiesCarousel() {
     const video = videoRefs.current[index];
     if (video) {
       if (video.paused) {
+        stopAllVideosExcept(index);
         video.play();
+        setCurrentlyPlayingIndex(index);
+        setAutoScrollPaused(true);
       } else {
         video.pause();
+        setCurrentlyPlayingIndex(null);
+        setAutoScrollPaused(false);
       }
     }
+  };
+
+  /* Handle iframe click to stop other videos */
+  const handleIframeInteraction = (index) => {
+    stopAllVideosExcept(index);
+    setCurrentlyPlayingIndex(index);
+    setAutoScrollPaused(true);
   };
 
   /* Scroll transform */
@@ -207,12 +262,15 @@ export default function CaseStudiesCarousel() {
                     style={{ width: `${100 / cardsPerView}%` }}
                   >
                     {isYT ? (
-                      <iframe
-                        src={convertToEmbedUrl(src)}
-                        className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
-                        allow="autoplay; encrypted-media"
-                        title={card.title}
-                      ></iframe>
+                      <div onClick={() => handleIframeInteraction(i)} className="w-full h-full">
+                        <iframe
+                          ref={(el) => (iframeRefs.current[i] = el)}
+                          src={convertToEmbedUrl(src)}
+                          className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
+                          allow="autoplay; encrypted-media"
+                          title={card.title}
+                        ></iframe>
+                      </div>
                     ) : card.video?.endsWith(".mp4") ? (
                       <video
                         ref={(el) => (videoRefs.current[i] = el)}
@@ -220,8 +278,8 @@ export default function CaseStudiesCarousel() {
                         className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
                         controls
                         playsInline
-                        onPlay={handleVideoPlay}
-                        onPause={handleVideoPause}
+                        onPlay={() => handleVideoPlay(i)}
+                        onPause={() => handleVideoPause(i)}
                         onClick={(e) => handleVideoClick(e, i)}
                       />
                     ) : (

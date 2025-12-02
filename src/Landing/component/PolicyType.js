@@ -131,202 +131,182 @@ export default function HealthInsurance() {
   const firstRow = visiblePolicies.slice(0, firstRowCount);
   const secondRow = visiblePolicies.slice(firstRowCount);
 
-  return (
-    <div className="relative z-10 flex flex-col items-center px-6">
+ return (
+  <div className="relative z-10 flex flex-col items-center px-6">
 
-      {/* Background Slideshow with Dark Overlay */}
-      <div className="absolute inset-0">
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <img 
-              src={slide} 
-              alt={`Slide ${index + 1}`} 
-              className="w-full h-full object-cover" 
-            />
-            <div className="absolute inset-0 bg-black/70"></div>
-          </div>
-        ))}
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-10 h-[80vh] flex flex-col items-center justify-center px-6 py-5">
-        {/* Header */}
-        <div className="text-center mb-14 animate-fade-in-down">
-          <Typography variant="h3" sx={{ ...headingStyle, textAlign: "center" }}>
-            Pick a Policy & Get Covered
-          </Typography>
-          <Typography
-            variant="h4"
-            sx={{
-              color: "#FFF",
-              fontWeight: 700,
-              mb: 3,
-              textAlign: "center",
-              fontSize: { xs: "26px", sm: "30px", md: "32px" },
-            }}
-          >
-            Let's get you & your family insured
-          </Typography>
+    {/* Background Slideshow with Dark Overlay */}
+    <div className="absolute inset-0">
+      {slides.map((slide, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentSlide ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <img 
+            src={slide} 
+            alt={`Slide ${index + 1}`} 
+            className="w-full h-full object-cover" 
+          />
+          <div className="absolute inset-0 bg-black/70"></div>
         </div>
-
-        {/* Insurance Cards - Dynamic from API */}
-        <div className="flex flex-col gap-12 items-center">
-          {/* Row 1 - First 4 Cards */}
-          {firstRow.length > 0 && (
-            <div className="flex gap-12 flex-wrap justify-center">
-              {firstRow.map((policy, index) => {
-                const IconComponent = getIconComponent(policy.policyType);
-                return (
-                  <div
-                    key={policy._id}
-                    className="group relative animate-fade-in-up"
-                    style={{ animationDelay: `${index * 140}ms` }}
-                    onMouseEnter={() => setHoveredCard(index)}
-                    onMouseLeave={() => setHoveredCard(null)}
-                  >
-                    <div 
-                      onClick={() => handlePolicyClick(policy)}
-                      className="backdrop-blur-md bg-black/90 border border-gray-800/50 rounded-3xl shadow-2xl overflow-hidden cursor-pointer transition-all duration-300 transform hover:-translate-y-4 hover:shadow-[0_20px_60px_rgba(111,168,42,0.5)] hover:border-[#6fa82a]/50 w-80 h-80"
-                    >
-                      <div className="p-8 flex flex-col items-center justify-center h-full gap-6">
-                        {/* Icon - either from API or Lucide fallback */}
-                        <div
-                          className={`flex items-center justify-center text-[#6fa82a] transition-all duration-500 ${
-                            hoveredCard === index
-                              ? "scale-110 rotate-6 drop-shadow-[0_0_15px_rgba(111,168,42,0.8)]"
-                              : "scale-100"
-                          }`}
-                        >
-                          {policy.icon ? (
-                            <img
-                              src={policy.icon}
-                              alt={policy.policyType}
-                              className="w-36 h-36 object-contain drop-shadow-2xl brightness-110"
-                            />
-                          ) : (
-                            <IconComponent
-                              size={140}
-                              strokeWidth={1.5}
-                              className="drop-shadow-2xl"
-                            />
-                          )}
-                        </div>
-
-                        {/* Label with Policy Type */}
-                        <div
-                          className="text-white font-bold text-2xl text-center w-full drop-shadow-lg"
-                          title={policy.policyType}
-                        >
-                          {policy.policyType}
-                        </div>
-                      </div>
-
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#6fa82a]/20 via-[#6fa82a]/10 to-[#6fa82a]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Row 2 - Remaining Cards */}
-          {secondRow.length > 0 && (
-            <div className="flex gap-12 flex-wrap justify-center">
-              {secondRow.map((policy, index) => {
-                const IconComponent = getIconComponent(policy.policyType);
-                const actualIndex = index + firstRowCount;
-                return (
-                  <div
-                    key={policy._id}
-                    className="group relative animate-fade-in-up"
-                    style={{ animationDelay: `${actualIndex * 140}ms` }}
-                    onMouseEnter={() => setHoveredCard(actualIndex)}
-                    onMouseLeave={() => setHoveredCard(null)}
-                  >
-                  <div 
-                      onClick={() => handlePolicyClick(policy)}
-                      className="backdrop-blur-md bg-black/90 border border-gray-800/50 rounded-3xl shadow-2xl overflow-hidden cursor-pointer transition-all duration-300 transform hover:-translate-y-4 hover:shadow-[0_20px_60px_rgba(111,168,42,0.5)] hover:border-[#6fa82a]/50 w-80 h-80"
-                    >
-                      <div className="p-8 flex flex-col items-center justify-center h-full gap-6">
-                        {/* Icon - either from API or Lucide fallback */}
-                        <div
-                          className={`flex items-center justify-center text-[#6fa82a] transition-all duration-500 ${
-                            hoveredCard === actualIndex
-                              ? "scale-110 rotate-6 drop-shadow-[0_0_15px_rgba(111,168,42,0.8)]"
-                              : "scale-100"
-                          }`}
-                        >
-                          {policy.icon ? (
-                            <img
-                              src={policy.icon}
-                              alt={policy.policyType}
-                              className="w-36 h-36 object-contain drop-shadow-2xl brightness-110"
-                            />
-                          ) : (
-                            <IconComponent
-                              size={140}
-                              strokeWidth={1.5}
-                              className="drop-shadow-2xl"
-                            />
-                          )}
-                        </div>
-
-                        {/* Label with Policy Type */}
-                        <div
-                          className="text-white font-bold text-2xl text-center w-full drop-shadow-lg"
-                          title={policy.policyType}
-                        >
-                          {policy.policyType}
-                        </div>
-                      </div>
-
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#6fa82a]/20 via-[#6fa82a]/10 to-[#6fa82a]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes fade-in-down {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-fade-in-down {
-          animation: fade-in-down 0.8s ease-out;
-        }
-        .animate-fade-in-up {
-          animation: fade-in-up 0.7s ease-out;
-          animation-fill-mode: both;
-        }
-      `}</style>
+      ))}
     </div>
-  );
+
+    {/* Main Content */}
+    <div className="relative z-10 flex flex-col items-center justify-center px-6 py-16 my-10">
+      {/* Header */}
+      <div className="text-center mb-20 animate-fade-in-down">
+        <Typography variant="h3" sx={{ ...headingStyle, textAlign: "center" }}>
+          Pick a Policy & Get Covered
+        </Typography>
+        <Typography
+          variant="h4"
+          sx={{
+            color: "#FFF",
+            fontWeight: 700,
+            mb: 3,
+            textAlign: "center",
+            fontSize: { xs: "26px", sm: "30px", md: "32px" },
+          }}
+        >
+          Let's get you & your family insured
+        </Typography>
+      </div>
+
+      {/* Insurance Cards - Dynamic from API */}
+      <div className="flex flex-col gap-y-20 items-center">
+        
+        {/* Row 1 */}
+        {firstRow.length > 0 && (
+          <div className="flex gap-16 flex-wrap justify-center">
+            {firstRow.map((policy, index) => {
+              const IconComponent = getIconComponent(policy.policyType);
+              return (
+                <div
+                  key={policy._id}
+                  className="group relative animate-fade-in-up"
+                  style={{ animationDelay: `${index * 140}ms` }}
+                  onMouseEnter={() => setHoveredCard(index)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  <div 
+                    onClick={() => handlePolicyClick(policy)}
+                    className="backdrop-blur-md bg-black/90 border border-gray-800/50 rounded-3xl shadow-2xl overflow-hidden cursor-pointer transition-all duration-300 transform hover:-translate-y-4 hover:shadow-[0_20px_60px_rgba(111,168,42,0.5)] hover:border-[#6fa82a]/50 w-80 h-80"
+                  >
+                    <div className="p-8 flex flex-col items-center justify-center h-full gap-8">
+                      {/* Icon */}
+                      <div
+                        className={`flex items-center justify-center text-[#6fa82a] transition-all duration-500 ${
+                          hoveredCard === index
+                            ? "scale-110 rotate-6 drop-shadow-[0_0_15px_rgba(111,168,42,0.8)]"
+                            : "scale-100"
+                        }`}
+                      >
+                        {policy.icon ? (
+                          <img
+                            src={policy.icon}
+                            alt={policy.policyType}
+                            className="w-36 h-36 object-contain drop-shadow-2xl brightness-110"
+                          />
+                        ) : (
+                          <IconComponent
+                            size={140}
+                            strokeWidth={1.5}
+                            className="drop-shadow-2xl"
+                          />
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <div className="text-white font-bold text-2xl text-center w-full drop-shadow-lg">
+                        {policy.policyType}
+                      </div>
+                    </div>
+
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6fa82a]/20 via-[#6fa82a]/10 to-[#6fa82a]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Row 2 */}
+        {secondRow.length > 0 && (
+          <div className="flex gap-16 flex-wrap justify-center">
+            {secondRow.map((policy, index) => {
+              const IconComponent = getIconComponent(policy.policyType);
+              const actualIndex = index + firstRowCount;
+
+              return (
+                <div
+                  key={policy._id}
+                  className="group relative animate-fade-in-up"
+                  style={{ animationDelay: `${actualIndex * 140}ms` }}
+                  onMouseEnter={() => setHoveredCard(actualIndex)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  <div 
+                    onClick={() => handlePolicyClick(policy)}
+                    className="backdrop-blur-md bg-black/90 border border-gray-800/50 rounded-3xl shadow-2xl overflow-hidden cursor-pointer transition-all duration-300 transform hover:-translate-y-4 hover:shadow-[0_20px_60px_rgba(111,168,42,0.5)] hover:border-[#6fa82a]/50 w-80 h-80"
+                  >
+                    <div className="p-8 flex flex-col items-center justify-center h-full gap-8">
+                      
+                      {/* Icon */}
+                      <div
+                        className={`flex items-center justify-center text-[#6fa82a] transition-all duration-500 ${
+                          hoveredCard === actualIndex
+                            ? "scale-110 rotate-6 drop-shadow-[0_0_15px_rgba(111,168,42,0.8)]"
+                            : "scale-100"
+                        }`}
+                      >
+                        {policy.icon ? (
+                          <img
+                            src={policy.icon}
+                            alt={policy.policyType}
+                            className="w-36 h-36 object-contain drop-shadow-2xl brightness-110"
+                          />
+                        ) : (
+                          <IconComponent
+                            size={140}
+                            strokeWidth={1.5}
+                            className="drop-shadow-2xl"
+                          />
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <div className="text-white font-bold text-2xl text-center w-full drop-shadow-lg">
+                        {policy.policyType}
+                      </div>
+                    </div>
+
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6fa82a]/20 via-[#6fa82a]/10 to-[#6fa82a]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      </div>
+    </div>
+
+    {/* Animations */}
+    <style jsx>{`
+      @keyframes fade-in-down {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in-down { animation: fade-in-down 0.8s ease-out; }
+      .animate-fade-in-up { animation: fade-in-up 0.7s ease-out; animation-fill-mode: both; }
+    `}</style>
+  </div>
+);
+
 }
