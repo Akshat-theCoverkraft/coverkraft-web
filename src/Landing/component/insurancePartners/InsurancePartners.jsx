@@ -44,20 +44,10 @@ const LogoCarousel = () => {
       <Typography variant="h3" sx={headingStyle}>
         Our Insurance Partners
       </Typography>
-      <Typography
-        variant="h4"
-        sx={{
-          color: "#FFF",
-          fontWeight: 700,
-          textAlign: "center",
-          fontSize: { xs: "26px", sm: "30px", md: "32px" },
-        }}
-      >
-        Leading insurers for your financial freedom
-      </Typography>
+
 
       {/* Infinite Scrolling Logos */}
-      <div className="overflow-hidden position-relative mt-5 py-6 w-100 bg-white">
+      <div className="overflow-hidden position-relative mt-5 py-6 w-100">
         <div
           className="d-flex align-items-center"
           style={{
@@ -75,6 +65,7 @@ const LogoCarousel = () => {
     width: "240px", // fixed width for all icons
     height: "140px", // fixed height for all icons
     backgroundColor: "white", // bright transparent background
+    image: "contain",
     // backdropFilter: "blur(8px)",
     borderRadius: "16px",
     padding: "20px",
@@ -91,7 +82,6 @@ const LogoCarousel = () => {
       height: "80px", // consistent icon size
       width: "auto",
       transition: "transform 0.3s ease",
-      filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.2))",
     }}
     onMouseOver={(e) =>
       (e.currentTarget.style.transform = "scale(1.1)")

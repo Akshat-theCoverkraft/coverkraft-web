@@ -19,6 +19,7 @@ import BlogSection from "./component/NewsBlogs";
 import { useEffect } from "react";
 import BrandCarousel from "./component/insurancePartners/InsurancePartners";
 import LogoCarousel from "./component/insurancePartners/InsurancePartners";
+import CaseStudiesCarousel from "./component/FeatureVideo";
 const Landing = () => {
   useEffect(() => {
     const scrollY = sessionStorage.getItem("scroll-position");
@@ -38,9 +39,9 @@ const Landing = () => {
       <ToastContainer />
       <Navbar />
       <HeroSection />
-      <Afterglow />
       <PolicyType />
-     
+      {/* <Afterglow /> */}
+      <CaseStudiesCarousel/>     
       <BlogSection />
       <Cards3d />
       {/* <About /> */}
