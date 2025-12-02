@@ -20,7 +20,6 @@ import { useEffect } from "react";
 import BrandCarousel from "./component/insurancePartners/InsurancePartners";
 import LogoCarousel from "./component/insurancePartners/InsurancePartners";
 import CaseStudiesCarousel from "./component/FeatureVideo";
-import CaseStudiesCarouselExample from "./component/FeatureVideoExample";
 const Landing = () => {
   useEffect(() => {
     const scrollY = sessionStorage.getItem("scroll-position");
@@ -42,9 +41,7 @@ const Landing = () => {
       <HeroSection />
       <PolicyType />
       {/* <Afterglow /> */}
-      <CaseStudiesCarousel/>
-      {/* <CaseStudiesCarouselExample/> */}
-     
+      <CaseStudiesCarousel/>     
       <BlogSection />
       <Cards3d />
       {/* <About /> */}
