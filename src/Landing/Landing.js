@@ -43,7 +43,7 @@ const Landing = () => {
       <PolicyType />
       {/* <Afterglow /> */}
       <CaseStudiesCarousel/>
-      <CaseStudiesCarouselExample/>
+      {/* <CaseStudiesCarouselExample/> */}
      
       <BlogSection />
       <Cards3d />

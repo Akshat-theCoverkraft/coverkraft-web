@@ -170,12 +170,6 @@ export default function CaseStudiesCarousel() {
         }}
       />
 
-      <div className="max-w-[1600px] mx-auto text-center mb-24 relative z-10">
-        <h1 className="text-[#FF9906] text-3xl sm:text-4xl md:text-5xl font-bold drop-shadow-lg">
-          Pick a Policy & Get Covered
-        </h1>
-      </div>
-
       <div className="relative max-w-[1600px] mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
 
         {/* LEFT ARROW */}
