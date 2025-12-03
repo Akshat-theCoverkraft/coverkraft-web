@@ -533,7 +533,7 @@ const handlePolicyAction = (action) => {
         const status = getExpiryStatus(policy?.policyEndDate);
         const documentPath = policy?.documentDetails?.documentPath;
         const progress = calculatePolicyProgress(policy);
-
+        console.log("policy?.totalPremium", policy?.totalPremium)
         return (
           <Card
             key={index}
@@ -776,7 +776,7 @@ const handlePolicyAction = (action) => {
                         style={{ fontSize: "16px", fontWeight: "700" }}
                         className="fw-bolder"
                       >
-                        {policy?.premiumPaid || "-"}
+                         {policy?.policyDetails?.totalPremium || "-"}
                       </p>
                     </div>
                   </Grid>
