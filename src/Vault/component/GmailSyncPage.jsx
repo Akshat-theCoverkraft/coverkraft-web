@@ -823,35 +823,45 @@ const GmailSyncPage = () => {
     });
   };
 
-  return (
-    <div
-      style={{
-        backgroundColor: "#121212",
-        minHeight: "100vh",
-        padding: "20px",
-        color: "#ffffff",
-      }}
-    >
-      <div
-        style={{ display: "flex", alignItems: "center", marginBottom: "24px" }}
-      >
+return (
+  <div
+    style={{
+      backgroundColor: "#121212",
+      minHeight: "100vh",
+      padding: "20px",
+      color: "#ffffff",
+      display: "flex",
+      justifyContent: "center",
+    }}
+  >
+    {/* MAIN CENTERED CONTAINER */}
+    <div style={{ width: "100%", maxWidth: "520px" }}>
+      
+      {/* Header */}
+      <div onClick={() => navigate(-1)} style={{ display: "flex",  cursor: "pointer", alignItems: "center", marginBottom: "24px" }}>
         <ArrowBackIosNewIcon
-          style={{ color: "#ffffff", cursor: "pointer", marginRight: "8px" }}
-          onClick={() => navigate(-1)}
+          style={{ color: "#ffffff", marginRight: "8px" }}
+          
         />
         <Typography variant="h6" style={{ fontWeight: 700 }}>
           Fetching policies from Gmail
         </Typography>
       </div>
 
+      {/* Image */}
       <div style={{ textAlign: "center", marginBottom: "32px" }}>
         <img
           src={gmailImage}
           alt="gmail cloud"
-          style={{ width: "80%", maxWidth: "500px", height: "auto" }}
+          style={{
+            width: "100%",
+            height: "auto",
+            borderRadius: "10px",
+          }}
         />
       </div>
 
+      {/* Button */}
       <div style={{ textAlign: "center", marginBottom: "40px" }}>
         <Button
           onClick={handleGoogleSignIn}
@@ -865,18 +875,14 @@ const GmailSyncPage = () => {
             fontWeight: 600,
             fontSize: "16px",
             textTransform: "none",
-            maxWidth: "520px",
-            position: "relative",
+            width: "100%",     // 👈 SAME SIZE
+            maxWidth: "520px", // 👈 SAME SIZE
           }}
           startIcon={
             signingIn ? (
               <CircularProgress size={24} style={{ color: "#666666" }} />
             ) : (
-              <img
-                src={gmailIcon}
-                alt="Gmail"
-                style={{ width: 24, height: 24 }}
-              />
+              <img src={gmailIcon} alt="Gmail" style={{ width: 24, height: 24 }} />
             )
           }
         >
@@ -884,15 +890,17 @@ const GmailSyncPage = () => {
         </Button>
       </div>
 
+      {/* Promise Card */}
       <Card
         style={{
           backgroundColor: "#212121",
           padding: "20px",
           borderRadius: "20px",
           color: "#fff",
+          width: "100%",      // 👈 SAME SIZE
+          maxWidth: "520px",  // 👈 SAME SIZE
           margin: "0 auto",
           marginTop: "32px",
-          maxWidth: "520px",
         }}
       >
         <Typography
@@ -936,7 +944,9 @@ const GmailSyncPage = () => {
         </Alert>
       </Snackbar>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default GmailSyncPage;

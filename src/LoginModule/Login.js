@@ -216,12 +216,12 @@ const Login = () => {
               userData.userEmail || userData.email || ""
             );
             const accessToken =
-  responseData?.tokens?.accessToken ||
-  userData?.token ||
-  userData?.accessToken ||
-  "";
+              responseData?.tokens?.accessToken ||
+              userData?.token ||
+              userData?.accessToken ||
+              "";
 
-sessionStorage.setItem("token", accessToken);
+            sessionStorage.setItem("token", accessToken);
 
             // sessionStorage.setItem(
             //   "token",
@@ -237,7 +237,10 @@ sessionStorage.setItem("token", accessToken);
           }
         }
       } catch (directApiError) {
-        console.log("Direct API Error:", directApiError?.response || directApiError);
+        console.log(
+          "Direct API Error:",
+          directApiError?.response || directApiError
+        );
         if (directApiError.response) {
           const msg =
             directApiError.response.data?.message ||
@@ -265,9 +268,12 @@ sessionStorage.setItem("token", accessToken);
             result.type.toLowerCase().includes("success"))) ||
         result?.payload?.success === true ||
         result?.payload?.status === 200 ||
-        (result?.payload?.user && Object.keys(result.payload.user).length > 0) ||
+        (result?.payload?.user &&
+          Object.keys(result.payload.user).length > 0) ||
         (result?.meta?.requestStatus === "fulfilled" && !result?.error) ||
-        (!result?.error && result?.payload && Object.keys(result.payload).length > 0);
+        (!result?.error &&
+          result?.payload &&
+          Object.keys(result.payload).length > 0);
 
       if (isSuccess) {
         const userData =
@@ -284,7 +290,10 @@ sessionStorage.setItem("token", accessToken);
           );
           sessionStorage.setItem(
             "token",
-            userData.token || userData.accessToken || result?.payload?.token || ""
+            userData.token ||
+              userData.accessToken ||
+              result?.payload?.token ||
+              ""
           );
           sessionStorage.setItem("loginTime", Date.now().toString());
           sessionStorage.setItem("isLoggedIn", "true");
@@ -374,7 +383,9 @@ sessionStorage.setItem("token", accessToken);
                     onChange={handlephonechange}
                     onKeyDown={handleKeyPress}
                     placeholder="Enter Your Number"
-                    className={` ${!valid && phoneNumber.length > 0 ? "is-invalid" : ""}`}
+                    className={` ${
+                      !valid && phoneNumber.length > 0 ? "is-invalid" : ""
+                    }`}
                     required
                     inputStyle={commonInputStyle}
                     validationMessage={
@@ -451,29 +462,39 @@ sessionStorage.setItem("token", accessToken);
                   <div className="d-flex justify-content-center align-items-center my-4">
                     <OtpInput
                       value={otp}
-                      onChange={handleOtpChange}
+                      onChange={setOtp}
                       numInputs={6}
-                      isInputNum
-                      shouldAutoFocus
-                      renderInput={(props) => (
-                        <input
-                          {...props}
-                          onKeyDown={handleOtpKeyPress}
-                          style={{
-                            textAlign: "center",
-                            width: "3.5rem",
-                            height: "3.5rem",
-                            margin: "0 8px",
-                            fontSize: "1.2rem",
-                            borderRadius: "8px",
-                            border: "2px solid #ccc",
-                            backgroundColor: otpError ? "#ffebee" : "white",
-                            borderColor: otpError ? "#f44336" : "#ccc",
-                            outline: "none",
-                            transition: "border-color 0.3s",
-                          }}
-                        />
-                      )}
+                      separator={<span style={{ width: "4px" }}></span>}
+                      isInputNum={true}
+                      shouldAutoFocus={true}
+                      inputStyle={{
+                        padding: "0.5rem 0.75rem",
+                        backgroundColor: "#2c2c2c", // Dark background matching CustomInput
+                        color: "#fff", // Light text matching CustomInput
+                        borderRadius: "50px", // Extra rounded for capsule shape
+                        border: otpError ? "1px solid red" : "0",
+                        outline: "none",
+                        boxShadow: otpError
+                          ? "0 0 0 2px rgba(255, 0, 0, 0.4)"
+                          : "none",
+                        width: "55px",
+                        height: "55px",
+                        fontSize: "20px",
+                        fontWeight: "600",
+                        caretColor: "#fff",
+                        textAlign: "center",
+                      }}
+                      focusStyle={{
+                        border: otpError
+                          ? "1px solid red"
+                          : "1px solid #007bff",
+                        outline: "none",
+                        backgroundColor: "#2c2c2c", // Keep dark background on focus
+                        boxShadow: otpError
+                          ? "0 0 0 2px rgba(255, 0, 0, 0.4)"
+                          : "0 0 0 2px rgba(0, 123, 255, 0.25)",
+                      }}
+                      renderInput={(props) => <input {...props} />}
                     />
                   </div>
 
@@ -510,7 +531,8 @@ sessionStorage.setItem("token", accessToken);
                   <div className="text-center mt-4">
                     {!canResend ? (
                       <p className="text-white-50 mb-0">
-                        Resend OTP in {resendCounter} second{resendCounter !== 1 ? "s" : ""}
+                        Resend OTP in {resendCounter} second
+                        {resendCounter !== 1 ? "s" : ""}
                       </p>
                     ) : (
                       <span
