@@ -3,13 +3,13 @@ importScripts("https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"
 importScripts("https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-apiKey: "AIzaSyDnwNulEZC1FCtxckUiQ_x637oD74Bp2QI",
-  authDomain: "coverkraft-dev-2082b.firebaseapp.com",
-  projectId: "coverkraft-dev-2082b",
-  storageBucket: "coverkraft-dev-2082b.firebasestorage.app",
-  messagingSenderId: "946812362760",
-  appId: "1:946812362760:web:853df53b3de23be699f1bd",
-  measurementId: "G-K71X2MTYQ5"
+apiKey: "AIzaSyDsRJ8VAapehDLayHpN5Ho1fbjXZNvIr78",
+  authDomain: "coverkraft-uat-5a09e.firebaseapp.com",
+  projectId: "coverkraft-uat-5a09e",
+  storageBucket: "coverkraft-uat-5a09e.firebasestorage.app",
+  messagingSenderId: "1012907500859",
+  appId: "1:1012907500859:web:4245b7fd7728e3f4a8031e",
+  measurementId: "G-MLF92G82S6"
 });
 
 const messaging = firebase.messaging();

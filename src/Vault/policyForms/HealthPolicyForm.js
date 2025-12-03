@@ -64,7 +64,6 @@ const HealthPolicyForm = () => {
   );
   const [premiumPaid, setPremiumPaid] = useState(
         responseData?.totalPremium || policyDetails?.policyDetails?.totalPremium || policyDetails?.premiumPaid || ""
-
   );
   const [netPremium, setNetPremium] = useState(
     responseData?.netPremium || policyDetails?.policyDetails?.netPremium || ""

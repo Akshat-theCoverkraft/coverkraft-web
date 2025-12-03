@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Typography,
@@ -56,28 +56,50 @@ const GmailSyncPage = () => {
 
   const getLastFetchDate = async (userEmail, userId) => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
       const response = await fetch(
-        `${API_URL}gmail-sync/last-sync?gmailAddress=${userEmail}&userId=${userIds}`
+        `${API_URL}gmail-sync/last-sync?gmailAddress=${userEmail}&userId=${userId}`,
+        { signal: controller.signal }
       );
+      
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         return await response.json();
       }
       return null;
     } catch (error) {
-      console.error("Error getting last fetch date:", error);
+      if (error.name === 'AbortError') {
+        console.error("Request timeout: last-sync");
+      } else {
+        console.error("Error getting last fetch date:", error);
+      }
       return null;
     }
   };
 
   const handleGoogleSignIn = async () => {
     if (signingIn) return;
+    
+    console.log("🚀 Starting Google Sign-In...");
     setSigningIn(true);
+
+    const timeout = setTimeout(() => {
+      console.error("⏰ Sign-in timeout after 30 seconds");
+      setSigningIn(false);
+      showToast({
+        type: "error",
+        message: "Sign-in took too long. Please try again.",
+      });
+    }, 40000); // 30 second timeout
 
     try {
       // Sign out any existing user first
       if (auth.currentUser) {
+        console.log("🔄 Signing out existing user...");
         await auth.signOut();
-        // Wait a bit for signOut to complete
         await new Promise(resolve => setTimeout(resolve, 500));
       }
 
@@ -86,23 +108,36 @@ const GmailSyncPage = () => {
       provider.addScope('https://www.googleapis.com/auth/gmail.readonly');
       provider.addScope('https://www.googleapis.com/auth/gmail.modify');
       
-      // Set custom parameters to force account selection
+      // Set custom parameters
       provider.setCustomParameters({
         prompt: 'select_account',
         access_type: 'offline'
       });
 
+      console.log("🔐 Opening sign-in popup...");
+      
       // Attempt sign in with popup
       const result = await signInWithPopup(auth, provider);
+      
+      clearTimeout(timeout);
+      
+      console.log("✅ Popup sign-in completed");
       
       // Get credentials from result
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken;
       const user = result?.user;
 
+      console.log("Token present:", !!token);
+      console.log("User present:", !!user);
+
       // Validate we got what we need
-      if (!token || !user) {
-        throw new Error("Missing authentication credentials");
+      if (!token) {
+        throw new Error("No access token received from Google");
+      }
+
+      if (!user) {
+        throw new Error("No user information received");
       }
 
       const userEmail = user.email || user.providerData?.[0]?.email;
@@ -117,46 +152,47 @@ const GmailSyncPage = () => {
       await fetchGmailMessages(token, userEmail, userIds);
       
     } catch (error) {
-      console.error("Google sign-in error:", error);
+      clearTimeout(timeout);
+      
+      console.error("❌ Google sign-in error:", error);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
       
       let errorMessage = "Sign-in failed. Please try again.";
       
       // Handle specific Firebase error codes
-      switch (error.code) {
-        case 'auth/popup-closed-by-user':
-          errorMessage = "Sign-in cancelled. Please try again.";
-          break;
-        case 'auth/popup-blocked':
-          errorMessage = "Pop-up was blocked by your browser. Please allow pop-ups and try again.";
-          break;
-        case 'auth/cancelled-popup-request':
-          errorMessage = "Another sign-in is in progress. Please wait.";
-          break;
-        case 'auth/network-request-failed':
-          errorMessage = "Network error. Please check your connection.";
-          break;
-        case 'auth/unauthorized-domain':
-          errorMessage = "This domain is not authorized. Please contact support.";
-          break;
-        case 'auth/operation-not-allowed':
-          errorMessage = "Google sign-in is not enabled. Please contact support.";
-          break;
-        default:
-          if (error.message) {
-            errorMessage = error.message;
-          }
+      if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = "Sign-in cancelled. Please try again.";
+      } else if (error.code === 'auth/popup-blocked') {
+        errorMessage = "Pop-up was blocked. Please allow pop-ups and try again.";
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        errorMessage = "Another sign-in is in progress. Please wait.";
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection.";
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = "This domain is not authorized. Please contact support.";
+      } else if (error.code === 'auth/operation-not-allowed') {
+        errorMessage = "Google sign-in is not enabled. Please contact support.";
+      } else if (error.message) {
+        errorMessage = error.message;
       }
       
       showToast({
         type: "error",
-        message: `Please select email account to start sync.`,
+        message: errorMessage,
       });
     } finally {
+      console.log("🏁 Sign-in process complete");
       setSigningIn(false);
     }
   };
 
   const fetchGmailMessages = async (accessToken, userEmail, userId) => {
+    console.log("📧 Starting Gmail fetch...");
+    console.log("Access token length:", accessToken?.length);
+    console.log("User email:", userEmail);
+    console.log("User ID:", userId);
+
     try {
       const lastFetchData = await getLastFetchDate(userEmail, userId);
       let dateQuery = "";
@@ -238,7 +274,27 @@ const GmailSyncPage = () => {
         "starhealth.in",
         "trans.hdfcergo.email",
         "emailer.futuregenerali.in",
+        "bandhanlife.co.in",
+        "mailer.axismaxlife.com",
+        "policy.bond@bajajallianz.co.in"
       ];
+
+      // Payment receipt whitelist patterns - these should ALWAYS be included
+const paymentReceiptPatterns = [
+  /payment\s*receipt/i,
+  /premium\s*payment/i,
+  /payment\s*confirmation/i,
+  /payment\s*received/i,
+  /payment\s*successful/i,
+  /receipt\s*for\s*payment/i,
+  /payment\s*acknowledgment/i,
+  /premium\s*paid/i,
+  /payment\s*processed/i,
+  /transaction\s*receipt/i,
+  /premium\s*receipt/i,
+  /payment\s*complete/i,
+  /thank\s*you\s*for\s*your\s*payment/i,
+];
 
       // Enhanced marketing exclusion patterns to catch more marketing emails
     const marketingExclusionPatterns = [
@@ -249,7 +305,6 @@ const GmailSyncPage = () => {
     /insurance\s*quotation/i,
     /insurance\s*quote/i,
     /get\s*(free\s*)?quote/i,
-    /pay/i,
     /proposal/i,
     /insurance\s*proposal/i,
     /policy\s*proposal/i,
@@ -391,21 +446,111 @@ const GmailSyncPage = () => {
     /giveaway/i,
   ];
 
-      const isMarketingEmail = (subject) => {
-        return marketingExclusionPatterns.some((pattern) =>
-          pattern.test(subject)
-        );
+      // const isMarketingEmail = (subject,  body = '') => {
+      //   return marketingExclusionPatterns.some((pattern) =>
+      //     pattern.test(subject)
+      //   );
+      // };
+      const isMarketingEmail = (subject, body = '') => {
+  const combinedText = `${subject} ${body}`.toLowerCase();
+  
+  // FIRST: Check if it's a payment receipt - if yes, it's NOT marketing
+  const isPaymentReceipt = paymentReceiptPatterns.some(pattern => 
+    pattern.test(combinedText)
+  );
+  
+  if (isPaymentReceipt) {
+    console.log(`✅ Payment receipt detected: "${subject.substring(0, 50)}..."`);
+    return false; // Not marketing, it's a legitimate payment receipt
+  }
+  
+  // THEN: Check marketing patterns
+  const isMarketing = marketingExclusionPatterns.some(pattern => 
+    pattern.test(combinedText)
+  );
+  
+  if (isMarketing) {
+    console.log(`⚠️ Marketing email detected: "${subject.substring(0, 50)}..."`);
+  }
+  
+  return isMarketing;
+};
+
+      // Helper function to extract text from email body parts
+      const extractEmailBody = (payload) => {
+        let bodyText = "";
+        
+        if (payload.body?.data) {
+          // Single part email
+          try {
+            const decoded = atob(payload.body.data.replace(/-/g, "+").replace(/_/g, "/"));
+            bodyText += decoded;
+          } catch (e) {
+            // Ignore decoding errors
+          }
+        }
+        
+        if (payload.parts) {
+          for (const part of payload.parts) {
+            if (part.mimeType === "text/plain" || part.mimeType === "text/html") {
+              if (part.body?.data) {
+                try {
+                  const decoded = atob(part.body.data.replace(/-/g, "+").replace(/_/g, "/"));
+                  bodyText += decoded;
+                } catch (e) {
+                  // Ignore decoding errors
+                }
+              }
+            } else if (part.parts) {
+              // Nested parts
+              const nestedText = extractEmailBody(part);
+              bodyText += nestedText;
+            }
+          }
+        }
+        
+        return bodyText;
       };
 
-      const getSubjectPriority = (subject) => {
-        return isMarketingEmail(subject) ? 0 : 1;
+      // Helper function to extract original sender from forwarded email
+      const extractOriginalSenderFromForwarded = (bodyText) => {
+        // Pattern to match forwarded message format:
+        // "---------- Forwarded message ---------"
+        // "From: <email@domain.com>" or "From: email@domain.com"
+        const forwardedPattern = /-{3,}\s*Forwarded\s+message\s+-{3,}/i;
+        
+        if (!forwardedPattern.test(bodyText)) {
+          return null;
+        }
+        
+        // Extract the "From:" line in the forwarded message section
+        const fromPattern = /From:\s*<?([^<>@\s]+@[^<>\s]+)>?/i;
+        const matches = bodyText.match(fromPattern);
+        
+        if (matches && matches[1]) {
+          const originalEmail = matches[1].trim();
+          const domain = originalEmail.split("@")[1];
+          
+          // Verify this domain is in our allowed list
+          if (senderDomains.includes(domain)) {
+            return { email: originalEmail, domain: domain };
+          }
+        }
+        
+        return null;
       };
 
       const domainQuery = senderDomains
         .map((domain) => `from:${domain}`)
         .join(" OR ");
 
-      const query = `(${domainQuery}) (label:spam OR label:inbox OR label:junk OR label: all mail) ${dateQuery}`;
+      // Use in:all to search all mail (inbox, spam, sent, etc.)
+      // Gmail API doesn't support OR with labels like (label:spam OR label:inbox)
+      // Note: We also search for emails with PDF attachments in case of forwarded emails
+      // Forwarded emails will be detected and processed using the extractOriginalSenderFromForwarded function
+      const query = `(${domainQuery} OR (has:attachment filename:pdf)) in:all ${dateQuery}`;
+
+      console.log("🔍 Gmail query:", query);
 
       const fetchAllMessages = async () => {
         let allMessages = [];
@@ -415,38 +560,67 @@ const GmailSyncPage = () => {
 
         do {
           pageCount++;
+          console.log(`📄 Fetching page ${pageCount}...`);
 
-          let gmailUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=${maxResults}&q=${encodeURIComponent(
-            query
-          )}`;
+          let gmailUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=${maxResults}&q=${encodeURIComponent(query)}`;
 
           if (nextPageToken) {
             gmailUrl += `&pageToken=${nextPageToken}`;
           }
 
-          const response = await fetch(gmailUrl, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 50000); // 30s timeout
 
-          if (!response.ok) {
-            throw new Error(`Gmail API request failed: ${response.status}`);
-          }
+          try {
+            const response = await fetch(gmailUrl, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+              signal: controller.signal,
+            });
+            console.log("response", response)
 
-          const data = await response.json();
+            clearTimeout(timeoutId);
 
-          if (data.messages && data.messages.length > 0) {
-            allMessages = allMessages.concat(data.messages);
-          }
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error("Gmail API error response:", errorText);
+              throw new Error(`Gmail API request failed: ${response.status} - ${errorText}`);
+            }
 
-          nextPageToken = data.nextPageToken;
+            const data = await response.json();
+            console.log("📦 Gmail API response:", {
+              messagesCount: data.messages?.length || 0,
+              resultSizeEstimate: data.resultSizeEstimate,
+              nextPageToken: data.nextPageToken ? "present" : "none"
+            });
 
-          if (nextPageToken) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            if (data.messages && data.messages.length > 0) {
+              allMessages = allMessages.concat(data.messages);
+              console.log(`✅ Page ${pageCount}: Found ${data.messages.length} messages (Total: ${allMessages.length})`);
+              console.log(`   Result size estimate: ${data.resultSizeEstimate || 'N/A'}`);
+            } else {
+              console.log(`✅ Page ${pageCount}: No messages found`);
+            }
+
+            nextPageToken = data.nextPageToken;
+
+            if (nextPageToken) {
+              console.log(`   ➡️  Next page token present, continuing pagination...`);
+              await new Promise((resolve) => setTimeout(resolve, 100));
+            } else {
+              console.log(`   ✅ No more pages to fetch`);
+            }
+          } catch (fetchError) {
+            clearTimeout(timeoutId);
+            if (fetchError.name === 'AbortError') {
+              throw new Error('Gmail API request timeout. Please try again.');
+            }
+            throw fetchError;
           }
         } while (nextPageToken);
 
+        console.log(`📊 Total messages fetched: ${allMessages.length}`);
         return {
           messages: allMessages,
           resultSizeEstimate: allMessages.length,
@@ -455,94 +629,112 @@ const GmailSyncPage = () => {
 
       const data = await fetchAllMessages();
 
-      if (
-        !data.messages ||
-        data.messages.length === 0 ||
-        data.resultSizeEstimate === 0
-      ) {
+      if (!data.messages || data.messages.length === 0 || data.resultSizeEstimate === 0) {
+        console.log("✅ No messages found");
         showToast({
           type: "success",
-          message:
-            "Sync completed successfully. No new policy documents found.",
+          message: "Sync completed successfully. No new policy documents found.",
         });
         return;
       }
 
-      const domainHitCount = {};
+      console.log(`🔄 Processing ${data.messages.length} messages...`);
 
+      const domainHitCount = {};
       const skippedReasons = {
         marketing: 0,
         noAttachment: 0,
         wrongDomain: 0,
       };
 
-      const skippedSubjects = {
-        marketing: [],
-        noAttachment: [],
-        wrongDomain: [],
-      };
-
       const emailsWithPriority = [];
-
       const processingBatchSize = 50;
 
-      for (
-        let batchStart = 0;
-        batchStart < data.messages.length;
-        batchStart += processingBatchSize
-      ) {
-        const batchEnd = Math.min(
-          batchStart + processingBatchSize,
-          data.messages.length
-        );
+      for (let batchStart = 0; batchStart < data.messages.length; batchStart += processingBatchSize) {
+        const batchEnd = Math.min(batchStart + processingBatchSize, data.messages.length);
         const currentBatch = data.messages.slice(batchStart, batchEnd);
 
-        const batchPromises = currentBatch.map(async (msg, batchIndex) => {
-          const globalIndex = batchStart + batchIndex;
+        console.log(`🔄 Processing batch ${Math.floor(batchStart / processingBatchSize) + 1} (${batchStart + 1}-${batchEnd} of ${data.messages.length})`);
 
+        const batchPromises = currentBatch.map(async (msg, batchIndex) => {
           try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout per email
+
             const emailData = await fetch(
               `https://www.googleapis.com/gmail/v1/users/me/messages/${msg.id}`,
               {
                 headers: { Authorization: `Bearer ${accessToken}` },
+                signal: controller.signal,
               }
             );
 
+            clearTimeout(timeoutId);
+
             if (!emailData.ok) {
-              throw new Error(
-                `Failed to fetch email ${msg.id}: ${emailData.status}`
-              );
+              throw new Error(`Failed to fetch email ${msg.id}: ${emailData.status}`);
             }
 
             const emailResponse = await emailData.json();
-
             const headers = emailResponse.payload.headers;
-            const fromHeader =
-              headers.find((h) => h.name === "From")?.value || "";
-
-            const subject =
-              headers.find((h) => h.name === "Subject")?.value || "";
+            const fromHeader = headers.find((h) => h.name === "From")?.value || "";
+            const subject = headers.find((h) => h.name === "Subject")?.value || "";
 
             const emailMatch = fromHeader.match(/<([^>]+)>/);
             const senderEmail = emailMatch ? emailMatch[1] : fromHeader;
-            const senderDomain = senderEmail.split("@")[1];
+            let senderDomain = senderEmail.split("@")[1];
 
+            // Check if this is a forwarded email
+            const isForwarded = /^(Fwd?|Re.*Fwd?|FW|RE.*FW):\s*/i.test(subject);
+            
+            // Case 1: Direct email from insurance company (not forwarded)
+            // Case 2: Forwarded email - need to extract original sender
+            if (isForwarded) {
+              // This is a forwarded email
+              // Check if forwarder's domain matches first (in case it's also an insurance domain)
+              if (!senderDomains.includes(senderDomain)) {
+                // Forwarder is not from insurance domain, try to extract original sender
+                const bodyText = extractEmailBody(emailResponse.payload);
+                const originalSender = extractOriginalSenderFromForwarded(bodyText);
+                
+                if (originalSender) {
+                  console.log(`📧 Forwarded email detected: ${senderEmail} → ${originalSender.email}`);
+                  senderDomain = originalSender.domain;
+                } else {
+                  // Forwarded but couldn't extract original sender domain - skip it
+                  console.log(`⚠️  Forwarded email from ${senderEmail} but couldn't extract original sender`);
+                  skippedReasons.wrongDomain++;
+                  return null;
+                }
+              } else {
+                // Forwarder is from insurance domain (rare case but possible)
+                // Still check original sender in case we want to use that instead
+                const bodyText = extractEmailBody(emailResponse.payload);
+                const originalSender = extractOriginalSenderFromForwarded(bodyText);
+                
+                if (originalSender && senderDomains.includes(originalSender.domain)) {
+                  console.log(`📧 Forwarded email from insurance domain ${senderEmail}, original: ${originalSender.email}`);
+                  senderDomain = originalSender.domain;
+                }
+                // Otherwise use forwarder's domain (which already matches)
+              }
+            } else {
+              // Direct email (not forwarded) - use sender's domain as-is
+              // Only log for accepted emails to reduce console noise
+            }
+
+            // Final check: if domain doesn't match, skip it
             if (!senderDomains.includes(senderDomain)) {
               skippedReasons.wrongDomain++;
-              skippedSubjects.wrongDomain.push({
-                subject: subject,
-                domain: senderDomain,
-              });
               return null;
             }
+            
+            // Only log accepted emails to reduce console noise
+            console.log(`✅ Email accepted: ${isForwarded ? `Forwarded from ${senderEmail.split("@")[1]}` : `Direct from ${senderEmail}`} → ${senderDomain}`);
 
             const isMarketing = isMarketingEmail(subject);
             if (isMarketing) {
               skippedReasons.marketing++;
-              skippedSubjects.marketing.push({
-                subject: subject,
-                domain: senderDomain,
-              });
               return null;
             }
 
@@ -551,31 +743,19 @@ const GmailSyncPage = () => {
 
             if (!hasAttachment) {
               skippedReasons.noAttachment++;
-              skippedSubjects.noAttachment.push({
-                subject: subject,
-                domain: senderDomain,
-              });
               return null;
             }
 
-            const subjectPriority = 1;
+            domainHitCount[senderDomain] = (domainHitCount[senderDomain] || 0) + 1;
 
-            domainHitCount[senderDomain] =
-              (domainHitCount[senderDomain] || 0) + 1;
-
-            const emailData_processed = {
+            return {
               id: msg.id,
               subject: subject,
               domain: senderDomain,
-              priority: subjectPriority,
+              priority: 1,
             };
-
-            return emailData_processed;
           } catch (err) {
-            console.error(
-              `Error processing email ${msg.id}:`,
-              err.message
-            );
+            console.error(`Error processing email ${msg.id}:`, err.message);
             return null;
           }
         });
@@ -593,35 +773,14 @@ const GmailSyncPage = () => {
         }
       }
 
+      console.log(`📊 Processing complete:`);
+      console.log(`  - Valid emails: ${emailsWithPriority.length}`);
+      console.log(`  - Skipped (marketing): ${skippedReasons.marketing}`);
+      console.log(`  - Skipped (no attachment): ${skippedReasons.noAttachment}`);
+      console.log(`  - Skipped (wrong domain): ${skippedReasons.wrongDomain}`);
+
       emailsWithPriority.sort((a, b) => b.priority - a.priority);
-
       const finalMatchedEmails = emailsWithPriority.map((email) => email.id);
-
-      // Log skipped emails for debugging
-      // console.log(`\n📊 Processing Summary:`);
-      // console.log(`Total messages found: ${data.messages.length}`);
-      // console.log(`Marketing emails excluded: ${skippedReasons.marketing}`);
-      // console.log(`Emails without attachments: ${skippedReasons.noAttachment}`);
-      // console.log(`Wrong domain emails: ${skippedReasons.wrongDomain}`);
-      // console.log(`Final emails to process: ${finalMatchedEmails.length}`);
-
-      if (skippedSubjects.marketing.length > 0) {
-        // console.log(`\n🚫 Marketing emails excluded:`);
-        skippedSubjects.marketing.forEach((item, index) => {
-          // console.log(
-          //   `Marketing ${index + 1}: "${item.subject}" (${item.domain})`
-          // );
-        });
-      }
-
-      if (skippedSubjects.noAttachment.length > 0) {
-        // console.log(`\n📎 Emails without attachments:`);
-        skippedSubjects.noAttachment.forEach((item, index) => {
-          // console.log(
-          //   `No Attachment ${index + 1}: "${item.subject}" (${item.domain})`
-          // );
-        });
-      }
 
       setCollectedFiles([]);
 
@@ -629,11 +788,12 @@ const GmailSyncPage = () => {
         showGlobalToast(
           {
             title: "Fetching your policies securely…",
-            description:
-              "This process typically takes 2–5 minutes to complete.",
+            description: "This process typically takes 2–5 minutes to complete.",
           },
           "sync"
         );
+
+        console.log(`📥 Downloading attachments from ${finalMatchedEmails.length} messages...`);
 
         const fileResults = await Promise.allSettled(
           finalMatchedEmails.map((msgId) =>
@@ -641,18 +801,31 @@ const GmailSyncPage = () => {
           )
         );
 
-        const validFiles = fileResults
-          .filter((result) => result.status === "fulfilled" && result.value)
-          .map((result) => result.value);
+        // Flatten results - handle both single files and multiple files per message
+        const validFiles = [];
+        fileResults.forEach((result) => {
+          if (result.status === "fulfilled" && result.value) {
+            if (result.value._multipleFiles) {
+              // Multiple files from one message
+              validFiles.push(...result.value.files);
+            } else {
+              // Single file from one message
+              validFiles.push(result.value);
+            }
+          }
+        });
+
+        console.log(`✅ Downloaded ${validFiles.length} valid PDFs from ${finalMatchedEmails.length} messages`);
 
         if (validFiles.length > 0) {
           setCollectedFiles(validFiles);
           await handleUploadDocFromGmail(validFiles, userEmail, userId);
+        } else {
+          showToast({
+            type: "info",
+            message: "No valid policy documents found to upload.",
+          });
         }
-
-        Object.entries(domainHitCount).forEach(([domain, count]) =>
-          console.log(`- ${domain}: ${count} email(s)`)
-        );
       } else {
         showToast({
           type: "success",
@@ -660,61 +833,187 @@ const GmailSyncPage = () => {
         });
       }
     } catch (error) {
-      console.error("Gmail fetch error:", error);
+      console.error("❌ Gmail fetch error:", error);
+      console.error("Error stack:", error.stack);
+      
       showToast({
         type: "error",
-        message: "Oops! Something went wrong.",
+        message: error.message || "Failed to fetch emails. Please try again.",
       });
     }
+  };
+
+  // Helper function to check if filename contains valid policy document keywords
+  const isValidPolicyFilename = (filename) => {
+    if (!filename) return false;
+    
+    // Convert to lowercase for case-insensitive matching
+    const lowerFilename = filename.toLowerCase();
+    
+    // Check if filename contains "Schedule", "Certificate", or "Policy" anywhere (start, middle, or end)
+    const validKeywords = ['schedule', 'certificate'];
+    
+    return validKeywords.some(keyword => lowerFilename.includes(keyword));
+  };
+
+  // Helper function to recursively find all PDF attachments in email parts (without filtering)
+  const findAllPDFAttachments = (parts, attachments = []) => {
+    if (!parts || !Array.isArray(parts)) return attachments;
+    
+    for (const part of parts) {
+      if (part.mimeType === "application/pdf" && part.body?.attachmentId) {
+        const filename = part.filename || `attachment_${part.body.attachmentId}.pdf`;
+        
+        // Collect all PDF attachments without filtering (filtering will be done later based on count)
+        attachments.push({
+          attachmentId: part.body.attachmentId,
+          filename: filename,
+          size: part.body.size
+        });
+      } else if (part.parts && Array.isArray(part.parts)) {
+        // Recursively search nested parts
+        findAllPDFAttachments(part.parts, attachments);
+      }
+    }
+    
+    return attachments;
   };
 
   const fetchAndProcessPDF = async (messageId, accessToken) => {
     try {
       const headers = { Authorization: `Bearer ${accessToken}` };
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout
+
       const messageUrl = `https://www.googleapis.com/gmail/v1/users/me/messages/${messageId}`;
-      const messageResponse = await fetch(messageUrl, { headers });
+      const messageResponse = await fetch(messageUrl, { 
+        headers,
+        signal: controller.signal 
+      });
+
+      clearTimeout(timeoutId);
 
       if (!messageResponse.ok) throw new Error("Failed to fetch message");
 
       const message = await messageResponse.json();
       const parts = message.payload?.parts || [];
 
-      const pdfAttachment = parts.find(
-        (part) => part?.mimeType === "application/pdf"
-      );
+      // Find all PDF attachments in the email (without filtering yet)
+      const allPdfAttachments = findAllPDFAttachments(parts);
+      
+      if (allPdfAttachments.length === 0) {
+        // Fallback: check if the main body is a PDF
+        if (message.payload?.mimeType === "application/pdf" && message.payload.body?.attachmentId) {
+          // Single PDF as main body - include without filename check
+          allPdfAttachments.push({
+            attachmentId: message.payload.body.attachmentId,
+            filename: `attachment_${messageId}.pdf`,
+            size: message.payload.body.size
+          });
+          console.log(`ℹ️  Email ${messageId} has single PDF as main body - including without filename check`);
+        } else {
+          return null;
+        }
+      }
 
-      if (!pdfAttachment || !pdfAttachment.body.attachmentId) {
+      // Filter attachments based on count:
+      // - Single attachment: Include without filename check (likely the policy document)
+      // - Multiple attachments: Filter by filename (only include those with Schedule/Certificate/Policy)
+      let pdfAttachments;
+      if (allPdfAttachments.length === 1) {
+        // Single attachment - include without filename check
+        pdfAttachments = allPdfAttachments;
+        console.log(`✅ Email ${messageId} has single PDF attachment "${allPdfAttachments[0].filename}" - including without filename check`);
+      } else {
+        // Multiple attachments - filter by filename
+        pdfAttachments = allPdfAttachments.filter(attachment => {
+          const isValid = isValidPolicyFilename(attachment.filename);
+          if (!isValid) {
+            console.log(`⏭️  Skipping attachment "${attachment.filename}" - filename doesn't contain Schedule, Certificate, or Policy`);
+          }
+          return isValid;
+        });
+        
+        if (pdfAttachments.length === 0) {
+          console.log(`⚠️  Email ${messageId} has ${allPdfAttachments.length} PDF attachments but none contain Schedule/Certificate/Policy in filename`);
+          return null;
+        }
+        
+        console.log(`✅ Email ${messageId} has ${allPdfAttachments.length} PDF attachments, filtering to ${pdfAttachments.length} with valid policy document filenames`);
+      }
+
+      // Process all filtered PDF attachments and return an array
+      const processedFiles = [];
+      
+      for (let i = 0; i < pdfAttachments.length; i++) {
+        const attachment = pdfAttachments[i];
+        
+        try {
+          const attachmentUrl = `https://www.googleapis.com/gmail/v1/users/me/messages/${messageId}/attachments/${attachment.attachmentId}`;
+          
+          const attachmentController = new AbortController();
+          const attachmentTimeoutId = setTimeout(() => attachmentController.abort(), 30000); // 30s timeout
+          
+          const attachmentResponse = await fetch(attachmentUrl, { 
+            headers,
+            signal: attachmentController.signal 
+          });
+
+          clearTimeout(attachmentTimeoutId);
+
+          if (!attachmentResponse.ok) {
+            console.error(`Failed to fetch attachment ${attachment.attachmentId} for message ${messageId}`);
+            continue;
+          }
+
+          const attachmentData = await attachmentResponse.json();
+          let base64Data = attachmentData?.data;
+
+          if (!base64Data) {
+            console.error(`No data found for attachment ${attachment.attachmentId}`);
+            continue;
+          }
+
+          base64Data = base64Data.replace(/-/g, "+").replace(/_/g, "/");
+
+          const fileName = pdfAttachments.length > 1 
+            ? `${attachment.filename.replace(/\.pdf$/i, '')}_${i + 1}_${messageId}.pdf`
+            : attachment.filename || `attachment_${messageId}.pdf`;
+
+          console.log(`✅ Including attachment: "${attachment.filename}"`);
+          
+          processedFiles.push({
+            base64Data,
+            fileName,
+            messageId,
+          });
+        } catch (attachmentError) {
+          console.error(`Error processing attachment ${attachment.attachmentId} for message ${messageId}:`, attachmentError);
+          // Continue with other attachments
+        }
+      }
+
+      // Return the first file if single, or all files if multiple
+      // The caller expects a single object, but we'll handle arrays in the caller
+      if (processedFiles.length === 0) {
         return null;
+      } else if (processedFiles.length === 1) {
+        return processedFiles[0];
+      } else {
+        // Return an object with a special flag to indicate multiple files
+        // The caller will need to handle this
+        return {
+          _multipleFiles: true,
+          files: processedFiles
+        };
       }
-
-      const attachmentUrl = `https://www.googleapis.com/gmail/v1/users/me/messages/${messageId}/attachments/${pdfAttachment.body.attachmentId}`;
-      const attachmentResponse = await fetch(attachmentUrl, { headers });
-
-      if (!attachmentResponse.ok) throw new Error("Failed to fetch attachment");
-
-      const attachmentData = await attachmentResponse.json();
-      let base64Data = attachmentData?.data;
-
-      if (!base64Data) {
-        throw new Error("No attachment data found");
-      }
-
-      base64Data = base64Data.replace(/-/g, "+").replace(/_/g, "/");
-
-      const fileName = `attachment_${messageId}.pdf`;
-
-      return {
-        base64Data,
-        fileName,
-        messageId,
-      };
     } catch (error) {
-      console.error(`Error fetching PDF for message ${messageId}:`, error);
-      showToast({
-        type: "error",
-        message: `Error fetching PDF for message ${messageId}`,
-      });
+      if (error.name === 'AbortError') {
+        console.error(`Timeout fetching PDF for message ${messageId}`);
+      } else {
+        console.error(`Error fetching PDF for message ${messageId}:`, error);
+      }
       return null;
     }
   };
@@ -751,65 +1050,119 @@ const GmailSyncPage = () => {
       try {
         if (!files?.length) return reject("No files to upload");
 
-        const formData = createGmailUploadFormData(files, userId, userEmail);
+        // Batch upload files to avoid gateway timeout
+        // Upload 5 files at a time for better reliability
+        const BATCH_SIZE = 5;
+        const batches = [];
+        
+        for (let i = 0; i < files.length; i += BATCH_SIZE) {
+          batches.push(files.slice(i, i + BATCH_SIZE));
+        }
 
-        const response = await fetch(`${API_URL}gmail-sync/sync`, {
-          method: "POST",
-          body: formData,
-        });
+        console.log(`📤 Uploading ${files.length} files in ${batches.length} batches of ${BATCH_SIZE}...`);
 
-        const result = await response.json();
+        let successCount = 0;
+        let failCount = 0;
+        const errors = [];
 
-        if (result?.success) {
+        // Upload each batch sequentially to avoid overwhelming the server
+        for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+          const batch = batches[batchIndex];
+          const batchNumber = batchIndex + 1;
+          
+          try {
+            console.log(`📤 Uploading batch ${batchNumber}/${batches.length} (${batch.length} files)...`);
+
+            const formData = createGmailUploadFormData(batch, userId, userEmail);
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout per batch
+
+            const response = await fetch(`${API_URL}gmail-sync/sync`, {
+              method: "POST",
+              body: formData,
+              signal: controller.signal,
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              let errorMessage;
+              try {
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.message || errorJson.error || `HTTP ${response.status}`;
+              } catch {
+                errorMessage = `HTTP ${response.status}: ${errorText.substring(0, 100)}`;
+              }
+              
+              console.error(`❌ Batch ${batchNumber} upload failed:`, errorMessage);
+              errors.push(`Batch ${batchNumber}: ${errorMessage}`);
+              failCount += batch.length;
+              continue;
+            }
+
+            const result = await response.json();
+            
+            if (result?.success) {
+              console.log(`✅ Batch ${batchNumber}/${batches.length} uploaded successfully`);
+              successCount += batch.length;
+            } else {
+              console.error(`❌ Batch ${batchNumber} upload failed:`, result?.message || "Unknown error");
+              errors.push(`Batch ${batchNumber}: ${result?.message || "Upload failed"}`);
+              failCount += batch.length;
+            }
+
+            // Small delay between batches to avoid overwhelming the server
+            if (batchIndex < batches.length - 1) {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            }
+          } catch (error) {
+            console.error(`❌ Batch ${batchNumber} upload error:`, error);
+            
+            let errorMessage = "An unexpected error occurred.";
+            if (error.name === 'AbortError') {
+              errorMessage = "Upload timeout";
+            } else if (error.message) {
+              errorMessage = error.message;
+            }
+            
+            errors.push(`Batch ${batchNumber}: ${errorMessage}`);
+            failCount += batch.length;
+          }
+        }
+
+        // Final summary
+        console.log(`📊 Upload complete: ${successCount} successful, ${failCount} failed`);
+
+        if (successCount > 0 && failCount === 0) {
+          // All files uploaded successfully
           showToast({
-            message: "Sync completed successfully.",
+            message: `Sync completed successfully. ${successCount} policy document(s) uploaded.`,
             type: "success",
           });
           resolve(true);
-        } else {
+        } else if (successCount > 0 && failCount > 0) {
+          // Partial success
           showToast({
-            message: result?.message || "Gmail sync failed. Please try again.",
+            message: `Partial success: ${successCount} uploaded, ${failCount} failed. ${errors[0]}`,
+            type: "warning",
+          });
+          resolve(true); // Still resolve as partial success
+        } else {
+          // All failed
+          const errorMessage = errors.length > 0 ? errors[0] : "All uploads failed. Please try again.";
+          showToast({
+            message: errorMessage,
             type: "error",
           });
-          reject(new Error(result?.message || "Upload failed"));
+          reject(new Error(errorMessage));
         }
       } catch (error) {
-        console.error("Gmail sync error:", error);
-
+        console.error("❌ Gmail sync error:", error);
+        
         let errorMessage = "An unexpected error occurred. Please try again.";
-
-        if (error.response) {
-          const status = error.response.status;
-          const responseError =
-            error.response.data?.message || error.response.data?.error;
-
-          switch (status) {
-            case 400:
-              errorMessage =
-                responseError || "Invalid request. Please check your data.";
-              break;
-            case 401:
-              errorMessage = "Authentication failed. Please login again.";
-              break;
-            case 403:
-              errorMessage =
-                "Access denied. You don't have permission to sync Gmail.";
-              break;
-            case 429:
-              errorMessage =
-                "Too many requests. Please wait a moment and try again.";
-              break;
-            case 500:
-              errorMessage = "Server error. Please try again later.";
-              break;
-            default:
-              errorMessage =
-                responseError || `Request failed with status ${status}`;
-          }
-        } else if (error.request) {
-          errorMessage =
-            "Network error. Please check your connection and try again.";
-        } else if (error.message) {
+        if (error.message) {
           errorMessage = error.message;
         }
 
