@@ -67,7 +67,7 @@ const MotorPolicyForm = () => {
   );
   // const [sumAssured, setSumAssured] = useState(responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || "");
   const [premiumPaid, setPremiumPaid] = useState(
-    responseData?.totalPremium || policyDetails?.premiumPaid || ""
+        responseData?.totalPremium || policyDetails?.policyDetails?.totalPremium || policyDetails?.premiumPaid || ""
   );
   const [ncb, setNcb] = useState(
     responseData?.ncpPercentage ||

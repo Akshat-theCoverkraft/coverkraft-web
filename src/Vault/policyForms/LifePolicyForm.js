@@ -43,7 +43,7 @@ const LifePolicyForm = () => {
     responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || ""
   );
   const [premiumPaid, setPremiumPaid] = useState(
-    responseData?.totalPremium || policyDetails?.premiumPaid || ""
+    responseData?.totalPremium || policyDetails?.policyDetails?.totalPremium || policyDetails?.premiumPaid || ""
   );
   const [insuredName, setInsuredName] = useState(
     responseData?.insuredName || policyDetails?.insuredName || ""
