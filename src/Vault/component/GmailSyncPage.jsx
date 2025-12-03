@@ -279,6 +279,23 @@ const GmailSyncPage = () => {
         "policy.bond@bajajallianz.co.in"
       ];
 
+      // Payment receipt whitelist patterns - these should ALWAYS be included
+const paymentReceiptPatterns = [
+  /payment\s*receipt/i,
+  /premium\s*payment/i,
+  /payment\s*confirmation/i,
+  /payment\s*received/i,
+  /payment\s*successful/i,
+  /receipt\s*for\s*payment/i,
+  /payment\s*acknowledgment/i,
+  /premium\s*paid/i,
+  /payment\s*processed/i,
+  /transaction\s*receipt/i,
+  /premium\s*receipt/i,
+  /payment\s*complete/i,
+  /thank\s*you\s*for\s*your\s*payment/i,
+];
+
       // Enhanced marketing exclusion patterns to catch more marketing emails
     const marketingExclusionPatterns = [
     /quotation/i,
@@ -288,7 +305,6 @@ const GmailSyncPage = () => {
     /insurance\s*quotation/i,
     /insurance\s*quote/i,
     /get\s*(free\s*)?quote/i,
-    /pay/i,
     /proposal/i,
     /insurance\s*proposal/i,
     /policy\s*proposal/i,
@@ -430,11 +446,35 @@ const GmailSyncPage = () => {
     /giveaway/i,
   ];
 
-      const isMarketingEmail = (subject) => {
-        return marketingExclusionPatterns.some((pattern) =>
-          pattern.test(subject)
-        );
-      };
+      // const isMarketingEmail = (subject,  body = '') => {
+      //   return marketingExclusionPatterns.some((pattern) =>
+      //     pattern.test(subject)
+      //   );
+      // };
+      const isMarketingEmail = (subject, body = '') => {
+  const combinedText = `${subject} ${body}`.toLowerCase();
+  
+  // FIRST: Check if it's a payment receipt - if yes, it's NOT marketing
+  const isPaymentReceipt = paymentReceiptPatterns.some(pattern => 
+    pattern.test(combinedText)
+  );
+  
+  if (isPaymentReceipt) {
+    console.log(`✅ Payment receipt detected: "${subject.substring(0, 50)}..."`);
+    return false; // Not marketing, it's a legitimate payment receipt
+  }
+  
+  // THEN: Check marketing patterns
+  const isMarketing = marketingExclusionPatterns.some(pattern => 
+    pattern.test(combinedText)
+  );
+  
+  if (isMarketing) {
+    console.log(`⚠️ Marketing email detected: "${subject.substring(0, 50)}..."`);
+  }
+  
+  return isMarketing;
+};
 
       // Helper function to extract text from email body parts
       const extractEmailBody = (payload) => {
