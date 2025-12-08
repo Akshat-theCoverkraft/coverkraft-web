@@ -15,28 +15,30 @@ function GradientButton({
     borderColor: "transparent",
     display: "flex",
     alignItems: "center",
-    justifyContent: startIcon ? "space-evenly" : "center",
+    justifyContent: startIcon ? "center" : "center",
     padding: "12px 10px",
     borderRadius: "30px",
     border: "none",
     fontSize: "1.6rem",
     fontWeight: "bold",
-    height: "auto",
   };
 
   return (
     <button
       type="button"
-      className={`btn btn-lg ${size ? `btn-${size}` : ""} ${block ? "w-100" : ""} ${className || ""}`}
-      style={{ ...defaultStyle, ...style }} //  merge custom style
+      className={`btn btn-lg ${size ? `btn-${size}` : ""} ${
+        block ? "w-100" : ""
+      } ${className || ""}`}
+      style={{ ...defaultStyle, ...style }}
       onClick={onClick}
     >
       {startIcon && (
         <img
           src={startIcon}
-          height={16}
+          height={20}              // <<< SMALL ICON
+          width={20}               // keeps it perfectly square
           alt="Start Icon"
-          style={{ marginRight: "8px" }}
+          style={{ marginRight: "6px" }} // small spacing
         />
       )}
       {text}

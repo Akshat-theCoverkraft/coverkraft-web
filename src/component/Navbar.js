@@ -316,15 +316,7 @@ function Navbar({ scrollToContactBottom }) {
           <SectionTitle>Navigation</SectionTitle>
           {visibleNavItems.map((item) => (
             <React.Fragment key={item.key}>
-              <MenuItem
-                onClick={() => {
-                  handleNavigation(item);
-                  closeAllMenus();
-                }}
-                sx={{ fontSize: "1.3rem", py: 1.5 }}
-              >
-                {item.label}
-              </MenuItem>
+            
               {item.children?.map((child) => (
                 <MenuItem
                   key={child.label}
@@ -534,7 +526,9 @@ function Navbar({ scrollToContactBottom }) {
                   Login
                 </StyledButton>
               )}
-
+               <StyledButton onClick={() => navigate("/joinUs")}>
+                 Join Us
+                </StyledButton>
               <StyledButton onClick={handleVault}>
                 Policy Vault
               </StyledButton>

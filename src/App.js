@@ -26,12 +26,13 @@ import PrivacyPolicy from "./PrivacyPolicy";
 import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import PolicyType from './Landing/component/PolicyType';
-import PolicyDetails from './pages/PolicyDetails';
+import PolicyDetails from './pages/Policies/PolicyDetails.jsx';
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
 import { PolicyProvider } from "./store/policyContext.js";
 import LeaderShip from "./About/LeaderShip.js";
+import JoinUs from "./pages/JoinUs.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -117,6 +118,7 @@ function App() {
           <Route path="" element={<Landing />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/joinUs" element={<JoinUs />} />
           <Route path="/vault" element={<Vault />} />
           <Route path="/motor-policy" element={<MotorPolicyForm />} />
           <Route path="/health-policy" element={<HealthPolicyForm />} />

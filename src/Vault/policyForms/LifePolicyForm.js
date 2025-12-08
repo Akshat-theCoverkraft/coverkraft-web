@@ -43,7 +43,7 @@ const LifePolicyForm = () => {
     responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || ""
   );
   const [premiumPaid, setPremiumPaid] = useState(
-    responseData?.totalPremium || policyDetails?.premiumPaid || ""
+    responseData?.totalPremium || policyDetails?.policyDetails?.totalPremium || policyDetails?.premiumPaid || ""
   );
   const [insuredName, setInsuredName] = useState(
     responseData?.insuredName || policyDetails?.insuredName || ""
@@ -89,11 +89,11 @@ const LifePolicyForm = () => {
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
 
-  // ✅ Persist documentId in sessionStorage
-  const documentId = localStorage.getItem("documentId");
-  useEffect(() => {
-    sessionStorage.setItem("documentId", documentId);
-  }, [documentId]);
+  // // ✅ Persist documentId in sessionStorage
+  // const documentId = localStorage.getItem("documentId");
+  // useEffect(() => {
+  //   sessionStorage.setItem("documentId", documentId);
+  // }, [documentId]);
 
   const [loading, setLoading] = useState(false);
   const [dropdownOptions, setDropdownOptions] = useState([]);
@@ -212,6 +212,7 @@ const LifePolicyForm = () => {
   };
 
   const createPolicy = (payload) => {
+    const documentId = localStorage.getItem("documentId");
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("documentId", documentId);
@@ -238,6 +239,7 @@ const LifePolicyForm = () => {
   };
 
   const updatePolicy = (payload) => {
+    const documentId = sessionStorage.getItem("documentId");
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("documentId", documentId);

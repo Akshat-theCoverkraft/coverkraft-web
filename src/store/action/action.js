@@ -84,6 +84,13 @@ export const DELETE_ACCOUNT_REQUEST = "DELETE_ACCOUNT_REQUEST";
 export const DELETE_ACCOUNT_SUCCESS = "DELETE_ACCOUNT_SUCCESS";
 export const DELETE_ACCOUNT_FAILURE = "DELETE_ACCOUNT_FAILURE";
 
+
+//AgentForm
+// src/redux/constants/agentConstants.js
+export const SUBMIT_AGENT_REQUEST = "SUBMIT_AGENT_REQUEST";
+export const SUBMIT_AGENT_SUCCESS = "SUBMIT_AGENT_SUCCESS";
+export const SUBMIT_AGENT_FAILURE = "SUBMIT_AGENT_FAILURE";
+
 // delete account api
 export const deleteAccount = (API_URL, userId) => {
   return (dispatch) => {
@@ -333,16 +340,31 @@ export const getAllPolicyType = (API_URL, data) => {
 export const getBYIDUsers = (API_URL, userId) => {
   return (dispatch) => {
     dispatch({ type: GETBYID_USERS_DATA_REQUEST });
+
+    // Get token from localStorage
+    const token = sessionStorage.getItem("token");
+
+
     axios
-      .get(API_URL + `user/getUserById`, {
+      .get(`${API_URL}user/getUserById`, {
         params: { _id: userId },
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
       })
       .then((response) => {
-        dispatch({ type: GETBYID_USERS_DATA_SUCCESS, payload: response.data });
+        dispatch({
+          type: GETBYID_USERS_DATA_SUCCESS,
+          payload: response.data,
+        });
         return response.data;
       })
       .catch((error) => {
-        dispatch({ type: GETBYID_USERS_DATA_FAILURE, payload: error.message });
+        dispatch({
+          type: GETBYID_USERS_DATA_FAILURE,
+          payload: error.message,
+        });
+        console.error("Error fetching user by ID:", error);
       });
   };
 };
@@ -428,6 +450,57 @@ export const getAllFAQs = (API_URL) => {
           type: GETALLFAQ_DATA_FAILURE,
           payload: error.message,
         });
+      });
+  };
+};
+
+
+// --------------------------------------------------
+
+
+
+export const submitAgent = (API_URL, formData) => {
+  return (dispatch) => {
+    dispatch({ type: SUBMIT_AGENT_REQUEST });
+
+    return axios
+      .post(`${API_URL}api/agents/apply`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        if (response.data.status === false) {
+          dispatch({
+            type: SUBMIT_AGENT_FAILURE,
+            payload: response.data.message,
+          });
+        } else {
+          dispatch({
+            type: SUBMIT_AGENT_SUCCESS,
+            payload: response.data,
+          });
+
+          // ✅ Optional: Store agent ID
+          if (response.data.data && response.data.data._id) {
+            sessionStorage.setItem("agentId", response.data.data._id);
+          }
+        }
+
+        return response.data; // ✅ Return to component
+      })
+      .catch((error) => {
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          "Failed to submit application";
+
+        dispatch({
+          type: SUBMIT_AGENT_FAILURE,
+          payload: errorMessage,
+        });
+
+        return { status: false, message: errorMessage }; // ✅ Return consistent structure
       });
   };
 };

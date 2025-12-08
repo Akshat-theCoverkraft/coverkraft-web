@@ -67,7 +67,7 @@ const MotorPolicyForm = () => {
   );
   // const [sumAssured, setSumAssured] = useState(responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || "");
   const [premiumPaid, setPremiumPaid] = useState(
-    responseData?.totalPremium || policyDetails?.premiumPaid || ""
+        responseData?.totalPremium || policyDetails?.policyDetails?.totalPremium || policyDetails?.premiumPaid || ""
   );
   const [ncb, setNcb] = useState(
     responseData?.ncpPercentage ||
@@ -113,7 +113,7 @@ const MotorPolicyForm = () => {
     responseData?.model || policyDetails?.policyDetails?.model || ""
   );
 
-  const documentId = localStorage.getItem("documentId");
+  // const documentId = localStorage.getItem("documentId");
 
   const commonItemStyle = {
     maxWidth: 900,
@@ -243,6 +243,7 @@ const MotorPolicyForm = () => {
   };
 
   const createPolicy = async (payload) => {
+    const documentId = localStorage.getItem("documentId");
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("documentId", documentId);
@@ -297,6 +298,7 @@ const MotorPolicyForm = () => {
   };
 
   const updatePolicy = (payload) => {
+    const documentId = sessionStorage.getItem("documentId");
     const formData = new FormData();
     formData.append("_id", policyId);
     formData.append("userId", userId);
@@ -308,7 +310,7 @@ const MotorPolicyForm = () => {
     formData.append("premiumPaid", premiumPaid);
     formData.append("netPremium", netPremium);
     formData.append("insuredName", insuredName);
-    formData.append("insuranceCompany", insuredCompany);
+    formData.append("insuredCompany", insuredCompany);
     formData.append("registrationNumber", registrationNumber);
     formData.append("registrationYear", registrationYear);
     formData.append("assetType", assetType);

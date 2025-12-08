@@ -559,14 +559,6 @@ const exportToPDF = async () => {
                     toggleDialog("error", "");
                     toggleDialog("addPolicy", true);
                   }}
-                  style={{
-                    padding: "8px 16px",
-                    minHeight: "32px",
-                    borderRadius: "28px",
-                    fontSize: "16px",
-                    marginTop: "10px",
-                    width: "180px",
-                  }}
                 />
 
                 {shareAllPolicy && (

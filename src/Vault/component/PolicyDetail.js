@@ -33,6 +33,7 @@ import view from "../../Images/ic-view.png";
 import emptyImage from "../../Images/NoData.png";
 import moment from "moment";
 import SessionExpiredModal from "../../utils/sessionExpireModal";
+import { usePolicyContext } from "../../store/policyContext";
 
 const PolicyDetail = ({ policyId }) => {
   const [policyDetails, setPolicyDetails] = useState([]);
@@ -55,8 +56,12 @@ const PolicyDetail = ({ policyId }) => {
         );
 
         const data = response.data?.data;
+        console.log("data", data)
         setPolicyDetails(Array.isArray(data) ? data : []);
         sessionStorage.setItem("policyId", policyId);
+         const documentId = data[0]?.documentDetails?._id;
+        console.log("documentId", documentId);
+        sessionStorage.setItem("documentId", documentId )
       } catch (error) {
         if (error.response?.status === 401) {
           setShowSessionExpired(true);
@@ -175,22 +180,25 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   // Helper function to show toast only once
-  const showToastOnce = (message, type = "success") => {
-    const toastKey = `${type}-${message}`;
-    if (!toastShownRef.current.has(toastKey)) {
-      toastShownRef.current.add(toastKey);
-      if (type === "success") {
-        ComingSoonModal(message);
-      } else if (type === "error") {
-        toast.error(message);
-      } else if (type === "info") {
-        toast.info(message);
-      }
-      setTimeout(() => {
-        toastShownRef.current.delete(toastKey);
-      }, 3000);u
+const showToastOnce = (message, type = "success") => {
+  const toastKey = `${type}-${message}`;
+  if (!toastShownRef.current.has(toastKey)) {
+    toastShownRef.current.add(toastKey);
+
+    if (type === "success") {
+      toast.success(message); // Use toast here instead of calling ComingSoonModal
+    } else if (type === "error") {
+      toast.error(message);
+    } else if (type === "info") {
+      toast.info(message);
     }
-  };
+
+    setTimeout(() => {
+      toastShownRef.current.delete(toastKey);
+    }, 3000);
+  }
+};
+
 
   const isMotorPolicy = (policyType) => {
     const motorPolicies = ["car_policy", "bike_policy", "other_vehicle"];
@@ -331,33 +339,42 @@ const handleDocument = async (documentPath, action) => {
 };
 
 
+const { setValue, setActiveTab } = usePolicyContext();
+  
+const handlePolicyAction = (action) => {
+  if (action === "renew") {
+    setShowComingSoonModal(true);
+    return;
+  }
 
-  const handlePolicyAction = (action) => {
-     // Show ComingSoonModal for renew action
-    if (action === "renew") {
-      setShowComingSoonModal(true);
-      return;
-    }
-    const userId = sessionStorage.getItem("userId");
-    const formData = new FormData();
-    formData.append("_id", policyId);
-    formData.append("userId", userId);
-    formData.append("status", action);
+  const userId = sessionStorage.getItem("userId");
+  const formData = new FormData();
+  formData.append("_id", policyId);
+  formData.append("userId", userId);
+  formData.append("status", action);
 
-    dispatch(updateDocument(API_URL, formData))
-      .then(() => {
-        const message =
-          action === "archive"
-            ? "Policy archived successfully"
-            : action === "unarchive"
-            ? "Policy removed from archive successfully"
-            : "Action completed successfully";
-        showToastOnce(message, "success");
-      })
-      .catch(() => {
-        showToastOnce("Some error occurred", "error");
-      });
-  };
+  dispatch(updateDocument(API_URL, formData))
+    .then(() => {
+      const message =
+        action === "archive"
+          ? "Policy archived successfully"
+          : action === "unarchive"
+          ? "Policy removed from archive successfully"
+          : "Action completed successfully";
+      showToastOnce(message, "success");
+
+      // Switch to Archive tab if archiving
+      if (action === "archive") {
+        setTimeout(() => {
+          setValue(2);
+          setActiveTab("archive");
+        }, 500);
+      }
+    })
+    .catch(() => {
+      showToastOnce("Some error occurred", "error");
+    });
+};
 
   const renderPolicyActions = (policy) => {
     const isArchived = policy?.status === "archive";
@@ -516,7 +533,7 @@ const handleDocument = async (documentPath, action) => {
         const status = getExpiryStatus(policy?.policyEndDate);
         const documentPath = policy?.documentDetails?.documentPath;
         const progress = calculatePolicyProgress(policy);
-
+        console.log("policy?.totalPremium", policy?.totalPremium)
         return (
           <Card
             key={index}
@@ -759,7 +776,7 @@ const handleDocument = async (documentPath, action) => {
                         style={{ fontSize: "16px", fontWeight: "700" }}
                         className="fw-bolder"
                       >
-                        {policy?.premiumPaid || "-"}
+                         {policy?.policyDetails?.totalPremium || "-"}
                       </p>
                     </div>
                   </Grid>

@@ -1,33 +1,69 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  Box,
-  CardActionArea,
-  Tooltip,
-} from "@mui/material";
+  Car,
+  Bike,
+  Shield,
+  Users,
+  Truck,
+  Wrench,
+  Plane,
+  Home,
+  Heart,
+  Briefcase,
+  Package,
+  Building,
+  Globe,
+  Umbrella,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPolicyType } from "../../store/action/action";
 import API_URL from "../../ServiceModule/Service";
 import { useNavigate } from "react-router-dom";
-import "../component/CSS/policyType.css";
-import { headingStyle, textStyle } from "../../theme/themeStyles";
+import { Typography } from "@mui/material";
+import { headingStyle } from "../../theme/themeStyles";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 7;
 
-const PolicyType = () => {
+export default function HealthInsurance() {
+  const [hoveredCard, setHoveredCard] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [policyType, setPolicyType] = useState([]);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  
   const policyTypes = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Icon mapping for dynamic data - maps policy type names to Lucide icons
+  const iconMap = {
+    car: Car,
+    bike: Bike,
+    health: Shield,
+    term: Users,
+    gcv: Truck,
+    pcv: Wrench,
+    travel: Plane,
+    home: Home,
+    life: Heart,
+    business: Briefcase,
+    commercial: Package,
+    property: Building,
+    international: Globe,
+    general: Umbrella,
+  };
+
+  const slides = [
+    "https://policy.thecoverkraft.com/assets/images/frontend-images/home-image1.png",
+    "https://policy.thecoverkraft.com/assets/images/frontend-images/home-image2.png",
+    "https://policy.thecoverkraft.com/assets/images/frontend-images/home-image3.png",
+  ];
+
+  // Fetch policy types from API
   useEffect(() => {
     dispatch(getAllPolicyType(API_URL));
   }, [dispatch]);
 
+  // Update local state when Redux state changes
   useEffect(() => {
     if (
       policyTypes &&
@@ -38,160 +74,239 @@ const PolicyType = () => {
     }
   }, [policyTypes]);
 
+  // Slideshow effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+  const prevSlide = () =>
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+
+  // Handle policy click navigation
+  const handlePolicyClick = (policy) => {
+    console.log("Clicked Policy:", policy);
+    navigate(`/policy-details/${policy._id}`);
+  };
+
+  // Handle see more functionality
   const handleSeeMore = () => {
     setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   };
 
+  // Handle see less functionality
   const handleSeeLess = () => {
     setVisibleCount(ITEMS_PER_PAGE);
   };
 
-  return (
-    <Box sx={{ mx: "6%", my: 4, mt: 0, mb: 10 }}>
-      
+  // Get icon component based on policy type name
+  const getIconComponent = (policyTypeName) => {
+    if (!policyTypeName) return Shield;
+    
+    // Convert policy type to lowercase and remove spaces for matching
+    const normalizedName = policyTypeName.toLowerCase().replace(/\s+/g, '');
+    
+    // Try to find exact match
+    if (iconMap[normalizedName]) {
+      return iconMap[normalizedName];
+    }
+    
+    // Try to find partial match
+    for (const [key, icon] of Object.entries(iconMap)) {
+      if (normalizedName.includes(key) || key.includes(normalizedName)) {
+        return icon;
+      }
+    }
+    
+    // Default fallback
+    return Shield;
+  };
 
-      <Box
-        sx={{
-          background: "linear-gradient(105deg, #3E3E3E 0%, #121212 100%)",
-          borderRadius: "25px",
-          padding: 5,
-          marginTop: 5,
-          color: "#fff",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
-        }}
-      >
-        <Typography variant="h3" sx={headingStyle}>
-        Pick a Policy & Get Covered
-      </Typography>
-       <Typography variant="h4" sx={textStyle}>
-            Let's get you & your family insured
-          </Typography>
-        {/* Heading and Buttons */}
-       
-        <Grid container spacing={3}>
-          {policyType.slice(0, visibleCount).map((policy, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
-              <Card
-                className="hover-effect"
-                sx={{
-                  backgroundColor: "#121212 !important",
-                  borderRadius: "25px !important",
-                  border: "1px solid #FF9906",
-                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                  height: 183,
-                  width: 271,
-                  maxWidth: "100%",
-                  margin: "auto",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <CardActionArea
-                  onClick={() => navigate(`/policy-details/${policy._id}`)}
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CardContent
-                    sx={{
-                      textAlign: "center",
-                      py: 3,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box mb={2}>
-                      <img
-                        src={policy.icon}
-                        alt={policy.policyType}
-                        style={{
-                          width: 70,
-                          height: 70,
-                          objectFit: "contain",
-                        }}
-                      />
-                    </Box>
+  // Calculate how many items to show
+  const visiblePolicies = policyType.slice(0, visibleCount);
+  const firstRowCount = Math.min(4, visiblePolicies.length);
+  const firstRow = visiblePolicies.slice(0, firstRowCount);
+  const secondRow = visiblePolicies.slice(firstRowCount);
 
-                    <Tooltip
-                      title={policy.policyType}
-                      arrow
-                      sx={{ fontSize: "40px" }}
-                    >
-                      <Typography
-                        variant="h6"
-                        fontWeight={600}
-                        color="#fff"
-                        sx={{
-                          display: "-webkit-box",
-                          WebkitBoxOrient: "vertical",
-                          WebkitLineClamp: 1,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "100%",
-                        }}
-                      >
-                        {policy.policyType}
-                      </Typography>
-                    </Tooltip>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-         <Box
-          display="flex"
-          justifyContent="flex-end"
-          alignItems="end"
-          mb={3}
-          sx={{marginTop: 3}}
+ return (
+  <div className="relative z-10 flex flex-col items-center px-6">
+
+    {/* Background Slideshow with Dark Overlay */}
+    <div className="absolute inset-0">
+      {slides.map((slide, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentSlide ? "opacity-100" : "opacity-0"
+          }`}
         >
-          
+          <img 
+            src={slide} 
+            alt={`Slide ${index + 1}`} 
+            className="w-full h-full object-cover" 
+          />
+          <div className="absolute inset-0 bg-black/70"></div>
+        </div>
+      ))}
+    </div>
 
-          {policyType.length > ITEMS_PER_PAGE && (
-            <Box display="flex" gap={2}>
-              {visibleCount < policyType.length && (
-                <Typography
-                  onClick={handleSeeMore}
-                  sx={{
-                    color: "#5A9E1E",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontSize: "1.2rem",
-                    textTransform: "uppercase",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
+    {/* Main Content */}
+    <div className="relative z-10 flex flex-col items-center justify-center px-6 py-16 my-10">
+      {/* Header */}
+      <div className="text-center mb-20 animate-fade-in-down">
+        <Typography variant="h3" sx={{ ...headingStyle, textAlign: "center" }}>
+          Pick a Policy & Get Covered
+        </Typography>
+        <Typography
+          variant="h4"
+          sx={{
+            color: "#FFF",
+            fontWeight: 700,
+            mb: 3,
+            textAlign: "center",
+            fontSize: { xs: "26px", sm: "30px", md: "32px" },
+          }}
+        >
+          Let's get you & your family insured
+        </Typography>
+      </div>
+
+      {/* Insurance Cards - Dynamic from API */}
+      <div className="flex flex-col gap-y-20 items-center">
+        
+        {/* Row 1 */}
+        {firstRow.length > 0 && (
+          <div className="flex gap-16 flex-wrap justify-center">
+            {firstRow.map((policy, index) => {
+              const IconComponent = getIconComponent(policy.policyType);
+              return (
+                <div
+                  key={policy._id}
+                  className="group relative animate-fade-in-up"
+                  style={{ animationDelay: `${index * 140}ms` }}
+                  onMouseEnter={() => setHoveredCard(index)}
+                  onMouseLeave={() => setHoveredCard(null)}
                 >
-                  See More
-                </Typography>
-              )}
-              {visibleCount > ITEMS_PER_PAGE && (
-                <Typography
-                  onClick={handleSeeLess}
-                  sx={{
-                    color: "#5A9E1E",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontSize: "1.2rem",
-                    textTransform: "uppercase",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
+                  <div 
+                    onClick={() => handlePolicyClick(policy)}
+                    className="backdrop-blur-md bg-black/90 border border-gray-800/50 rounded-3xl shadow-2xl overflow-hidden cursor-pointer transition-all duration-300 transform hover:-translate-y-4 hover:shadow-[0_20px_60px_rgba(111,168,42,0.5)] hover:border-[#6fa82a]/50 w-80 h-80"
+                  >
+                    <div className="p-8 flex flex-col items-center justify-center h-full gap-8">
+                      {/* Icon */}
+                      <div
+                        className={`flex items-center justify-center text-[#6fa82a] transition-all duration-500 ${
+                          hoveredCard === index
+                            ? "scale-110 rotate-6 drop-shadow-[0_0_15px_rgba(111,168,42,0.8)]"
+                            : "scale-100"
+                        }`}
+                      >
+                        {policy.icon ? (
+                          <img
+                            src={policy.icon}
+                            alt={policy.policyType}
+                            className="w-36 h-36 object-contain drop-shadow-2xl brightness-110"
+                          />
+                        ) : (
+                          <IconComponent
+                            size={140}
+                            strokeWidth={1.5}
+                            className="drop-shadow-2xl"
+                          />
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <div className="text-white font-bold text-2xl text-center w-full drop-shadow-lg">
+                        {policy.policyType}
+                      </div>
+                    </div>
+
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6fa82a]/20 via-[#6fa82a]/10 to-[#6fa82a]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Row 2 */}
+        {secondRow.length > 0 && (
+          <div className="flex gap-16 flex-wrap justify-center">
+            {secondRow.map((policy, index) => {
+              const IconComponent = getIconComponent(policy.policyType);
+              const actualIndex = index + firstRowCount;
+
+              return (
+                <div
+                  key={policy._id}
+                  className="group relative animate-fade-in-up"
+                  style={{ animationDelay: `${actualIndex * 140}ms` }}
+                  onMouseEnter={() => setHoveredCard(actualIndex)}
+                  onMouseLeave={() => setHoveredCard(null)}
                 >
-                  See Less
-                </Typography>
-              )}
-            </Box>
-          )}
-        </Box>
+                  <div 
+                    onClick={() => handlePolicyClick(policy)}
+                    className="backdrop-blur-md bg-black/90 border border-gray-800/50 rounded-3xl shadow-2xl overflow-hidden cursor-pointer transition-all duration-300 transform hover:-translate-y-4 hover:shadow-[0_20px_60px_rgba(111,168,42,0.5)] hover:border-[#6fa82a]/50 w-80 h-80"
+                  >
+                    <div className="p-8 flex flex-col items-center justify-center h-full gap-8">
+                      
+                      {/* Icon */}
+                      <div
+                        className={`flex items-center justify-center text-[#6fa82a] transition-all duration-500 ${
+                          hoveredCard === actualIndex
+                            ? "scale-110 rotate-6 drop-shadow-[0_0_15px_rgba(111,168,42,0.8)]"
+                            : "scale-100"
+                        }`}
+                      >
+                        {policy.icon ? (
+                          <img
+                            src={policy.icon}
+                            alt={policy.policyType}
+                            className="w-36 h-36 object-contain drop-shadow-2xl brightness-110"
+                          />
+                        ) : (
+                          <IconComponent
+                            size={140}
+                            strokeWidth={1.5}
+                            className="drop-shadow-2xl"
+                          />
+                        )}
+                      </div>
 
-      </Box>
-    </Box>
-  );
-};
+                      {/* Title */}
+                      <div className="text-white font-bold text-2xl text-center w-full drop-shadow-lg">
+                        {policy.policyType}
+                      </div>
+                    </div>
 
-export default PolicyType;
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6fa82a]/20 via-[#6fa82a]/10 to-[#6fa82a]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      </div>
+    </div>
+
+    {/* Animations */}
+    <style jsx>{`
+      @keyframes fade-in-down {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in-down { animation: fade-in-down 0.8s ease-out; }
+      .animate-fade-in-up { animation: fade-in-up 0.7s ease-out; animation-fill-mode: both; }
+    `}</style>
+  </div>
+);
+
+}
