@@ -35,6 +35,16 @@ import LeaderShip from "./About/LeaderShip.js";
 import JoinUs from "./pages/JoinUs.jsx";
 
 function App() {
+  useEffect(() => {
+    console.log("window.location.hostname ", window.location.hostname )
+  if (window.location.hostname === "thecoverkraft.com") {
+    window.location.href =
+      "https://www.thecoverkraft.com" +
+      window.location.pathname +
+      window.location.search;
+  }
+}, []);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
