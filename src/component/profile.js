@@ -658,7 +658,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             <p className="register-text text-center">{formData.useremail}</p>
           )}
           {!profileState.update && (
-            <div className="flex justify-center mt-2 mb-10">
+            <div className="flex justify-center mt-2">
               <Button
                 text="Edit Profile"
                 size="lg"
@@ -959,7 +959,6 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             style={{
               background: THEME_COLOR.FADE_BACKGROUND,
               color: THEME_COLOR.COLOR,
-              marginTop: "20%",
             }}
           >
             {MENU_ITEMS.map(renderMenuItem)}
