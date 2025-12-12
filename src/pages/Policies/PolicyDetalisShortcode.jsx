@@ -646,7 +646,7 @@ const PolicyDetails = () => {
           )}
 
           {/* CTA Section */}
-          <Box
+         <Box
             sx={{
               mb: { xs: 4, md: 6 },
               p: { xs: 4, sm: 5, md: 6 },
@@ -678,6 +678,17 @@ const PolicyDetails = () => {
             >
               {buying ? "Processing..." : "Buy Insurance Now →"}
             </Button>
+            <Typography 
+              sx={{ 
+                color: "red", 
+                mt: 3, 
+                fontSize: { xs: "12px", md: "14px" },
+                fontWeight: 500,
+                lineHeight: 1.6
+              }}
+            >
+              Please read all policy terms and conditions, coverages & exclusions before buying policy as they may change for every policy and every insurance company
+            </Typography>
           </Box>
         </Container>
       </Box>
