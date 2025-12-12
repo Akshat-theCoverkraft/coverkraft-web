@@ -159,7 +159,7 @@ const HeroSection = () => {
                <img
 src={require("../../Images/landingimage.jpg")} // ⭐ Put your image path here
     alt="Family"
-    className="w-full h-[540px] object-cover"
+    className="w-full h-[600px] object-cover"
   />
               </motion.div>
 
