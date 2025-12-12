@@ -240,6 +240,7 @@ const PolicyDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [policy, setPolicy] = useState(null);
+  console.log("policy", policy?.typesofPolicies)
   const [loading, setLoading] = useState(true);
   const [buying, setBuying] = useState(false);
   const [showSessionExpired, setShowSessionExpired] = useState(false);
@@ -295,7 +296,8 @@ const PolicyDetails = () => {
               icon: parsedDetails.icon,
               tagline: parsedDetails.tagline,
               whyChoose: parsedDetails.whyChoose,
-              keyFeatures: parsedDetails.keyFeatures,
+              keyFeatures: parsedDetails?.keyFeatures,
+              typesofPolicies: parsedDetails?.typesofPolicies,
               coverageComparison: parsedDetails.coverageComparison,
               addOns: parsedDetails.addOns,
               exclusions: parsedDetails.exclusions,
@@ -786,7 +788,7 @@ const PolicyDetails = () => {
           )}
 
           {/* Key Features */}
-          {policy.keyFeatures?.length > 0 && (
+          {policy?.keyFeatures?.length > 0 && (
             <AnimatedSection>
               <MotionBox
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -855,6 +857,77 @@ const PolicyDetails = () => {
               </MotionBox>
             </AnimatedSection>
           )}
+
+{/* Show Types of Policies section */}
+{policy?.typesofPolicies?.length > 0 && (
+  <AnimatedSection>
+    <MotionBox
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      sx={{
+        mb: { xs: 6, md: 8 },
+        p: { xs: 3, sm: 4, md: 6 },
+        background: "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)",
+        borderRadius: "20px",
+        border: "1px solid #2a2a2a",
+      }}
+    >
+      <Typography sx={sectionTitleStyle}>Types of Policies</Typography>
+      <StaggeredContainer>
+        <Grid container spacing={2}>
+          {policy.typesofPolicies.map((policyType, idx) => (
+            <MotionGrid item xs={6} sm={4} md={2} key={idx} variants={fadeInUp}>
+              <MotionCard
+                whileHover={{
+                  scale: 1.08,
+                  borderColor: "#FFEB3B",
+                  boxShadow: "0 8px 30px rgba(255, 235, 59, 0.3)",
+                }}
+                transition={{ duration: 0.3 }}
+                sx={{
+                  background: "#2a2a2a",
+                  borderRadius: "12px",
+                  border: "1px solid #333",
+                  textAlign: "center",
+                  height: "100%",
+                  cursor: "pointer",
+                }}
+              >
+                <CardContent sx={{ p: { xs: 2, md: 2.5 } }}>
+                  <Typography sx={{ mb: 1.5, fontSize: { xs: "32px", md: "40px" }, lineHeight: 1 }}>
+                    {policyType.icon}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      color: "#fff",
+                      mb: 0.5,
+                      fontSize: { xs: "14px", sm: "15px", md: "16px" },
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {policyType.title}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      color: "#999",
+                      fontSize: { xs: "11px", sm: "12px", md: "13px" },
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {policyType.description}
+                  </Typography>
+                </CardContent>
+              </MotionCard>
+            </MotionGrid>
+          ))}
+        </Grid>
+      </StaggeredContainer>
+    </MotionBox>
+  </AnimatedSection>
+)}
 
           {/* Coverage Comparison */}
           {policy.coverageComparison?.rows?.length > 0 && (
@@ -1062,7 +1135,7 @@ const PolicyDetails = () => {
           )}
 
           {/* CTA Section */}
-          <AnimatedSection>
+         <AnimatedSection>
             <MotionBox
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -1141,6 +1214,23 @@ const PolicyDetails = () => {
               >
                 {buying ? "Processing..." : "Buy Insurance Now →"}
               </MotionButton>
+              <MotionTypography
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                viewport={{ once: true }}
+                sx={{
+                  color: "red",
+                  mt: 3,
+                  fontSize: { xs: "12px", sm: "13px", md: "14px" },
+                  fontWeight: 500,
+                  lineHeight: 1.6,
+                  maxWidth: "700px",
+                  mx: "auto",
+                }}
+              >
+                Please read all policy terms and conditions, coverages & exclusions before buying policy as they may change for every policy and every insurance company
+              </MotionTypography>
             </MotionBox>
           </AnimatedSection>
         </Container>

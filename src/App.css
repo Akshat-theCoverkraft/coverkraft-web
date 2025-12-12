@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 6px; /* thin scrollbar */
+  height: 6px;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}

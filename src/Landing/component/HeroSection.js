@@ -120,6 +120,7 @@ const HeroSection = () => {
               {/* FEATURES */}
               <div className="grid gap-3">
                 {[
+                  "Save your all insurance policies in one place",
                   "Share policy summaries with your loved ones",
                   "Get timely renewal reminders",
                   "Receive the best renewal suggestions",

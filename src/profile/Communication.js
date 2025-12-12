@@ -18,8 +18,6 @@ import { useDispatch, useSelector } from "react-redux";
 import API_URL from "../ServiceModule/Service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-
 import backArrow from "../Images/ic_back_button.png";
 import sms from "../Images/ic-sms.png";
 import call from "../Images/ic-call.png";
@@ -33,34 +31,26 @@ const PinkSwitch = styled(Switch)(({ theme }) => ({
       backgroundColor: "rgba(138, 198, 66, 0.1)",
     },
   },
-
   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
     backgroundColor: "#8AC642",
   },
-
   "& .MuiSwitch-switchBase": {
     color: "#888888",
     "&:hover": {
       backgroundColor: "rgba(255, 255, 255, 0.08)",
     },
   },
-
   "& .MuiSwitch-track": {
     backgroundColor: "#555555",
     opacity: 1,
   },
 }));
 
-
 const Communication = ({ communication, onCommunicationClose }) => {
   const [selectedValue, setSelectedValue] = useState("a");
-  const [switchStates, setSwitchStates] = useState({
-    userSms: false,
-    userCall: false,
-    userWhatsapp: false,
-    userEmail: false,
-  });
+  const [switchStates, setSwitchStates] = useState({});
   const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
   const userId = sessionStorage.getItem("userId");
   const userbyId = useSelector((state) => state.user);
@@ -73,6 +63,7 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
   useEffect(() => {
     const data = userbyId.getUserById?.data;
+    console.log("data", data);
     if (data) {
       setSwitchStates({
         userSms: data.userSms,
@@ -86,16 +77,27 @@ const Communication = ({ communication, onCommunicationClose }) => {
 
   const handleSwitchUpdate = (key) => async (event) => {
     const checked = event.target.checked;
-    setSwitchStates((prev) => ({ ...prev, [key]: checked }));
-    setLoading(true);
 
+    // Update UI immediately (optimistic update)
+    setSwitchStates((prev) => ({
+      ...prev,
+      [key]: checked,
+    }));
+
+    setLoading(true);
     const formData = new FormData();
     formData.append("_id", userId);
-    formData.append(key, checked);
+formData.append(key, checked ? true : false);
+
 
     try {
       await dispatch(updateUser(API_URL, formData));
-    } catch {
+    } catch (error) {
+      // Revert the optimistic update on error
+      setSwitchStates((prev) => ({
+        ...prev,
+        [key]: !checked,
+      }));
       toast.error("Error updating preference");
     } finally {
       setLoading(false);
@@ -118,10 +120,21 @@ const Communication = ({ communication, onCommunicationClose }) => {
   };
 
   const contactMethods = [
-    { icon: sms, label: "Reach out for personalized policy options tailored to my family's needs.", key: "userSms" },
-    { icon: call, label: "Limit communication to once a month.", key: "userCall" },
-    { icon: wtsp, label: "Kindly avoid phone calls — I prefer communication via email or WhatsApp.", key: "userWhatsapp" },
-
+    {
+      icon: sms,
+      label: "Reach out for personalized policy options tailored to my family's needs.",
+      key: "userSms",
+    },
+    {
+      icon: call,
+      label: "Limit communication to once a month.",
+      key: "userCall",
+    },
+    {
+      icon: wtsp,
+      label: "Kindly avoid phone calls — I prefer communication via email or WhatsApp.",
+      key: "userWhatsapp",
+    },
   ];
 
   const frequencyOptions = [
@@ -130,7 +143,6 @@ const Communication = ({ communication, onCommunicationClose }) => {
     { value: "3", label: "Never" },
   ];
 
-
   return (
     <Drawer
       anchor="right"
@@ -138,21 +150,19 @@ const Communication = ({ communication, onCommunicationClose }) => {
       onClose={onCommunicationClose}
       sx={{
         "& .MuiDrawer-paper": {
-          width: "35vw",
-          maxWidth: "400px",
-          backgroundColor: "#212121",
+          width: isMobile ? "100%" : "500px",
+          backgroundColor: "#1E1E1E",
           color: "#fff",
-          padding: theme.spacing(4),
+          padding: "20px",
         },
       }}
     >
-      <ToastContainer position="top-center" />
       <Box>
-        <Stack direction="row" alignItems="center" spacing={2} mb={4}>
+        <Stack direction="row" alignItems="center" spacing={2} mb={3}>
           <IconButton onClick={onCommunicationClose}>
-            <img src={backArrow} alt="Back" style={{ width: 24 }} />
+            <img src={backArrow} alt="back" style={{ width: "24px" }} />
           </IconButton>
-          <Typography variant="h5" fontWeight={600}>
+          <Typography variant="h6" fontWeight="bold">
             Communication Preferences
           </Typography>
         </Stack>

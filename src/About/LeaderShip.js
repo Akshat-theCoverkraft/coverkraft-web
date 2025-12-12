@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import { motion } from "framer-motion";
 import gsap from "gsap";
@@ -18,7 +18,7 @@ Throughout his tenure, Vivek has played pivotal roles in orchestrating national-
     img: "/images/leadership/VK.jpeg",
   },
   {
-    name: "Prasad Kulkarni",
+    name: "Mr Prasad B Kulkarni",
     title: "Executive Director",
     desc: `Mr. Prasad B. Kulkarni is a results-driven insurance professional with over 22 years of experience in claims management, underwriting, and crop insurance, specializing in the Motor and Crop segments. Known for a strategic approach to operational excellence, Mr. Kulkarni consistently achieves organizational goals while enhancing customer satisfaction and optimizing efficiency across all facets of insurance operations. Prasad has worked with Generali Central GIC (erstwhile Future Generali GIC Ltd), HDFC ERGO and ICICI Lombard in various capacities focusing on motor claims, underwriting and crop insurance.
 
@@ -46,6 +46,197 @@ His areas of specialization encompass a broad spectrum, including sales support,
     img: "/images/leadership/SM.jpeg",
   },
 ];
+
+const LeadershipCard = ({ leader, index }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <Grid item xs={12} lg={6} key={index}>
+      <motion.div
+        className="leader-card"
+        whileHover={{ scale: 1.02, y: -5 }}
+        transition={{ type: "spring", stiffness: 250, damping: 20 }}
+        style={{ cursor: "pointer" }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "stretch",
+            backgroundColor: THEME_COLOR.FADE_BACKGROUND,
+            borderRadius: "20px",
+            border: "2px solid rgba(139,198,66,0.3)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+            overflow: "hidden",
+            minHeight: "300px",
+            backdropFilter: "blur(10px)",
+            transition: "all 0.3s ease",
+          }}
+          className="leadership-card-hover"
+        >
+          {/* Left Side - Image */}
+          <div
+            style={{
+              flex: "0 0 220px",
+              height: "100%",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            <motion.img
+              src={leader.img}
+              alt={leader.name}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                objectPosition: "center top",
+              }}
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            />
+          </div>
+
+          {/* Right Side - Content */}
+          <div
+            style={{
+              flex: 1,
+              padding: "30px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              height: "100%",
+              position: "relative",
+            }}
+          >
+            <motion.h2
+              style={{
+                color: "#8BC642",
+                fontWeight: 700,
+                fontSize: "2.2rem",
+                marginBottom: "8px",
+                lineHeight: 1.2,
+              }}
+              whileHover={{ x: 5 }}
+              transition={{ duration: 0.3 }}
+            >
+              {leader.name}
+            </motion.h2>
+            <h4
+              style={{
+                color: "#8BC642",
+                fontWeight: 600,
+                fontSize: "1.3rem",
+                marginBottom: "20px",
+                opacity: 0.8,
+                lineHeight: 1.3,
+                fontStyle: "italic",
+                underline: "1px solid rgba(139,198,66,0.6)",
+              }}
+            >
+              {leader.title}
+            </h4>
+            <motion.div
+              style={{
+                color: THEME_COLOR.SECONDARY_TEXT,
+                fontSize: "1.3rem",
+                lineHeight: 1.6,
+                margin: 0,
+                textAlign: "justify",
+                maxHeight: isExpanded ? "200px" : "150px",
+                overflowY: isExpanded ? "auto" : "hidden",
+                position: "relative",
+                scrollbarWidth: "thin",
+              }}
+              initial={{ opacity: 0.9 }}
+              whileHover={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className={isExpanded ? "expanded-content" : ""}
+            >
+              {leader.desc}
+              {!isExpanded && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: "50px",
+                    background: "linear-gradient(to bottom, transparent, rgba(30, 30, 30, 0.95))",
+                  }}
+                />
+              )}
+            </motion.div>
+            
+            {/* Read More Button */}
+            <motion.button
+              onClick={() => setIsExpanded(!isExpanded)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                marginTop: "15px",
+                padding: "8px 20px",
+                backgroundColor: "rgba(139,198,66,0.2)",
+                border: "1px solid #8BC642",
+                borderRadius: "8px",
+                color: "#8BC642",
+                fontSize: "1.1rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                alignSelf: "flex-start",
+                transition: "all 0.3s ease",
+              }}
+              className="read-more-btn"
+            >
+              {isExpanded ? "Show Less ↑" : "Read More ↓"}
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Hover Effect Styles */}
+        <style jsx>{`
+          .leadership-card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(139, 198, 66, 0.25);
+            border-color: rgba(139, 198, 66, 0.6);
+          }
+          .expanded-content::-webkit-scrollbar {
+            width: 6px;
+          }
+          .expanded-content::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+          }
+          .expanded-content::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 10px;
+          }
+          .expanded-content {
+            scrollbar-width: thin;
+            scrollbar-color: #333 transparent;
+          }
+          .read-more-btn:hover {
+            background-color: rgba(139,198,66,0.3);
+            box-shadow: 0 4px 12px rgba(139, 198, 66, 0.3);
+          }
+          @media (max-width: 768px) {
+            .leadership-card-hover {
+              flex-direction: column !important;
+              text-align: center;
+            }
+            .leadership-card-hover > div:first-child {
+              flex: 0 0 200px !important;
+              width: 100% !important;
+              height: 200px !important;
+            }
+            .leadership-card-hover > div:last-child {
+              padding: 20px !important;
+            }
+          }
+        `}</style>
+      </motion.div>
+    </Grid>
+  );
+};
 
 const LeadershipTab = () => {
   const sectionRef = useRef(null);
@@ -109,141 +300,7 @@ const LeadershipTab = () => {
         {/* Leadership Cards */}
         <Grid container spacing={6} justifyContent="center" style={{ maxWidth: "1400px", margin: "0 auto" }}>
           {leaders.map((leader, index) => (
-            <Grid item xs={12} lg={6} key={index}>
-              <motion.div
-                className="leader-card"
-                whileHover={{ scale: 1.02, y: -5 }}
-                transition={{ type: "spring", stiffness: 250, damping: 20 }}
-                style={{ cursor: "pointer" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "stretch",
-                    backgroundColor: THEME_COLOR.FADE_BACKGROUND,
-                    borderRadius: "20px",
-                    border: "2px solid rgba(139,198,66,0.3)",
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-                    overflow: "hidden",
-                    minHeight: "300px",
-                    backdropFilter: "blur(10px)",
-                    transition: "all 0.3s ease",
-                  }}
-                  className="leadership-card-hover"
-                >
-                  {/* Left Side - Image */}
-                  <div
-                    style={{
-                      flex: "0 0 220px",
-                      height: "100%",
-                      overflow: "hidden",
-                      position: "relative",
-                    }}
-                  >
-                    <motion.img
-                      src={leader.img}
-                      alt={leader.name}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                        objectPosition: "center top",
-                      }}
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                    />
-                  </div>
-
-                  {/* Right Side - Content */}
-                  <div
-                    style={{
-                      flex: 1,
-                      padding: "30px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      height: "100%",
-                      position: "relative",
-                    }}
-                  >
-                    <motion.h2
-                      style={{
-                        color: "#8BC642",
-                        fontWeight: 700,
-                        fontSize: "2.2rem",
-                        marginBottom: "8px",
-                        lineHeight: 1.2,
-                      }}
-                      whileHover={{ x: 5 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {leader.name}
-                    </motion.h2>
-                    <h4
-                      style={{
-                        color: "#8BC642",
-                        fontWeight: 600,
-                        fontSize: "1.3rem",
-                        marginBottom: "20px",
-                        opacity: 0.8,
-                        lineHeight: 1.3,
-                        fontStyle: "italic",
-                        underline: "1px solid rgba(139,198,66,0.6)",
-                      }}
-                    >
-                      {leader.title}
-                    </h4>
-                    <motion.p
-                      style={{
-                        color: THEME_COLOR.SECONDARY_TEXT,
-                        fontSize: "1.3rem",
-                        lineHeight: 1.6,
-                        margin: 0,
-                        textAlign: "justify",
-                        maxHeight: "200px",
-                        overflowY: "auto",
-                        scrollbarWidth: "thin",
-                      }}
-                      initial={{ opacity: 0.9 }}
-                      whileHover={{ opacity: 1 }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      {leader.desc}
-                    </motion.p>
-                  </div>
-                </div>
-
-                {/* Hover Effect Styles */}
-                <style jsx>{`
-                  .leadership-card-hover:hover {
-                    transform: translateY(-5px);
-                    box-shadow: 0 12px 40px rgba(139, 198, 66, 0.25);
-                    border-color: rgba(139, 198, 66, 0.6);
-                  }
-                  .leadership-card-hover p::-webkit-scrollbar {
-                    width: 6px;
-                  }
-                  .leadership-card-hover p::-webkit-scrollbar-thumb {
-                    background: rgba(139, 198, 66, 0.6);
-                    border-radius: 10px;
-                  }
-                  @media (max-width: 768px) {
-                    .leadership-card-hover {
-                      flex-direction: column !important;
-                      text-align: center;
-                    }
-                    .leadership-card-hover > div:first-child {
-                      flex: 0 0 200px !important;
-                      width: 100% !important;
-                      height: 200px !important;
-                    }
-                    .leadership-card-hover > div:last-child {
-                      padding: 20px !important;
-                    }
-                  }
-                `}</style>
-              </motion.div>
-            </Grid>
+            <LeadershipCard key={index} leader={leader} index={index} />
           ))}
         </Grid>
       </section>
