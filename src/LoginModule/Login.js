@@ -359,7 +359,7 @@ const Login = () => {
               }}
               onSubmit={(e) => e.preventDefault()}
             >
-              <div className="text-center mb-4">
+              <div className="d-flex justify-content-center mb-4">
                 <img
                   src={logo}
                   alt="Logo"
