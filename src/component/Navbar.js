@@ -19,6 +19,7 @@ import {
   Logout as LogoutIcon,
   Notifications as NotificationsIcon,
   Security as VaultIcon,
+  Business as BusinessIcon,
 } from "@mui/icons-material";
 import Logo from "../Images/CKbig.png";
 import profileIcon from "../Images/ic-profile.png";
@@ -123,6 +124,7 @@ function Navbar({ scrollToContactBottom }) {
     mobile: null,
     more: null,
     submenu: null,
+    login: null,
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
@@ -205,8 +207,20 @@ function Navbar({ scrollToContactBottom }) {
       mobile: null,
       more: null,
       submenu: null,
+      login: null,
     });
   }, []);
+
+  // Login handlers
+  const handleUserLogin = useCallback(() => {
+    navigate("/login");
+    setAnchor('login', null);
+  }, [navigate, setAnchor]);
+
+  const handlePartnerLogin = useCallback(() => {
+    navigate("/login"); // Update with your partner login route
+    setAnchor('login', null);
+  }, [navigate, setAnchor]);
 
   // Mobile Menu Sections
   const renderMobileMenuSections = () => {
@@ -286,12 +300,23 @@ function Navbar({ scrollToContactBottom }) {
           <SectionTitle>Get Started</SectionTitle>
           <MenuItem
             onClick={() => {
-              navigate("/login");
+              handleUserLogin();
               closeAllMenus();
             }}
             sx={{ fontSize: "1.3rem", py: 1.5 }}
           >
+            <AccountCircleOutlinedIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Login
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handlePartnerLogin();
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            <BusinessIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+            Partner Login
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -316,7 +341,15 @@ function Navbar({ scrollToContactBottom }) {
           <SectionTitle>Navigation</SectionTitle>
           {visibleNavItems.map((item) => (
             <React.Fragment key={item.key}>
-            
+              <MenuItem
+                onClick={() => {
+                  handleNavigation(item);
+                  closeAllMenus();
+                }}
+                sx={{ fontSize: "1.3rem", py: 1.5 }}
+              >
+                {item.label}
+              </MenuItem>
               {item.children?.map((child) => (
                 <MenuItem
                   key={child.label}
@@ -522,13 +555,38 @@ function Navbar({ scrollToContactBottom }) {
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton onClick={() => navigate("/login")}>
-                  Login
-                </StyledButton>
+                <>
+                  <StyledButton onClick={(e) => setAnchor('login', e.currentTarget)}>
+                    Login
+                  </StyledButton>
+                  <DarkMenu
+                    anchorEl={anchorEls.login}
+                    open={Boolean(anchorEls.login)}
+                    onClose={() => setAnchor('login', null)}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    transformOrigin={{ vertical: "top", horizontal: "center" }}
+                    PaperProps={{ sx: { mt: 1 } }}
+                  >
+                    <MenuItem
+                      onClick={handleUserLogin}
+                      sx={{ fontSize: "1.3rem", py: 1.5 }}
+                    >
+                      <AccountCircleOutlinedIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+                      User Login
+                    </MenuItem>
+                    <MenuItem
+                      onClick={handlePartnerLogin}
+                      sx={{ fontSize: "1.3rem", py: 1.5 }}
+                    >
+                      <BusinessIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+                      Partner Login
+                    </MenuItem>
+                  </DarkMenu>
+                </>
               )}
-               <StyledButton onClick={() => navigate("/joinUs")}>
-                 Join Us
-                </StyledButton>
+              <StyledButton onClick={() => navigate("/joinUs")}>
+                Join Us
+              </StyledButton>
               <StyledButton onClick={handleVault}>
                 Policy Vault
               </StyledButton>

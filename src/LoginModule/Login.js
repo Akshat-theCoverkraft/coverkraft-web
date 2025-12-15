@@ -233,7 +233,8 @@ const Login = () => {
             sessionStorage.setItem("loggedIn", "true");
 
             toast.success("Login successful!");
-            setTimeout(() => navigate(from, { replace: true }), 800);
+            navigate('/Partner-Dashboard')
+            // setTimeout(() => navigate(from, { replace: true }), 800);
             return;
           }
         }
@@ -373,13 +374,13 @@ const Login = () => {
 
               {!loggedIn ? (
                 <>
-                  <h2 className="text-center mb-2">Login to your Account</h2>
+                  <h2 className="text-center mb-2">Partner Login</h2>
                   <p className="text-center text-white-50 mb-4">
-                    Enter your mobile number
+                  Access your partner dashboard
                   </p>
 
                   <CustomInput
-                    label="Mobile Number"
+                    label="Email Address"
                     value={phoneNumber}
                     onChange={handlephonechange}
                     onKeyDown={handleKeyPress}
@@ -395,6 +396,24 @@ const Login = () => {
                         : phoneNumberError
                     }
                   />
+
+                   {/* <CustomInput
+                    label="Password"
+                    value={phoneNumber}
+                    onChange={handlephonechange}
+                    onKeyDown={handleKeyPress}
+                    placeholder="Enter Your Password"
+                    className={` ${
+                      !valid && phoneNumber.length > 0 ? "is-invalid" : ""
+                    }`}
+                    required
+                    inputStyle={commonInputStyle}
+                    validationMessage={
+                      !valid && phoneNumber.length > 0
+                        ? "Please enter a valid 10-digit mobile number."
+                        : phoneNumberError
+                    }
+                  /> */}
 
                   <Button
                     text={isLoading ? "Sending OTP..." : "Login"}
@@ -417,12 +436,12 @@ const Login = () => {
                     }}
                   />
 
-                  <p className="medium fw-bold mt-4 mb-0 text-center">
+                  {/* <p className="medium fw-bold mt-4 mb-0 text-center">
                     Don't have an account?{" "}
                     <Link to="/register" className="custom-color">
                       Register
                     </Link>
-                  </p>
+                  </p> */}
                 </>
               ) : (
                 <>

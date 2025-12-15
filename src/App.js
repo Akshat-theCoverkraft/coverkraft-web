@@ -33,6 +33,7 @@ import BackToTop from "./component/BackToTop.js";
 import { PolicyProvider } from "./store/policyContext.js";
 import LeaderShip from "./About/LeaderShip.js";
 import JoinUs from "./pages/JoinUs.jsx";
+import Partner from "./partner.js"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -137,6 +138,9 @@ function App() {
           <Route path="/policy-details/:id" element={<PolicyDetails />} />
           <Route path="/gmail-sync" element={<GmailSyncPage />} />
           <Route path="/Our-LeaderShip" element={<LeaderShip />} />
+          <Route path="/Partner-Dashboard" element={<Partner />} />
+
+          
         </Routes>
       </PolicyProvider>
     </HelmetProvider>

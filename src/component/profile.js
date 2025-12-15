@@ -655,7 +655,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
             {capitalizeFirstLetter(formData.username)}
           </h2>
           {formData.useremail && (
-            <p className="register-text text-center">{formData.useremail}</p>
+            <p className="text-light text-center">{formData.useremail}</p>
           )}
           {!profileState.update && (
             <div className="flex justify-center mt-2">
