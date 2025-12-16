@@ -188,7 +188,10 @@ const GmailSyncPage = () => {
   };
 
   const fetchGmailMessages = async (accessToken, userEmail, userId) => {
+      const syncStartTime = new Date();
     console.log("📧 Starting Gmail fetch...");
+      console.log("🕐 Sync start time:", syncStartTime.toISOString());
+  console.log("🕐 Sync start time (IST):", syncStartTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
     console.log("Access token length:", accessToken?.length);
     console.log("User email:", userEmail);
     console.log("User ID:", userId);
@@ -197,9 +200,14 @@ const GmailSyncPage = () => {
       const lastFetchData = await getLastFetchDate(userEmail, userId);
       let dateQuery = "";
       const currentDate = new Date();
+      console.log("currentDate" ,currentDate)
+      
 
       const tomorrowDate = new Date(currentDate);
       tomorrowDate.setDate(currentDate.getDate() + 1);
+
+          // ✅ CRITICAL: Store last sync timestamp for filtering
+    let lastSyncTimestamp = null;
 
       if (!lastFetchData || !lastFetchData.lastSyncedAt) {
         const threeYearsAgo = new Date();
@@ -209,12 +217,22 @@ const GmailSyncPage = () => {
         const toDate = formatDateForGmail(tomorrowDate);
 
         dateQuery = `after:${fromDate} before:${toDate}`;
+              console.log("🆕 First sync: fetching from", fromDate, "to", toDate);
+
       } else {
+              lastSyncTimestamp = new Date(lastFetchData.lastSyncedAt).getTime();
+
         const lastFetchDate = new Date(lastFetchData.lastSyncedAt);
+        
+              lastFetchDate.setDate(lastFetchDate.getDate() - 1);
         const fromDate = formatDateForGmail(lastFetchDate);
-        const toDate = formatDateForGmail(currentDate);
+        const toDate = formatDateForGmail(tomorrowDate);
 
         dateQuery = `after:${fromDate} before:${toDate}`;
+      console.log("🔄 Incremental sync: fetching from", fromDate, "to", toDate);
+      console.log("   Last sync was at (UTC):", lastFetchData.lastSyncedAt);
+      console.log("   Last sync was at (IST):", new Date(lastFetchData.lastSyncedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+      console.log("   📌 Will filter emails AFTER:", new Date(lastSyncTimestamp).toISOString());
       }
 
       const senderDomains = [
@@ -645,10 +663,13 @@ const paymentReceiptPatterns = [
         marketing: 0,
         noAttachment: 0,
         wrongDomain: 0,
+         tooOld: 0, 
       };
 
       const emailsWithPriority = [];
       const processingBatchSize = 50;
+
+          const processedEmailIds = new Set();
 
       for (let batchStart = 0; batchStart < data.messages.length; batchStart += processingBatchSize) {
         const batchEnd = Math.min(batchStart + processingBatchSize, data.messages.length);
@@ -656,8 +677,12 @@ const paymentReceiptPatterns = [
 
         console.log(`🔄 Processing batch ${Math.floor(batchStart / processingBatchSize) + 1} (${batchStart + 1}-${batchEnd} of ${data.messages.length})`);
 
-        const batchPromises = currentBatch.map(async (msg, batchIndex) => {
+        const batchPromises = currentBatch.map(async (msg) => {
           try {
+             if (processedEmailIds.has(msg.id)) {
+            console.log(`⏭️  Skipping duplicate email ID: ${msg.id}`);
+            return null;
+          }
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout per email
 
@@ -677,6 +702,29 @@ const paymentReceiptPatterns = [
 
             const emailResponse = await emailData.json();
             const headers = emailResponse.payload.headers;
+
+                      // ✅ CRITICAL FIX: Get email's exact timestamp FIRST
+          const dateHeader = headers.find((h) => h.name === "Date")?.value;
+          const emailTimestamp = dateHeader ? new Date(dateHeader).getTime() : 0;
+
+                    // ✅ FILTER: Skip emails older than or equal to last sync
+          if (lastSyncTimestamp && emailTimestamp <= lastSyncTimestamp) {
+            const emailDate = new Date(emailTimestamp);
+            const lastSyncDate = new Date(lastSyncTimestamp);
+            
+            console.log(`⏭️  Skipping old email ${msg.id}:`);
+            console.log(`     Email time: ${emailDate.toISOString()} (${emailDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })})`);
+            console.log(`     Last sync:  ${lastSyncDate.toISOString()} (${lastSyncDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })})`);
+            
+            skippedReasons.tooOld++;
+            return null;
+          }
+
+           const emailDate = new Date(emailTimestamp);
+                    console.log(`✅ New email found ${msg.id}:`);
+                    console.log(`   Email time: ${emailDate.toISOString()} (${emailDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })})`);
+          
+
             const fromHeader = headers.find((h) => h.name === "From")?.value || "";
             const subject = headers.find((h) => h.name === "Subject")?.value || "";
 
@@ -748,10 +796,13 @@ const paymentReceiptPatterns = [
 
             domainHitCount[senderDomain] = (domainHitCount[senderDomain] || 0) + 1;
 
+                      processedEmailIds.add(msg.id);
+                      
             return {
               id: msg.id,
               subject: subject,
               domain: senderDomain,
+               timestamp: emailTimestamp, 
               priority: 1,
             };
           } catch (err) {
@@ -775,11 +826,14 @@ const paymentReceiptPatterns = [
 
       console.log(`📊 Processing complete:`);
       console.log(`  - Valid emails: ${emailsWithPriority.length}`);
+          console.log(`  - Skipped (too old): ${skippedReasons.tooOld}`); // ✅ NEW
       console.log(`  - Skipped (marketing): ${skippedReasons.marketing}`);
       console.log(`  - Skipped (no attachment): ${skippedReasons.noAttachment}`);
       console.log(`  - Skipped (wrong domain): ${skippedReasons.wrongDomain}`);
 
-      emailsWithPriority.sort((a, b) => b.priority - a.priority);
+      // emailsWithPriority.sort((a, b) => b.priority - a.priority);
+          emailsWithPriority.sort((a, b) => b.timestamp - a.timestamp);
+
       const finalMatchedEmails = emailsWithPriority.map((email) => email.id);
 
       setCollectedFiles([]);
@@ -819,7 +873,7 @@ const paymentReceiptPatterns = [
 
         if (validFiles.length > 0) {
           setCollectedFiles(validFiles);
-          await handleUploadDocFromGmail(validFiles, userEmail, userId);
+          await handleUploadDocFromGmail(validFiles, userEmail, userId, syncStartTime);
         } else {
           showToast({
             type: "info",
@@ -1023,11 +1077,15 @@ const paymentReceiptPatterns = [
     userId,
     gmailAddress,
     emailId = null,
+    syncStartTime,
     fileType = "application/pdf"
   ) => {
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("gmailAddress", gmailAddress);
+    if (syncStartTime) {
+  formData.append("syncStartTime", syncStartTime.toISOString());
+}
     if (emailId) formData.append("emailId", emailId);
     formData.append("fileType", fileType);
 
@@ -1045,7 +1103,7 @@ const paymentReceiptPatterns = [
     return formData;
   };
 
-  const handleUploadDocFromGmail = async (files, userEmail, userId) => {
+  const handleUploadDocFromGmail = async (files, userEmail, userId, syncStartTime) => {
     return new Promise(async (resolve, reject) => {
       try {
         if (!files?.length) return reject("No files to upload");
@@ -1073,7 +1131,7 @@ const paymentReceiptPatterns = [
           try {
             console.log(`📤 Uploading batch ${batchNumber}/${batches.length} (${batch.length} files)...`);
 
-            const formData = createGmailUploadFormData(batch, userId, userEmail);
+            const formData = createGmailUploadFormData(batch, userId, userEmail, syncStartTime );
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout per batch
