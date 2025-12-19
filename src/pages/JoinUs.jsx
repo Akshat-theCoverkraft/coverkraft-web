@@ -36,21 +36,26 @@ const JoinUs = () => {
   });
 
   const [resumeFile, setResumeFile] = useState(null);
-  // ADD: POS Documents state
+  
+  // POS Documents state - Added passportPhoto and cancelledCheque
   const [posDocuments, setPosDocuments] = useState({
+    passportPhoto: null,
     panCard: null,
     aadharFront: null,
     aadharBack: null,
     educationCertificate: null,
+    cancelledCheque: null,
   });
 
-  // MODIFY: dragActive to handle multiple upload sections
+  // Drag active state - Added passportPhoto and cancelledCheque
   const [dragActive, setDragActive] = useState({
     resume: false,
+    passportPhoto: false,
     panCard: false,
     aadharFront: false,
     aadharBack: false,
     educationCertificate: false,
+    cancelledCheque: false,
   });
 
   const [fieldErrors, setFieldErrors] = useState({});
@@ -62,7 +67,8 @@ const JoinUs = () => {
   const [selectedRole, setSelectedRole] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // MODIFY: validateForm to include POS documents validation
+
+  // Updated validateForm to include passportPhoto and cancelledCheque
   const validateForm = (data, file, isPOS, posFiles) => {
     const errors = {};
     if (validateFullName(data.fullName).error)
@@ -82,11 +88,11 @@ const JoinUs = () => {
       errors.gender = validateGender(data.gender).error;
     if (validateApplyingFor(data.applyingFor).error)
       errors.applyingFor = validateApplyingFor(data.applyingFor).error;
-    if (!validateFile(file, false).valid)
-      errors.resume = validateFile(file, false).error;
 
-    // ADD: Validate POS documents if applying for POS
+    // For Employee, validate resume; for POS, validate passportPhoto
     if (isPOS) {
+      if (!validateFile(posFiles.passportPhoto, true).valid)
+        errors.passportPhoto = validateFile(posFiles.passportPhoto, true).error;
       if (!validateFile(posFiles.panCard, true).valid)
         errors.panCard = validateFile(posFiles.panCard, true).error;
       if (!validateFile(posFiles.aadharFront, true).valid)
@@ -98,6 +104,11 @@ const JoinUs = () => {
           posFiles.educationCertificate,
           true
         ).error;
+      if (!validateFile(posFiles.cancelledCheque, true).valid)
+        errors.cancelledCheque = validateFile(posFiles.cancelledCheque, true).error;
+    } else {
+      if (!validateFile(file, false).valid)
+        errors.resume = validateFile(file, false).error;
     }
 
     return {
@@ -132,7 +143,7 @@ const JoinUs = () => {
     }
   };
 
-  // ADD: Handle POS document file selection
+  // Handle POS document file selection
   const handlePosFileSelect = (docType, e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -151,7 +162,6 @@ const JoinUs = () => {
     }
   };
 
-  // MODIFY: handleDrag to accept field parameter
   const handleDrag = (e, field = "resume") => {
     e.preventDefault();
     e.stopPropagation();
@@ -162,7 +172,6 @@ const JoinUs = () => {
     }
   };
 
-  // MODIFY: handleDrop to accept field parameter
   const handleDrop = (e, field = "resume", isPosDoc = false) => {
     e.preventDefault();
     e.stopPropagation();
@@ -183,7 +192,7 @@ const JoinUs = () => {
     setShowForm(true);
   };
 
-  // MODIFY: handleSubmit to include POS documents in API payload
+  // Updated handleSubmit with passportPhoto and cancelledCheque
   const handleSubmit = async () => {
     const allFields = [
       "fullName",
@@ -197,21 +206,18 @@ const JoinUs = () => {
       "applyingFor",
     ];
 
-    // Mark all fields as touched
     setTouched(
       allFields.reduce((acc, field) => ({ ...acc, [field]: true }), {})
     );
 
     const isPOS = formData.applyingFor === "POS";
 
-    // Validate form
     const validation = validateForm(formData, resumeFile, isPOS, posDocuments);
     if (!validation.isValid) {
       setFieldErrors(validation.errors);
       return;
     }
 
-    // Destructure form data
     const {
       fullName,
       gender,
@@ -224,7 +230,6 @@ const JoinUs = () => {
       applyingFor,
     } = formData;
 
-    // Prepare FormData for API
     const data = new FormData();
     data.append("fullName", fullName);
     data.append("gender", gender);
@@ -235,17 +240,23 @@ const JoinUs = () => {
     data.append("contactNumber", contactNumber);
     data.append("email", email);
     data.append("applyingFor", applyingFor);
-    if (resumeFile) data.append("resume", resumeFile);
 
-    // Append POS documents (if applicable)
+    // Append files based on role
     if (isPOS) {
-      if (posDocuments.panCard) data.append("panCard", posDocuments.panCard);
+      if (posDocuments.passportPhoto) 
+        data.append("passportPhoto", posDocuments.passportPhoto);
+      if (posDocuments.panCard) 
+        data.append("panCard", posDocuments.panCard);
       if (posDocuments.aadharFront)
         data.append("aadharFront", posDocuments.aadharFront);
       if (posDocuments.aadharBack)
         data.append("aadharBack", posDocuments.aadharBack);
       if (posDocuments.educationCertificate)
         data.append("educationCertificate", posDocuments.educationCertificate);
+      if (posDocuments.cancelledCheque)
+        data.append("cancelledCheque", posDocuments.cancelledCheque);
+    } else {
+      if (resumeFile) data.append("resume", resumeFile);
     }
 
     setLoading(true);
@@ -254,7 +265,6 @@ const JoinUs = () => {
       const res = await dispatch(submitAgent(API_URL, data));
       console.log("Response:", res);
 
-      // ✅ Backend response: { status: true/false, message: "...", data: {...} }
       if (res?.status === true) {
         setShowSuccessModal(true);
 
@@ -272,10 +282,12 @@ const JoinUs = () => {
         });
         setResumeFile(null);
         setPosDocuments({
+          passportPhoto: null,
           panCard: null,
           aadharFront: null,
           aadharBack: null,
           educationCertificate: null,
+          cancelledCheque: null,
         });
         setFieldErrors({});
         setTouched({});
@@ -290,39 +302,7 @@ const JoinUs = () => {
     }
   };
 
-  const {
-    fullName,
-    gender,
-    dob,
-    address,
-    stateAgent,
-    pinCode,
-    contactNumber,
-    email,
-    applyingFor,
-  } = formData;
-  
-
-  // const welcomeButtons = [
-  //   {
-  //     label: "Employee",
-  //     onClick: () => handleWelcomeButtonClick("Employee"),
-  //     style: {
-  //       backgroundColor: "#8AC642",
-  //       color: "#fff",
-  //     },
-  //   },
-  //   {
-  //     label: "POS",
-  //     onClick: () => handleWelcomeButtonClick("POS"),
-  //     style: {
-  //       backgroundColor: "#8AC642",
-  //       color: "#fff",
-  //     },
-  //   },
-  // ];
-
- const welcomeButtons = [
+  const welcomeButtons = [
     {
       label: "Continue",
       onClick: () => {
@@ -339,13 +319,12 @@ const JoinUs = () => {
     },
   ];
 
-
   const successButtons = [
     {
       label: "OK",
       onClick: () => {
-        setShowSuccessModal(false); // close popup
-        navigate("/"); // ✅ redirect to root
+        setShowSuccessModal(false);
+        navigate("/");
       },
       style: {
         backgroundColor: "#8AC642",
@@ -353,7 +332,8 @@ const JoinUs = () => {
       },
     },
   ];
-  // ADD: Reusable file upload component
+
+  // Reusable file upload component
   const FileUploadBox = ({
     id,
     label,
@@ -362,7 +342,7 @@ const JoinUs = () => {
     onFileSelect,
     dragActiveState,
     icon = "📄",
-    accept = ".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif", // ✅ Added more image formats
+    accept = ".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif",
   }) => (
     <div style={{ marginBottom: 24 }}>
       <label
@@ -453,19 +433,19 @@ const JoinUs = () => {
       <Navbar />
       {loading && <LoaderOverlay />}
 
-     <Popup
-  visible={showWelcomeModal}
-  title="👋 Welcome to CoverKraft"
-  message="Thank you for choosing to partner with us. Please provide your details to begin. We will review and respond at the earliest."
-  radioOptions={[
-    { label: "Employee", value: "Employee" },
-    { label: "POS", value: "POS" },
-  ]}
-  selectedRadio={selectedRole}
-  onRadioChange={setSelectedRole}
-  buttons={welcomeButtons}
-  onClose={() => setShowWelcomeModal(false)}
-/>
+      <Popup
+        visible={showWelcomeModal}
+        title="👋 Welcome to CoverKraft"
+        message="Thank you for choosing to partner with us. Please provide your details to begin. We will review and respond at the earliest."
+        radioOptions={[
+          { label: "Employee", value: "Employee" },
+          { label: "POS", value: "POS" },
+        ]}
+        selectedRadio={selectedRole}
+        onRadioChange={setSelectedRole}
+        buttons={welcomeButtons}
+        onClose={() => setShowWelcomeModal(false)}
+      />
 
       <Popup
         visible={showSuccessModal}
@@ -511,7 +491,7 @@ const JoinUs = () => {
                   margin: 0,
                 }}
               >
-               Details
+                Details
               </h1>
               <div
                 style={{
@@ -651,22 +631,24 @@ const JoinUs = () => {
               </div>
             </div>
 
-            {/* Resume Upload */}
-            <FileUploadBox
-              id="resumeUpload"
-              label="Upload Resume"
-              file={resumeFile}
-              error={fieldErrors.resume}
-              onFileSelect={handleFileSelect}
-              dragActiveState={dragActive.resume}
-              icon="📄"
-              accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
-            />
+            {/* Conditional File Upload - Resume for Employee, Passport Photo for POS */}
+            {formData.applyingFor === "Employee" && (
+              <FileUploadBox
+                id="resumeUpload"
+                label="Upload Resume"
+                file={resumeFile}
+                error={fieldErrors.resume}
+                onFileSelect={handleFileSelect}
+                dragActiveState={dragActive.resume}
+                icon="📄"
+                accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
+              />
+            )}
 
-            {/* ADD: POS Documents Section - Only show if POS is selected */}
+            {/* POS Documents Section */}
             {formData.applyingFor === "POS" && (
               <>
-                <div style={{ marginTop: 48, marginBottom: 32 }}>
+                <div style={{ marginTop: 24, marginBottom: 32 }}>
                   <h2
                     style={{
                       color: "#8AC642",
@@ -705,36 +687,16 @@ const JoinUs = () => {
                     }}
                   >
                     <FileUploadBox
-                      id="panCard"
-                      label="PAN Card"
-                      file={posDocuments.panCard}
-                      error={fieldErrors.panCard}
-                      onFileSelect={(e) => handlePosFileSelect("panCard", e)}
-                      dragActiveState={dragActive.panCard}
-                      icon="🆔"
-                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
+                      id="passportPhoto"
+                      label="Passport Size Photo"
+                      file={posDocuments.passportPhoto}
+                      error={fieldErrors.passportPhoto}
+                      onFileSelect={(e) => handlePosFileSelect("passportPhoto", e)}
+                      dragActiveState={dragActive.passportPhoto}
+                      icon="📷"
+                      accept=".jpg,.jpeg,.png"
                     />
 
-                    <FileUploadBox
-                      id="aadharBack"
-                      label="Aadhar Card (Back Side)"
-                      file={posDocuments.aadharBack}
-                      error={fieldErrors.aadharBack}
-                      onFileSelect={(e) => handlePosFileSelect("aadharBack", e)}
-                      dragActiveState={dragActive.aadharBack}
-                      icon="🪪"
-                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
-                    />
-                  </div>
-
-                  {/* Right Column */}
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 24,
-                    }}
-                  >
                     <FileUploadBox
                       id="aadharFront"
                       label="Aadhar Card (Front Side)"
@@ -758,6 +720,50 @@ const JoinUs = () => {
                       }
                       dragActiveState={dragActive.educationCertificate}
                       icon="🎓"
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
+                    />
+                  </div>
+
+                  {/* Right Column */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 24,
+                    }}
+                  >
+                    <FileUploadBox
+                      id="panCard"
+                      label="PAN Card"
+                      file={posDocuments.panCard}
+                      error={fieldErrors.panCard}
+                      onFileSelect={(e) => handlePosFileSelect("panCard", e)}
+                      dragActiveState={dragActive.panCard}
+                      icon="🆔"
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
+                    />
+
+                    <FileUploadBox
+                      id="aadharBack"
+                      label="Aadhar Card (Back Side)"
+                      file={posDocuments.aadharBack}
+                      error={fieldErrors.aadharBack}
+                      onFileSelect={(e) => handlePosFileSelect("aadharBack", e)}
+                      dragActiveState={dragActive.aadharBack}
+                      icon="🪪"
+                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
+                    />
+
+                    <FileUploadBox
+                      id="cancelledCheque"
+                      label="Cancelled Cheque & Bank Passbook ( Name must be visible )"
+                      file={posDocuments.cancelledCheque}
+                      error={fieldErrors.cancelledCheque}
+                      onFileSelect={(e) =>
+                        handlePosFileSelect("cancelledCheque", e)
+                      }
+                      dragActiveState={dragActive.cancelledCheque}
+                      icon="🏦"
                       accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
                     />
                   </div>
@@ -804,10 +810,12 @@ const JoinUs = () => {
                   });
                   setResumeFile(null);
                   setPosDocuments({
+                    passportPhoto: null,
                     panCard: null,
                     aadharFront: null,
                     aadharBack: null,
                     educationCertificate: null,
+                    cancelledCheque: null,
                   });
                   setFieldErrors({});
                   setTouched({});
