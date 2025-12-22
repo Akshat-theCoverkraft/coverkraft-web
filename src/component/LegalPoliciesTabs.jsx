@@ -151,7 +151,7 @@ const policies = [
                     <li style={{ marginBottom: '1rem' }}>
                         If unresolved within 14 days or if dissatisfied with the response, customers may escalate by:
                         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>Emailing the Grievance Officer, Mr. Vivek Lalan, at <a href="mailto:support@thecoverkraft.com" style={{ color: '#8BC642' }}>support@thecoverkraft.com</a></li>
+                            <li>Emailing the Grievance Officer, Mr. Vivek Lalan, at <a href="mailto:grievance@thecoverkraft.com" style={{ color: '#8BC642' }}>grievance@thecoverkraft.com</a></li>
                             <li>Calling us at [Toll Free Number — to be provided]</li>
                             <li>Visiting or writing to:<br />
                                 CoverKraft Insurance Brokers Pvt. Ltd.,<br />
@@ -166,8 +166,8 @@ const policies = [
                     <li style={{ marginBottom: '1rem' }}>
                         If you are still unsatisfied with the outcome, you may:
                         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>Register and monitor your complaint through IRDAI’s <strong>Integrated Grievance Management System (IGMS)</strong>: <a href="https://igms.irda.gov.in" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>igms.irda.gov.in</a></li>
-                            <li>Approach the <strong>Insurance Ombudsman</strong>: For details, visit <a href="http://ecoi.co.in" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>ecoi.co.in</a></li>
+                            <li>Register and monitor your complaint through IRDAI’s <strong>Integrated Grievance Management System (IGMS)</strong>: <a href="https://irdai.gov.in/" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://irdai.gov.in/</a></li>
+                            <li>Approach the <strong>Insurance Ombudsman</strong>: For details, visit <a href="https://ecoi.co.in/" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://ecoi.co.in/</a></li>
                         </ul>
                     </li>
                     <li style={{ marginBottom: '1rem' }}>
