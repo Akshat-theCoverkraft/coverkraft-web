@@ -152,7 +152,6 @@ const policies = [
                         If unresolved within 14 days or if dissatisfied with the response, customers may escalate by:
                         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
                             <li>Emailing the Grievance Officer, Mr. Vivek Lalan, at <a href="mailto:grievance@thecoverkraft.com" style={{ color: '#8BC642' }}>grievance@thecoverkraft.com</a></li>
-                            <li>Calling us at [Toll Free Number — to be provided]</li>
                             <li>Visiting or writing to:<br />
                                 CoverKraft Insurance Brokers Pvt. Ltd.,<br />
                                 16 D-1, Danish Nagar, Hoshangabad Road,<br />
@@ -160,13 +159,11 @@ const policies = [
                             </li>
                         </ul>
                     </li>
-                    <li style={{ marginBottom: '1rem' }}>
-                        For escalations, you can write directly to Mr. Vivek Lalan at <a href="mailto:vivek.lalan@thecoverkraft.com" style={{ color: '#8BC642' }}>vivek.lalan@thecoverkraft.com</a>
-                    </li>
+                    
                     <li style={{ marginBottom: '1rem' }}>
                         If you are still unsatisfied with the outcome, you may:
                         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>Register and monitor your complaint through IRDAI’s <strong>Integrated Grievance Management System (IGMS)</strong>: <a href="https://irdai.gov.in/" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://irdai.gov.in/</a></li>
+                            <li>Register and monitor your complaint through IRDAI’s <strong>Integrated Grievance Management System (IGMS)</strong>: <a href="https://www.cioins.co.in/ " target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://www.cioins.co.in/</a></li>
                             <li>Approach the <strong>Insurance Ombudsman</strong>: For details, visit <a href="https://ecoi.co.in/" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://ecoi.co.in/</a></li>
                         </ul>
                     </li>
