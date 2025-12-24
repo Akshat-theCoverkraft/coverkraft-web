@@ -97,7 +97,7 @@ const policies = [
                     16 D-1, Danish Nagar, Hoshangabad Road,<br />
                     Bhopal, Madhya Pradesh, 462026<br />
                     Email: <a href="mailto:grievance@thecoverkraft.com" style={{ color: '#8BC642' }}>grievance@thecoverkraft.com</a><br />
-                    Phone: [To be provided]
+                    Phone: +91 7247724735
                 </p>
 
                 <h2 style={{ color: '#8BC642' }}>Consent</h2>
@@ -163,8 +163,8 @@ const policies = [
                     <li style={{ marginBottom: '1rem' }}>
                         If you are still unsatisfied with the outcome, you may:
                         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>Register and monitor your complaint through IRDAI’s <strong>Integrated Grievance Management System (IGMS)</strong>: <a href="https://www.cioins.co.in/ " target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://www.cioins.co.in/</a></li>
-                            <li>Approach the <strong>Insurance Ombudsman</strong>: For details, visit <a href="https://ecoi.co.in/" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://ecoi.co.in/</a></li>
+                            <li>Register and monitor your complaint through IRDAI’s <strong>Integrated Grievance Management System (IGMS)</strong>: <a href="https://irdai.gov.in/igms1" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://irdai.gov.in/igms1</a></li>
+                            <li>Approach the <strong>Insurance Ombudsman</strong>: For details, visit <a href=" https://www.cioins.co.in/" target="_blank" rel="noopener noreferrer" style={{ color: '#8BC642' }}>https://www.cioins.co.in/ </a></li>
                         </ul>
                     </li>
                     <li style={{ marginBottom: '1rem' }}>
@@ -795,7 +795,7 @@ const policies = [
                     16 D-1, Danish Nagar, Hoshangabad Road,<br />
                     Bhopal, Madhya Pradesh, PIN - 462026<br />
                     <strong>Email:</strong> <a href="mailto:contact@thecoverkraft.com" style={{ color: '#8BC642' }}>contact@thecoverkraft.com</a><br />
-                    <strong>Phone:</strong> [To be provided]
+                    <strong>Phone:</strong> +91 7247724735
                 </p>
 
                 <h3 style={{ color: '#8BC642' }}>Shape</h3>
