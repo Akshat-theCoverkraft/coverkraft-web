@@ -527,7 +527,8 @@ const NewsBlog = () => {
                     <PersonRounded sx={{ fontSize: 14 }} />
                   </Avatar>
                   <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "16px" }}>
-                    {capitalizeFirstLetter(blog?.createdBy) || "Super Admin"}
+                    {/* {capitalizeFirstLetter(blog?.createdBy) || "Super Admin"} */}
+                    CoverKraft
                   </Typography>
                 </Box>
                 
@@ -565,7 +566,7 @@ const NewsBlog = () => {
               }}>
                 More from {capitalizeFirstLetter(type)}
                 {type.toLowerCase() === "blog" || 
-                 type.toLowerCase() === "news" || 
+                 type.toLowerCase() === "new" || 
                  type.toLowerCase() === "video" || 
                  type.toLowerCase() === "short" ? "s" : ""}
               </Typography>
@@ -626,7 +627,8 @@ const NewsBlog = () => {
                                 <PersonRounded sx={{ fontSize: 12 }} />
                               </Avatar>
                               <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>
-                                {capitalizeFirstLetter(mBlog?.createdBy) || "Super Admin"}
+                                {/* {capitalizeFirstLetter(mBlog?.createdBy) || "Super Admin"} */}
+                                CoverKraft
                               </Typography>
                             </Box>
                             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

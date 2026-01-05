@@ -368,7 +368,8 @@ const Feeds = () => {
                               <PersonRounded sx={{ fontSize: 12 }} />
                             </Avatar>
                             <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>
-                              {capitalizeFirstLetter(item.createdBy) || "Super Admin"}
+                              {/* {capitalizeFirstLetter(item.createdBy) || "Super Admin"} */}
+                              CoverKraft
                             </Typography>
                           </Box>
                           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
