@@ -646,50 +646,7 @@ const PolicyDetails = () => {
           )}
 
           {/* CTA Section */}
-         <Box
-            sx={{
-              mb: { xs: 4, md: 6 },
-              p: { xs: 4, sm: 5, md: 6 },
-              textAlign: "center",
-              background: "linear-gradient(90deg, #8AC642 0%, #FFEB3B 100%)",
-              borderRadius: "20px",
-            }}
-          >
-            <Typography variant="h4" sx={{ fontWeight: 700, color: "#000", mb: 2 }}>
-              Ready to Get Protected?
-            </Typography>
-            <Typography sx={{ color: "#333", mb: 4, fontSize: { xs: "16px", md: "18px" } }}>
-              Join millions of satisfied customers. Get your policy in minutes.
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={handleBuyNow}
-              disabled={buying}
-              sx={{
-                background: "#5A9E1E",
-                color: "#fff",
-                px: { xs: 5, sm: 6, md: 8 },
-                py: { xs: 1.5, md: 2 },
-                fontSize: { xs: "14px", md: "18px" },
-                fontWeight: 600,
-                borderRadius: "50px",
-                "&:hover": { background: "#4B8719" },
-              }}
-            >
-              {buying ? "Processing..." : "Buy Insurance Now →"}
-            </Button>
-            <Typography 
-              sx={{ 
-                color: "red", 
-                mt: 3, 
-                fontSize: { xs: "12px", md: "14px" },
-                fontWeight: 500,
-                lineHeight: 1.6
-              }}
-            >
-              Please read all policy terms and conditions, coverages & exclusions before buying policy as they may change for every policy and every insurance company
-            </Typography>
-          </Box>
+
         </Container>
       </Box>
     </>
