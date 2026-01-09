@@ -383,6 +383,21 @@ const handleClosePopup = () => {
   setSelectedFeature(null);
 };
 
+  const [openPopupPolicyType, setOpenPopupPolicyType] = useState(false);
+const [selectedPolicyType, setSelectedPolicyType] = useState(null);
+
+
+const handlePolicyTypeClick = (policyType) => {
+  if (policyType.details) {
+    setSelectedPolicyType(policyType);
+    setOpenPopupPolicyType(true);
+  }
+};
+
+const handleClosePopupPolicyType = () => {
+  setOpenPopupPolicyType(false);
+  setSelectedPolicyType(null);
+};
   
   const [comingSoonModal, setComingSoonModal] = useState({
     visible: false,
@@ -1167,13 +1182,15 @@ const handleClosePopup = () => {
                   boxShadow: "0 8px 30px rgba(255, 235, 59, 0.3)",
                 }}
                 transition={{ duration: 0.3 }}
+                 onClick={() => handlePolicyTypeClick(policyType)}
                 sx={{
                   background: "#2a2a2a",
                   borderRadius: "12px",
                   border: "1px solid #333",
                   textAlign: "center",
                   height: "100%",
-                  cursor: "pointer",
+                  cursor: policyType.details ? "pointer" : "default", // ADD THIS
+
                 }}
               >
                 <CardContent sx={{ p: { xs: 2, md: 2.5 } }}>
@@ -1200,6 +1217,18 @@ const handleClosePopup = () => {
                   >
                     {policyType.description}
                   </Typography>
+                   {policyType.details && (
+                    <Typography
+                      sx={{
+                        color: "#8AC642",
+                        fontSize: "10px",
+                        mt: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      Click for details
+                    </Typography>
+                  )}
                 </CardContent>
               </MotionCard>
             </MotionGrid>
@@ -1209,6 +1238,48 @@ const handleClosePopup = () => {
     </MotionBox>
   </AnimatedSection>
 )}
+{/* Popup Dialog for  Policies section */}
+<Dialog
+  open={openPopupPolicyType}
+  onClose={handleClosePopupPolicyType}
+  maxWidth="md"
+  fullWidth
+  PaperProps={{
+    sx: {
+      background: "#000000",
+      border: "2px solid #8AC642",
+      borderRadius: "20px",
+      maxHeight: "90vh",
+    }
+  }}
+>
+  <Box sx={{ position: "relative" }}>
+    <IconButton
+      onClick={handleClosePopupPolicyType}
+      sx={{
+        position: "absolute",
+        right: 8,
+        top: 8,
+        color: "#8AC642",
+        zIndex: 1,
+        background: "#1a1a1a",
+        "&:hover": {
+          background: "#2a2a2a",
+        }
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+    
+    <DialogContent sx={{ p: { xs: 2, md: 4 } }}>
+      {selectedPolicyType?.details && (
+        <div 
+          dangerouslySetInnerHTML={{ __html: selectedPolicyType.details }}
+        />
+      )}
+    </DialogContent>
+  </Box>
+</Dialog>
 
           {/* Coverage Comparison */}
           {policy.coverageComparison?.rows?.length > 0 && (
