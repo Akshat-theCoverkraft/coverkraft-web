@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -45,6 +45,8 @@ import { color } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { usePolicyContext } from "../store/policyContext";
+import SyncIcon from "@mui/icons-material/Sync";
+
 // import { Toast } from "react-bootstrap";
 
 const api = axios.create({ baseURL: API_URL });
@@ -82,7 +84,7 @@ const StyledButton = styled("button")(({ isAllSelected }) => ({
   border: "1.5px solid #8AC642",
   borderRadius: "20px",
   padding: "8px 16px",
-  marginTop: "10px",
+  marginTop: "0px",
   fontSize: "1.4rem",
   fontWeight: 600,
   minWidth: "100px",
@@ -131,6 +133,78 @@ const Vault = () => {
     life: "/life-policy",
     accident: "/life-policy",
   };
+
+
+  // ---- last sync
+  const userId = useMemo(() => sessionStorage.getItem("userId"), []);
+
+const [lastSync, setLastSync] = useState(null);
+
+const getPolicyByUserId = async (userId) => {
+  try {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.get(`${API_URL}policy/getById`, {
+      params: {
+        userId,
+        policyType: "all",
+      },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // 👇 use backend lastSyncedAt (UTC)
+    const lastSyncedAt = res?.data?.lastSyncDate?.lastSyncedAt;
+
+    if (lastSyncedAt) {
+      setLastSync(new Date(lastSyncedAt));
+    }
+
+  } catch (error) {
+    console.error("Error fetching policy:", error);
+  }
+};
+
+
+useEffect(() => {
+  if (userId) {
+    getPolicyByUserId(userId);
+  }
+}, [userId]);
+
+
+const formatLastSyncIST = (date) => {
+  if (!date) return "Not synced yet";
+
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+};
+
+const outlineChipStyle = {
+  height: "38px",
+  padding: "0 16px",
+  borderRadius: "22px",
+  border: "1.5px solid #8AC642",
+  backgroundColor: "transparent",
+  color: "#8AC642",
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+  fontSize: "14px",
+  fontWeight: 500,
+  cursor: "default",
+  whiteSpace: "nowrap",
+};
+
+
+
+
 
   useEffect(() => {
     const handleSessionExpired = () => {
@@ -533,7 +607,7 @@ const exportToPDF = async () => {
                       border: "1px solid #e0e0e0",
                       backgroundColor: "#fff",
                       transition: "all 0.2s ease",
-                      marginTop: "10px",
+                      marginTop: "0px",
                       boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
                     }}
                   >
@@ -560,6 +634,16 @@ const exportToPDF = async () => {
                     toggleDialog("addPolicy", true);
                   }}
                 />
+
+{lastSync && (
+  <div style={outlineChipStyle}>
+    <SyncIcon style={{ fontSize: "16px" }} />
+    <span>Last synced: {formatLastSyncIST(lastSync)}</span>
+  </div>
+)}
+
+
+
 
                 {shareAllPolicy && (
                   <>

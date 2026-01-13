@@ -16,7 +16,7 @@ function GradientButton({
     display: "flex",
     alignItems: "center",
     justifyContent: startIcon ? "center" : "center",
-    padding: "12px 10px",
+    padding: "9px 10px",
     borderRadius: "30px",
     border: "none",
     fontSize: "1.6rem",
@@ -26,7 +26,7 @@ function GradientButton({
   return (
     <button
       type="button"
-      className={`btn btn-lg ${size ? `btn-${size}` : ""} ${
+      className={` btn-lg ${size ? `btn-${size}` : ""} ${
         block ? "w-100" : ""
       } ${className || ""}`}
       style={{ ...defaultStyle, ...style }}
