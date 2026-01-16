@@ -41,6 +41,10 @@ import {
   chipHoverAnimation,
 } from "../../component/Animations/animations";
 import Popup from "../../component/Components/Popup";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { Tooltip } from "@mui/material";
+import { Dialog, DialogContent, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 // Animated components
 const MotionBox = motion(Box);
@@ -235,6 +239,122 @@ const CoverageCell = ({ value, idx, i }) => (
   </TableCell>
 );
 
+// Add this new CoverageTypeCell component for the first column with tooltip
+const CoverageTypeCell = ({ rowType, definition }) => (
+  <TableCell
+    sx={{
+      color: "#fff",
+      fontWeight: 500,
+      fontSize: { xs: "13px", sm: "14px", md: "15px" },
+      py: 2,
+      px: { xs: 1.5, md: 2 },
+    }}
+  >
+    <Tooltip
+      title={
+        <Box sx={{ p: 1 }}>
+          <Typography sx={{ fontSize: '14px', lineHeight: 1.6 }}>
+            {definition}
+          </Typography>
+        </Box>
+      }
+      arrow
+      placement="top"
+      componentsProps={{
+        tooltip: {
+          sx: {
+            bgcolor: '#2a2a2a',
+            color: '#fff',
+            border: '1px solid #FF9906',
+            borderRadius: '8px',
+            boxShadow: '0 4px 20px rgba(255, 153, 6, 0.3)',
+            maxWidth: '300px',
+            fontSize: '13px',
+            '& .MuiTooltip-arrow': {
+              color: '#2a2a2a',
+              '&::before': {
+                border: '1px solid #FF9906'
+              }
+            }
+          }
+        }
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          cursor: 'help',
+          transition: 'color 0.3s ease',
+          '&:hover': {
+            color: '#FF9906',
+          }
+        }}
+      >
+        {rowType}
+        <InfoOutlinedIcon 
+          sx={{ 
+            fontSize: '18px', 
+            color: '#FF9906',
+            opacity: 0.7,
+            transition: 'opacity 0.3s ease',
+            '&:hover': {
+              opacity: 1
+            }
+          }} 
+        />
+      </Box>
+    </Tooltip>
+  </TableCell>
+);
+
+// Custom Tooltip Component with better styling
+const CustomTooltip = ({ title, children }) => (
+  <Tooltip
+    title={
+      <Box sx={{ p: 1 }}>
+        {Array.isArray(title) ? (
+          <ul style={{ margin: 0, paddingLeft: '20px' }}>
+            {title.map((item, idx) => (
+              <li key={idx} style={{ marginBottom: '8px', lineHeight: 1.6 }}>
+                {item}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Typography sx={{ fontSize: '13px', lineHeight: 1.6 }}>
+            {title}
+          </Typography>
+        )}
+      </Box>
+    }
+    arrow
+    placement="top"
+    componentsProps={{
+      tooltip: {
+        sx: {
+          backgroundColor: '#2a2a2a',
+          color: '#fff',
+          fontSize: '13px',
+          padding: '12px 16px',
+          maxWidth: '400px',
+          border: '1px solid #444',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          '& .MuiTooltip-arrow': {
+            color: '#2a2a2a',
+            '&::before': {
+              border: '1px solid #444',
+            },
+          },
+        },
+      },
+    }}
+  >
+    {children}
+  </Tooltip>
+);
+
 const PolicyDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -246,6 +366,38 @@ const PolicyDetails = () => {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userName, setUserName] = useState("");
+
+  const [openPopup, setOpenPopup] = useState(false);
+const [selectedFeature, setSelectedFeature] = useState(null);
+
+
+const handleFeatureClick = (feature) => {
+  if (feature.details) {
+    setSelectedFeature(feature);
+    setOpenPopup(true);
+  }
+};
+
+const handleClosePopup = () => {
+  setOpenPopup(false);
+  setSelectedFeature(null);
+};
+
+  const [openPopupPolicyType, setOpenPopupPolicyType] = useState(false);
+const [selectedPolicyType, setSelectedPolicyType] = useState(null);
+
+
+const handlePolicyTypeClick = (policyType) => {
+  if (policyType.details) {
+    setSelectedPolicyType(policyType);
+    setOpenPopupPolicyType(true);
+  }
+};
+
+const handleClosePopupPolicyType = () => {
+  setOpenPopupPolicyType(false);
+  setSelectedPolicyType(null);
+};
   
   const [comingSoonModal, setComingSoonModal] = useState({
     visible: false,
@@ -295,6 +447,7 @@ const PolicyDetails = () => {
               name: res.data.data.policyType,
               icon: parsedDetails.icon,
               tagline: parsedDetails.tagline,
+              subtagline: parsedDetails.subtagline,
               whyChoose: parsedDetails.whyChoose,
               keyFeatures: parsedDetails?.keyFeatures,
               typesofPolicies: parsedDetails?.typesofPolicies,
@@ -747,6 +900,22 @@ const PolicyDetails = () => {
                 >
                   Why Choose Our Insurance?
                 </MotionTypography>
+                {/* subtagline */}
+      <MotionTypography
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                   viewport={{ once: true }}
+     sx={{
+          color: "#ccc",
+           textAlign: "center",
+          fontSize: { xs: "16px", sm: "18px", md: "20px" },
+          fontWeight: 400,
+          mb: 4,
+        }}
+      >
+        {policy.subtagline}
+      </MotionTypography>
 
                 <StaggeredContainer>
                   <Grid container spacing={3}>
@@ -788,7 +957,7 @@ const PolicyDetails = () => {
           )}
 
           {/* Key Features */}
-          {policy?.keyFeatures?.length > 0 && (
+          {/* {policy?.keyFeatures?.length > 0 && (
             <AnimatedSection>
               <MotionBox
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -856,7 +1025,134 @@ const PolicyDetails = () => {
                 </StaggeredContainer>
               </MotionBox>
             </AnimatedSection>
-          )}
+          )} */}
+
+          {policy?.keyFeatures?.length > 0 && (
+  <AnimatedSection>
+    <MotionBox
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      sx={{
+        mb: { xs: 6, md: 8 },
+        p: { xs: 3, sm: 4, md: 6 },
+        background: "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)",
+        borderRadius: "20px",
+        border: "1px solid #2a2a2a",
+      }}
+    >
+      <Typography sx={sectionTitleStyle}>Key Features</Typography>
+      <StaggeredContainer>
+        <Grid container spacing={2}>
+          {policy.keyFeatures.map((feature, idx) => (
+            <MotionGrid item xs={6} sm={4} md={2} key={idx} variants={fadeInUp}>
+              <MotionCard
+                whileHover={{
+                  scale: 1.08,
+                  borderColor: "#FFEB3B",
+                  boxShadow: "0 8px 30px rgba(255, 235, 59, 0.3)",
+                }}
+                transition={{ duration: 0.3 }}
+                onClick={() => handleFeatureClick(feature)} // ADD THIS
+                sx={{
+                  background: "#2a2a2a",
+                  borderRadius: "12px",
+                  border: "1px solid #333",
+                  textAlign: "center",
+                  height: "100%",
+                  cursor: feature.details ? "pointer" : "default", // ADD THIS
+                }}
+              >
+                <CardContent sx={{ p: { xs: 2, md: 2.5 } }}>
+                  <Typography sx={{ mb: 1.5, fontSize: { xs: "32px", md: "40px" }, lineHeight: 1 }}>
+                    {feature.icon}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      color: "#fff",
+                      mb: 0.5,
+                      fontSize: { xs: "14px", sm: "15px", md: "16px" },
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {feature.title}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      color: "#999",
+                      fontSize: { xs: "11px", sm: "12px", md: "13px" },
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {feature.description}
+                  </Typography>
+                  {/* ADD THIS: Click indicator */}
+                  {feature.details && (
+                    <Typography
+                      sx={{
+                        color: "#8AC642",
+                        fontSize: "10px",
+                        mt: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      Click for details
+                    </Typography>
+                  )}
+                </CardContent>
+              </MotionCard>
+            </MotionGrid>
+          ))}
+        </Grid>
+      </StaggeredContainer>
+    </MotionBox>
+  </AnimatedSection>
+)}
+
+{/* Popup Dialog for Feature Details */}
+<Dialog
+  open={openPopup}
+  onClose={handleClosePopup}
+  maxWidth="md"
+  fullWidth
+  PaperProps={{
+    sx: {
+      background: "#000000",
+      border: "2px solid #8AC642",
+      borderRadius: "20px",
+      maxHeight: "90vh",
+    }
+  }}
+>
+  <Box sx={{ position: "relative" }}>
+    <IconButton
+      onClick={handleClosePopup}
+      sx={{
+        position: "absolute",
+        right: 8,
+        top: 8,
+        color: "#8AC642",
+        zIndex: 1,
+        background: "#1a1a1a",
+        "&:hover": {
+          background: "#2a2a2a",
+        }
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+    
+    <DialogContent sx={{ p: { xs: 2, md: 4 } }}>
+      {selectedFeature?.details && (
+        <div 
+          dangerouslySetInnerHTML={{ __html: selectedFeature.details }}
+        />
+      )}
+    </DialogContent>
+  </Box>
+</Dialog>
 
 {/* Show Types of Policies section */}
 {policy?.typesofPolicies?.length > 0 && (
@@ -886,13 +1182,15 @@ const PolicyDetails = () => {
                   boxShadow: "0 8px 30px rgba(255, 235, 59, 0.3)",
                 }}
                 transition={{ duration: 0.3 }}
+                 onClick={() => handlePolicyTypeClick(policyType)}
                 sx={{
                   background: "#2a2a2a",
                   borderRadius: "12px",
                   border: "1px solid #333",
                   textAlign: "center",
                   height: "100%",
-                  cursor: "pointer",
+                  cursor: policyType.details ? "pointer" : "default", // ADD THIS
+
                 }}
               >
                 <CardContent sx={{ p: { xs: 2, md: 2.5 } }}>
@@ -919,6 +1217,18 @@ const PolicyDetails = () => {
                   >
                     {policyType.description}
                   </Typography>
+                   {policyType.details && (
+                    <Typography
+                      sx={{
+                        color: "#8AC642",
+                        fontSize: "10px",
+                        mt: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      Click for details
+                    </Typography>
+                  )}
                 </CardContent>
               </MotionCard>
             </MotionGrid>
@@ -928,6 +1238,48 @@ const PolicyDetails = () => {
     </MotionBox>
   </AnimatedSection>
 )}
+{/* Popup Dialog for  Policies section */}
+<Dialog
+  open={openPopupPolicyType}
+  onClose={handleClosePopupPolicyType}
+  maxWidth="md"
+  fullWidth
+  PaperProps={{
+    sx: {
+      background: "#000000",
+      border: "2px solid #8AC642",
+      borderRadius: "20px",
+      maxHeight: "90vh",
+    }
+  }}
+>
+  <Box sx={{ position: "relative" }}>
+    <IconButton
+      onClick={handleClosePopupPolicyType}
+      sx={{
+        position: "absolute",
+        right: 8,
+        top: 8,
+        color: "#8AC642",
+        zIndex: 1,
+        background: "#1a1a1a",
+        "&:hover": {
+          background: "#2a2a2a",
+        }
+      }}
+    >
+      <CloseIcon />
+    </IconButton>
+    
+    <DialogContent sx={{ p: { xs: 2, md: 4 } }}>
+      {selectedPolicyType?.details && (
+        <div 
+          dangerouslySetInnerHTML={{ __html: selectedPolicyType.details }}
+        />
+      )}
+    </DialogContent>
+  </Box>
+</Dialog>
 
           {/* Coverage Comparison */}
           {policy.coverageComparison?.rows?.length > 0 && (
@@ -988,17 +1340,10 @@ const PolicyDetails = () => {
                             viewport={{ once: true }}
                             style={{ borderBottom: "1px solid #333" }}
                           >
-                            <TableCell
-                              sx={{
-                                color: "#fff",
-                                fontWeight: 500,
-                                fontSize: { xs: "13px", sm: "14px", md: "15px" },
-                                py: 2,
-                                px: { xs: 1.5, md: 2 },
-                              }}
-                            >
-                              {row.type}
-                            </TableCell>
+                           <CoverageTypeCell 
+                    rowType={row.type}
+                    definition={policy.coverageComparison.coverageDefinitions?.[row.type] || row.type}
+                  />
                             {Object.entries(row)
                               .filter(([key]) => key !== "type")
                               .map(([key, value], i) => (
@@ -1015,127 +1360,158 @@ const PolicyDetails = () => {
           )}
 
           {/* Add-ons and Exclusions */}
-          {(policy.addOns?.length > 0 || policy.exclusions?.length > 0) && (
-            <AnimatedSection variant={staggerContainer}>
-              <Grid container spacing={3} sx={{ mb: { xs: 6, md: 8 } }}>
-                {policy.addOns?.length > 0 && (
-                  <MotionGrid item xs={12} md={6} variants={slideInLeft}>
-                    <MotionCard
-                      whileHover={{
-                        borderColor: "#8AC642",
-                        boxShadow: "0 10px 40px rgba(90, 158, 30, 0.2)",
-                      }}
-                      sx={{ ...cardGradientStyle, height: "100%" }}
-                    >
-                      <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-                        <Typography
-                          sx={{
-                            fontWeight: 700,
-                            color: "#8AC642",
-                            mb: 3,
-                            fontSize: { xs: "20px", sm: "22px", md: "24px" },
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                          }}
-                        >
-                          ✨ Available Add-ons
-                        </Typography>
-                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
-                          {policy.addOns.map((addon, idx) => (
-                            <ScaleInWhenVisible key={idx} delay={idx * 0.05}>
-                              <MotionChip
-                                label={addon}
-                                {...chipHoverAnimation}
-                                whileHover={{
-                                  ...chipHoverAnimation.whileHover,
-                                  background: "#8AC642",
-                                  color: "#000",
-                                }}
-                                sx={{
-                                  background: "#333",
-                                  color: "#fff",
-                                  border: "1px solid #8AC642",
-                                  fontSize: { xs: "12px", sm: "13px", md: "14px" },
-                                  fontWeight: 500,
-                                  py: 2.5,
-                                  transition: "all 0.3s ease",
-                                  cursor: "pointer",
-                                }}
-                              />
-                            </ScaleInWhenVisible>
-                          ))}
-                        </Box>
-                      </CardContent>
-                    </MotionCard>
-                  </MotionGrid>
-                )}
-
-                {policy.exclusions?.length > 0 && (
-                  <MotionGrid item xs={12} md={6} variants={slideInRight}>
-                    <MotionCard
-                      whileHover={{
-                        borderColor: "#FFB547",
-                        boxShadow: "0 10px 40px rgba(255, 181, 71, 0.25)",
-                      }}
-                      sx={{
-                        background: "linear-gradient(135deg, #1c1c1c 0%, #292929 100%)",
-                        borderRadius: "16px",
-                        border: "1px solid #444",
-                        height: "100%",
-                        transition: "all 0.3s ease",
-                      }}
-                    >
-                      <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-                        <Typography
-                          sx={{
-                            fontWeight: 700,
-                            color: "#FFB547",
-                            mb: 3,
-                            fontSize: { xs: "20px", sm: "22px", md: "24px" },
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                          }}
-                        >
-                          ⚠️ Exclusions
-                        </Typography>
-                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
-                          {policy.exclusions.map((exclusion, idx) => (
-                            <ScaleInWhenVisible key={idx} delay={idx * 0.05}>
-                              <MotionChip
-                                label={exclusion}
-                                whileHover={{
-                                  scale: 1.05,
-                                  background: "#FFB547",
-                                  color: "#000",
-                                  boxShadow: "0 4px 20px rgba(255, 181, 71, 0.25)",
-                                }}
-                                sx={{
-                                  background: "rgba(255, 181, 71, 0.08)",
-                                  color: "#fff",
-                                  border: "1px solid rgba(255, 181, 71, 0.4)",
-                                  fontSize: { xs: "12px", sm: "13px", md: "14px" },
-                                  fontWeight: 500,
-                                  py: 2.5,
-                                  transition: "all 0.3s ease",
-                                  cursor: "pointer",
-                                  borderRadius: "10px",
-                                }}
-                              />
-                            </ScaleInWhenVisible>
-                          ))}
-                        </Box>
-                      </CardContent>
-                    </MotionCard>
-                  </MotionGrid>
-                )}
-              </Grid>
-            </AnimatedSection>
-          )}
-
+         {(policy.addOns?.length > 0 || policy.exclusions?.length > 0) && (
+           <AnimatedSection variant={staggerContainer}>
+             <Grid container spacing={3} sx={{ mb: { xs: 6, md: 8 } }}>
+               {/* Add-ons Section */}
+               {policy.addOns?.length > 0 && (
+                 <MotionGrid item xs={12} md={6} variants={slideInLeft}>
+                   <MotionCard
+                     whileHover={{
+                       borderColor: "#8AC642",
+                       boxShadow: "0 10px 40px rgba(90, 158, 30, 0.2)",
+                     }}
+                     sx={{ ...cardGradientStyle, height: "100%" }}
+                   >
+                     <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                       <Typography
+                         sx={{
+                           fontWeight: 700,
+                           color: "#8AC642",
+                           mb: 3,
+                           fontSize: { xs: "20px", sm: "22px", md: "24px" },
+                           display: "flex",
+                           alignItems: "center",
+                           gap: 1,
+                         }}
+                       >
+                         ✨ Available Add-ons
+                       </Typography>
+                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+                         {policy.addOns.map((addon, idx) => (
+                           <ScaleInWhenVisible key={idx} delay={idx * 0.05}>
+                             <CustomTooltip 
+                               title={addon.description || addon.title}
+                             >
+                               <MotionChip
+                                 label={
+                                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                     {addon.title}
+                                     <InfoOutlinedIcon sx={{ fontSize: 16, opacity: 0.7 }} />
+                                   </Box>
+                                 }
+                                 whileHover={{
+                                   scale: 1.05,
+                                   background: "#8AC642",
+                                   color: "#000",
+                                   boxShadow: "0 4px 20px rgba(138, 198, 66, 0.4)",
+                                 }}
+                                 sx={{
+                                   background: "#333",
+                                   color: "#fff",
+                                   border: "1px solid #8AC642",
+                                   fontSize: { xs: "12px", sm: "13px", md: "14px" },
+                                   fontWeight: 500,
+                                   py: 2.5,
+                                   px: 2,
+                                   transition: "all 0.3s ease",
+                                   cursor: "pointer",
+                                   '&:hover .MuiChip-label': {
+                                     fontWeight: 600,
+                                   },
+                                 }}
+                               />
+                             </CustomTooltip>
+                           </ScaleInWhenVisible>
+                         ))}
+                       </Box>
+                     </CardContent>
+                   </MotionCard>
+                 </MotionGrid>
+               )}
+         
+               {/* Exclusions Section */}
+               {policy.exclusions?.length > 0 && (
+                 <MotionGrid item xs={12} md={6} variants={slideInRight}>
+                   <MotionCard
+                     whileHover={{
+                       borderColor: "#FFB547",
+                       boxShadow: "0 10px 40px rgba(255, 181, 71, 0.25)",
+                     }}
+                     sx={{
+                       background: "linear-gradient(135deg, #1c1c1c 0%, #292929 100%)",
+                       borderRadius: "16px",
+                       border: "1px solid #444",
+                       height: "100%",
+                       transition: "all 0.3s ease",
+                     }}
+                   >
+                     <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                       <Typography
+                         sx={{
+                           fontWeight: 700,
+                           color: "#FFB547",
+                           mb: 3,
+                           fontSize: { xs: "20px", sm: "22px", md: "24px" },
+                           display: "flex",
+                           alignItems: "center",
+                           gap: 1,
+                         }}
+                       >
+                         ⚠️ Exclusions
+                       </Typography>
+                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+                         {policy.exclusions.map((exclusion, idx) => (
+                           <ScaleInWhenVisible key={idx} delay={idx * 0.05}>
+                             <CustomTooltip 
+                               title={exclusion.description || exclusion.title}
+                             >
+                               <MotionChip
+                                 label={
+                                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                     {exclusion.title}
+                                     <InfoOutlinedIcon sx={{ fontSize: 16, opacity: 0.7 }} />
+                                   </Box>
+                                 }
+                                 whileHover={{
+                                   scale: 1.05,
+                                   background: "#FFB547",
+                                   color: "#000",
+                                   boxShadow: "0 4px 20px rgba(255, 181, 71, 0.25)",
+                                 }}
+                                 sx={{
+                                   background: "rgba(255, 181, 71, 0.08)",
+                                   color: "#fff",
+                                   border: "1px solid rgba(255, 181, 71, 0.4)",
+                                   fontSize: { xs: "12px", sm: "13px", md: "14px" },
+                                   fontWeight: 500,
+                                   py: 2.5,
+                                   px: 2,
+                                   transition: "all 0.3s ease",
+                                   cursor: "pointer",
+                                   borderRadius: "10px",
+                                   '&:hover .MuiChip-label': {
+                                     fontWeight: 600,
+                                   },
+                                 }}
+                               />
+                             </CustomTooltip>
+                           </ScaleInWhenVisible>
+                         ))}
+                       </Box>
+                     </CardContent>
+                   </MotionCard>
+                 </MotionGrid>
+               )}
+             </Grid>
+           </AnimatedSection>
+         )}
           {/* CTA Section */}
-         <AnimatedSection>
+ 
+
+
+{/* CTA Section */}
+       <AnimatedSection>
             <MotionBox
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -1143,96 +1519,361 @@ const PolicyDetails = () => {
               viewport={{ once: true }}
               sx={{
                 mb: { xs: 4, md: 6 },
-                p: { xs: 4, sm: 5, md: 6 },
-                textAlign: "center",
-                background: "linear-gradient(90deg, #8AC642 0%, #FFEB3B 100%)",
-                borderRadius: "20px",
-                boxShadow: "0 8px 40px rgba(90, 158, 30, 0.3)",
+                position: "relative",
+                overflow: "hidden",
+                borderRadius: "24px",
               }}
             >
-              <MotionTypography
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
+              {/* Main CTA Card */}
+              <Box
                 sx={{
-                  fontWeight: 700,
-                  color: "#000",
-                  mb: 2,
-                  fontSize: { xs: '24px', sm: '28px', md: '30px' },
-                  lineHeight: 1.2,
+                  background: "linear-gradient(135deg, #8AC642 0%, #FFEB3B 100%)",
+                  p: { xs: 5, sm: 6, md: 8 },
+                  position: "relative",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexDirection: { xs: "column", md: "row" },
+                  gap: { xs: 4, md: 6 },
                 }}
               >
-                Ready to Get Protected?
-              </MotionTypography>
-              <MotionTypography
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-                sx={{
-                  color: "#333",
-                  mb: 4,
-                  fontSize: { xs: "16px", sm: "18px", md: "20px" },
-                  fontWeight: 500,
-                  lineHeight: 1.5,
-                  maxWidth: "700px",
-                  mx: "auto",
-                }}
-              >
-                Join millions of satisfied customers. Get your policy in minutes.
-              </MotionTypography>
-              <MotionButton
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.6, type: "spring" }}
-                viewport={{ once: true }}
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: "#4B8719",
-                  boxShadow: "0 6px 15px rgba(0,0,0,0.3)",
-                }}
-                variant="contained"
-                onClick={handleBuyNow}
-                disabled={buying}
-                sx={{
-                  background: "#5A9E1E",
-                  color: "#fff",
-                  px: { xs: 5, sm: 6, md: 8 },
-                  py: { xs: 1.5, md: 2 },
-                  fontSize: { xs: "14px", sm: "16px", md: "18px" },
-                  fontWeight: 600,
-                  borderRadius: "50px",
-                  textTransform: "none",
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-                  transition: "background-color 0.3s ease, transform 0.2s ease",
-                  "&:focus-visible": {
-                    outline: "2px solid #4B8719",
-                    outlineOffset: "2px",
-                  },
-                }}
-              >
-                {buying ? "Processing..." : "Buy Insurance Now →"}
-              </MotionButton>
-              <MotionTypography
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                {/* Decorative circles */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "-50px",
+                    right: "-50px",
+                    width: "200px",
+                    height: "200px",
+                    background: "rgba(255, 255, 255, 0.15)",
+                    borderRadius: "50%",
+                    filter: "blur(40px)",
+                  }}
+                />
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: "-80px",
+                    left: "-80px",
+                    width: "250px",
+                    height: "250px",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    borderRadius: "50%",
+                    filter: "blur(50px)",
+                  }}
+                />
+
+                {/* Left Content */}
+                <Box sx={{ position: "relative", zIndex: 1, flex: 1, textAlign: { xs: "center", md: "left" } }}>
+                  <MotionTypography
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    viewport={{ once: true }}
+                    sx={{
+                      fontWeight: 800,
+                      color: "#000",
+                      mb: 2,
+                      fontSize: { xs: '32px', sm: '38px', md: '44px' },
+                      lineHeight: 1.1,
+                      textShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    Ready to Get Protected?
+                  </MotionTypography>
+                  <MotionTypography
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    viewport={{ once: true }}
+                    sx={{
+                      color: "#1a1a1a",
+                      mb: 5,
+                      fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                      fontWeight: 600,
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    Join millions of satisfied customers. Get your policy in minutes.
+                  </MotionTypography>
+                  <MotionButton
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.6, type: "spring" }}
+                    viewport={{ once: true }}
+                    whileHover={{
+                      scale: 1.08,
+                      boxShadow: "0 15px 50px rgba(0,0,0,0.35)",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    variant="contained"
+                    onClick={handleBuyNow}
+                    disabled={buying}
+                    sx={{
+                      background: "#000",
+                      color: "#fff",
+                      px: { xs: 6, sm: 7, md: 10 },
+                      py: { xs: 2, md: 2.5 },
+                      fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                      fontWeight: 700,
+                      borderRadius: "50px",
+                      textTransform: "none",
+                      boxShadow: "0 8px 30px rgba(0,0,0,0.25)",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        background: "#1a1a1a",
+                      },
+                      "&:disabled": {
+                        background: "#666",
+                        color: "#ccc",
+                      },
+                    }}
+                  >
+                    {buying ? "Processing..." : "Buy Insurance"}
+                  </MotionButton>
+                </Box>
+
+                {/* Right Side - Shield Illustration */}
+                <MotionBox
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  sx={{
+                    position: "relative",
+                    zIndex: 1,
+                    display: { xs: "none", md: "flex" },
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: "350px",
+                  }}
+                >
+                  {/* Shield SVG */}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      width: "280px",
+                      height: "280px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {/* Glow effect */}
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        width: "300px",
+                        height: "300px",
+                        background: "radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%)",
+                        borderRadius: "50%",
+                        filter: "blur(30px)",
+                        animation: "pulse 2s ease-in-out infinite",
+                        "@keyframes pulse": {
+                          "0%, 100%": { opacity: 0.6 },
+                          "50%": { opacity: 1 },
+                        },
+                      }}
+                    />
+
+                    {/* Main Shield */}
+                    <svg width="220" height="250" viewBox="0 0 220 250" style={{ position: "relative", zIndex: 2 }}>
+                      <defs>
+                        <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#7BC832" />
+                          <stop offset="50%" stopColor="#9DD642" />
+                          <stop offset="100%" stopColor="#B8E65C" />
+                        </linearGradient>
+                        <linearGradient id="shieldHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+                          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                        </linearGradient>
+                        <filter id="shadow">
+                          <feDropShadow dx="0" dy="8" stdDeviation="15" floodColor="#000" floodOpacity="0.3" />
+                        </filter>
+                      </defs>
+                      
+                      {/* Shield outline */}
+                      <path
+                        d="M110 10 L200 50 L200 120 Q200 180 110 240 Q20 180 20 120 L20 50 Z"
+                        fill="url(#shieldGradient)"
+                        stroke="#5A8A1F"
+                        strokeWidth="4"
+                        filter="url(#shadow)"
+                      />
+                      
+                      {/* Shield highlight */}
+                      <path
+                        d="M110 20 L190 55 L190 120 Q190 175 110 230 Q30 175 30 120 L30 55 Z"
+                        fill="url(#shieldHighlight)"
+                        opacity="0.6"
+                      />
+                      
+                      {/* Inner shield border */}
+                      <path
+                        d="M110 30 L180 65 L180 120 Q180 170 110 220 Q40 170 40 120 L40 65 Z"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.3)"
+                        strokeWidth="2"
+                      />
+                      
+                      {/* Checkmark */}
+                      <path
+                        d="M70 120 L95 145 L150 90"
+                        fill="none"
+                        stroke="#fff"
+                        strokeWidth="16"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <animate
+                          attributeName="stroke-dasharray"
+                          from="0 200"
+                          to="200 0"
+                          dur="1s"
+                          repeatCount="indefinite"
+                        />
+                      </path>
+                    </svg>
+
+                    {/* Coin stacks */}
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: "20px",
+                        left: "10px",
+                        display: "flex",
+                        gap: "8px",
+                      }}
+                    >
+                      {[40, 55, 45].map((height, i) => (
+                        <Box
+                          key={i}
+                          sx={{
+                            width: "35px",
+                            height: `${height}px`,
+                            background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+                            borderRadius: "4px",
+                            border: "2px solid #CC8800",
+                            position: "relative",
+                            animation: `float ${2 + i * 0.3}s ease-in-out infinite`,
+                            animationDelay: `${i * 0.2}s`,
+                            "&::before": {
+                              content: '""',
+                              position: "absolute",
+                              top: "3px",
+                              left: "3px",
+                              right: "3px",
+                              height: "40%",
+                              background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%)",
+                              borderRadius: "2px",
+                            },
+                            "@keyframes float": {
+                              "0%, 100%": { transform: "translateY(0)" },
+                              "50%": { transform: "translateY(-8px)" },
+                            },
+                          }}
+                        />
+                      ))}
+                    </Box>
+
+                    {/* Document icon */}
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: "40px",
+                        right: "20px",
+                        width: "50px",
+                        height: "60px",
+                        background: "linear-gradient(135deg, #fff 0%, #f0f0f0 100%)",
+                        borderRadius: "6px",
+                        border: "2px solid #ddd",
+                        boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+                        animation: "rotate 3s ease-in-out infinite",
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "8px",
+                        gap: "4px",
+                        "@keyframes rotate": {
+                          "0%, 100%": { transform: "rotate(0deg)" },
+                          "50%": { transform: "rotate(5deg)" },
+                        },
+                      }}
+                    >
+                      <Box sx={{ width: "100%", height: "3px", background: "#8AC642", borderRadius: "2px" }} />
+                      <Box sx={{ width: "80%", height: "2px", background: "#ddd", borderRadius: "1px" }} />
+                      <Box sx={{ width: "90%", height: "2px", background: "#ddd", borderRadius: "1px" }} />
+                      <Box sx={{ width: "70%", height: "2px", background: "#ddd", borderRadius: "1px" }} />
+                    </Box>
+                  </Box>
+                </MotionBox>
+              </Box>
+
+              {/* Disclaimer Section */}
+              <MotionBox
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
                 viewport={{ once: true }}
                 sx={{
-                  color: "red",
-                  mt: 3,
-                  fontSize: { xs: "12px", sm: "13px", md: "14px" },
-                  fontWeight: 500,
-                  lineHeight: 1.6,
-                  maxWidth: "700px",
-                  mx: "auto",
+                  background: "#1a1a1a",
+                  p: { xs: 3, sm: 4 },
+                  borderTop: "3px solid #FF9906",
                 }}
               >
-                Please read all policy terms and conditions, coverages & exclusions before buying policy as they may change for every policy and every insurance company
-              </MotionTypography>
+                <Box 
+                  sx={{ 
+                    display: "flex", 
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 2,
+                    mb: 2,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      background: "rgba(255, 153, 6, 0.15)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "20px",
+                    }}
+                  >
+                    ⚠️
+                  </Box>
+                  <Typography
+                    sx={{
+                      color: "#FF9906",
+                      fontSize: { xs: "14px", sm: "15px", md: "16px" },
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    Important Notice
+                  </Typography>
+                </Box>
+                <Typography
+                  sx={{
+                    color: "#ccc",
+                    fontSize: { xs: "13px", sm: "14px", md: "15px" },
+                    fontWeight: 400,
+                    lineHeight: 1.8,
+                    textAlign: "center",
+                    maxWidth: "750px",
+                    mx: "auto",
+                  }}
+                >
+                  Please read all policy terms and conditions, coverages & exclusions before buying policy as they may change for every policy and every insurance company.
+                </Typography>
+              </MotionBox>
             </MotionBox>
           </AnimatedSection>
+          
         </Container>
       </Box>
       <ToastContainer />

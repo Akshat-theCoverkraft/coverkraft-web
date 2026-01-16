@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
 import FormField from "../component/Components/FormField";
 import LoaderOverlay from "../component/Components/LoaderOverlay";
+import StateAutocomplete from "../component/Components/StateAutocomplete";
 import Button from "../component/Button";
 import Popup from "../component/Components/Popup";
 import API_URL from "../ServiceModule/Service";
@@ -58,6 +59,9 @@ const JoinUs = () => {
     cancelledCheque: false,
   });
 
+  const [statesData, setStatesData] = useState([]);
+  const [loadingStates, setLoadingStates] = useState(false);
+
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
@@ -67,6 +71,33 @@ const JoinUs = () => {
   const [selectedRole, setSelectedRole] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+    useEffect(() => {
+    fetchStates();
+  }, []);
+
+
+    const fetchStates = async () => {
+    setLoadingStates(true);
+    try {
+      const response = await fetch("https://api.thecoverkraft.com/state/getAll");
+      const result = await response.json();
+      
+      if (result.status && result.data) {
+        // Transform the data to match FormField options format
+        const stateOptions = result.data.map(state => ({
+          value: state.stateNameEnglish,
+          label: state.stateNameEnglish
+        }));
+        setStatesData(stateOptions);
+      }
+    } catch (error) {
+      console.error("Error fetching states:", error);
+      alert("Failed to load states data");
+    } finally {
+      setLoadingStates(false);
+    }
+  };
 
   // Updated validateForm to include passportPhoto and cancelledCheque
   const validateForm = (data, file, isPOS, posFiles) => {
@@ -118,7 +149,24 @@ const JoinUs = () => {
   };
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    // Special handling for phone number - only allow digits and limit to 10
+    if (field === "contactNumber") {
+      const digitsOnly = value.replace(/\D/g, '');
+      if (digitsOnly.length <= 10) {
+        setFormData((prev) => ({ ...prev, [field]: digitsOnly }));
+      }
+    }
+    // Special handling for pin code - only allow digits and limit to 6
+    else if (field === "pinCode") {
+      const digitsOnly = value.replace(/\D/g, '');
+      if (digitsOnly.length <= 6) {
+        setFormData((prev) => ({ ...prev, [field]: digitsOnly }));
+      }
+    }
+    else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
+    
     if (fieldErrors[field]) {
       setFieldErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -564,16 +612,16 @@ const JoinUs = () => {
                   error={fieldErrors.address}
                   touched={touched.address}
                 />
-                <FormField
+                <StateAutocomplete
                   label="State"
-                  field="stateAgent"
-                  type="text"
-                  placeholder="Enter your state"
                   value={formData.stateAgent}
                   onChange={(val) => handleChange("stateAgent", val)}
                   onBlur={() => handleBlur("stateAgent")}
                   error={fieldErrors.stateAgent}
                   touched={touched.stateAgent}
+                  options={statesData}
+                  placeholder="Search and select your state"
+                  disabled={loadingStates}
                 />
               </div>
 
@@ -595,18 +643,18 @@ const JoinUs = () => {
                     { value: "Others", label: "Others" },
                   ]}
                 />
-                <FormField
-                  label="Pin Code"
-                  field="pinCode"
-                  type="text"
-                  placeholder="Enter your pin code"
-                  value={formData.pinCode}
-                  onChange={(val) => handleChange("pinCode", val)}
-                  onBlur={() => handleBlur("pinCode")}
-                  error={fieldErrors.pinCode}
-                  touched={touched.pinCode}
+                  <FormField
+                  label="Contact Number"
+                  field="contactNumber"
+                  type="tel"
+                  placeholder="Enter your contact number"
+                  value={formData.contactNumber}
+                  onChange={(val) => handleChange("contactNumber", val)}
+                  onBlur={() => handleBlur("contactNumber")}
+                  error={fieldErrors.contactNumber}
+                  touched={touched.contactNumber}
                 />
-                <FormField
+                 <FormField
                   label="Email"
                   field="email"
                   type="email"
@@ -618,16 +666,18 @@ const JoinUs = () => {
                   touched={touched.email}
                 />
                 <FormField
-                  label="Contact Number"
-                  field="contactNumber"
-                  type="tel"
-                  placeholder="Enter your contact number"
-                  value={formData.contactNumber}
-                  onChange={(val) => handleChange("contactNumber", val)}
-                  onBlur={() => handleBlur("contactNumber")}
-                  error={fieldErrors.contactNumber}
-                  touched={touched.contactNumber}
+                  label="Pin Code"
+                  field="pinCode"
+                  type="text"
+                  placeholder="Enter your pin code"
+                  value={formData.pinCode}
+                  onChange={(val) => handleChange("pinCode", val)}
+                  onBlur={() => handleBlur("pinCode")}
+                  error={fieldErrors.pinCode}
+                  touched={touched.pinCode}
                 />
+               
+              
               </div>
             </div>
 
