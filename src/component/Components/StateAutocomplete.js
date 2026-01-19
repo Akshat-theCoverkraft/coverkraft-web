@@ -92,7 +92,7 @@ const StateAutocomplete = ({
           display: "block",
         }}
       >
-        {label} <span style={{ color: "#f44336" }}>*</span>
+        {label} <span style={{ color: "#FF4444" }}>*</span>
       </label>
 
       <div style={{ position: "relative" }}>
@@ -219,8 +219,8 @@ const StateAutocomplete = ({
       {error && touched && (
         <span
           style={{
-            color: "#f44336",
-            fontSize: "0.85rem",
+            color: "#FF4444",
+            fontSize: "1.3rem",
             display: "block",
             marginTop: 4,
           }}
