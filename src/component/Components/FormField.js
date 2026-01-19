@@ -28,7 +28,7 @@ const FormField = ({
     paddingRight: rightIcon ? "35px" : "20px",
     color: "white",
     backgroundColor: "#2c2c2c",
-    border: `1px solid ${hasError ? "#f44336" : "#444"}`,
+    border: `1px solid ${hasError ? "#FF4444" : "#444"}`,
     width: "100%",
     fontFamily: "inherit",
     transition: "all 0.3s ease",
@@ -38,11 +38,11 @@ const FormField = ({
   };
 
   const handleFocus = (e) => {
-    e.target.style.borderColor = hasError ? "#f44336" : "#8AC642";
+    e.target.style.borderColor = hasError ? "#FF4444" : "#8AC642";
   };
 
   const handleBlurEvent = (e) => {
-    e.target.style.borderColor = hasError ? "#f44336" : "#444";
+    e.target.style.borderColor = hasError ? "#FF4444" : "#444";
     if (onBlur) onBlur();
   };
 
@@ -138,8 +138,8 @@ const FormField = ({
         {hasError && (
           <span
             style={{
-              color: "#f44336",
-              fontSize: "0.85rem",
+              color: "#FF4444",
+              fontSize: "1.3rem",
               display: "block",
             }}
           >

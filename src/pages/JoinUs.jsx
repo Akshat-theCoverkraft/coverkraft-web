@@ -464,8 +464,8 @@ const JoinUs = () => {
       {error && (
         <span
           style={{
-            color: "#f44336",
-            fontSize: "0.85rem",
+            color: "#FF4444",
+            fontSize: "1.3rem",
             display: "block",
             marginTop: 4,
           }}
@@ -569,117 +569,134 @@ const JoinUs = () => {
               </p>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                gap: 24,
-                marginBottom: 32,
-              }}
-            >
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 24 }}
-              >
-                <FormField
-                  label="Full Name"
-                  field="fullName"
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={formData.fullName}
-                  onChange={(val) => handleChange("fullName", val)}
-                  onBlur={() => handleBlur("fullName")}
-                  error={fieldErrors.fullName}
-                  touched={touched.fullName}
-                />
-                <FormField
-                  label="Date Of Birth"
-                  field="dob"
-                  type="date"
-                  value={formData.dob}
-                  onChange={(val) => handleChange("dob", val)}
-                  onBlur={() => handleBlur("dob")}
-                  error={fieldErrors.dob}
-                  touched={touched.dob}
-                />
-                <FormField
-                  label="Address"
-                  field="address"
-                  type="text"
-                  placeholder="Enter your address"
-                  value={formData.address}
-                  onChange={(val) => handleChange("address", val)}
-                  onBlur={() => handleBlur("address")}
-                  error={fieldErrors.address}
-                  touched={touched.address}
-                />
-                <StateAutocomplete
-                  label="State"
-                  value={formData.stateAgent}
-                  onChange={(val) => handleChange("stateAgent", val)}
-                  onBlur={() => handleBlur("stateAgent")}
-                  error={fieldErrors.stateAgent}
-                  touched={touched.stateAgent}
-                  options={statesData}
-                  placeholder="Search and select your state"
-                  disabled={loadingStates}
-                />
-              </div>
+           {/* Replace your entire grid section with this */}
+<div style={{ marginBottom: 32 }}>
+  {/* Row 1: Full Name | Gender */}
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 24,
+    marginBottom: 24,
+  }}>
+    <FormField
+      label="Full Name"
+      field="fullName"
+      type="text"
+      placeholder="Enter your full name"
+      value={formData.fullName}
+      onChange={(val) => handleChange('fullName', val)}
+      onBlur={() => handleBlur('fullName')}
+      error={fieldErrors.fullName}
+      touched={touched.fullName}
+    />
+    <FormField
+      label="Gender"
+      field="gender"
+      type="select"
+      value={formData.gender}
+      onChange={(val) => handleChange('gender', val)}
+      onBlur={() => handleBlur('gender')}
+      error={fieldErrors.gender}
+      touched={touched.gender}
+      options={[
+        { value: 'Male', label: 'Male' },
+        { value: 'Female', label: 'Female' },
+        { value: 'Others', label: 'Others' },
+      ]}
+    />
+  </div>
 
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 24 }}
-              >
-                <FormField
-                  label="Gender"
-                  field="gender"
-                  type="select"
-                  value={formData.gender}
-                  onChange={(val) => handleChange("gender", val)}
-                  onBlur={() => handleBlur("gender")}
-                  error={fieldErrors.gender}
-                  touched={touched.gender}
-                  options={[
-                    { value: "Male", label: "Male" },
-                    { value: "Female", label: "Female" },
-                    { value: "Others", label: "Others" },
-                  ]}
-                />
-                  <FormField
-                  label="Contact Number"
-                  field="contactNumber"
-                  type="tel"
-                  placeholder="Enter your contact number"
-                  value={formData.contactNumber}
-                  onChange={(val) => handleChange("contactNumber", val)}
-                  onBlur={() => handleBlur("contactNumber")}
-                  error={fieldErrors.contactNumber}
-                  touched={touched.contactNumber}
-                />
-                 <FormField
-                  label="Email"
-                  field="email"
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={formData.email}
-                  onChange={(val) => handleChange("email", val)}
-                  onBlur={() => handleBlur("email")}
-                  error={fieldErrors.email}
-                  touched={touched.email}
-                />
-                <FormField
-                  label="Pin Code"
-                  field="pinCode"
-                  type="text"
-                  placeholder="Enter your pin code"
-                  value={formData.pinCode}
-                  onChange={(val) => handleChange("pinCode", val)}
-                  onBlur={() => handleBlur("pinCode")}
-                  error={fieldErrors.pinCode}
-                  touched={touched.pinCode}
-                />
-               
-              
-              </div>
-            </div>
+  {/* Row 2: Date of Birth | Contact Number */}
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 24,
+    marginBottom: 24,
+  }}>
+    <FormField
+      label="Date Of Birth"
+      field="dob"
+      type="date"
+      value={formData.dob}
+      onChange={(val) => handleChange('dob', val)}
+      onBlur={() => handleBlur('dob')}
+      error={fieldErrors.dob}
+      touched={touched.dob}
+    />
+    <FormField
+      label="Contact Number"
+      field="contactNumber"
+      type="tel"
+      placeholder="Enter your contact number"
+      value={formData.contactNumber}
+      onChange={(val) => handleChange('contactNumber', val)}
+      onBlur={() => handleBlur('contactNumber')}
+      error={fieldErrors.contactNumber}
+      touched={touched.contactNumber}
+    />
+  </div>
+
+  {/* Row 3: Address | Email */}
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 24,
+    marginBottom: 24,
+  }}>
+    <FormField
+      label="Address"
+      field="address"
+      type="text"
+      placeholder="Enter your address"
+      value={formData.address}
+      onChange={(val) => handleChange('address', val)}
+      onBlur={() => handleBlur('address')}
+      error={fieldErrors.address}
+      touched={touched.address}
+    />
+    <FormField
+      label="Email"
+      field="email"
+      type="email"
+      placeholder="Enter your email address"
+      value={formData.email}
+      onChange={(val) => handleChange('email', val)}
+      onBlur={() => handleBlur('email')}
+      error={fieldErrors.email}
+      touched={touched.email}
+    />
+  </div>
+
+  {/* Row 4: State | Pin Code */}
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 24,
+  }}>
+    <StateAutocomplete
+      label="State"
+      value={formData.stateAgent}
+      onChange={(val) => handleChange('stateAgent', val)}
+      onBlur={() => handleBlur('stateAgent')}
+      error={fieldErrors.stateAgent}
+      touched={touched.stateAgent}
+      options={statesData}
+      placeholder="Search and select your state"
+      disabled={loadingStates}
+    />
+    <FormField
+      label="Pin Code"
+      field="pinCode"
+      type="text"
+      placeholder="Enter your pin code"
+      value={formData.pinCode}
+      onChange={(val) => handleChange('pinCode', val)}
+      onBlur={() => handleBlur('pinCode')}
+      error={fieldErrors.pinCode}
+      touched={touched.pinCode}
+    />
+  </div>
+</div>
 
             {/* Conditional File Upload - Resume for Employee, Passport Photo for POS */}
             {formData.applyingFor === "Employee" && (
