@@ -758,7 +758,7 @@ const handleClosePopupPolicyType = () => {
 >
   <DecorativeCircles />
 
-  <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+  <Container sx={{ position: "relative", zIndex: 1, textAlign: "center",  maxWidth: '1536px !important' }}>
     
     {/* Back Button */}
     <MotionButton
@@ -886,7 +886,7 @@ const handleClosePopupPolicyType = () => {
 </MotionBox>
 
 
-        <Container maxWidth="lg">
+        <Container sx={{ maxWidth: '1536px !important'}}>
           {/* Why Choose */}
           {policy.whyChoose?.length > 0 && (
             <AnimatedSection>
@@ -1371,9 +1371,10 @@ const handleClosePopupPolicyType = () => {
                        borderColor: "#8AC642",
                        boxShadow: "0 10px 40px rgba(90, 158, 30, 0.2)",
                      }}
-                     sx={{ ...cardGradientStyle, height: "100%" }}
+                     sx={{ ...cardGradientStyle, height: "550px", display: "flex",
+                       flexDirection: "column" }}
                    >
-                     <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                     <CardContent sx={{ p: { xs: 3, md: 4 }, flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                        <Typography
                          sx={{
                            fontWeight: 700,
@@ -1383,11 +1384,26 @@ const handleClosePopupPolicyType = () => {
                            display: "flex",
                            alignItems: "center",
                            gap: 1,
+                            flexShrink: 0
                          }}
                        >
                          ✨ Available Add-ons
                        </Typography>
-                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5,  overflowY: "auto",
+                         pr: 1, '&::-webkit-scrollbar': {
+                           width: '8px',
+                         },
+                         '&::-webkit-scrollbar-track': {
+                           background: 'rgba(255, 255, 255, 0.05)',
+                           borderRadius: '4px',
+                         },
+                         '&::-webkit-scrollbar-thumb': {
+                           background: '#8AC642',
+                           borderRadius: '4px',
+                         },
+                         '&::-webkit-scrollbar-thumb:hover': {
+                           background: '#9BD654',
+                         },}}>
                          {policy.addOns.map((addon, idx) => (
                            <ScaleInWhenVisible key={idx} delay={idx * 0.05}>
                              <CustomTooltip 
@@ -1395,9 +1411,21 @@ const handleClosePopupPolicyType = () => {
                              >
                                <MotionChip
                                  label={
-                                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                     {addon.title}
-                                     <InfoOutlinedIcon sx={{ fontSize: 16, opacity: 0.7 }} />
+                                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, width: '100%'  }}>
+                                      <Box
+                                       sx={{
+                                         overflow: 'hidden',
+                                         textOverflow: 'ellipsis',
+                                         display: '-webkit-box',
+                                         WebkitLineClamp: 2,
+                                         WebkitBoxOrient: 'vertical',
+                                         lineHeight: '1.4',
+                                         flex: 1,
+                                       }}
+                                     >
+                                       {addon.title}
+                                     </Box>
+                                     <InfoOutlinedIcon sx={{ fontSize: 16, opacity: 0.7, flexShrink: 0  }} />
                                    </Box>
                                  }
                                  whileHover={{
@@ -1412,10 +1440,19 @@ const handleClosePopupPolicyType = () => {
                                    border: "1px solid #8AC642",
                                    fontSize: { xs: "12px", sm: "13px", md: "14px" },
                                    fontWeight: 500,
-                                   py: 2.5,
-                                   px: 2,
+                                   py: 1.5,
+                                   px: 1.5,
                                    transition: "all 0.3s ease",
+                                   textAlign: "center",
                                    cursor: "pointer",
+                                     width: '200px',
+                                   height: '60px',
+                                   minHeight: '40px',
+                                   '& .MuiChip-label': {
+                                     whiteSpace: 'normal',
+                                     width: '100%',
+                                     padding: 0,
+                                   },
                                    '&:hover .MuiChip-label': {
                                      fontWeight: 600,
                                    },
@@ -1442,11 +1479,13 @@ const handleClosePopupPolicyType = () => {
                        background: "linear-gradient(135deg, #1c1c1c 0%, #292929 100%)",
                        borderRadius: "16px",
                        border: "1px solid #444",
-                       height: "100%",
+                       height: "550px",
                        transition: "all 0.3s ease",
+                       display: "flex",
+                       flexDirection: "column"
                      }}
                    >
-                     <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                     <CardContent sx={{ p: { xs: 3, md: 4 }, flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                        <Typography
                          sx={{
                            fontWeight: 700,
@@ -1456,11 +1495,27 @@ const handleClosePopupPolicyType = () => {
                            display: "flex",
                            alignItems: "center",
                            gap: 1,
+                           flexShrink: 0
                          }}
                        >
                          ⚠️ Exclusions
                        </Typography>
-                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5,  overflowY: "auto",
+                         pr: 1,
+                         '&::-webkit-scrollbar': {
+                           width: '8px',
+                         },
+                         '&::-webkit-scrollbar-track': {
+                           background: 'rgba(255, 255, 255, 0.05)',
+                           borderRadius: '4px',
+                         },
+                         '&::-webkit-scrollbar-thumb': {
+                           background: '#8AC642',
+                           borderRadius: '4px',
+                         },
+                         '&::-webkit-scrollbar-thumb:hover': {
+                           background: '#9BD654',
+                         }, }}>
                          {policy.exclusions.map((exclusion, idx) => (
                            <ScaleInWhenVisible key={idx} delay={idx * 0.05}>
                              <CustomTooltip 
@@ -1468,9 +1523,22 @@ const handleClosePopupPolicyType = () => {
                              >
                                <MotionChip
                                  label={
-                                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                     {exclusion.title}
-                                     <InfoOutlinedIcon sx={{ fontSize: 16, opacity: 0.7 }} />
+                                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5,width: '100%' }}>
+                                    
+                                      <Box
+                                       sx={{
+                                         overflow: 'hidden',
+                                         textOverflow: 'ellipsis',
+                                         display: '-webkit-box',
+                                         WebkitLineClamp: 2,
+                                         WebkitBoxOrient: 'vertical',
+                                         lineHeight: '1.4',
+                                         flex: 1,
+                                       }}
+                                     >
+                                       {exclusion.title}
+                                     </Box>
+                                     <InfoOutlinedIcon sx={{ fontSize: 16, opacity: 0.7, flexShrink: 0  }} />
                                    </Box>
                                  }
                                  whileHover={{
@@ -1485,11 +1553,20 @@ const handleClosePopupPolicyType = () => {
                                    border: "1px solid rgba(255, 181, 71, 0.4)",
                                    fontSize: { xs: "12px", sm: "13px", md: "14px" },
                                    fontWeight: 500,
-                                   py: 2.5,
-                                   px: 2,
+                                   py: 1.5,
+                                   px: 1.5,
                                    transition: "all 0.3s ease",
                                    cursor: "pointer",
-                                   borderRadius: "10px",
+                                   width: '200px',
+                                   height: '60px',
+                                   textAlign: "center",
+                                   minHeight: '40px',
+                                   '& .MuiChip-label': {
+                                     whiteSpace: 'normal',
+                                     width: '100%',
+                                     padding: 0,
+                                   },
+                               
                                    '&:hover .MuiChip-label': {
                                      fontWeight: 600,
                                    },
@@ -1527,7 +1604,7 @@ const handleClosePopupPolicyType = () => {
               {/* Main CTA Card */}
               <Box
                 sx={{
-                  background: "linear-gradient(135deg, #8AC642 0%, #FFEB3B 100%)",
+                  background: "linear-gradient(90deg, #8AC642 0%, #5FB848 50%, #4DD0C8 100%)",
                   p: { xs: 5, sm: 6, md: 8 },
                   position: "relative",
                   overflow: "hidden",
@@ -1536,6 +1613,7 @@ const handleClosePopupPolicyType = () => {
                   justifyContent: "space-between",
                   flexDirection: { xs: "column", md: "row" },
                   gap: { xs: 4, md: 6 },
+                  
                 }}
               >
                 {/* Decorative circles */}
@@ -1630,7 +1708,7 @@ const handleClosePopupPolicyType = () => {
                       },
                     }}
                   >
-                    {buying ? "Processing..." : "Buy Insurance"}
+                    {buying ? "Processing..." : "Get Insured Now →"}
                   </MotionButton>
                 </Box>
 
