@@ -758,7 +758,7 @@ const handleClosePopupPolicyType = () => {
 >
   <DecorativeCircles />
 
-  <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+  <Container sx={{ position: "relative", zIndex: 1, textAlign: "center",  maxWidth: '1536px !important' }}>
     
     {/* Back Button */}
     <MotionButton
@@ -886,7 +886,7 @@ const handleClosePopupPolicyType = () => {
 </MotionBox>
 
 
-        <Container maxWidth="xl">
+        <Container sx={{ maxWidth: '1536px !important'}}>
           {/* Why Choose */}
           {policy.whyChoose?.length > 0 && (
             <AnimatedSection>
