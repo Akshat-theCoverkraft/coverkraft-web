@@ -8,6 +8,7 @@ const Popup = ({
   visible,
   title = "Application Submitted 🎉",
   message = "Thank you! Your submission was successful.",
+  messageHtml = null, 
   buttons = [],
   buttonText = "OK",
   onClose,
@@ -150,17 +151,28 @@ const Popup = ({
           </h2>
         </div>
 
-        {/* Message */}
-        <p
-          style={{
-            marginBottom: "1.5em",
-            color: "#ccc",
-            lineHeight: 1.6,
-            whiteSpace: "pre-line",
-          }}
-        >
-          {message}
-        </p>
+       {/* Message - ✅ Support both HTML and plain text */}
+        {messageHtml ? (
+          <div
+            style={{
+              marginBottom: "1.5em",
+              color: "#ccc",
+              lineHeight: 1.6,
+            }}
+            dangerouslySetInnerHTML={{ __html: messageHtml }}
+          />
+        ) : (
+          <p
+            style={{
+              marginBottom: "1.5em",
+              color: "#ccc",
+              lineHeight: 1.6,
+              whiteSpace: "pre-line",
+            }}
+          >
+            {message}
+          </p>
+        )}
 
           {/* ✅ NEW: Radio Button Section */}
 {/* ✅ NEW: Radio Button Section */}

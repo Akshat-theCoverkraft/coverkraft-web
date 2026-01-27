@@ -402,11 +402,14 @@ const handleClosePopupPolicyType = () => {
   const [comingSoonModal, setComingSoonModal] = useState({
     visible: false,
     message: "",
-    contactEmail: ""
+    messageHtml: "",
+    contactEmail: "",
+    mailtoLink: "" 
   });
   const [profileModal, setProfileModal] = useState({
     visible: false,
     message: "",
+    messageHtml: "",
     missingFields: []
   });
 
@@ -542,7 +545,9 @@ const handleClosePopupPolicyType = () => {
           setComingSoonModal({
             visible: true,
             message: responseData.message,
-            contactEmail: responseData.contact_email || "Contact@thecoverkraft.com"
+            message_html: responseData.message_html,
+            contactEmail: responseData.contact_email || "Contact@thecoverkraft.com",
+            mailtoLink: responseData.mailto_link
           });
           setBuying(false);
           return;
@@ -698,6 +703,7 @@ const handleClosePopupPolicyType = () => {
       <Popup
         visible={comingSoonModal.visible}
         title="Coming Soon 🚀"
+        messageHtml={comingSoonModal.message_html || comingSoonModal.messageHtml}
         message={
           comingSoonModal.message ||
           "You may send your requirement to Contact@thecoverkraft.com and our team will get in touch with you."
@@ -710,6 +716,8 @@ const handleClosePopupPolicyType = () => {
                 visible: false,
                 message: "",
                 contactEmail: "",
+                 messageHtml: "", 
+                  mailtoLink: "",
               }),
           },
         ]}
