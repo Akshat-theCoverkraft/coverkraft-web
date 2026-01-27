@@ -210,7 +210,7 @@ const PolicyDetails = () => {
   const [showSessionExpired, setShowSessionExpired] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userName, setUserName] = useState("");
-  const [comingSoonModal, setComingSoonModal] = useState({ visible: false, message: "", contactEmail: "" });
+  const [comingSoonModal, setComingSoonModal] = useState({ visible: false, message: "",  messageHtml: "", contactEmail: "", mailtoLink: ""  });
   const [profileModal, setProfileModal] = useState({ visible: false, message: "", missingFields: [] });
 
   // Fetch user data
@@ -326,7 +326,9 @@ const PolicyDetails = () => {
         setComingSoonModal({
           visible: true,
           message: responseData.message,
-          contactEmail: responseData.contact_email || "Contact@thecoverkraft.com"
+           messageHtml: responseData.message_html,
+          contactEmail: responseData.contact_email || "Contact@thecoverkraft.com",
+          mailtoLink: responseData.mailto_link
         });
         return;
       }

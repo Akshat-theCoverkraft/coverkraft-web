@@ -139,45 +139,59 @@ const PolicyDetail = ({ policyId }) => {
   };
 
   // New Modal for Coming Soon
-  const ComingSoonModal = ({ visible, onClose }) => {
-    if (!visible) return null;
-  
-    return (
+const ComingSoonModal = ({ visible, onClose }) => {
+  if (!visible) return null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        background: "rgba(0,0,0,0.6)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10000,
+      }}
+    >
       <div
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "rgba(0,0,0,0.6)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10000,
+          background: "#1e1e1e",
+          padding: "2em",
+          borderRadius: "16px",
+          maxWidth: "450px",
+          textAlign: "center",
+          color: "#fff",
+          boxShadow: "0 0 20px rgba(0,0,0,0.7)",
         }}
       >
-        <div
-          style={{
-            background: "#1e1e1e",
-            padding: "2em",
-            borderRadius: "16px",
-            maxWidth: "450px",
-            textAlign: "center",
-            color: "#fff",
-            boxShadow: "0 0 20px rgba(0,0,0,0.7)",
-          }}
-        >
-          <h2 style={{ marginBottom: "1em", fontSize: "1.5em" }}>Coming Soon 🚀</h2>
-          <p style={{ marginBottom: "1.5em", color: "#ccc", lineHeight: 1.6 }}>
-            You may send your requirement to <b>Contact@thecoverkraft.com</b> and
-            our team will get in touch with you.
-          </p>
-          <Button text="OK" size="md" block={true} onClick={onClose} />
-        </div>
+        <h2 style={{ marginBottom: "1em", fontSize: "1.5em" }}>Coming Soon 🚀</h2>
+        <p style={{ marginBottom: "1.5em", color: "#ccc", lineHeight: 1.6 }}>
+          You may send your requirement to{" "}
+          <a
+            href="mailto:Contact@thecoverkraft.com?subject=Requirement%20for%20Upcoming%20Feature"
+            style={{
+              color: "#4A90E2",
+              textDecoration: "underline",
+              cursor: "pointer",
+              fontWeight: "bold",
+              transition: "color 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.target.style.color = "#8AC642")}
+            onMouseLeave={(e) => (e.target.style.color = "#4A90E2")}
+          >
+            Contact@thecoverkraft.com
+          </a>{" "}
+          and our team will get in touch with you.
+        </p>
+        <Button text="OK" size="md" block={true} onClick={onClose} />
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   // Helper function to show toast only once
 const showToastOnce = (message, type = "success") => {
