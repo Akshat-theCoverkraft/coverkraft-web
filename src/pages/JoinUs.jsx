@@ -34,6 +34,7 @@ const JoinUs = () => {
     contactNumber: "",
     email: "",
     applyingFor: "",
+    rmName: "",
   });
 
   const [resumeFile, setResumeFile] = useState(null);
@@ -119,6 +120,9 @@ const JoinUs = () => {
       errors.gender = validateGender(data.gender).error;
     if (validateApplyingFor(data.applyingFor).error)
       errors.applyingFor = validateApplyingFor(data.applyingFor).error;
+      if (!data.rmName || data.rmName.trim() === "") {
+    errors.rmName = "RM Name is required";
+  }
 
     // For Employee, validate resume; for POS, validate passportPhoto
     if (isPOS) {
@@ -252,6 +256,7 @@ const JoinUs = () => {
       "contactNumber",
       "email",
       "applyingFor",
+      "rmName"
     ];
 
     setTouched(
@@ -276,6 +281,7 @@ const JoinUs = () => {
       contactNumber,
       email,
       applyingFor,
+      rmName,
     } = formData;
 
     const data = new FormData();
@@ -288,7 +294,7 @@ const JoinUs = () => {
     data.append("contactNumber", contactNumber);
     data.append("email", email);
     data.append("applyingFor", applyingFor);
-
+    data.append("rmName", rmName);
     // Append files based on role
     if (isPOS) {
       if (posDocuments.passportPhoto) 
@@ -327,6 +333,7 @@ const JoinUs = () => {
           contactNumber: "",
           email: "",
           applyingFor: "",
+          rmName: "", 
         });
         setResumeFile(null);
         setPosDocuments({
@@ -740,6 +747,7 @@ const JoinUs = () => {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: 24,
+    marginBottom: 24,
   }}>
     <StateAutocomplete
       label="State"
@@ -764,6 +772,27 @@ const JoinUs = () => {
       touched={touched.pinCode}
     />
   </div>
+ {/* Row 5: Reference / RM Name - Only show for POS */}
+{formData.applyingFor === "POS" && (
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 24,
+  }}>
+    <FormField
+      label="Reference / RM Name"
+      field="rmName"
+      type="text"
+      placeholder="Enter your RM Name"
+      value={formData.rmName}
+      onChange={(val) => handleChange('rmName', val)}
+      onBlur={() => handleBlur('rmName')}
+      error={fieldErrors.rmName}
+      touched={touched.rmName}
+    />
+    <div /> {/* Empty div to maintain grid structure */}
+  </div>
+)}
 </div>
 
             {/* Conditional File Upload - Resume for Employee, Passport Photo for POS */}
@@ -942,6 +971,7 @@ const JoinUs = () => {
                     contactNumber: "",
                     email: "",
                     applyingFor: "",
+                    rmName: "", 
                   });
                   setResumeFile(null);
                   setPosDocuments({
