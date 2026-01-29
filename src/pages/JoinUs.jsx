@@ -120,9 +120,6 @@ const JoinUs = () => {
       errors.gender = validateGender(data.gender).error;
     if (validateApplyingFor(data.applyingFor).error)
       errors.applyingFor = validateApplyingFor(data.applyingFor).error;
-      if (!data.rmName || data.rmName.trim() === "") {
-    errors.rmName = "RM Name is required";
-  }
 
     // For Employee, validate resume; for POS, validate passportPhoto
     if (isPOS) {
@@ -786,9 +783,8 @@ const JoinUs = () => {
       placeholder="Enter your RM Name"
       value={formData.rmName}
       onChange={(val) => handleChange('rmName', val)}
-      onBlur={() => handleBlur('rmName')}
-      error={fieldErrors.rmName}
       touched={touched.rmName}
+      required = {false}
     />
     <div /> {/* Empty div to maintain grid structure */}
   </div>
