@@ -34,6 +34,7 @@ const JoinUs = () => {
     contactNumber: "",
     email: "",
     applyingFor: "",
+    rmName: "",
   });
 
   const [resumeFile, setResumeFile] = useState(null);
@@ -119,6 +120,9 @@ const JoinUs = () => {
       errors.gender = validateGender(data.gender).error;
     if (validateApplyingFor(data.applyingFor).error)
       errors.applyingFor = validateApplyingFor(data.applyingFor).error;
+      if (!data.rmName || data.rmName.trim() === "") {
+    errors.rmName = "RM Name is required";
+  }
 
     // For Employee, validate resume; for POS, validate passportPhoto
     if (isPOS) {
@@ -252,6 +256,7 @@ const JoinUs = () => {
       "contactNumber",
       "email",
       "applyingFor",
+      "rmName"
     ];
 
     setTouched(
@@ -276,6 +281,7 @@ const JoinUs = () => {
       contactNumber,
       email,
       applyingFor,
+      rmName,
     } = formData;
 
     const data = new FormData();
@@ -288,7 +294,7 @@ const JoinUs = () => {
     data.append("contactNumber", contactNumber);
     data.append("email", email);
     data.append("applyingFor", applyingFor);
-
+    data.append("rmName", rmName);
     // Append files based on role
     if (isPOS) {
       if (posDocuments.passportPhoto) 
@@ -327,6 +333,7 @@ const JoinUs = () => {
           contactNumber: "",
           email: "",
           applyingFor: "",
+          rmName: "", 
         });
         setResumeFile(null);
         setPosDocuments({
@@ -385,6 +392,7 @@ const JoinUs = () => {
   const FileUploadBox = ({
     id,
     label,
+    tooltip,
     file,
     error,
     onFileSelect,
@@ -402,7 +410,66 @@ const JoinUs = () => {
           display: "block",
         }}
       >
-        {label} <span style={{ color: "#f44336" }}>*</span>
+        {label} 
+       {tooltip && (
+  <div style={{ position: "relative", display: "inline-block", marginLeft: 6 }}>
+    <span
+      style={{
+        display: "inline-flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 22,
+        height: 22,
+        borderRadius: "50%",
+        color: "#8AC642",
+        fontSize: "1rem",
+        fontWeight: "bold",
+        cursor: "pointer",
+      }}
+    >
+      ⓘ
+    </span>
+
+    {/* Tooltip box */}
+    <div
+      style={{
+        position: "absolute",
+        bottom: "125%", // place above the icon
+        left: "50%",
+        transform: "translateX(-50%)",
+        backgroundColor: "#212121",
+        // color: "#8AC642",
+        padding: "6px 10px",
+        borderRadius: 6,
+        fontSize: "0.85rem",
+        whiteSpace: "nowrap",
+        textAlign: "center",
+        border: "1px solid #8AC642",
+        zIndex: 10,
+        boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+      }}
+    >
+      {tooltip}
+
+      {/* Small arrow pointing down */}
+      <div
+        style={{
+          position: "absolute",
+          top: "100%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: 0,
+          height: 0,
+          borderLeft: "6px solid transparent",
+          borderRight: "6px solid transparent",
+          borderTop: "6px solid #212121",
+        }}
+      />
+    </div>
+  </div>
+)}
+
+        <span style={{ color: "#f44336" }}>*</span>
       </label>
 
       <input
@@ -487,7 +554,7 @@ const JoinUs = () => {
         message="Thank you for choosing to partner with us. Please provide your details to begin. We will review and respond at the earliest."
         radioOptions={[
           { label: "Employee", value: "Employee" },
-          { label: "POS", value: "POS" },
+          { label: "POSP", value: "POS" },
         ]}
         selectedRadio={selectedRole}
         onRadioChange={setSelectedRole}
@@ -533,19 +600,23 @@ const JoinUs = () => {
                   color: "#8AC642",
                   fontWeight: 700,
                   fontSize: "2.5rem",
-                  textTransform: "uppercase",
+                 
                   marginBottom: 8,
                   letterSpacing: 1,
                   margin: 0,
                 }}
               >
-                Details
+               {formData.applyingFor === "POS" 
+      ? "Become a POSP Insurance Agent"
+      : formData.applyingFor === "Employee"
+      ? "Employee Application Details"
+      : "Application Form"}
               </h1>
               <div
                 style={{
                   height: 4,
                   width: 60,
-                  backgroundColor: "#8AC642",
+                  // backgroundColor: "#8AC642",
                   borderRadius: 2,
                 }}
               />
@@ -564,8 +635,12 @@ const JoinUs = () => {
               <p style={{ color: "#8AC642", fontWeight: 600, margin: 0 }}>
                 Applying For:{" "}
                 <span style={{ color: "#fff" }}>
-                  {formData.applyingFor || "Not Selected"}
-                </span>
+      {formData.applyingFor === "POS" 
+        ? "POSP (Point of Sales Person)"
+        : formData.applyingFor === "Employee"
+        ? "Employee"
+        : "Not Selected"}
+    </span>
               </p>
             </div>
 
@@ -672,6 +747,7 @@ const JoinUs = () => {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: 24,
+    marginBottom: 24,
   }}>
     <StateAutocomplete
       label="State"
@@ -696,6 +772,27 @@ const JoinUs = () => {
       touched={touched.pinCode}
     />
   </div>
+ {/* Row 5: Reference / RM Name - Only show for POS */}
+{formData.applyingFor === "POS" && (
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 24,
+  }}>
+    <FormField
+      label="Reference / RM Name"
+      field="rmName"
+      type="text"
+      placeholder="Enter your RM Name"
+      value={formData.rmName}
+      onChange={(val) => handleChange('rmName', val)}
+      onBlur={() => handleBlur('rmName')}
+      error={fieldErrors.rmName}
+      touched={touched.rmName}
+    />
+    <div /> {/* Empty div to maintain grid structure */}
+  </div>
+)}
 </div>
 
             {/* Conditional File Upload - Resume for Employee, Passport Photo for POS */}
@@ -766,7 +863,7 @@ const JoinUs = () => {
 
                     <FileUploadBox
                       id="aadharFront"
-                      label="Aadhar Card (Front Side)"
+                      label="Aadhaar Front Side (Number Masked)"
                       file={posDocuments.aadharFront}
                       error={fieldErrors.aadharFront}
                       onFileSelect={(e) =>
@@ -812,7 +909,7 @@ const JoinUs = () => {
 
                     <FileUploadBox
                       id="aadharBack"
-                      label="Aadhar Card (Back Side)"
+                      label="Aadhaar Back Side (Number Masked)"
                       file={posDocuments.aadharBack}
                       error={fieldErrors.aadharBack}
                       onFileSelect={(e) => handlePosFileSelect("aadharBack", e)}
@@ -874,6 +971,7 @@ const JoinUs = () => {
                     contactNumber: "",
                     email: "",
                     applyingFor: "",
+                    rmName: "", 
                   });
                   setResumeFile(null);
                   setPosDocuments({

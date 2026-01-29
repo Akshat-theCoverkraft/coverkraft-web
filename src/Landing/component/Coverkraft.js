@@ -82,26 +82,40 @@ const Coverkraft = () => {
 </Box>
 
 
-        <Box
-          display="flex"
-          flexDirection={{ xs: "column", sm: "row" }}
-          alignItems={{ xs: "flex-start", sm: "center" }}
-          gap={2}
-          mt={4}
-        >
-          <Box
-            component="img"
-            src={googleicon}
-            alt="Google Play"
-            sx={{ width: { xs: "160px", sm: "180px" } }}
-          />
-          <Box
-            component="img"
-            src={appleicon}
-            alt="Apple Store"
-            sx={{ width: { xs: "160px", sm: "180px" } }}
-          />
-        </Box>
+       <Box
+  display="flex"
+  flexDirection={{ xs: "column", sm: "row" }}
+  alignItems={{ xs: "flex-start", sm: "center" }}
+  gap={2}
+  mt={4}
+>
+  <Box
+    component="a"
+    href="https://play.google.com/store/apps/details?id=com.coverkraft&hl=en_IN"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Box
+      component="img"
+      src={googleicon}
+      alt="Google Play"
+      sx={{ width: { xs: "160px", sm: "180px" }, cursor: "pointer" }}
+    />
+  </Box>
+  <Box
+    component="a"
+    href="https://apps.apple.com/in/app/coverkraft/id6745465246"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Box
+      component="img"
+      src={appleicon}
+      alt="Apple Store"
+      sx={{ width: { xs: "160px", sm: "180px" }, cursor: "pointer" }}
+    />
+  </Box>
+</Box>
       </Grid>
     </Grid>
   );
