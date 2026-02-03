@@ -184,7 +184,7 @@ const Popup = ({
         color: "#fff",
         fontWeight: 600,
         marginBottom: "20px",
-        fontSize: "1.1rem",
+        fontSize: "1.8rem",
         textAlign: "center",
       }}
     >
@@ -242,7 +242,7 @@ const Popup = ({
               style={{
                 color: "#fff",
                 fontWeight: 500,
-                fontSize: "1rem",
+                fontSize: "1.5rem",
               }}
             >
               {option.label}

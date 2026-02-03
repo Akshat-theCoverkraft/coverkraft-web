@@ -52,7 +52,7 @@ const FormField = ({
       <label
         style={{
           color: "#fff",
-             fontSize: "1.05rem",
+             fontSize: "1.5rem",
           marginBottom: 8,
           fontWeight: 500,
         }}

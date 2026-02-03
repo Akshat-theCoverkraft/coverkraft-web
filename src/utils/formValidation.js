@@ -95,6 +95,20 @@ export const validateState = (state) => {
   return { valid: true, error: "" };
 };
 
+export const validateCity = (state) => {
+  const stateRegex = /^[a-zA-Z\s]{2,30}$/;
+  if (!state) {
+    return { valid: false, error: "District is required" };
+  }
+  if (!stateRegex.test(state)) {
+    return {
+      valid: false,
+      error: "Please enter a valid District name",
+    };
+  }
+  return { valid: true, error: "" };
+};
+
 export const validateGender = (gender) => {
   if (!gender) {
     return { valid: false, error: "Gender is required" };
