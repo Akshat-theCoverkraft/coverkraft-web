@@ -10,6 +10,7 @@ const StateAutocomplete = ({
   options = [],
   placeholder = "Search and select state",
   disabled = false,
+   onStateSelect,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,12 +31,15 @@ const StateAutocomplete = ({
 
   // Set search term to selected value
   useEffect(() => {
-    if (value) {
-      setSearchTerm(value);
+    if (value && options.length > 0) {
+      const selectedOption = options.find(option => option.value === value);
+      if (selectedOption) {
+        setSearchTerm(selectedOption.label); // Show the state name, not the ID
+      }
     } else {
       setSearchTerm("");
     }
-  }, [value]);
+  }, [value, options]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -59,12 +63,18 @@ const StateAutocomplete = ({
     // If user clears the input, clear the selection
     if (inputValue === "") {
       onChange("");
+      if (onStateSelect) {
+        onStateSelect(null); // Clear state ID
+      }
     }
   };
 
   const handleOptionClick = (option) => {
     setSearchTerm(option.label);
     onChange(option.value);
+    if (onStateSelect) {
+      onStateSelect(option.id); // Pass the ID separately
+    }
     setIsOpen(false);
   };
 
@@ -86,7 +96,7 @@ const StateAutocomplete = ({
       <label
         style={{
           color: "#fff",
-          fontSize: "1.05rem",
+          fontSize: "1.5rem",
           marginBottom: 8,
           fontWeight: 500,
           display: "block",
@@ -183,7 +193,7 @@ const StateAutocomplete = ({
                     cursor: "pointer",
                     color: "#fff",
                     backgroundColor:
-                      value === option.value ? "#2a2a2a" : "transparent",
+                      value === option.label || option.value ? "#2a2a2a" : "transparent",
                     transition: "background-color 0.2s ease",
                     borderBottom:
                       index < filteredOptions.length - 1
@@ -195,7 +205,7 @@ const StateAutocomplete = ({
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor =
-                      value === option.value ? "#2a2a2a" : "transparent";
+                      value === option.label || option.value ? "#2a2a2a" : "transparent";
                   }}
                 >
                   {option.label}

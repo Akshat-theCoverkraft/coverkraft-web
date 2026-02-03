@@ -4,6 +4,7 @@ import Footer from "../Landing/component/Footer";
 import FormField from "../component/Components/FormField";
 import LoaderOverlay from "../component/Components/LoaderOverlay";
 import StateAutocomplete from "../component/Components/StateAutocomplete";
+import CityAutocomplete from "../component/Components/Cityautocomplete"
 import Button from "../component/Button";
 import Popup from "../component/Components/Popup";
 import API_URL from "../ServiceModule/Service";
@@ -20,6 +21,7 @@ import {
   validateGender,
   validateApplyingFor,
   validateFile,
+  validateCity 
 } from "../utils/formValidation";
 import { useNavigate } from "react-router-dom";
 
@@ -30,6 +32,7 @@ const JoinUs = () => {
     dob: "",
     address: "",
     stateAgent: "",
+    cityAgent: "",
     pinCode: "",
     contactNumber: "",
     email: "",
@@ -37,6 +40,9 @@ const JoinUs = () => {
     rmName: "",
   });
 
+    const [selectedStateId, setSelectedStateId] = useState(null);
+    console.log("selectedStateId", selectedStateId)
+  
   const [resumeFile, setResumeFile] = useState(null);
   
   // POS Documents state - Added passportPhoto and cancelledCheque
@@ -61,6 +67,8 @@ const JoinUs = () => {
   });
 
   const [statesData, setStatesData] = useState([]);
+  const [data, setData] = useState ([]);
+  console.log("statesData", statesData)
   const [loadingStates, setLoadingStates] = useState(false);
 
   const [fieldErrors, setFieldErrors] = useState({});
@@ -87,6 +95,7 @@ const JoinUs = () => {
       if (result.status && result.data) {
         // Transform the data to match FormField options format
         const stateOptions = result.data.map(state => ({
+          id: state._id, 
           value: state.stateNameEnglish,
           label: state.stateNameEnglish
         }));
@@ -116,6 +125,8 @@ const JoinUs = () => {
       errors.address = validateAddress(data.address).error;
     if (validateState(data.stateAgent).error)
       errors.stateAgent = validateState(data.stateAgent).error;
+        if (validateCity(data.cityAgent).error)
+      errors.cityAgent = validateCity(data.cityAgent).error;
     if (validateGender(data.gender).error)
       errors.gender = validateGender(data.gender).error;
     if (validateApplyingFor(data.applyingFor).error)
@@ -172,6 +183,11 @@ const JoinUs = () => {
       setFieldErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
+
+    const handleStateChange = (stateName) => {
+    handleChange('stateAgent', stateName);
+  };
+
 
   const handleBlur = (field) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
@@ -249,6 +265,7 @@ const JoinUs = () => {
       "dob",
       "address",
       "stateAgent",
+      "cityAgent",
       "pinCode",
       "contactNumber",
       "email",
@@ -274,6 +291,7 @@ const JoinUs = () => {
       dob,
       address,
       stateAgent,
+      cityAgent,
       pinCode,
       contactNumber,
       email,
@@ -287,6 +305,7 @@ const JoinUs = () => {
     data.append("dob", dob);
     data.append("address", address);
     data.append("state", stateAgent);
+    data.append("city", cityAgent);
     data.append("pinCode", pinCode);
     data.append("contactNumber", contactNumber);
     data.append("email", email);
@@ -326,12 +345,14 @@ const JoinUs = () => {
           dob: "",
           address: "",
           stateAgent: "",
+          cityAgent: "",
           pinCode: "",
           contactNumber: "",
           email: "",
           applyingFor: "",
           rmName: "", 
         });
+         setSelectedStateId(null); 
         setResumeFile(null);
         setPosDocuments({
           passportPhoto: null,
@@ -385,8 +406,138 @@ const JoinUs = () => {
     },
   ];
 
+
+  const POSDocumentUploadRow = ({ id, label, file, error, onFileSelect }) => {
+    return (
+      <div style={{ 
+        marginBottom: '20px',
+        borderBottom: '1px solid #333',
+        paddingBottom: '20px'
+      }}>
+        {/* Flexbox Layout - Label and Upload Box on Same Line */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '50px'
+        }}>
+          {/* Left Side - Label */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            flex: '0 0 auto',
+            minWidth: '200px'
+          }}>
+            <span style={{
+              color: '#ffffff',
+              fontSize: '1.5rem',
+              fontWeight: '400',
+              letterSpacing: '0.3px'
+            }}>
+              {label}
+            </span>
+            <span style={{
+              color: ' #f44336',
+              fontSize: '1.2rem',
+              marginLeft: '5px'
+            }}>
+              *
+            </span>
+          </div>
+
+          {/* Right Side - Upload Box */}
+          <div style={{
+          
+            maxWidth: '550px',
+               flex: '0 0 auto',
+  marginLeft: '30px',   // ✅ push to right
+
+          }}>
+            <input
+              type="file"
+              id={id}
+              onChange={onFileSelect}
+              style={{ display: 'none' }}
+              accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
+            />
+            
+            <label htmlFor={id}>
+             <div style={{
+  border: error ? '2px dashed #f44336' : '2px dashed #8AC642',
+  borderRadius: '6px',
+  padding: '10px 16px',     // ✅ less height
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  backgroundColor: 'transparent',
+  transition: 'all 0.3s ease',
+  minHeight: '48px',        // ✅ smaller height
+      width: '300px'   
+}}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(138, 198, 66, 0.05)';
+                if (!error) e.currentTarget.style.borderColor = '#a0d954';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = error ? '#f44336' : '#8AC642';
+              }}>
+                {file ? (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    gap: '6px'
+                  }}>
+                    <div style={{
+                      color: '#8AC642',
+                      fontSize: '1.5rem',
+                      fontWeight: '500',
+                      textAlign: 'center',
+                      wordBreak: 'break-word',
+                      maxWidth: '100%'
+                    }}>
+                      {file.name}
+                    </div>
+                    <div style={{
+                      color: '#999',
+                      fontSize: '0.75rem'
+                    }}>
+                      Click to change
+                    </div>
+                  </div>
+                ) : (
+                  <span style={{
+                    color: '#8AC642',
+                    fontSize: '1.5rem',
+                    fontWeight: '400',
+                    letterSpacing: '0.5px'
+                  }}>
+                    Click to upload
+                  </span>
+                )}
+              </div>
+            </label>
+
+            {error && (
+              <span style={{
+                color: '#f44336',
+                fontSize: '1.3rem',
+                display: 'block',
+                marginTop: '8px'
+              }}>
+                {error}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // Reusable file upload component
-  const FileUploadBox = ({
+   const FileUploadBox = ({
     id,
     label,
     tooltip,
@@ -396,149 +547,191 @@ const JoinUs = () => {
     dragActiveState,
     icon = "📄",
     accept = ".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif",
-  }) => (
-    <div style={{ marginBottom: 24 }}>
-      <label
+  }) => {
+    // Check if the file is an image
+    const isImage = file && file.type && file.type.startsWith('image/');
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    useEffect(() => {
+      if (file && isImage) {
+        const objectUrl = URL.createObjectURL(file);
+        setPreviewUrl(objectUrl);
+        
+        // Cleanup function to revoke the object URL
+        return () => URL.revokeObjectURL(objectUrl);
+      } else {
+        setPreviewUrl(null);
+      }
+    }, [file, isImage]);
+
+    return (
+      <div style={{ marginBottom: 0 }}>
+        <label
+          style={{
+            color: "#fff",
+            fontSize: "1.05rem",
+            marginBottom: 8,
+            fontWeight: 500,
+            display: "block",
+          }}
+        >
+          {label} 
+         {tooltip && (
+    <div style={{ position: "relative", display: "inline-block", marginLeft: 6 }}>
+      <span
         style={{
-          color: "#fff",
-          fontSize: "1.05rem",
-          marginBottom: 8,
-          fontWeight: 500,
-          display: "block",
+          display: "inline-flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: 22,
+          height: 22,
+          borderRadius: "50%",
+          color: "#8AC642",
+          fontSize: "1rem",
+          fontWeight: "bold",
+          cursor: "pointer",
         }}
       >
-        {label} 
-       {tooltip && (
-  <div style={{ position: "relative", display: "inline-block", marginLeft: 6 }}>
-    <span
-      style={{
-        display: "inline-flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: 22,
-        height: 22,
-        borderRadius: "50%",
-        color: "#8AC642",
-        fontSize: "1rem",
-        fontWeight: "bold",
-        cursor: "pointer",
-      }}
-    >
-      ⓘ
-    </span>
+        ⓘ
+      </span>
 
-    {/* Tooltip box */}
-    <div
-      style={{
-        position: "absolute",
-        bottom: "125%", // place above the icon
-        left: "50%",
-        transform: "translateX(-50%)",
-        backgroundColor: "#212121",
-        // color: "#8AC642",
-        padding: "6px 10px",
-        borderRadius: 6,
-        fontSize: "0.85rem",
-        whiteSpace: "nowrap",
-        textAlign: "center",
-        border: "1px solid #8AC642",
-        zIndex: 10,
-        boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-      }}
-    >
-      {tooltip}
-
-      {/* Small arrow pointing down */}
+      {/* Tooltip box */}
       <div
         style={{
           position: "absolute",
-          top: "100%",
+          bottom: "125%", // place above the icon
           left: "50%",
           transform: "translateX(-50%)",
-          width: 0,
-          height: 0,
-          borderLeft: "6px solid transparent",
-          borderRight: "6px solid transparent",
-          borderTop: "6px solid #212121",
-        }}
-      />
-    </div>
-  </div>
-)}
-
-        <span style={{ color: "#f44336" }}>*</span>
-      </label>
-
-      <input
-        type="file"
-        id={id}
-        onChange={onFileSelect}
-        style={{ display: "none" }}
-        accept={accept}
-      />
-
-      <label
-        htmlFor={id}
-        onDragEnter={(e) => handleDrag(e, id)}
-        onDragLeave={(e) => handleDrag(e, id)}
-        onDragOver={(e) => handleDrag(e, id)}
-        onDrop={(e) => handleDrop(e, id, id !== "resumeUpload")}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          minHeight: "140px",
-          backgroundColor: dragActiveState ? "#2c2c2c" : "#1a1a1a",
-          border:
-            dragActiveState || error
-              ? dragActiveState
-                ? "2px dashed #8AC642"
-                : "2px dashed #f44336"
-              : "2px dashed #444",
-          borderRadius: "12px",
-          cursor: "pointer",
-          transition: "all 0.3s ease",
-          padding: "20px",
+          backgroundColor: "#212121",
+          // color: "#8AC642",
+          padding: "6px 10px",
+          borderRadius: 6,
+          fontSize: "0.85rem",
+          whiteSpace: "nowrap",
+          textAlign: "center",
+          border: "1px solid #8AC642",
+          zIndex: 10,
+          boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
         }}
       >
-        <div style={{ fontSize: "2.5rem", marginBottom: "8px" }}>{icon}</div>
-        {file ? (
-          <>
-            <span style={{ color: "#8AC642", fontWeight: 600 }}>
-              {file.name}
-            </span>
-            <span style={{ color: "#999", fontSize: "0.85rem" }}>
-              Click to change file
-            </span>
-          </>
-        ) : (
-          <>
-            <span style={{ color: "#8AC642", fontWeight: 600 }}>
-              Drag and drop your file here
-            </span>
-            <span style={{ color: "#999", fontSize: "0.85rem" }}>
-              or click to browse
-            </span>
-          </>
-        )}
-      </label>
+        {tooltip}
 
-      {error && (
-        <span
+        {/* Small arrow pointing down */}
+        <div
           style={{
-            color: "#FF4444",
-            fontSize: "1.3rem",
-            display: "block",
-            marginTop: 4,
+            position: "absolute",
+            top: "100%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 0,
+            height: 0,
+            borderLeft: "6px solid transparent",
+            borderRight: "6px solid transparent",
+            borderTop: "6px solid #212121",
+          }}
+        />
+      </div>
+    </div>
+  )}
+
+          <span style={{ color: "#f44336" }}>*</span>
+        </label>
+
+        <input
+          type="file"
+          id={id}
+          onChange={onFileSelect}
+          style={{ display: "none" }}
+          accept={accept}
+        />
+
+        <label
+          htmlFor={id}
+          onDragEnter={(e) => handleDrag(e, id)}
+          onDragLeave={(e) => handleDrag(e, id)}
+          onDragOver={(e) => handleDrag(e, id)}
+          onDrop={(e) => handleDrop(e, id, id !== "resumeUpload")}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            minHeight: "140px",
+            backgroundColor: dragActiveState ? "#2c2c2c" : "#1a1a1a",
+            border:
+              dragActiveState || error
+                ? dragActiveState
+                  ? "2px dashed #8AC642"
+                  : "2px dashed #f44336"
+                : "2px dashed #444",
+            borderRadius: "12px",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            padding: "10px",
           }}
         >
-          {error}
-        </span>
-      )}
-    </div>
-  );
+          {file && isImage && previewUrl ? (
+            // Show image preview
+            <>
+              <img
+                src={previewUrl}
+                alt="Preview"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "50px",
+                  objectFit: "contain",
+                  borderRadius: "4px",
+                  marginBottom: "8px",
+                }}
+              />
+              <span style={{ color: "#8AC642", fontWeight: 600, fontSize: "0.9rem" }}>
+                {file.name}
+              </span>
+              <span style={{ color: "#999", fontSize: "0.85rem" }}>
+                Click to change file
+              </span>
+            </>
+          ) : file ? (
+            // Show filename for PDFs and other documents
+            <>
+              <div style={{ fontSize: "2.5rem", marginBottom: "8px" }}>{icon}</div>
+              <span style={{ color: "#8AC642", fontWeight: 600 }}>
+                {file.name}
+              </span>
+              <span style={{ color: "#999", fontSize: "0.85rem" }}>
+                Click to change file
+              </span>
+            </>
+          ) : (
+            // Show upload prompt when no file selected
+            <>
+              <div style={{ fontSize: "2.5rem", marginBottom: "8px" }}>{icon}</div>
+              <span style={{ color: "#8AC642", fontWeight: 600 }}>
+                Drag and drop your file here
+              </span>
+              <span style={{ color: "#999", fontSize: "0.85rem" }}>
+                or click to browse
+              </span>
+            </>
+          )}
+        </label>
+
+        {error && (
+          <span
+            style={{
+              color: "#FF4444",
+              fontSize: "1.3rem",
+              display: "block",
+              marginTop: 4,
+            }}
+          >
+            {error}
+          </span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -601,10 +794,11 @@ const JoinUs = () => {
                   marginBottom: 8,
                   letterSpacing: 1,
                   margin: 0,
+                  textAlign: "center"
                 }}
               >
                {formData.applyingFor === "POS" 
-      ? "Become a POSP Insurance Agent"
+      ? "Become a POSP"
       : formData.applyingFor === "Employee"
       ? "Employee Application Details"
       : "Application Form"}
@@ -612,9 +806,10 @@ const JoinUs = () => {
               <div
                 style={{
                   height: 4,
-                  width: 60,
-                  // backgroundColor: "#8AC642",
+                  width: 200,
+                  backgroundColor: "#8AC642",
                   borderRadius: 2,
+                    margin: "8px auto 0", 
                 }}
               />
             </div>
@@ -642,13 +837,13 @@ const JoinUs = () => {
             </div>
 
            {/* Replace your entire grid section with this */}
-<div style={{ marginBottom: 32 }}>
+<div style={{ marginBottom: 10 }}>
   {/* Row 1: Full Name | Gender */}
   <div style={{
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: 24,
-    marginBottom: 24,
+    marginBottom: 10,
   }}>
     <FormField
       label="Full Name"
@@ -683,7 +878,7 @@ const JoinUs = () => {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: 24,
-    marginBottom: 24,
+    marginBottom:10,
   }}>
     <FormField
       label="Date Of Birth"
@@ -713,8 +908,19 @@ const JoinUs = () => {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: 24,
-    marginBottom: 24,
+    marginBottom: 10,
   }}>
+     <FormField
+      label="Email"
+      field="email"
+      type="email"
+      placeholder="Enter your email address"
+      value={formData.email}
+      onChange={(val) => handleChange('email', val)}
+      onBlur={() => handleBlur('email')}
+      error={fieldErrors.email}
+      touched={touched.email}
+    />
     <FormField
       label="Address"
       field="address"
@@ -726,17 +932,7 @@ const JoinUs = () => {
       error={fieldErrors.address}
       touched={touched.address}
     />
-    <FormField
-      label="Email"
-      field="email"
-      type="email"
-      placeholder="Enter your email address"
-      value={formData.email}
-      onChange={(val) => handleChange('email', val)}
-      onBlur={() => handleBlur('email')}
-      error={fieldErrors.email}
-      touched={touched.email}
-    />
+   
   </div>
 
   {/* Row 4: State | Pin Code */}
@@ -744,9 +940,9 @@ const JoinUs = () => {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: 24,
-    marginBottom: 24,
+    marginBottom: 10,
   }}>
-    <StateAutocomplete
+        <StateAutocomplete
       label="State"
       value={formData.stateAgent}
       onChange={(val) => handleChange('stateAgent', val)}
@@ -756,8 +952,9 @@ const JoinUs = () => {
       options={statesData}
       placeholder="Search and select your state"
       disabled={loadingStates}
+       onStateSelect={setSelectedStateId}
     />
-    <FormField
+     <FormField
       label="Pin Code"
       field="pinCode"
       type="text"
@@ -768,27 +965,47 @@ const JoinUs = () => {
       error={fieldErrors.pinCode}
       touched={touched.pinCode}
     />
+
+   
   </div>
- {/* Row 5: Reference / RM Name - Only show for POS */}
-{formData.applyingFor === "POS" && (
-  <div style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+
+{/* Row 5: District | Reference / RM Name */}
+
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(300px, 1fr))",
     gap: 24,
-  }}>
+    marginBottom: 10,
+  }}
+>
+  <CityAutocomplete
+    label="District"
+    value={formData.cityAgent}
+    onChange={(val) => handleChange("cityAgent", val)}
+    onBlur={() => handleBlur("cityAgent")}
+    error={fieldErrors.cityAgent}
+    touched={touched.cityAgent}
+    stateId={selectedStateId}
+    placeholder="Search and select your District"
+  />
+
+  {formData.applyingFor === "POS" ? (
     <FormField
-      label="Reference / RM Name"
+      label="Reference / RM Name (If Any)"
       field="rmName"
       type="text"
       placeholder="Enter your RM Name"
       value={formData.rmName}
-      onChange={(val) => handleChange('rmName', val)}
+      onChange={(val) => handleChange("rmName", val)}
       touched={touched.rmName}
-      required = {false}
+      required={false}
     />
-    <div /> {/* Empty div to maintain grid structure */}
-  </div>
-)}
+  ) : (
+    <div></div>
+  )}
+</div>
+
 </div>
 
             {/* Conditional File Upload - Resume for Employee, Passport Photo for POS */}
@@ -806,127 +1023,82 @@ const JoinUs = () => {
             )}
 
             {/* POS Documents Section */}
-            {formData.applyingFor === "POS" && (
+              {formData.applyingFor === "POS" && (
               <>
-                <div style={{ marginTop: 24, marginBottom: 32 }}>
+                <div style={{ marginTop: 20, marginBottom: 40 }}>
                   <h2
                     style={{
                       color: "#8AC642",
-                      fontWeight: 600,
-                      fontSize: "1.5rem",
-                      marginBottom: 8,
+                      fontWeight: 400,
+                      fontSize: "2rem",
+                      marginBottom: 15,
+                      letterSpacing: '0.5px',
+                       textAlign: "center",
                     }}
                   >
                     Required Documents for POS
                   </h2>
                   <div
                     style={{
-                      height: 3,
-                      width: 50,
-                      backgroundColor: "#8AC642",
+                      height: 4,
+                      width: 280,
+                      background: 'linear-gradient(90deg, #8AC642 0%, #6a9a32 100%)',
                       borderRadius: 2,
+                      marginBottom: 40,
+                      margin: "8px auto 0",
                     }}
                   />
                 </div>
 
-                {/* Two-column layout for POS documents */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                    gap: 24,
-                    marginBottom: 32,
-                  }}
-                >
-                  {/* Left Column */}
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 24,
-                    }}
-                  >
-                    <FileUploadBox
-                      id="passportPhoto"
-                      label="Passport Size Photo"
-                      file={posDocuments.passportPhoto}
-                      error={fieldErrors.passportPhoto}
-                      onFileSelect={(e) => handlePosFileSelect("passportPhoto", e)}
-                      dragActiveState={dragActive.passportPhoto}
-                      icon="📷"
-                      accept=".jpg,.jpeg,.png"
-                    />
+                {/* Side by Side Rows for POS documents */}
+                <div>
+                  <POSDocumentUploadRow
+                    id="passportPhoto"
+                    label="Passport Size Photo"
+                    file={posDocuments.passportPhoto}
+                    error={fieldErrors.passportPhoto}
+                    onFileSelect={(e) => handlePosFileSelect("passportPhoto", e)}
+                  />
 
-                    <FileUploadBox
-                      id="aadharFront"
-                      label="Aadhaar Front Side (Number Masked)"
-                      file={posDocuments.aadharFront}
-                      error={fieldErrors.aadharFront}
-                      onFileSelect={(e) =>
-                        handlePosFileSelect("aadharFront", e)
-                      }
-                      dragActiveState={dragActive.aadharFront}
-                      icon="🪪"
-                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
-                    />
+                  <POSDocumentUploadRow
+                    id="panCard"
+                    label="PAN Card"
+                    file={posDocuments.panCard}
+                    error={fieldErrors.panCard}
+                    onFileSelect={(e) => handlePosFileSelect("panCard", e)}
+                  />
 
-                    <FileUploadBox
-                      id="educationCertificate"
-                      label="Education Certificate"
-                      file={posDocuments.educationCertificate}
-                      error={fieldErrors.educationCertificate}
-                      onFileSelect={(e) =>
-                        handlePosFileSelect("educationCertificate", e)
-                      }
-                      dragActiveState={dragActive.educationCertificate}
-                      icon="🎓"
-                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
-                    />
-                  </div>
+                  <POSDocumentUploadRow
+                    id="aadharFront"
+                    label="Aadhaar Front Side (Number Masked)"
+                    file={posDocuments.aadharFront}
+                    error={fieldErrors.aadharFront}
+                    onFileSelect={(e) => handlePosFileSelect("aadharFront", e)}
+                  />
 
-                  {/* Right Column */}
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 24,
-                    }}
-                  >
-                    <FileUploadBox
-                      id="panCard"
-                      label="PAN Card"
-                      file={posDocuments.panCard}
-                      error={fieldErrors.panCard}
-                      onFileSelect={(e) => handlePosFileSelect("panCard", e)}
-                      dragActiveState={dragActive.panCard}
-                      icon="🆔"
-                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
-                    />
+                  <POSDocumentUploadRow
+                    id="aadharBack"
+                    label="Aadhaar Back Side (Number Masked)"
+                    file={posDocuments.aadharBack}
+                    error={fieldErrors.aadharBack}
+                    onFileSelect={(e) => handlePosFileSelect("aadharBack", e)}
+                  />
 
-                    <FileUploadBox
-                      id="aadharBack"
-                      label="Aadhaar Back Side (Number Masked)"
-                      file={posDocuments.aadharBack}
-                      error={fieldErrors.aadharBack}
-                      onFileSelect={(e) => handlePosFileSelect("aadharBack", e)}
-                      dragActiveState={dragActive.aadharBack}
-                      icon="🪪"
-                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
-                    />
+                  <POSDocumentUploadRow
+                    id="educationCertificate"
+                    label="Education Certificate"
+                    file={posDocuments.educationCertificate}
+                    error={fieldErrors.educationCertificate}
+                    onFileSelect={(e) => handlePosFileSelect("educationCertificate", e)}
+                  />
 
-                    <FileUploadBox
-                      id="cancelledCheque"
-                      label="Cancelled Cheque & Bank Passbook ( Name must be visible )"
-                      file={posDocuments.cancelledCheque}
-                      error={fieldErrors.cancelledCheque}
-                      onFileSelect={(e) =>
-                        handlePosFileSelect("cancelledCheque", e)
-                      }
-                      dragActiveState={dragActive.cancelledCheque}
-                      icon="🏦"
-                      accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.tiff,.tif"
-                    />
-                  </div>
+                  <POSDocumentUploadRow
+                    id="cancelledCheque"
+                    label="Cancelled Cheque & Bank Passbook (Name must be visible)"
+                    file={posDocuments.cancelledCheque}
+                    error={fieldErrors.cancelledCheque}
+                    onFileSelect={(e) => handlePosFileSelect("cancelledCheque", e)}
+                  />
                 </div>
               </>
             )}
