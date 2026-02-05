@@ -20,8 +20,10 @@ import IMAGE_PATH from '../ServiceModule/imagePath';
 import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
 import SessionExpiredModal from "../utils/sessionExpireModal";
+import { useNavigate } from "react-router-dom";
 
 const Notification = () => {
+    const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -84,9 +86,12 @@ const Notification = () => {
   };
 
   const truncateText = (text, wordLimit = 40) => {
-    const words = text.split(" ");
-    return words.length <= wordLimit ? text : words.slice(0, wordLimit).join(" ") + "...";
+    // Remove HTML tags from description
+    const plainText = text.replace(/<[^>]*>/g, '');
+    const words = plainText.split(" ");
+    return words.length <= wordLimit ? plainText : words.slice(0, wordLimit).join(" ") + "...";
   };
+
 
   const getTimeAgo = (dateString) => {
     const now = new Date();
@@ -128,6 +133,66 @@ const Notification = () => {
     }
   };
 
+  const handleNotificationClick = (notification) => {
+    // Update status for policy notifications or general notifications
+    if (notification.notificationStatus !== "seen") {
+      updateNotificationStatus(notification._id);
+    }
+
+    // Check if it's a general notification with specific type
+    const notificationType = notification.type || notification.data?.type;
+    
+    // Define types that should redirect
+    const redirectTypes = ['blog', 'video', 'news', 'short'];
+    
+    if (activeTab === 1 && notificationType && redirectTypes.includes(notificationType.toLowerCase())) {
+      // Handle redirect for specific general notifications (blog, video, news, shorts)
+      const itemId = notification.data?.newsId || notification.populatedData?._id;
+      
+      if (itemId) {
+        // Redirect based on type
+        const redirectPath = `/feed/${notificationType}/${itemId}`;
+        navigate(redirectPath);
+      } else {
+        // If no ID, show dialog as fallback
+        setSelectedNotification(notification);
+        setShowDialog(true);
+      }
+    } else {
+      // For policy notifications or other general notifications, show dialog
+      setSelectedNotification(notification);
+      setShowDialog(true);
+    }
+  };
+
+    // Get notification image
+  const getNotificationImage = (notification) => {
+    // Try to get image from various sources
+    if (notification.imagePath && notification.imagePath !== "null") {
+      return notification.imagePath;
+    }
+    
+    // For general notifications, try to get from populatedData
+    if (notification.populatedData?.image) {
+      return notification.populatedData.image;
+    }
+    
+    // Default image
+    return require("../Images/CoverKraft-Logo-6.png");
+  };
+
+  // Get notification description
+  const getNotificationDescription = (notification) => {
+    if (notification.description) {
+      return notification.description;
+    }
+    
+    if (notification.data?.description) {
+      return notification.data.description;
+    }
+    
+    return "No description available";
+  };
 
 
   return (
@@ -184,40 +249,23 @@ const Notification = () => {
                         gap: 2,
                         cursor: "pointer"
                       }}
-                      onClick={() => {
-                        setSelectedNotification(n);
-                        setShowDialog(true);
-
-                        if (activeTab === 0 && n.notificationStatus !== "seen") {
-                          updateNotificationStatus(n._id);
-                        }
-                      }}
+                     onClick={() => handleNotificationClick(n)}
 
                     >
                       {/* Left Image */}
-                      {n.imagePath && n.imagePath !== "null" ? (
-                        <img
-                          src={n.imagePath}
-                          alt="Notification"
-                          style={{
-                            width: "80px",
-                            height: "80px",
-                            borderRadius: "8px",
-                            objectFit: "contain"
-                          }}
-                        />
-                      ) : (
-                        <img
-                          src={require("../Images/CoverKraft-Logo-6.png")}
-                          alt="Notification"
-                          style={{
-                            width: "80px",
-                            height: "80px",
-                            borderRadius: "8px",
-                            objectFit: "contain"
-                          }}
-                        />
-                      )}
+                      <img
+                        src={getNotificationImage(n)}
+                        alt="Notification"
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          borderRadius: "8px",
+                          objectFit: "cover"
+                        }}
+                        onError={(e) => {
+                          e.target.src = require("../Images/CoverKraft-Logo-6.png");
+                        }}
+                      />
 
                       {/* Right Content */}
                       <Box sx={{ flex: 1 }}>
@@ -237,6 +285,24 @@ const Notification = () => {
                                 }}
                               />
                             )}
+                              {/* Show type badge for general notifications */}
+                                                        {activeTab === 1 && n.type && n.type !== "policy" && (
+                                                          <Box
+                                                            sx={{
+                                                              px: 1,
+                                                              py: 0.5,
+                                                              borderRadius: 1,
+                                                              backgroundColor: "#8BC642",
+                                                              color: "#000",
+                                                              fontSize: "0.8rem",
+                                                              fontWeight: 600,
+                                                              textTransform: "capitalize"
+                                                            }}
+                                                          >
+                                                            {n.type}
+                                                          </Box>
+                                                        )}
+
                           </Box>
                           <Typography sx={{ fontSize: "1rem", color: "#8BC642" }}>
                             {getTimeAgo(n.createdAt)}
@@ -244,7 +310,8 @@ const Notification = () => {
                         </Box>
 
                         <Typography sx={{ mt: 0.5, fontSize: "1.2rem", color: "#ccc" }}>
-                          {truncateText(n.description, 15)}
+                                                    {truncateText(getNotificationDescription(n), 15)}
+
                         </Typography>
                       </Box>
                     </Box>
