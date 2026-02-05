@@ -153,7 +153,7 @@ const getPolicyByUserId = async (userId) => {
     });
 
     // 👇 use backend lastSyncedAt (UTC)
-    const lastSyncedAt = res?.data?.lastSyncDate?.lastSyncedAt;
+    const lastSyncedAt = res?.data?.lastSyncDate?.currentSyncTime;
 
     if (lastSyncedAt) {
       setLastSync(new Date(lastSyncedAt));
