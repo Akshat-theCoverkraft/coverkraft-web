@@ -8,6 +8,19 @@ import store from "./store";
 import { Provider } from "react-redux";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import * as Sentry from "@sentry/react";   
+
+// Sentry init (ADD)
+Sentry.init({
+  dsn: "https://ebc4f2c44dacb64b05e3d3b72dc0beb8@o4510837986164736.ingest.us.sentry.io/4510837992914944",
+  integrations: [Sentry.browserTracingIntegration()],
+  tracesSampleRate: 1.0,
+   tracePropagationTargets: [
+    "localhost",
+    "www.thecoverkraft.com"
+    // /^https:\/\/api\.thecoverkraft\.com/
+  ],
+});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const observerErrorHandler = (e) => {
