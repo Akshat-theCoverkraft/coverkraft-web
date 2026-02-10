@@ -45,6 +45,24 @@ const policies = [
                 <p><strong>Uploaded Files:</strong> Documents stored in the Policy Vault.</p>
                 <p><strong>Cookies:</strong> Used to enhance your experience and performance.</p>
 
+                <h2 style={{ color: '#8BC642' }}>Google OAuth & Google User Data</h2>
+<p>
+    We use Google OAuth to allow users to sign in securely to the CoverKraft website and mobile application.
+</p>
+<p>
+    When you sign in using Google, we may collect limited information from your Google account such as your name, email address, and profile picture, strictly for authentication and account creation purposes.
+</p>
+<p>
+    We do not access, read, modify, or store any Google user data beyond what is necessary for login and account identification.
+</p>
+<p>
+    We do not sell, share, or use Google user data for advertising or marketing purposes.
+</p>
+<p>
+    All Google user data is handled in accordance with Google OAuth policies and applicable data protection laws.
+</p>
+
+
                 <h2 style={{ color: '#8BC642' }}>Use of Information</h2>
                 <p>We use your information to:</p>
                 <p>- Deliver and maintain our services.<br />
@@ -60,6 +78,10 @@ const policies = [
                 <p><strong>Third-Party Services:</strong> For secure payment, tech support, analytics.</p>
                 <p><strong>Legal Bodies:</strong> When required under the law or court order.</p>
                 <p><strong>Business Transitions:</strong> In case of mergers or acquisitions.</p>
+                <p>
+    <strong>Google Services:</strong> Limited data may be shared with Google solely for authentication purposes via Google OAuth.
+</p>
+
 
                 <h2 style={{ color: '#8BC642' }}>Data Security</h2>
                 <p>We implement robust security measures including:</p>
@@ -100,12 +122,14 @@ const policies = [
                     Phone: +91 7247724735
                 </p>
 
-                <h2 style={{ color: '#8BC642' }}>Consent</h2>
-                <p>By using the CoverKraft App or website, you consent to this Privacy Policy and its practices.</p>
+               <h2 style={{ color: '#8BC642' }}>Consent</h2>
+<p>
+    By using the CoverKraft App or website, you consent to this Privacy Policy and its practices.
+</p>
+<p>
+    By using Google Sign-In, you consent to the collection and use of your Google account information as described above.
+</p>
 
-                <p style={{ marginTop: '2rem', fontStyle: 'italic', color: '#CCCCCC' }}>
-                    We encourage you to review this policy regularly for any changes.
-                </p>
             </div>
 
 
