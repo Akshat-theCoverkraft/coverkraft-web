@@ -41,6 +41,7 @@ const NAV_ITEMS = [
 ];
 
 const MORE_MENU_ITEMS = [
+  { key: "PrivacyPolicy", label: "Privacy Policy", id: "PrivacyPolicy" },
   { key: "blog", label: "Blogs And News", id: "blog" },
   { key: "Card", label: "Tips And Tricks", id: "card" },
   { key: "testimonials", label: "Testimonials", id: "testimonials" },
@@ -183,6 +184,10 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleMoreItemClick = useCallback((id) => {
     setAnchor('more', null);
+     if (id === "PrivacyPolicy") {
+    navigate("/legal#PrivacyPolicy");
+    return;
+  }
     const element = document.getElementById(id);
     if (element) element.scrollIntoView({ behavior: "smooth" });
   }, [setAnchor]);
