@@ -659,7 +659,7 @@ export default function HeroSection() {
             y: logoY,
             opacity: logoOpacity,
             pointerEvents: logoPointerEvents,
-            top: '25%',
+            top: '8%',
             right: '8%',
             willChange: 'transform, opacity',
           }}
