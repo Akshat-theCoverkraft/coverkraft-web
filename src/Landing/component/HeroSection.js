@@ -101,7 +101,7 @@ export default function HeroSection() {
     return (
       <div className="relative bg-black min-h-screen">
         {/* PORTRAIT: Section 1 - Text Only */}
-        <section className="relative overflow-hidden bg-black min-h-screen flex items-center justify-center px-6 py-20">
+        <section className="relative overflow-hidden bg-black flex items-center justify-center px-6 py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -329,7 +329,7 @@ export default function HeroSection() {
     <div ref={containerRef} className="relative">
       {/* SECTION 1: Hero */}
       <section className="relative overflow-hidden bg-black min-h-screen">
-        <div className="relative z-10 grid lg:grid-cols-2 gap-8 items-center min-h-screen px-6 sm:px-12 lg:px-16 xl:px-20 py-12">
+        <div className="relative z-10 grid lg:grid-cols-2 gap-8 items-center min-h-screen px-6 sm:px-12 lg:px-16 xl:px-20 py-10">
           
           {/* LEFT - Text Content */}
           <motion.div
@@ -351,7 +351,7 @@ export default function HeroSection() {
                 style={{
                   backgroundImage:
                     "linear-gradient(90deg, #90DB78 0%, #5FD4BE 40%, #3FC8EE 100%)",
-                  fontSize: "clamp(40px, 5vw + 1rem, 110px)",
+                  fontSize: "clamp(30px, 4vw + 1rem, 75px)",
                 }}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -361,14 +361,14 @@ export default function HeroSection() {
                   delay: 0.3
                 }}
               >
-                All Your Policies.
+                All Your Policies. 
               </motion.span>
               <motion.span
                 className="block bg-clip-text text-transparent"
                 style={{
                   backgroundImage:
                     "linear-gradient(90deg, #90DB78 0%, #5FD4BE 40%, #3FC8EE 100%)",
-                  fontSize: "clamp(40px, 5vw + 1rem, 110px)",
+                  fontSize: "clamp(30px, 4vw + 1rem, 75px)",
                 }}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -660,7 +660,7 @@ export default function HeroSection() {
             opacity: logoOpacity,
             pointerEvents: logoPointerEvents,
             top: '8%',
-            right: '8%',
+            right: '5%',
             willChange: 'transform, opacity',
           }}
         >
