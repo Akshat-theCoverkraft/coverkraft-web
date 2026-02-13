@@ -41,7 +41,6 @@ const NAV_ITEMS = [
 ];
 
 const MORE_MENU_ITEMS = [
-  { key: "PrivacyPolicy", label: "Privacy Policy", id: "PrivacyPolicy" },
   { key: "blog", label: "Blogs And News", id: "blog" },
   { key: "Card", label: "Tips And Tricks", id: "card" },
   { key: "testimonials", label: "Testimonials", id: "testimonials" },
@@ -184,10 +183,6 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleMoreItemClick = useCallback((id) => {
     setAnchor('more', null);
-     if (id === "PrivacyPolicy") {
-    navigate("/legal#PrivacyPolicy");
-    return;
-  }
     const element = document.getElementById(id);
     if (element) element.scrollIntoView({ behavior: "smooth" });
   }, [setAnchor]);
@@ -202,6 +197,9 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleVault = useCallback(() => {
     navigate(sessionStorage.getItem("token") ? "/vault" : "/login");
+  }, [navigate]);
+  const handlePrivacyPolicy = useCallback(() => {
+    navigate("/legal#PrivacyPolicy");
   }, [navigate]);
 
   const closeAllMenus = useCallback(() => {
@@ -231,6 +229,15 @@ function Navbar({ scrollToContactBottom }) {
           >
             <VaultIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Policy Vault
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handlePrivacyPolicy();
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            Privacy Policy
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -308,6 +315,15 @@ function Navbar({ scrollToContactBottom }) {
             <VaultIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Policy Vault
           </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handlePrivacyPolicy();
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            Privacy Policy
+          </MenuItem>
         </MenuSection>
       );
 
@@ -321,7 +337,15 @@ function Navbar({ scrollToContactBottom }) {
           <SectionTitle>Navigation</SectionTitle>
           {visibleNavItems.map((item) => (
             <React.Fragment key={item.key}>
-            
+              <MenuItem
+                onClick={() => {
+                  handleNavigation(item);
+                  closeAllMenus();
+                }}
+                sx={{ fontSize: "1.3rem", py: 1.5 }}
+              >
+                {item.label}
+              </MenuItem>
               {item.children?.map((child) => (
                 <MenuItem
                   key={child.label}
@@ -531,9 +555,14 @@ function Navbar({ scrollToContactBottom }) {
                   Login
                 </StyledButton>
               )}
-               <StyledButton onClick={() => navigate("/joinUs")}>
-                 Join Us
-                </StyledButton>
+              
+              <StyledButton onClick={() => navigate("/joinUs")}>
+                Join Us
+              </StyledButton>
+              <StyledButton onClick={handlePrivacyPolicy}>
+                Privacy Policy
+              </StyledButton>
+              
               <StyledButton onClick={handleVault}>
                 Policy Vault
               </StyledButton>
