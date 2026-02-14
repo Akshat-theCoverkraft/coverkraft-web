@@ -199,7 +199,7 @@ function Navbar({ scrollToContactBottom }) {
     navigate(sessionStorage.getItem("token") ? "/vault" : "/login");
   }, [navigate]);
   const handlePrivacyPolicy = useCallback(() => {
-    navigate("/legal#PrivacyPolicy");
+    navigate("/privacy-policy");
   }, [navigate]);
 
   const closeAllMenus = useCallback(() => {
