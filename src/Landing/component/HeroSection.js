@@ -301,8 +301,7 @@ export default function HeroSection() {
     <div ref={containerRef} className="relative">
       {/* SECTION 1: Hero */}
       <section className="relative overflow-hidden bg-black min-h-screen">
-        <div className="relative z-10 grid lg:grid-cols-2 gap-8 items-center min-h-screen px-6 sm:px-12 lg:px-16 xl:px-20 py-10">
-          
+        <div className="relative z-10 grid lg:grid-cols-2 gap-8 items-center min-h-screen px-6 sm:px-12 lg:px-16 xl:px-20 pb-10 -mt-15">
           {/* LEFT - Text Content */}
           <motion.div
             initial={{ opacity: 0, x: -100 }}
