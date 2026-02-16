@@ -659,11 +659,14 @@ const handlePolicyAction = (action) => {
                     marginBottom: 0,
                   }}
                 >
-                  Expires on{" "}
-                  {moment(policy.policyEndDate, [
-                    "DD/MM/YYYY",
-                    "YYYY-MM-DD",
-                  ]).format("DD MMM, YYYY")}
+                   Expires on{" "}
+  {policy?.policyEndDate &&
+  moment(policy.policyEndDate, ["DD/MM/YYYY", "YYYY-MM-DD"], true).isValid()
+    ? moment(policy.policyEndDate, [
+        "DD/MM/YYYY",
+        "YYYY-MM-DD",
+      ]).format("DD MMM, YYYY")
+    : "-"}
                 </p>
               </div>
 

@@ -450,12 +450,14 @@ const PolicyCard = ({
   value,
   classes,
   showProgress = false, // New prop to control progress bar display
+  fetchTabCount,
 }) => {
   const config = POLICY_CONFIGS[policy.policyType] || {
     label: "Unknown Policy",
     image: scooty,
   };
 
+  
   console.log("policu" , policy)
   const getSafeValue = (value, fallback = "Not Available") => {
     if (
@@ -516,17 +518,25 @@ const PolicyCard = ({
       });
 
       if (response.ok) {
-        if (value === 2) {
-          fetchData("policy/archiveData", { status: "archive" }, true);
-        } else if (value === 3) {
-          fetchData(
+         if (value === 0) {
+          await fetchData("policy/getById", { policyType: "active" });
+          fetchTabCount("active"); // ✅ Update active count
+        } 
+       else if (value === 1) {
+          await fetchData("policy/getById", { policyType: "expired" });
+          fetchTabCount("expired"); // ✅ Update expired count
+        }
+        else if (value === 2) {
+          await fetchData("policy/archiveData", { status: "archive" }, true);
+          fetchTabCount("archive"); // ✅ Update archive count
+        }  else if (value === 3) {
+          await fetchData(
             "policy/getById",
             { policyType: "uncompleted" },
             false,
             true
           );
-        } else {
-          fetchData("policy/getById", { policyType: activeTab });
+          fetchTabCount("pending"); // ✅ Update pending count
         }
       } else {
         console.error("Failed to delete policy:", response.status);
@@ -964,6 +974,76 @@ export default function PolicyTabs({
 
   const classes = useStyles();
 
+    // ✅ NEW: State to store counts
+  const [tabCounts, setTabCounts] = useState({
+    active: 0,
+    expired: 0,
+    archive: 0,
+    pending: 0,
+  });
+
+    // ✅ NEW: Separate function to fetch count only
+  const fetchTabCount = async (tabKey) => {
+    try {
+      let endpoint = "";
+      let params = {};
+
+      if (tabKey === "archive") {
+        endpoint = `${API_URL}policy/archiveData`;
+        params = { status: "archive" };
+      } else if (tabKey === "pending") {
+        endpoint = `${API_URL}policy/getById`;
+        params = { policyType: "uncompleted" };
+      } else {
+        endpoint = `${API_URL}policy/getById`;
+        params = { policyType: tabKey };
+      }
+
+      // Build URL with query params
+      const queryString = new URLSearchParams({
+        userId: sessionStorage.getItem("userId") || "",
+        ...params,
+      }).toString();
+
+      const response = await fetch(`${endpoint}?${queryString}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+              console.log(`✅ Response for ${tabKey}:`, data); // ✅ Debug log
+
+        if (data.totalCount !== undefined) {
+                  console.log(`📊 Setting count for ${tabKey}:`, data.totalCount); // ✅ Debug log
+
+          setTabCounts((prev) => ({
+            ...prev,
+            [tabKey]: data.totalCount,
+          }));
+        }
+         else {
+        console.warn(`⚠️ No totalCount in response for ${tabKey}`); // ✅ Debug log
+      }
+    } else {
+      console.error(`❌ Failed to fetch ${tabKey}:`, response.status); // ✅ Debug log
+    }
+    } catch (error) {
+      console.error(`Error fetching count for ${tabKey}:`, error);
+    }
+  };
+
+    // ✅ Fetch all tab counts on mount
+  useEffect(() => {
+    fetchTabCount("active");
+    fetchTabCount("expired");
+    fetchTabCount("archive");
+    fetchTabCount("pending");
+  }, []); // Only run once on mount
+
   // Restore selected policy & tab
   useEffect(() => {
     setActiveTab("active");
@@ -977,6 +1057,8 @@ export default function PolicyTabs({
       if (tabValue < 2) setActiveTab(TAB_CONFIGS[tabValue].key);
     }
   }, []);
+
+ 
 
   // Select correct policy when filters change
   useEffect(() => {
@@ -1027,6 +1109,8 @@ export default function PolicyTabs({
       fetchData("policy/getById", { policyType: activeTab });
     }
   }, [value, activeTab]);
+
+ 
 
   const handleCardClickWithState = (id) => {
     setSelectedPolicyId(id);
@@ -1114,6 +1198,7 @@ export default function PolicyTabs({
             activeTab={activeTab}
             classes={classes}
             showProgress={tabValue === 3}
+             fetchTabCount={fetchTabCount}
           />
         ))}
       </Box>
@@ -1126,6 +1211,8 @@ export default function PolicyTabs({
   const expiredCount = policyList.filter(
     (policy) => calculatePolicyStatus(policy?.policyEndDate) === "Expired"
   ).length;
+
+
 
   return (
     <Box sx={{ px: { xs: 2, sm: 2 }, height: "100%" }}>
@@ -1178,7 +1265,60 @@ export default function PolicyTabs({
                   px: 1,
                 }}
               >
-                {TAB_CONFIGS.map((tab) => (
+                   {TAB_CONFIGS.map((tab) => {
+                  const tabCount = tabCounts[tab.key];
+                  const showCount = tabCount > 0;
+
+                  return (
+                    <Tab
+                      key={tab.value}
+                      label={
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
+                          <span style={{ fontSize: "1.4rem" }}>{tab.label}</span>
+                          {showCount && (
+                            <Box
+                              sx={{
+                                backgroundColor: tab.value === 1 ? "red" : "#8AC642",
+                                color: "white",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "1rem",
+                                fontWeight: "bold",
+                                minWidth: "24px",
+                                minHeight: "24px",
+                                padding: "2px 6px",
+                              }}
+                            >
+                              {tabCount}
+                            </Box>
+                          )}
+                        </Box>
+                      }
+                      value={tab.value}
+                      sx={{
+                        color: value === tab.value ? THEME_COLOR.GREEN : "white",
+                        backgroundColor:
+                          value === tab.value ? "white" : "inherit",
+                        textTransform: "capitalize",
+                        borderRadius: "25px",
+                        fontSize: "1.2rem",
+                        fontWeight: "700",
+                        flex: 1,
+                        px: 1,
+                      }}
+                      onClick={() => tab.value < 2 && setActiveTab(tab.key)}
+                    />
+                  );
+                })}
+                {/* {TAB_CONFIGS.map((tab) => (
                   <Tab
                     key={tab.value}
                     label={
@@ -1208,6 +1348,7 @@ export default function PolicyTabs({
                             {expiredCount}
                           </Box>
                         )}
+                        
                       </Box>
                     }
                     value={tab.value}
@@ -1224,7 +1365,7 @@ export default function PolicyTabs({
                     }}
                     onClick={() => tab.value < 2 && setActiveTab(tab.key)}
                   />
-                ))}
+                ))} */}
               </TabList>
             </Box>
           </Box>
