@@ -14,7 +14,7 @@ function PlaceholderDiv() {
         className="w-full h-full object-contain"
         style={{ transform: 'translateZ(0)' }}
       >
-        <source src="Coverkraft-logo-Final.webm" type="video/webm" />
+        <source src="Coverkraft-logo-transparent.webm" type="video/webm" />
       </video>
     </div>
   );
@@ -24,25 +24,50 @@ function PlaceholderDiv() {
 export default function HeroSection() {
   const containerRef = useRef(null);
   const [isLandscape, setIsLandscape] = useState(true);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const baseLogoSize = Math.min(screenWidth * 0.4, 600);
+const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  const logoScale = useTransform(
+  scrollYProgress,
+  [0, 0.25, 0.5],
+  [1, 0.97, 1.05]
+);
+  const logoSize = useTransform(
+    scrollYProgress,
+    [0, 0.25, 0.5],
+    [
+      baseLogoSize * 1.05,
+      baseLogoSize * 0.92,   // slightly smaller in centre move
+      baseLogoSize    // slight grow after settle
+    ]
+  );
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Detect orientation - optimized
   useEffect(() => {
     const checkOrientation = () => {
       setIsLandscape(window.innerWidth > window.innerHeight);
     };
-    
+
     checkOrientation();
-    
+
     // Debounce resize events
     let timeoutId;
     const handleResize = () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(checkOrientation, 150);
     };
-    
+
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', checkOrientation);
-    
+
     return () => {
       clearTimeout(timeoutId);
       window.removeEventListener('resize', handleResize);
@@ -51,17 +76,22 @@ export default function HeroSection() {
   }, []);
 
   // Scroll-based animations - ONLY FOR LANDSCAPE
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
+  
 
   // Direct transforms - No springs for buttery smooth 60fps
-  const logoScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.2]);
-  const logoX = useTransform(scrollYProgress, [0, 0.5], [0, -450]); // Move more to the left to reach center
+  // const logoScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.2]);
+  const maxShift = Math.min(screenWidth * 0.25, 480);
+
+  const logoX = useTransform(scrollYProgress, [0, 0.5], [0, -maxShift]);
+
+  // const logoScale = useTransform(
+  //   scrollYProgress,
+  //   [0, 0.25, 0.45, 0.5],
+  //   [1, 0.92, 1.18, 1.15]
+  // );
   const logoY = useTransform(scrollYProgress, [0, 0.5], [0, 0]); // Keep centered vertically
   const logoOpacity = useTransform(scrollYProgress, [0.85, 0.99], [1, 0]);
-  
+
   const textOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
@@ -74,7 +104,7 @@ export default function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
+            transition={{
               duration: 0.8,
               ease: [0.25, 0.1, 0.25, 1]
             }}
@@ -121,7 +151,7 @@ export default function HeroSection() {
               assistance for every policy — effortlessly.
             </motion.p>
 
-            <motion.div 
+            <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -161,7 +191,7 @@ export default function HeroSection() {
         {/* PORTRAIT: Section 2 - Logo + Features */}
         <section className="relative bg-black min-h-screen py-20 px-6">
           <div className="max-w-6xl mx-auto">
-            
+
             {/* Video - Optimized Size and Loading */}
             <motion.div
               className="flex justify-center items-center mb-16"
@@ -170,7 +200,7 @@ export default function HeroSection() {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <div 
+              <div
                 className="relative w-[350px] h-[350px] sm:w-[450px] sm:h-[450px] md:w-[550px] md:h-[550px]"
                 style={{ transform: 'translateZ(0)' }}
               >
@@ -198,7 +228,7 @@ export default function HeroSection() {
 
             {/* Features Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              
+
               {/* Feature 1 */}
               <motion.div
                 className="text-center"
@@ -306,10 +336,10 @@ export default function HeroSection() {
           <motion.div
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ 
+            transition={{
               duration: 0.8,
               ease: [0.25, 0.1, 0.25, 1],
-              delay: 0.1 
+              delay: 0.1
             }}
             style={{ opacity: textOpacity }}
           >
@@ -326,13 +356,13 @@ export default function HeroSection() {
                 }}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ 
+                transition={{
                   duration: 0.6,
                   ease: [0.25, 0.1, 0.25, 1],
                   delay: 0.2
                 }}
               >
-                All Your Policies. 
+                All Your Policies.
               </motion.span>
               <motion.span
                 className="block bg-clip-text text-transparent"
@@ -343,7 +373,7 @@ export default function HeroSection() {
                 }}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ 
+                transition={{
                   duration: 0.6,
                   ease: [0.25, 0.1, 0.25, 1],
                   delay: 0.3
@@ -362,7 +392,7 @@ export default function HeroSection() {
               }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ 
+              transition={{
                 duration: 0.6,
                 ease: [0.25, 0.1, 0.25, 1],
                 delay: 0.4
@@ -373,11 +403,11 @@ export default function HeroSection() {
               assistance for every policy — effortlessly.
             </motion.p>
 
-            <motion.div 
+            <motion.div
               className="mt-12 flex flex-wrap gap-5"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ 
+              transition={{
                 duration: 0.6,
                 ease: [0.25, 0.1, 0.25, 1],
                 delay: 0.5
@@ -391,11 +421,11 @@ export default function HeroSection() {
                   fontFamily: "Gotham, sans-serif",
                   fontSize: "clamp(16px, 1.5vw, 18px)",
                 }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.05,
                   transition: { duration: 0.2 }
                 }}
-                whileTap={{ 
+                whileTap={{
                   scale: 0.95,
                   transition: { duration: 0.1 }
                 }}
@@ -410,11 +440,11 @@ export default function HeroSection() {
                     fontFamily: "Gotham, sans-serif",
                     fontSize: "clamp(16px, 1.5vw, 18px)",
                   }}
-                  whileHover={{ 
+                  whileHover={{
                     scale: 1.05,
                     transition: { duration: 0.2 }
                   }}
-                  whileTap={{ 
+                  whileTap={{
                     scale: 0.95,
                     transition: { duration: 0.1 }
                   }}
@@ -433,7 +463,7 @@ export default function HeroSection() {
             className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ 
+            transition={{
               delay: 1,
               duration: 0.5
             }}
@@ -442,7 +472,7 @@ export default function HeroSection() {
             <motion.div
               className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2"
               animate={{ y: [0, 10, 0] }}
-              transition={{ 
+              transition={{
                 duration: 1.5,
                 repeat: Infinity,
                 ease: "easeInOut"
@@ -467,7 +497,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ 
+          transition={{
             duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1],
           }}
@@ -501,7 +531,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ 
+          transition={{
             duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1],
             delay: 0.1
@@ -540,7 +570,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ 
+          transition={{
             duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1],
             delay: 0.05
@@ -579,7 +609,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ 
+          transition={{
             duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1],
             delay: 0.15
@@ -611,13 +641,13 @@ export default function HeroSection() {
 
       {/* FLOATING LOGO - Optimized with GPU acceleration and reduced size */}
       <AnimatePresence>
-        <motion.div 
+        <motion.div
           className="hidden lg:flex justify-center items-center fixed z-50 transform-gpu"
           initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ 
+          animate={{
             opacity: 1,
             scale: 1,
-            transition: { 
+            transition: {
               duration: 0.8,
               ease: [0.25, 0.1, 0.25, 1],
               delay: 0.2
@@ -630,13 +660,15 @@ export default function HeroSection() {
             opacity: logoOpacity,
             top: '25%',
             right: '5%',
-            transform: 'translateY(-50%) translateZ(0)', // Center vertically + GPU layer
+            transform: 'translateY(-40%) translateZ(0)', // Center vertically + GPU layer
             willChange: 'transform, opacity',
           }}
         >
-          <motion.div 
-            className="relative w-[38vw] h-[38vw] max-w-[580px] max-h-[580px]"
-            style={{ 
+          <motion.div
+          // className='className="relative w-[18vw] h-[18vw] max-w-[280px] max-h-[280px]"'
+            style={{
+              width: logoSize,
+              height: logoSize,
               transform: 'translateZ(0)',
             }}
           >
