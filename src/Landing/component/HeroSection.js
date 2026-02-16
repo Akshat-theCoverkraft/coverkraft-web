@@ -1,39 +1,51 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
-// Simple placeholder component instead of 3D model
-function PlaceholderDiv({ gifUrl }) {
+// Optimized placeholder with lazy loading and GPU acceleration
+function PlaceholderDiv() {
   return (
     <div className="w-full h-full flex items-center justify-center overflow-hidden">
-      <img 
-        src={gifUrl || "/Coverkraft-logo-Final.gif"} 
-        alt="Animation"
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
         className="w-full h-full object-contain"
-        style={{
-          maxWidth: '100%',
-          maxHeight: '100%',
-        }}
-      />
+        style={{ transform: 'translateZ(0)' }}
+      >
+        <source src="Coverkraft-logo-Final.webm" type="video/webm" />
+      </video>
     </div>
   );
 }
+
 
 export default function HeroSection() {
   const containerRef = useRef(null);
   const [isLandscape, setIsLandscape] = useState(true);
 
-  // Detect orientation
+  // Detect orientation - optimized
   useEffect(() => {
     const checkOrientation = () => {
       setIsLandscape(window.innerWidth > window.innerHeight);
     };
     
     checkOrientation();
-    window.addEventListener('resize', checkOrientation);
+    
+    // Debounce resize events
+    let timeoutId;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(checkOrientation, 150);
+    };
+    
+    window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', checkOrientation);
     
     return () => {
-      window.removeEventListener('resize', checkOrientation);
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', checkOrientation);
     };
   }, []);
@@ -42,59 +54,16 @@ export default function HeroSection() {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
-    layoutEffect: false
   });
 
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 60,
-    damping: 20,
-    restDelta: 0.001,
-    restSpeed: 0.001
-  });
-
-  // Transforms for LANDSCAPE mode only - Updated for center movement
-  const logoScale = useSpring(
-    useTransform(smoothProgress, [0, 0.5, 1], [1, 1.2, 1.2]),
-    { stiffness: 60, damping: 20 }
-  );
+  // Direct transforms - No springs for buttery smooth 60fps
+  const logoScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.2]);
+  const logoX = useTransform(scrollYProgress, [0, 0.5], [0, -450]); // Move more to the left to reach center
+  const logoY = useTransform(scrollYProgress, [0, 0.5], [0, 0]); // Keep centered vertically
+  const logoOpacity = useTransform(scrollYProgress, [0.85, 0.99], [1, 0]);
   
-  // Move from right side to center horizontally
-  const logoX = useSpring(
-    useTransform(smoothProgress, [0, 0.5, 1], [0, -350, -350]),
-    { stiffness: 60, damping: 20 }
-  );
-  
-  // Move from top to center vertically
-  const logoY = useSpring(
-    useTransform(smoothProgress, [0, 0.5, 1], [0, 10, 10]),
-    { stiffness: 60, damping: 20 }
-  );
-  
-  // Faster fade-out that starts earlier and completes before scroll end
-  const logoOpacity = useSpring(
-    useTransform(smoothProgress, [0, 0.4, 0.5, 0.75, 0.85], [1, 1, 1, 0.5, 0]),
-    { stiffness: 100, damping: 30 }
-  );
-  
-  const logoBackground = useTransform(
-    smoothProgress,
-    [0, 0.5, 1],
-    ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)']
-  );
-  
-  const logoPointerEvents = useTransform(scrollYProgress, (value) => {
-    return value > 0.75 ? 'none' : 'auto';
-  });
-  
-  const textOpacity = useSpring(
-    useTransform(smoothProgress, [0, 0.3, 0.5], [1, 0.5, 0]),
-    { stiffness: 60, damping: 20 }
-  );
-  
-  const scrollIndicatorOpacity = useSpring(
-    useTransform(smoothProgress, [0, 0.2], [1, 0]),
-    { stiffness: 60, damping: 20 }
-  );
+  const textOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   // PORTRAIT MODE - Different Layout
   if (!isLandscape) {
@@ -106,7 +75,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
-              duration: 1,
+              duration: 0.8,
               ease: [0.25, 0.1, 0.25, 1]
             }}
             className="text-center max-w-2xl"
@@ -146,7 +115,7 @@ export default function HeroSection() {
               }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
               Access, manage, share, renew, and get claim
               assistance for every policy — effortlessly.
@@ -156,7 +125,7 @@ export default function HeroSection() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
             >
               <motion.button
                 className="px-8 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto"
@@ -189,19 +158,22 @@ export default function HeroSection() {
           </motion.div>
         </section>
 
-        {/* PORTRAIT: Section 2 - Logo + Features (No Scrolling Logo) */}
+        {/* PORTRAIT: Section 2 - Logo + Features */}
         <section className="relative bg-black min-h-screen py-20 px-6">
           <div className="max-w-6xl mx-auto">
             
-            {/* GIF - Increased Size and Centered */}
+            {/* Video - Optimized Size and Loading */}
             <motion.div
               className="flex justify-center items-center mb-16"
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+              transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <div className="relative w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] md:w-[600px] md:h-[600px]">
+              <div 
+                className="relative w-[350px] h-[350px] sm:w-[450px] sm:h-[450px] md:w-[550px] md:h-[550px]"
+                style={{ transform: 'translateZ(0)' }}
+              >
                 <PlaceholderDiv />
               </div>
             </motion.div>
@@ -219,7 +191,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
               Your Personal Insurance Policy Vault
             </motion.h2>
@@ -230,10 +202,10 @@ export default function HeroSection() {
               {/* Feature 1 */}
               <motion.div
                 className="text-center"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
+                transition={{ duration: 0.5, delay: 0.05 }}
               >
                 <h3
                   className="font-bold mb-3"
@@ -260,10 +232,10 @@ export default function HeroSection() {
               {/* Feature 2 */}
               <motion.div
                 className="text-center"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
               >
                 <h3
                   className="font-bold mb-3"
@@ -290,10 +262,10 @@ export default function HeroSection() {
               {/* Feature 3 */}
               <motion.div
                 className="text-center sm:col-span-2 lg:col-span-1"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.15 }}
               >
                 <h3
                   className="font-bold mb-3"
@@ -324,7 +296,7 @@ export default function HeroSection() {
     );
   }
 
-  // LANDSCAPE MODE - Original Scrolling Animation
+  // LANDSCAPE MODE - Optimized Scrolling Animation
   return (
     <div ref={containerRef} className="relative">
       {/* SECTION 1: Hero */}
@@ -336,9 +308,9 @@ export default function HeroSection() {
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ 
-              duration: 1,
+              duration: 0.8,
               ease: [0.25, 0.1, 0.25, 1],
-              delay: 0.2 
+              delay: 0.1 
             }}
             style={{ opacity: textOpacity }}
           >
@@ -347,18 +319,18 @@ export default function HeroSection() {
               style={{ fontFamily: "Gotham, sans-serif" }}
             >
               <motion.span
-                className="block bg-clip-text text-transparent mb-1"
+                className="block bg-clip-text text-transparent -mb-2"
                 style={{
                   backgroundImage:
                     "linear-gradient(90deg, #90DB78 0%, #5FD4BE 40%, #3FC8EE 100%)",
                   fontSize: "clamp(30px, 4vw + 1rem, 75px)",
                 }}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ 
-                  duration: 0.7,
+                  duration: 0.6,
                   ease: [0.25, 0.1, 0.25, 1],
-                  delay: 0.3
+                  delay: 0.2
                 }}
               >
                 All Your Policies. 
@@ -370,12 +342,12 @@ export default function HeroSection() {
                     "linear-gradient(90deg, #90DB78 0%, #5FD4BE 40%, #3FC8EE 100%)",
                   fontSize: "clamp(30px, 4vw + 1rem, 75px)",
                 }}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ 
-                  duration: 0.7,
+                  duration: 0.6,
                   ease: [0.25, 0.1, 0.25, 1],
-                  delay: 0.5
+                  delay: 0.3
                 }}
               >
                 One Secure Vault.
@@ -389,12 +361,12 @@ export default function HeroSection() {
                 fontSize: "clamp(16px, 1.2vw + 0.5rem, 28px)",
                 fontWeight: "400",
               }}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
-                duration: 0.7,
+                duration: 0.6,
                 ease: [0.25, 0.1, 0.25, 1],
-                delay: 0.7
+                delay: 0.4
               }}
             >
               Access, manage, share, renew, and get claim
@@ -404,12 +376,12 @@ export default function HeroSection() {
 
             <motion.div 
               className="mt-12 flex flex-wrap gap-5"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
-                duration: 0.7,
+                duration: 0.6,
                 ease: [0.25, 0.1, 0.25, 1],
-                delay: 0.9
+                delay: 0.5
               }}
             >
               <motion.button
@@ -422,7 +394,7 @@ export default function HeroSection() {
                 }}
                 whileHover={{ 
                   scale: 1.05,
-                  transition: { duration: 0.2, ease: "easeOut" }
+                  transition: { duration: 0.2 }
                 }}
                 whileTap={{ 
                   scale: 0.95,
@@ -441,7 +413,7 @@ export default function HeroSection() {
                   }}
                   whileHover={{ 
                     scale: 1.05,
-                    transition: { duration: 0.2, ease: "easeOut" }
+                    transition: { duration: 0.2 }
                   }}
                   whileTap={{ 
                     scale: 0.95,
@@ -463,7 +435,7 @@ export default function HeroSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ 
-              delay: 1.5,
+              delay: 1,
               duration: 0.5
             }}
             style={{ opacity: scrollIndicatorOpacity }}
@@ -483,23 +455,22 @@ export default function HeroSection() {
         </div>
       </section>
 
-      {/* SECTION 2: Positioned Content Screen - FIXED HEIGHT TO MATCH HERO */}
+      {/* SECTION 2: Positioned Content Screen */}
       <section className="relative bg-black h-screen flex items-center justify-center">
 
-        {/* TITLE - TOP LEFT - Reduced top spacing */}
+        {/* TITLE - TOP LEFT */}
         <motion.div
           className="absolute z-10"
           style={{
             top: '8%',
             left: '5%',
           }}
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3, margin: "0px 0px -100px 0px" }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ 
-            duration: 0.6,
+            duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1],
-            delay: 0.1
           }}
         >
           <h2
@@ -528,13 +499,13 @@ export default function HeroSection() {
             transform: 'translateY(-50%)',
             maxWidth: '360px',
           }}
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3, margin: "0px 0px -100px 0px" }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ 
-            duration: 0.6,
+            duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1],
-            delay: 0.2
+            delay: 0.1
           }}
         >
           <h3
@@ -559,7 +530,7 @@ export default function HeroSection() {
           </p>
         </motion.div>
 
-        {/* TOP RIGHT - Reduced top spacing */}
+        {/* TOP RIGHT */}
         <motion.div
           className="absolute z-10"
           style={{
@@ -567,13 +538,13 @@ export default function HeroSection() {
             right: '8%',
             maxWidth: '360px',
           }}
-          initial={{ opacity: 0, x: 50 }}
+          initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3, margin: "0px 0px -100px 0px" }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ 
-            duration: 0.6,
+            duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1],
-            delay: 0.15
+            delay: 0.05
           }}
         >
           <h3
@@ -606,13 +577,13 @@ export default function HeroSection() {
             right: '8%',
             maxWidth: '380px',
           }}
-          initial={{ opacity: 0, x: 50 }}
+          initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3, margin: "0px 0px -100px 0px" }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ 
-            duration: 0.6,
+            duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1],
-            delay: 0.25
+            delay: 0.15
           }}
         >
           <h3
@@ -639,18 +610,18 @@ export default function HeroSection() {
 
       </section>
 
-      {/* FLOATING LOGO - Scrolls from right to center with faster fade-out */}
+      {/* FLOATING LOGO - Optimized with GPU acceleration and reduced size */}
       <AnimatePresence>
         <motion.div 
-          className="hidden lg:flex justify-center items-center fixed z-50"
-          initial={{ opacity: 0, scale: 0.8 }}
+          className="hidden lg:flex justify-center items-center fixed z-50 transform-gpu"
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ 
             opacity: 1,
             scale: 1,
             transition: { 
-              duration: 1,
+              duration: 0.8,
               ease: [0.25, 0.1, 0.25, 1],
-              delay: 0.3
+              delay: 0.2
             }
           }}
           style={{
@@ -658,15 +629,17 @@ export default function HeroSection() {
             x: logoX,
             y: logoY,
             opacity: logoOpacity,
-            pointerEvents: logoPointerEvents,
-            top: '8%',
+            top: '25%',
             right: '5%',
+            transform: 'translateY(-50%) translateZ(0)', // Center vertically + GPU layer
             willChange: 'transform, opacity',
           }}
         >
           <motion.div 
-            className="relative w-[700px] h-[700px] xl:w-[750px] xl:h-[750px]"
-            style={{ backgroundColor: logoBackground }}
+            className="relative w-[38vw] h-[38vw] max-w-[580px] max-h-[580px]"
+            style={{ 
+              transform: 'translateZ(0)',
+            }}
           >
             <PlaceholderDiv />
           </motion.div>
