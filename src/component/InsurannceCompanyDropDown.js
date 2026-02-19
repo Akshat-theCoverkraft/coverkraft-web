@@ -118,7 +118,7 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
         className="form-label fw-bold text-light mb-2 d-block"
         htmlFor="insurance-company-autocomplete"
       >
-        Select Insurance Company <span className="text-danger">*</span>
+        Insurance Company <span className="text-danger">*</span>
       </label>
 
       <Autocomplete
@@ -135,6 +135,7 @@ const InsuranceDropdown = ({ onCompanySelect, initialValue }) => {
             height: "48px",
             border: "none",
             outline: "none",
+            marginBottom: '11px'
           },
           ".MuiOutlinedInput-notchedOutline": { border: "none" },
           "& .Mui-focused .MuiOutlinedInput-notchedOutline": { border: "none" },

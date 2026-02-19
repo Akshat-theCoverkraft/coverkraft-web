@@ -77,7 +77,7 @@ const HealthPolicyForm = () => {
   const [insuredCompany, setInsuredCompany] = useState(
     responseData?.insuredCompany || responseData?.insuranceCompany || policyDetails?.insuredCompany || ""
   );
-  const [dob, setDob] = useState(responseData?.dob || "");
+  const [dob, setDob] = useState(responseData?.dob || policyDetails?.policyDetails?.dob || "");
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
@@ -113,6 +113,7 @@ const HealthPolicyForm = () => {
     insuredName,
     insuredCompany,
     policyName,
+    dob
   ];
   const calculateProgress = () => {
     const filledFields = inputFields.filter((field) => field !== "").length;

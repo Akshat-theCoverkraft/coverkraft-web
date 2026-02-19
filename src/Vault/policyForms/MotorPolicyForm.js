@@ -495,6 +495,7 @@ const MotorPolicyForm = () => {
                     type="text"
                     label="Registration Year"
                     value={registrationYear}
+                     className="mt-2"
                     onChange={(e) => {
                       setRegistrationYear(e.target.value);
                     }}
@@ -504,6 +505,7 @@ const MotorPolicyForm = () => {
                     type="text"
                     label="IDV"
                     value={idv}
+                     className="mt-1"
                     onChange={(e) => {
                       setIdv(e.target.value);
                     }}
@@ -515,6 +517,7 @@ const MotorPolicyForm = () => {
                     type="text"
                     label="NCB%"
                     value={ncb}
+                     className="mt-1"
                     onChange={(e) => {
                       setNcb(e.target.value);
                     }}

@@ -84,7 +84,7 @@ const PolicyDetail = ({ policyId }) => {
   // Function to calculate progress based on policy completeness
   const calculatePolicyProgress = (policy) => {
     if (!policy) return null;
-
+console.log("policy---", policy)
     const requiredFields = [];
     const policyType = policy.policyType;
 
@@ -93,7 +93,7 @@ const PolicyDetail = ({ policyId }) => {
         policy.policyNumber,
         policy.policyStartDate,
         policy.policyEndDate,
-        policy.premiumPaid,
+        policy?.totalPremium || policy?.policyDetails?.totalPremium || policy?.premiumPaid || "",
         policy.insuredName,
         policy.insuredCompany,
         policy.policyDetails?.registrationNumber,
@@ -108,11 +108,12 @@ const PolicyDetail = ({ policyId }) => {
         policy.policyNumber,
         policy.policyStartDate,
         policy.policyEndDate,
-        policy.policyDetails?.sumInsured,
-        policy.premiumPaid,
+        policy.sumInsured || policy?.policyDetails?.sumInsured || "",
+        policy?.totalPremium || policy?.policyDetails?.totalPremium || policy?.premiumPaid || "",
         policy.insuredName,
         policy.insuredCompany,
-        policy.policyDetails?.policyName
+        policy?.policyName || policy.policyDetails?.policyName,
+        policy.policyDetails?.dob
       );
     } else if (policyType === "life" || policyType === "accident") {
       requiredFields.push(
@@ -252,8 +253,8 @@ const showToastOnce = (message, type = "success") => {
         new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
       const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-      if (diffInDays < 0) return "Expired";
-      if (diffInDays <= 60) return `${diffInDays} days left`;
+      if (diffInDays < 0) return  { label: "Expired", diffInDays };
+      if (diffInDays <= 60) return{ label: `${diffInDays} days left`, diffInDays };
       return null;
     } catch (error) {
       console.error("Error parsing policy end date:", error);
@@ -392,6 +393,8 @@ const handlePolicyAction = (action) => {
 
   const renderPolicyActions = (policy) => {
     const isArchived = policy?.status === "archive";
+  const status = getExpiryStatus(policy?.policyEndDate);
+  const showRenew = status !== null && status.diffInDays >= -7 && status.diffInDays <= 60;
 
     if (isArchived) {
       return (
@@ -435,7 +438,7 @@ const handlePolicyAction = (action) => {
             flexWrap: "wrap",
           }}
         >
-          {getExpiryStatus(policy?.policyEndDate) && (
+           {showRenew && (
             <button
               className="btn btn-sm rounded-6"
               style={{
@@ -547,6 +550,7 @@ const handlePolicyAction = (action) => {
         const status = getExpiryStatus(policy?.policyEndDate);
         const documentPath = policy?.documentDetails?.documentPath;
         const progress = calculatePolicyProgress(policy);
+        console.log("progress", progress)
         console.log("policy?.totalPremium", policy?.totalPremium)
         return (
           <Card
@@ -707,7 +711,7 @@ const handlePolicyAction = (action) => {
                       zIndex: 1,
                     }}
                   >
-                    {status}
+                    {status.label}
                   </div>
                 </>
               )}
@@ -790,7 +794,7 @@ const handlePolicyAction = (action) => {
                         style={{ fontSize: "16px", fontWeight: "700" }}
                         className="fw-bolder"
                       >
-                         {policy?.policyDetails?.totalPremium || "-"}
+                               {  policy?.totalPremium || policy?.policyDetails?.totalPremium || policy?.premiumPaid ||"-"}
                       </p>
                     </div>
                   </Grid>
