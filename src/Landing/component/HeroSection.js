@@ -331,8 +331,8 @@ export default function HeroSection() {
             {[
               { h: 'Centralised Storage',     b: 'All policies in one secure place',           d: 0.05 },
               { h: 'Easy Sharing & Access',   b: 'Share policy details with family instantly', d: 0.1  },
-              { h: 'Smart Renewals & Claims', b: 'Reminders, renewals & claim assistance',     d: 0.15 },
-              { h: 'Instant Notifications',   b: 'Stay updated on policy status & due dates',  d: 0.2  },
+              { h: 'Smart Renewals', b: 'Reminders, renewals & claim assistance',     d: 0.15 },
+              { h: 'Reminders',   b: 'Stay updated on policy status & due dates',  d: 0.2  },
             ].map(({ h, b, d }) => (
               <motion.div key={h} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.5, delay: d }} style={{ textAlign: 'center' }}>
                 <h3 style={{ fontSize: 'clamp(18px, 5vw, 26px)', fontFamily: 'Gotham, sans-serif', color: '#F6A544', fontWeight: 700, marginBottom: '8px' }}>{h}</h3>
@@ -409,8 +409,52 @@ export default function HeroSection() {
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.55, delay: 0.32 }}
-                  style={{ fontFamily: 'Gotham, sans-serif', fontSize: 'clamp(15px, 1.3vw, 24px)', color: 'rgba(255,255,255,0.87)', lineHeight: 1.55, marginTop: '28px', marginBottom: '44px' }}
+                  style={{ fontFamily: 'Gotham, sans-serif', fontSize: 'clamp(15px, 1.3vw, 24px)', color: 'rgba(255,255,255,0.87)', lineHeight: 1.55, marginTop: '28px', marginBottom: '20px' }}
                 >Access, manage, share, renew, and get claim<br />assistance for every policy — effortlessly.</motion.p>
+                {/* ── USP Chips above buttons ── */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.38 }}
+                  style={{ display: 'flex', gap: '14px', marginBottom: '28px', flexWrap: 'wrap' }}
+                >
+                  {[
+                    { icon: '📘', title: 'All kinds of learning for insurance' },
+                    { icon: '💰', title: 'Policy Values' },
+                    { icon: '🛡️', title: 'Claims Support' },
+                  ].map((usp, i) => (
+                    <motion.div
+                      key={usp.title}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.42 + i * 0.1 }}
+                      whileHover={{ scale: 1.05, borderColor: 'rgba(95,212,190,0.5)' }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(144,219,120,0.2)',
+                        borderRadius: '999px',
+                        padding: '10px 20px',
+                        backdropFilter: 'blur(10px)',
+                        cursor: 'default',
+                      }}
+                    >
+                      <span style={{ fontSize: '18px' }}>{usp.icon}</span>
+                      <span style={{
+                        fontFamily: 'Gotham, sans-serif',
+                        fontWeight: 600,
+                        fontSize: 'clamp(12px, 1vw, 16px)',
+                        backgroundImage: 'linear-gradient(90deg,#90DB78,#3FC8EE)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        whiteSpace: 'nowrap',
+                      }}>{usp.title}</span>
+                    </motion.div>
+                  ))}
+                </motion.div>
                 <motion.div
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -466,8 +510,8 @@ export default function HeroSection() {
             </div>
 
             <div style={{ position: 'absolute', right: '8%', top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '60px', maxWidth: '280px', zIndex: 10 }}>
-              <Feature heading={<>Smart Renewals &<br />Claims</>} body={<>Reminders, renewals &<br />claim assistance</>}    dir="right" delay={0.1}  visible={onS2} />
-              <Feature heading={<>Instant<br />Notifications</>}   body={<>Stay updated on policy<br />status & due dates</>} dir="right" delay={0.18} visible={onS2} />
+              <Feature heading={<>Smart Renewals</>} body={<>Reminders, renewals &<br />claim assistance</>}    dir="right" delay={0.1}  visible={onS2} />
+              <Feature heading={<>Reminders</>}   body={<>Stay updated on policy<br />status & due dates</>} dir="right" delay={0.18} visible={onS2} />
             </div>
 
             {/* Up arrow */}

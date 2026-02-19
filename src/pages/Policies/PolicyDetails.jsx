@@ -514,7 +514,10 @@ const handleClosePopupPolicyType = () => {
 
       const autoLoginRes = await axios.post(
         `${API_URL}autoLogin/auto-login-url`,
-        { type: matchedPolicy.policyNumber },
+        { type: matchedPolicy.policyNumber,
+          vehicle_type: matchedPolicy?.vehicle_type ?? ""
+         },
+        
         {
           headers: {
             Authorization: `Bearer ${token}`,
