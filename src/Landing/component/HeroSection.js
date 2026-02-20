@@ -583,8 +583,8 @@ export default function HeroSection() {
       {/* ── SLIDE 1: Features ─────────────────────────────────────────────── */}
       <motion.div
         aria-hidden={!onS2}
-        animate={{ opacity: onS2 ? 1 : 0, y: onS2 ? 0 : 50 }}
-        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+        animate={{ opacity: onS2 ? 1 : 0, y: onS2 ? 0 : 35 }}
+        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         style={{
           position: 'absolute', inset: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -595,7 +595,7 @@ export default function HeroSection() {
         {/* Heading */}
         <motion.div
           animate={{ opacity: onS2 ? 1 : 0, y: onS2 ? 0 : -24 }}
-          transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1], delay: 0.04 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.06 }}
           style={{ position: 'absolute', top: '10%', left: 0, right: 0, textAlign: 'center', zIndex: 10 }}
         >
           <h2 style={{
@@ -609,14 +609,14 @@ export default function HeroSection() {
 
         {/* Left features */}
         <div style={{ position: 'absolute', left: '8%', top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 56, maxWidth: 280, zIndex: 10 }}>
-          <Feature heading={<>Centralised<br />Storage</>}  body={<>All policies in one<br />secure place</>}          dir="left"  delay={0.08} visible={onS2} />
-          <Feature heading={<>Easy Sharing &<br />Access</>} body={<>Share policy details<br />with family instantly</>} dir="left"  delay={0.16} visible={onS2} />
+          <Feature heading={<>Centralised<br />Storage</>}  body={<>All policies in one<br />secure place</>}          dir="left"  delay={0.12} visible={onS2} />
+          <Feature heading={<>Easy Sharing &<br />Access</>} body={<>Share policy details<br />with family instantly</>} dir="left"  delay={0.24} visible={onS2} />
         </div>
 
         {/* Right features */}
         <div style={{ position: 'absolute', right: '8%', top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 56, maxWidth: 280, zIndex: 10 }}>
-          <Feature heading={<>Smart Renewals</>} body={<>Reminders, renewals &<br />claim assistance</>}    dir="right" delay={0.08} visible={onS2} />
-          <Feature heading={<>Reminders</>}      body={<>Stay updated on policy<br />status & due dates</>} dir="right" delay={0.16} visible={onS2} />
+          <Feature heading={<>Smart Renewals</>} body={<>Reminders, renewals &<br />claim assistance</>}    dir="right" delay={0.12} visible={onS2} />
+          <Feature heading={<>Reminders</>}      body={<>Stay updated on policy<br />status & due dates</>} dir="right" delay={0.24} visible={onS2} />
         </div>
       </motion.div>
 
@@ -628,7 +628,7 @@ export default function HeroSection() {
         transition={{ duration: 0.6, delay: 0.25 }}
         style={{
           position: 'absolute',
-          top: '50%', right: '13%',
+          top: '50%', right: '10%',
           translateY: '-50%',
           x: logoX,
           zIndex: 50,
