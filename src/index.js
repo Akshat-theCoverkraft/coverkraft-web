@@ -13,7 +13,9 @@ import * as Sentry from "@sentry/react";
 // Sentry init (ADD)
 Sentry.init({
   dsn: "https://ebc4f2c44dacb64b05e3d3b72dc0beb8@o4510837986164736.ingest.us.sentry.io/4510837992914944",
-  integrations: [Sentry.browserTracingIntegration()],
+  integrations: [Sentry.browserTracingIntegration(), Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+],
+
   tracesSampleRate: 1.0,
    tracePropagationTargets: [
     "localhost",
