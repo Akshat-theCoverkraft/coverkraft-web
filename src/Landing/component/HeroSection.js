@@ -113,8 +113,8 @@ function PlaceholderDiv() {
  const USP_CARDS = [
   {
     Illustration: PolicyVaultIllustration,
-    title: 'POLICY VAULT.',
-    desc: 'Securely store & access all your policies.',
+    title: 'Policy Vault',
+    desc: 'Safe. Organized. Accessible.',
      gradient: 'linear-gradient(135deg, rgba(120,70,10,0.85) 0%, rgba(80,40,5,0.9) 100%)',
      border: 'rgba(246,165,68,0.55)',
      glow: 'rgba(246,165,68,0.25)',
@@ -122,8 +122,8 @@ function PlaceholderDiv() {
   },
    {
      Illustration: InsuranceLearningIllustration,
-    title: 'INSURANCE LEARNING.',
-    desc: 'Master insurance concepts effortlessly.',
+    title: 'Insurance Guidance',
+    desc: 'Learn smarter. Decide better.',
      gradient: 'linear-gradient(135deg, rgba(10,55,100,0.88) 0%, rgba(5,35,70,0.92) 100%)',
      border: 'rgba(63,200,238,0.55)',
      glow: 'rgba(63,200,238,0.22)',
@@ -131,8 +131,8 @@ function PlaceholderDiv() {
    },
    {
      Illustration: ClaimSupportIllustration,
-     title: '24/7 CLAIM SUPPORT.',
-     desc: 'Instant help anytime, anywhere.',
+     title: 'Claim Assistance',
+     desc: 'We stand by you at every step.',
      gradient: 'linear-gradient(135deg, rgba(10,70,35,0.88) 0%, rgba(5,45,20,0.92) 100%)',
      border: 'rgba(126,232,162,0.5)',
      glow: 'rgba(126,232,162,0.2)',
@@ -167,7 +167,7 @@ function PlaceholderDiv() {
             background: gradient,
             border: `1px solid ${border}`,
             borderRadius: 16,
-          padding: '14px 14px 12px',
+          padding: '20px 14px 24px',
            position: 'relative',
            overflow: 'hidden',
            boxShadow: `0 4px 20px ${glow}`,
@@ -194,10 +194,10 @@ function PlaceholderDiv() {
          <div style={{ position: 'relative', zIndex: 2 }}>
            <div style={{
              fontFamily: 'Gotham, sans-serif',
-             fontWeight: 800,
+             fontWeight: 900,
               fontSize: 'clamp(9px, 0.85vw, 12px)',
                color: textColor,
-              lineHeight: 1.25,
+              lineHeight: 1.30,
              marginBottom: 6,
             letterSpacing: '0.02em',
             }}>{title}</div>
@@ -456,8 +456,8 @@ export default function HeroSection() {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             style={{ textAlign: 'center', maxWidth: 600, width: '100%' }}
           >
-            <h1 style={{ fontFamily: 'Gotham, sans-serif', fontWeight: 800, lineHeight: 0.95, marginBottom: 24 }}>
-              {['All Your Policies.', 'One Secure Vault.'].map((line, i) => (
+            <h1 style={{ fontFamily: 'Gotham, sans-serif', fontWeight: 700, lineHeight: 0.95, marginBottom: 24 }}>
+              {['Insurance Simplified,', 'Secured & Supported'].map((line, i) => (
                 <motion.span key={line}
                   initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 + i * 0.1 }}
@@ -467,7 +467,7 @@ export default function HeroSection() {
             </h1>
             <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
               style={{ fontFamily: 'Gotham, sans-serif', fontSize: 'clamp(14px,4vw,19px)', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, marginBottom: 36 }}
-            >Access, manage, share, renew, and get claim assistance for every policy — effortlessly.</motion.p>
+            >Your trusted digital vault to manage policies, track renewals, and receive expert claim assistance — all in one secure ecosystem.</motion.p>
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
               style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}
             >
@@ -539,8 +539,8 @@ export default function HeroSection() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
         >
-          <h1 style={{ fontFamily: 'Gotham, sans-serif', fontWeight: 760, lineHeight: 0.95, letterSpacing: '-0.02em', margin: 0 }}>
-            {['All Your Policies.', 'One Secure Vault.'].map((line, i) => (
+          <h1 style={{ fontFamily: 'Gotham, sans-serif', fontWeight: 548, lineHeight: 0.95, letterSpacing: '-0.02em', margin: 0 }}>
+            {['Insurance Simplified,', 'Secured & Supported'].map((line, i) => (
               <motion.span key={line}
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.18 + i * 0.1 }}
@@ -560,7 +560,7 @@ export default function HeroSection() {
             transition={{ duration: 0.5, delay: 0.34 }}
             style={{ fontFamily: 'Gotham, sans-serif', fontSize: 'clamp(14px,1.2vw,22px)', color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, marginTop: 24, marginBottom: 22 }}
           >
-            Access, manage, share, renew, and get claim<br />assistance for every policy — effortlessly.
+            Your trusted digital vault to manage policies, track renewals,<br />and receive expert claim assistance — all in one secure ecosystem.
           </motion.p>
 
           {/* USP chips */}
