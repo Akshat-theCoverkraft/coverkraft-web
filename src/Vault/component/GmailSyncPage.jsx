@@ -106,7 +106,6 @@ const GmailSyncPage = () => {
       // Create a fresh provider instance with required scopes
       const provider = new GoogleAuthProvider();
       provider.addScope('https://www.googleapis.com/auth/gmail.readonly');
-      provider.addScope('https://www.googleapis.com/auth/gmail.modify');
       
       // Set custom parameters
       provider.setCustomParameters({
