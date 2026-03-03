@@ -81,6 +81,19 @@ const PolicyDetail = ({ policyId }) => {
     sessionStorage.clear();
   };
 
+    // Map assetType string to vehicle_type number
+  const getVehicleType = (assetType) => {
+    if (!assetType) return 1;
+    const normalized = assetType.trim().toLowerCase();
+    const twoWheelerKeywords = ["two wheeler", "scooter", "bike", "motorcycle", "scooty"];
+    const pcvKeywords = ["pcv", "passenger carrying vehicle", "bus", "taxi"];
+    const gcvKeywords = ["gcv", "goods carrying vehicle", "truck", "lorry", "tempo"];
+    if (twoWheelerKeywords.some((k) => normalized.includes(k))) return 2;
+    if (pcvKeywords.some((k) => normalized.includes(k))) return 3;
+    if (gcvKeywords.some((k) => normalized.includes(k))) return 4;
+    return 1; // Default: Private Car / SUV / Sedan / Hatchback
+  };
+
   // Function to calculate progress based on policy completeness
   const calculatePolicyProgress = (policy) => {
     if (!policy) return null;
@@ -355,41 +368,121 @@ const handleDocument = async (documentPath, action) => {
 
 
 const { setValue, setActiveTab } = usePolicyContext();
-  
-const handlePolicyAction = (action) => {
-  if (action === "renew") {
-    setShowComingSoonModal(true);
-    return;
-  }
 
-  const userId = sessionStorage.getItem("userId");
-  const formData = new FormData();
-  formData.append("_id", policyId);
-  formData.append("userId", userId);
-  formData.append("status", action);
+  // ─── Renewal handler ────────────────────────────────────────────────────────
+  const handleRenewMotorPolicy = async (policy) => {
+    const rcNumber = policy?.policyDetails?.registrationNumber;
 
-  dispatch(updateDocument(API_URL, formData))
-    .then(() => {
-      const message =
-        action === "archive"
-          ? "Policy archived successfully"
-          : action === "unarchive"
-          ? "Policy removed from archive successfully"
-          : "Action completed successfully";
-      showToastOnce(message, "success");
+    if (!rcNumber) {
+      showToastOnce("Registration number not found", "error");
+      return;
+    }
 
-      // Switch to Archive tab if archiving
-      if (action === "archive") {
-        setTimeout(() => {
-          setValue(2);
-          setActiveTab("archive");
-        }, 500);
+    const assetType = policy?.policyDetails?.assetType;
+    const vehicleType = getVehicleType(assetType);
+
+    console.log("Renew API params — rc_number:", rcNumber, "vehicle_type:", vehicleType, "type: 0");
+
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await axios.post(
+        `${API_URL}autoLogin/auto-login-url?rc_number=${encodeURIComponent(rcNumber)}`,
+        { type: 0, vehicle_type: vehicleType },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const redirectUrl = response.data?.redirect_url;
+      console.log("Renewal redirect_url:", redirectUrl);
+
+      if (redirectUrl) {
+        window.open(redirectUrl, "_blank");
+      } else {
+        showToastOnce("Unable to get renewal URL. Please try again.", "error");
       }
-    })
-    .catch(() => {
-      showToastOnce("Some error occurred", "error");
-    });
-};
+    } catch (error) {
+      console.error("Renewal API error:", error);
+      if (error.response?.status === 401) {
+        setShowSessionExpired(true);
+      } else {
+        showToastOnce("Failed to initiate renewal. Please try again.", "error");
+      }
+    }
+  };
+
+   const handlePolicyAction = async (action, policy) => {
+      if (action === "renew") {
+        if (isMotorPolicy(policy?.policyType)) {
+          // Motor policies → call auto-login renewal API
+          await handleRenewMotorPolicy(policy);
+        } else {
+          // Non-motor policies → Coming Soon modal
+          setShowComingSoonModal(true);
+        }
+        return;
+      }
+  
+      const userId = sessionStorage.getItem("userId");
+      const formData = new FormData();
+      formData.append("_id", policyId);
+      formData.append("userId", userId);
+      formData.append("status", action);
+  
+      dispatch(updateDocument(API_URL, formData))
+        .then(() => {
+          const message =
+            action === "archive"
+              ? "Policy archived successfully"
+              : action === "unarchive"
+              ? "Policy removed from archive successfully"
+              : "Action completed successfully";
+          showToastOnce(message, "success");
+  
+          if (action === "archive") {
+            setTimeout(() => {
+              setValue(2);
+              setActiveTab("archive");
+            }, 500);
+          }
+        })
+        .catch(() => {
+          showToastOnce("Some error occurred", "error");
+        });
+    };
+  
+// const handlePolicyAction = (action) => {
+//   if (action === "renew") {
+//     setShowComingSoonModal(true);
+//     return;
+//   }
+
+//   const userId = sessionStorage.getItem("userId");
+//   const formData = new FormData();
+//   formData.append("_id", policyId);
+//   formData.append("userId", userId);
+//   formData.append("status", action);
+
+//   dispatch(updateDocument(API_URL, formData))
+//     .then(() => {
+//       const message =
+//         action === "archive"
+//           ? "Policy archived successfully"
+//           : action === "unarchive"
+//           ? "Policy removed from archive successfully"
+//           : "Action completed successfully";
+//       showToastOnce(message, "success");
+
+//       // Switch to Archive tab if archiving
+//       if (action === "archive") {
+//         setTimeout(() => {
+//           setValue(2);
+//           setActiveTab("archive");
+//         }, 500);
+//       }
+//     })
+//     .catch(() => {
+//       showToastOnce("Some error occurred", "error");
+//     });
+// };
 
   const renderPolicyActions = (policy) => {
     const isArchived = policy?.status === "archive";
@@ -450,7 +543,7 @@ const handlePolicyAction = (action) => {
                 maxWidth: "280px",
                 textAlign: "center",
               }}
-              onClick={() => handlePolicyAction("renew")}
+              onClick={() => handlePolicyAction("renew", policy)}
             >
               Renew Policy
             </button>
