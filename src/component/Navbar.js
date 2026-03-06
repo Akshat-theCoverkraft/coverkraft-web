@@ -126,6 +126,7 @@ function Navbar({ scrollToContactBottom }) {
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
+const userName = useMemo(() => sessionStorage.getItem("userName"), []);
 
   // Memoized values
   const userId = useMemo(() => sessionStorage.getItem("userId"), []);
@@ -472,6 +473,17 @@ function Navbar({ scrollToContactBottom }) {
                 );
               })}
 
+              <StyledButton onClick={() => navigate("/joinUs")}>
+                Join Us
+              </StyledButton>
+              <StyledButton onClick={handlePrivacyPolicy}>
+                Privacy Policy
+              </StyledButton>
+              
+              <StyledButton onClick={handleVault}>
+                Policy Vault
+              </StyledButton>
+
               {loggedIn ? (
                 <>
                   <Badge
@@ -519,12 +531,31 @@ function Navbar({ scrollToContactBottom }) {
                         },
                       }}
                     >
-                      <img
-                        src={profileIcon}
-                        alt="profile"
-                        style={{ height: 28, width: 28, cursor: "pointer" }}
-                        onClick={(e) => setAnchor('profile', e.currentTarget)}
-                      />
+                      <div
+  onClick={(e) => setAnchor('profile', e.currentTarget)}
+  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
+>
+  {/* Avatar circle instead of profileIcon */}
+  <div style={{
+    width: 32, height: 32, borderRadius: '50%',
+    background: 'linear-gradient(135deg, #90DB78, #3FC8EE)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontWeight: 700, fontSize: 14, color: '#000',
+  }}>
+    {sessionStorage.getItem('userName')?.charAt(0).toUpperCase() || 'U'}
+  </div>
+
+  {/* Hi, FirstName below avatar */}
+  <span style={{
+    fontSize: 15, color: '#8AC642',
+    fontFamily: 'Gotham, sans-serif',
+    fontWeight: 600, marginTop: 2,
+    whiteSpace: 'nowrap', lineHeight: 1,
+  }}>
+   Hi, {sessionStorage.getItem('userName')?.split(' ')[0]?.charAt(0).toUpperCase() + sessionStorage.getItem('userName')?.split(' ')[0]?.slice(1).toLowerCase()} 👋
+
+  </span>
+</div>
                     </Badge>
                   </Tooltip>
 
@@ -556,16 +587,6 @@ function Navbar({ scrollToContactBottom }) {
                 </StyledButton>
               )}
               
-              <StyledButton onClick={() => navigate("/joinUs")}>
-                Join Us
-              </StyledButton>
-              <StyledButton onClick={handlePrivacyPolicy}>
-                Privacy Policy
-              </StyledButton>
-              
-              <StyledButton onClick={handleVault}>
-                Policy Vault
-              </StyledButton>
 
               {isHomePage && (
                 <IconButton
