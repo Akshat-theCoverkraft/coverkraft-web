@@ -212,6 +212,7 @@ const Login = () => {
 
           if (userData && typeof userData === "object") {
             sessionStorage.setItem("userId", userData._id || userData.id || "");
+            sessionStorage.setItem("userName", userData.userName || userData.userName || "");
             sessionStorage.setItem(
               "userEmail",
               userData.userEmail || userData.email || ""
@@ -285,6 +286,7 @@ const Login = () => {
 
         if (userData && typeof userData === "object") {
           sessionStorage.setItem("userId", userData._id || userData.id || "");
+          sessionStorage.setItem("userName", userData.userName || userData.userName || "");
           sessionStorage.setItem(
             "userEmail",
             userData.userEmail || userData.email || ""
