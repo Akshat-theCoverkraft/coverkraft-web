@@ -33,6 +33,11 @@ import BackToTop from "./component/BackToTop.js";
 import { PolicyProvider } from "./store/policyContext.js";
 import LeaderShip from "./About/LeaderShip.js";
 import JoinUs from "./pages/JoinUs.jsx";
+import ProductsRouter from "./component/ProductsRouter.jsx";
+import InsurancePage from "./component/InsurancePage.jsx";
+import CarThirdParty from "./component/CarThirdParty.jsx";
+import ProductDetail from "./component/ProductDetail.jsx";
+import InsuranceCategoryPage from "./component/InsuranceCategoryPage.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -137,6 +142,11 @@ function App() {
           <Route path="/policy-details/:id" element={<PolicyDetails />} />
           <Route path="/gmail-sync" element={<GmailSyncPage />} />
           <Route path="/Our-LeaderShip" element={<LeaderShip />} />
+<Route path="/products"       element={<ProductsRouter />} />
+<Route path="/products/:slug" element={<ProductsRouter />} />
+
+
+          
         </Routes>
       </PolicyProvider>
     </HelmetProvider>

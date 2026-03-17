@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   IconButton,
@@ -19,6 +19,11 @@ import {
   Logout as LogoutIcon,
   Notifications as NotificationsIcon,
   Security as VaultIcon,
+  KeyboardArrowDown as ArrowDownIcon,
+  DirectionsCar as CarIcon,
+  TwoWheeler as BikeIcon,
+  Favorite as HealthIcon,
+  FlightTakeoff as TravelIcon,
 } from "@mui/icons-material";
 import Logo from "../Images/CKbig.png";
 import profileIcon from "../Images/ic-profile.png";
@@ -28,16 +33,74 @@ import { THEME_COLOR } from "../constants";
 import axios from "axios";
 import API_URL from "../ServiceModule/Service";
 
+
+// ─── MEGA MENU DATA ────────────────────────────────────────────────────────────
+const MEGA_MENU_DATA = [
+  {
+    key: "car",
+    label: "Car Insurance",
+    icon: <CarIcon sx={{ fontSize: 16 }} />,
+    color: "#FF5A1F",
+    items: [
+      { label: "Third-Party Car Insurance", path: "/products/car-third-party" },
+      { label: "Comprehensive Car Insurance", path: "/products/car-comprehensive" },
+      { label: "Standalone Own Damage", path: "/products/car-own-damage" },
+      { label: "Car Insurance Add-ons", path: "/products/car-addons" },
+      { label: "View All Car Plans →", path: "/products/car", isViewAll: true },
+    ],
+  },
+  {
+    key: "bike",
+    label: "Two-Wheeler",
+    icon: <BikeIcon sx={{ fontSize: 16 }} />,
+    color: "#00A8E8",
+    items: [
+      { label: "Third-Party Bike Insurance", path: "/products/bike-third-party" },
+      { label: "Comprehensive Bike Insurance", path: "/products/bike-comprehensive" },
+      { label: "Standalone Own Damage", path: "/products/bike-own-damage" },
+      { label: "Bike Add-on Covers", path: "/products/bike-addons" },
+      { label: "View All Bike Plans →", path: "/products/bike", isViewAll: true },
+    ],
+  },
+  {
+    key: "health",
+    label: "Health Insurance",
+    icon: <HealthIcon sx={{ fontSize: 16 }} />,
+    color: "#E53935",
+    items: [
+      { label: "Individual Health Plan", path: "/products/health-individual" },
+      { label: "Family Floater Plan", path: "/products/health-family" },
+      { label: "Corona Kavach / Rakshak", path: "/products/health-covid" },
+      { label: "Claims Settlement Guide", path: "/products/health-claims" },
+      { label: "View All Health Plans →", path: "/products/health", isViewAll: true },
+    ],
+  },
+  {
+    key: "travel",
+    label: "Travel Insurance",
+    icon: <TravelIcon sx={{ fontSize: 16 }} />,
+    color: "#00C48C",
+    items: [
+      { label: "International Travel", path: "/products/travel-international" },
+      { label: "Student Travel", path: "/products/travel-student" },
+      { label: "Schengen Travel", path: "/products/travel-schengen" },
+      { label: "Domestic Travel", path: "/products/travel-domestic" },
+      { label: "View All Travel Plans →", path: "/products/travel", isViewAll: true },
+    ],
+  },
+];
+
+
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/" },
-  {
-    key: "about",
-    label: "About Us",
-    path: "/about",
-    auth: true,
-    children: [{ label: "Our Leaders", path: "/Our-LeaderShip" }],
-  },
-  { key: "contact", label: "Contact Us", path: "/contactus", auth: true },
+  // {
+  //   key: "about",
+  //   label: "About Us",
+  //   path: "/about",
+  //   auth: true,
+  //   children: [{ label: "Our Leaders", path: "/Our-LeaderShip" }],
+  // },
+  // { key: "contact", label: "Contact Us", path: "/contactus", auth: true },
 ];
 
 const MORE_MENU_ITEMS = [
@@ -111,19 +174,82 @@ const SectionTitle = styled("div")(() => ({
   letterSpacing: "0.5px",
 }));
 
+// ─── MEGA MENU STYLED ───────────────────────────────────────────────────────────
+const MegaMenuWrapper = styled("div")(() => ({
+  position: "absolute",
+  top: "100%",
+  left: "50%",
+  transform: "translateX(-50%)",
+  width: 880,
+  background: "#1a1a1a",
+  borderRadius: "0 0 16px 16px",
+  border: "1px solid #2a2a2a",
+  borderTop: "2px solid #8AC642",
+  boxShadow: "0 16px 48px rgba(0,0,0,0.5)",
+  padding: "24px 28px 28px",
+  zIndex: 1300,
+  display: "grid",
+  gridTemplateColumns: "repeat(4, 1fr)",
+  gap: 0,
+  animation: "fadeSlideDown 0.18s ease",
+  "@keyframes fadeSlideDown": {
+    from: { opacity: 0, transform: "translateX(-50%) translateY(-8px)" },
+    to: { opacity: 1, transform: "translateX(-50%) translateY(0)" },
+  },
+}));
+
+const MegaCol = styled("div")(({ isLast }) => ({
+  padding: "0 18px 0 0",
+  borderRight: isLast ? "none" : "1px solid #2e2e2e",
+  paddingLeft: isLast ? 18 : 0,
+  "&:first-of-type": { paddingLeft: 0 },
+}));
+
+const MegaColTitle = styled("div")(({ color }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: 7,
+  color: color || "#8AC642",
+  fontWeight: 700,
+  fontSize: "1.2rem",
+  textTransform: "uppercase",
+  letterSpacing: "0.07em",
+  marginBottom: 12,
+  paddingBottom: 8,
+  borderBottom: `2px solid ${color ? color + "33" : "#8AC64233"}`,
+}));
+
+const MegaLink = styled("div")(({ isViewAll, color }) => ({
+  padding: "7px 10px",
+  borderRadius: 6,
+  fontSize: "1.25rem",
+  fontWeight: isViewAll ? 700 : 400,
+  color: isViewAll ? (color || "#8AC642") : "rgba(255,255,255,0.82)",
+  cursor: "pointer",
+  transition: "all 0.13s",
+  "&:hover": {
+    background: "rgba(138,198,66,0.1)",
+    color: "#8AC642",
+    paddingLeft: 14,
+  },
+}));
+
+
 function Navbar({ scrollToContactBottom }) {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
-
+  const megaRef = useRef(null);
   const [anchorEls, setAnchorEls] = useState({
     profile: null,
     mobile: null,
     more: null,
     submenu: null,
   });
+    const [megaOpen, setMegaOpen] = useState(false);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
 const userName = useMemo(() => sessionStorage.getItem("userName"), []);
@@ -140,6 +266,22 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
       return !item.auth || loggedIn;
     });
   }, [loggedIn, isHomePage]);
+
+    // Close mega menu on outside click
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (megaRef.current && !megaRef.current.contains(e.target)) {
+        setMegaOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  // Close mega menu on route change
+  useEffect(() => {
+    setMegaOpen(false);
+  }, [location.pathname]);
 
   // Fetch unread notifications
   const fetchUnreadPolicyCount = useCallback(async () => {
@@ -212,9 +354,71 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
     });
   }, []);
 
+    // ── MEGA MENU COMPONENT (inline) ──────────────────────────────────────────
+  const MegaMenuDropdown = () => (
+    <MegaMenuWrapper>
+      {MEGA_MENU_DATA.map((col, idx) => (
+        <MegaCol key={col.key} isLast={idx === MEGA_MENU_DATA.length - 1}
+          style={{ paddingLeft: idx === 0 ? 0 : 18 }}>
+          <MegaColTitle color={col.color}>
+            {col.icon}
+            {col.label}
+          </MegaColTitle>
+          {col.items.map((item) => (
+            <MegaLink
+              key={item.label}
+              isViewAll={item.isViewAll}
+              color={col.color}
+              onClick={() => {
+                setMegaOpen(false);
+                navigate(item.path);
+              }}
+            >
+              {item.label}
+            </MegaLink>
+          ))}
+        </MegaCol>
+      ))}
+    </MegaMenuWrapper>
+  );
+
   // Mobile Menu Sections
   const renderMobileMenuSections = () => {
     const sections = [];
+
+     sections.push(
+          <MenuSection key="insurance-products">
+            <SectionTitle>Insurance Products</SectionTitle>
+            {MEGA_MENU_DATA.map((cat) => (
+              <React.Fragment key={cat.key}>
+                <MenuItem
+                  sx={{
+                    fontSize: "1.3rem",
+                    py: 1,
+                    color: cat.color,
+                    fontWeight: 700,
+                  }}
+                >
+                  {cat.label}
+                </MenuItem>
+                {cat.items.filter((i) => !i.isViewAll).map((item) => (
+                  <MenuItem
+                    key={item.label}
+                    onClick={() => {
+                      navigate(item.path);
+                      closeAllMenus();
+                    }}
+                    sx={{ fontSize: "1.15rem", pl: 4, py: 0.8, color: "rgba(255,255,255,0.8)" }}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </React.Fragment>
+            ))}
+          </MenuSection>
+        );
+    
+        sections.push(<Divider key="div-ins" sx={{ borderColor: "#333" }} />);
 
     if (loggedIn) {
       // Quick Actions Section
@@ -418,6 +622,28 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
             </>
           ) : (
             <div className="d-flex align-items-center" style={{ gap: isTablet ? 16 : 24 }}>
+                {/* ── INSURANCE PRODUCTS MEGA TRIGGER ── */}
+                            <div
+                              ref={megaRef}
+                              style={{ position: "relative" }}
+                              onMouseEnter={() => setMegaOpen(true)}
+                              onMouseLeave={() => setMegaOpen(false)}
+                            >
+                              <NavItem
+                                active={location.pathname.startsWith("/products")}
+                                style={{ userSelect: "none" }}
+                              >
+                                Insurance Products
+                                <ArrowDownIcon
+                                  sx={{
+                                    fontSize: 18,
+                                    transition: "transform 0.2s",
+                                    transform: megaOpen ? "rotate(180deg)" : "rotate(0deg)",
+                                  }}
+                                />
+                              </NavItem>
+                              {megaOpen && <MegaMenuDropdown />}
+                            </div>
               {visibleNavItems.map((item) => {
                 if (item.children) {
                   return (
