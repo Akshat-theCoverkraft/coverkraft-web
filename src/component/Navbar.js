@@ -24,6 +24,7 @@ import {
   TwoWheeler as BikeIcon,
   Favorite as HealthIcon,
   FlightTakeoff as TravelIcon,
+  Assignment as ClaimIcon,
 } from "@mui/icons-material";
 import Logo from "../Images/CKbig.png";
 import profileIcon from "../Images/ic-profile.png";
@@ -93,14 +94,6 @@ const MEGA_MENU_DATA = [
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", path: "/" },
-  // {
-  //   key: "about",
-  //   label: "About Us",
-  //   path: "/about",
-  //   auth: true,
-  //   children: [{ label: "Our Leaders", path: "/Our-LeaderShip" }],
-  // },
-  // { key: "contact", label: "Contact Us", path: "/contactus", auth: true },
 ];
 
 const MORE_MENU_ITEMS = [
@@ -248,11 +241,11 @@ function Navbar({ scrollToContactBottom }) {
     more: null,
     submenu: null,
   });
-    const [megaOpen, setMegaOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
-const userName = useMemo(() => sessionStorage.getItem("userName"), []);
+  const userName = useMemo(() => sessionStorage.getItem("userName"), []);
 
   // Memoized values
   const userId = useMemo(() => sessionStorage.getItem("userId"), []);
@@ -267,7 +260,7 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
     });
   }, [loggedIn, isHomePage]);
 
-    // Close mega menu on outside click
+  // Close mega menu on outside click
   useEffect(() => {
     const handleClick = (e) => {
       if (megaRef.current && !megaRef.current.contains(e.target)) {
@@ -341,9 +334,15 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
   const handleVault = useCallback(() => {
     navigate(sessionStorage.getItem("token") ? "/vault" : "/login");
   }, [navigate]);
+
   const handlePrivacyPolicy = useCallback(() => {
     navigate("/legal#PrivacyPolicy");
   }, [navigate]);
+
+  // ── NEW: Claim handler ──────────────────────────────────────────────────────
+  const handleClaim = useCallback(() => {
+    navigate(loggedIn ? "/claim" : "/login");
+  }, [navigate, loggedIn]);
 
   const closeAllMenus = useCallback(() => {
     setAnchorEls({
@@ -354,7 +353,7 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
     });
   }, []);
 
-    // ── MEGA MENU COMPONENT (inline) ──────────────────────────────────────────
+  // ── MEGA MENU COMPONENT (inline) ──────────────────────────────────────────
   const MegaMenuDropdown = () => (
     <MegaMenuWrapper>
       {MEGA_MENU_DATA.map((col, idx) => (
@@ -386,39 +385,39 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
   const renderMobileMenuSections = () => {
     const sections = [];
 
-     sections.push(
-          <MenuSection key="insurance-products">
-            <SectionTitle>Insurance Products</SectionTitle>
-            {MEGA_MENU_DATA.map((cat) => (
-              <React.Fragment key={cat.key}>
-                <MenuItem
-                  sx={{
-                    fontSize: "1.3rem",
-                    py: 1,
-                    color: cat.color,
-                    fontWeight: 700,
-                  }}
-                >
-                  {cat.label}
-                </MenuItem>
-                {cat.items.filter((i) => !i.isViewAll).map((item) => (
-                  <MenuItem
-                    key={item.label}
-                    onClick={() => {
-                      navigate(item.path);
-                      closeAllMenus();
-                    }}
-                    sx={{ fontSize: "1.15rem", pl: 4, py: 0.8, color: "rgba(255,255,255,0.8)" }}
-                  >
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </React.Fragment>
+    sections.push(
+      <MenuSection key="insurance-products">
+        <SectionTitle>Insurance Products</SectionTitle>
+        {MEGA_MENU_DATA.map((cat) => (
+          <React.Fragment key={cat.key}>
+            <MenuItem
+              sx={{
+                fontSize: "1.3rem",
+                py: 1,
+                color: cat.color,
+                fontWeight: 700,
+              }}
+            >
+              {cat.label}
+            </MenuItem>
+            {cat.items.filter((i) => !i.isViewAll).map((item) => (
+              <MenuItem
+                key={item.label}
+                onClick={() => {
+                  navigate(item.path);
+                  closeAllMenus();
+                }}
+                sx={{ fontSize: "1.15rem", pl: 4, py: 0.8, color: "rgba(255,255,255,0.8)" }}
+              >
+                {item.label}
+              </MenuItem>
             ))}
-          </MenuSection>
-        );
-    
-        sections.push(<Divider key="div-ins" sx={{ borderColor: "#333" }} />);
+          </React.Fragment>
+        ))}
+      </MenuSection>
+    );
+
+    sections.push(<Divider key="div-ins" sx={{ borderColor: "#333" }} />);
 
     if (loggedIn) {
       // Quick Actions Section
@@ -434,6 +433,17 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
           >
             <VaultIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Policy Vault
+          </MenuItem>
+          {/* ── NEW: Claim in mobile quick actions ── */}
+          <MenuItem
+            onClick={() => {
+              handleClaim();
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            <ClaimIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+            Claim
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -519,6 +529,17 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
           >
             <VaultIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Policy Vault
+          </MenuItem>
+          {/* ── NEW: Claim in mobile guest actions ── */}
+          <MenuItem
+            onClick={() => {
+              handleClaim();
+              closeAllMenus();
+            }}
+            sx={{ fontSize: "1.3rem", py: 1.5 }}
+          >
+            <ClaimIcon sx={{ mr: 1.5, color: "#8AC642" }} />
+            Claim
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -622,28 +643,29 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
             </>
           ) : (
             <div className="d-flex align-items-center" style={{ gap: isTablet ? 16 : 24 }}>
-                {/* ── INSURANCE PRODUCTS MEGA TRIGGER ── */}
-                            <div
-                              ref={megaRef}
-                              style={{ position: "relative" }}
-                              onMouseEnter={() => setMegaOpen(true)}
-                              onMouseLeave={() => setMegaOpen(false)}
-                            >
-                              <NavItem
-                                active={location.pathname.startsWith("/products")}
-                                style={{ userSelect: "none" }}
-                              >
-                                Insurance Products
-                                <ArrowDownIcon
-                                  sx={{
-                                    fontSize: 18,
-                                    transition: "transform 0.2s",
-                                    transform: megaOpen ? "rotate(180deg)" : "rotate(0deg)",
-                                  }}
-                                />
-                              </NavItem>
-                              {megaOpen && <MegaMenuDropdown />}
-                            </div>
+              {/* ── INSURANCE PRODUCTS MEGA TRIGGER ── */}
+              <div
+                ref={megaRef}
+                style={{ position: "relative" }}
+                onMouseEnter={() => setMegaOpen(true)}
+                onMouseLeave={() => setMegaOpen(false)}
+              >
+                <NavItem
+                  active={location.pathname.startsWith("/products")}
+                  style={{ userSelect: "none" }}
+                >
+                  Insurance Products
+                  <ArrowDownIcon
+                    sx={{
+                      fontSize: 18,
+                      transition: "transform 0.2s",
+                      transform: megaOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    }}
+                  />
+                </NavItem>
+                {megaOpen && <MegaMenuDropdown />}
+              </div>
+
               {visibleNavItems.map((item) => {
                 if (item.children) {
                   return (
@@ -705,9 +727,13 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
               <StyledButton onClick={handlePrivacyPolicy}>
                 Privacy Policy
               </StyledButton>
-              
               <StyledButton onClick={handleVault}>
                 Policy Vault
+              </StyledButton>
+
+              {/* ── NEW: Claim button ── */}
+              <StyledButton onClick={handleClaim}>
+                Claim
               </StyledButton>
 
               {loggedIn ? (
@@ -758,30 +784,26 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
                       }}
                     >
                       <div
-  onClick={(e) => setAnchor('profile', e.currentTarget)}
-  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
->
-  {/* Avatar circle instead of profileIcon */}
-  <div style={{
-    width: 32, height: 32, borderRadius: '50%',
-    background: 'linear-gradient(135deg, #90DB78, #3FC8EE)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontWeight: 700, fontSize: 14, color: '#000',
-  }}>
-    {sessionStorage.getItem('userName')?.charAt(0).toUpperCase() || 'U'}
-  </div>
-
-  {/* Hi, FirstName below avatar */}
-  <span style={{
-    fontSize: 15, color: '#8AC642',
-    fontFamily: 'Gotham, sans-serif',
-    fontWeight: 600, marginTop: 2,
-    whiteSpace: 'nowrap', lineHeight: 1,
-  }}>
-   Hi, {sessionStorage.getItem('userName')?.split(' ')[0]?.charAt(0).toUpperCase() + sessionStorage.getItem('userName')?.split(' ')[0]?.slice(1).toLowerCase()} 👋
-
-  </span>
-</div>
+                        onClick={(e) => setAnchor('profile', e.currentTarget)}
+                        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
+                      >
+                        <div style={{
+                          width: 32, height: 32, borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #90DB78, #3FC8EE)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontWeight: 700, fontSize: 14, color: '#000',
+                        }}>
+                          {sessionStorage.getItem('userName')?.charAt(0).toUpperCase() || 'U'}
+                        </div>
+                        <span style={{
+                          fontSize: 15, color: '#8AC642',
+                          fontFamily: 'Gotham, sans-serif',
+                          fontWeight: 600, marginTop: 2,
+                          whiteSpace: 'nowrap', lineHeight: 1,
+                        }}>
+                          Hi, {sessionStorage.getItem('userName')?.split(' ')[0]?.charAt(0).toUpperCase() + sessionStorage.getItem('userName')?.split(' ')[0]?.slice(1).toLowerCase()} 👋
+                        </span>
+                      </div>
                     </Badge>
                   </Tooltip>
 
@@ -812,7 +834,6 @@ const userName = useMemo(() => sessionStorage.getItem("userName"), []);
                   Login
                 </StyledButton>
               )}
-              
 
               {isHomePage && (
                 <IconButton
