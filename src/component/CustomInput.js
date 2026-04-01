@@ -1,8 +1,10 @@
+// CustomInput.jsx
 import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function CustomInput({
+  children, // 👈 ADDED THIS
   onKeyDown = () => { },
   type = "text",
   label,
