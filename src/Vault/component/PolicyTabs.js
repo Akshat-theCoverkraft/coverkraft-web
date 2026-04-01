@@ -141,6 +141,11 @@ const POLICY_CONFIGS = {
     image: scooty,
     category: "motor",
   },
+    motor: {
+    label: "motor",
+    image: scooty,
+    category: "motor",
+  },
   life: { label: "Life Insurance", image: Life, category: "life" },
   accident: { label: "Accident Insurance", image: Health, category: "health" },
   health: { label: "Health Insurance", image: Health, category: "health" },
