@@ -43,7 +43,7 @@ import InsurancePage from "./component/InsurancePage.jsx";
 import CarThirdParty from "./component/CarThirdParty.jsx";
 import ProductDetail from "./component/ProductDetail.jsx";
 import InsuranceCategoryPage from "./component/InsuranceCategoryPage.jsx";
-import Claim from "./pages/Claim.jsx";
+import Claim from "./pages/Claim/Claim.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

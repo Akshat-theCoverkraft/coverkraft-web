@@ -341,7 +341,7 @@ function Navbar({ scrollToContactBottom }) {
 
   // ── NEW: Claim handler ──────────────────────────────────────────────────────
   const handleClaim = useCallback(() => {
-    navigate(loggedIn ? "/claim" : "/login");
+    navigate("/claim");
   }, [navigate, loggedIn]);
 
   const closeAllMenus = useCallback(() => {
