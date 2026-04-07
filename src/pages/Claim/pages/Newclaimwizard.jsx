@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomInput from "../../../component/CustomInput";
 import Button from "../../../component/Button";
 import {
@@ -12,8 +12,7 @@ import { TypeCard, PolicyItem, OcrZone } from "../ui";
 import {
   submitClaim,
   fetchInsuranceCompanies,
-  fetchMyPolicies,
-  prefillPolicyData,
+  fetchPoliciesByType,
   extractData,
 } from "../../../store/action/action";
 
@@ -22,6 +21,7 @@ import API_URL from "../../../ServiceModule/Service";
 // ─── NewClaimWizard ───────────────────────────────────────────────────────────
 export default function NewClaimWizard({ navigate, showToast }) {
   const dispatch = useDispatch();
+const token = sessionStorage.getItem("token");
 
   const ocrInputRef = useRef(null);
 
@@ -48,19 +48,29 @@ export default function NewClaimWizard({ navigate, showToast }) {
     date: "", time: "", place: "", hospital: "", desc: "",
   });
 
-  // ── Load insurance companies & user's policies on mount ──────────────────
+  // ── Load insurance companies on mount ────────────────────────────────────
   useEffect(() => {
     dispatch(fetchInsuranceCompanies(API_URL)).then((res) => {
       if (res?.success && Array.isArray(res.data)) setCompanies(res.data);
     });
+  }, []);
+
+  // ── Fetch policies by type whenever category changes ──────────────────────
+  useEffect(() => {
+    if (!category) return;
 
     setPoliciesLoading(true);
-    dispatch(fetchMyPolicies(API_URL))
+    setPolicies([]);
+    setSelectedPolicy(null);
+
+    dispatch(fetchPoliciesByType(API_URL, category.toLowerCase(), token))
       .then((res) => {
-        if (res?.success && Array.isArray(res.data)) setPolicies(res.data);
+        if (res?.success && Array.isArray(res.data?.policies)) {
+          setPolicies(res.data.policies);
+        }
       })
       .finally(() => setPoliciesLoading(false));
-  }, []);
+  }, [category]);
 
   const clearErr = (field) =>
     setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -69,6 +79,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
     setStep(1); setCategory(""); setSelectedPolicy(null); setIsManual(false);
     setOcrScanning(false); setOcrDone(false); setDecl(false);
     setFirVal(""); setErrors({}); setSubmitting(false); setPrefilling(false);
+    setPolicies([]);
     setForm2({ policy: "", company: "", type: "Motor", holder: "", mobile: "", email: "" });
     setForm3({ date: "", time: "", place: "", hospital: "", desc: "" });
   }
@@ -80,36 +91,23 @@ export default function NewClaimWizard({ navigate, showToast }) {
     setSelectedPolicy(p); setIsManual(false);
   }
 
-  // ── Step 2 via selected policy → prefill API ─────────────────────────────
-  async function goToStep2WithPolicy(policy) {
-    setPrefilling(true);
+  // ── Step 2 via selected policy → use data directly from policy object ─────
+  function goToStep2WithPolicy(policy) {
     setOcrDone(false);
     setErrors({});
-    setStep(2);
 
-    try {
-      const res = await dispatch(prefillPolicyData(API_URL, policy.id));
-      if (res?.success && res.data) {
-        const d = res.data;
-        setForm2({
-          policy:  d.policyNumber     || "",
-          company: d.insuranceCompany || "",
-          type:    d.insuranceType    || "",
-          holder:  d.proposerName     || "",
-          mobile:  d.registeredMobile || "",
-          email:   d.registeredEmail  || "",
-        });
-        setOcrDone(true);
-      } else {
-        showToast("Could not load policy details. Please fill in manually.", "err");
-        setForm2({ policy: "", company: "", type: category || "Motor", holder: "", mobile: "", email: "" });
-      }
-    } catch {
-      showToast("Could not load policy details. Please fill in manually.", "err");
-      setForm2({ policy: "", company: "", type: category || "Motor", holder: "", mobile: "", email: "" });
-    } finally {
-      setPrefilling(false);
-    }
+    // Use data directly from the policy object — no API call needed
+    setForm2({
+      policy:  policy.policyNumber     || policy.policy_number || "",
+      company: policy.insuranceCompany || policy.company       || "",
+      type:    policy.insuranceType    || policy.type          || category || "Motor",
+      holder:  policy.insuredName      || policy.holderName    || policy.proposerName || "",
+      mobile:  policy.registeredMobile || policy.mobile        || "",
+      email:   policy.registeredEmail  || policy.email         || "",
+    });
+
+    setOcrDone(true);
+    setStep(2);
   }
 
   // ── Step navigation ───────────────────────────────────────────────────────
@@ -155,7 +153,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
       const res = await dispatch(extractData(API_URL, formData));
 
       // Normalize: support both flat { success, ocrText } and nested { success, data: { ocrText } }
-      const isSuccess  = res?.success ?? res?.data?.success ?? false;
+      const isSuccess    = res?.success ?? res?.data?.success ?? false;
       const responseData = res?.data ?? res ?? {};
 
       if (!isSuccess) {
@@ -183,18 +181,14 @@ export default function NewClaimWizard({ navigate, showToast }) {
       }
 
       // ── Match company name against loaded list (case-insensitive) ──────
-      // OCR returns the full company name as plain text. The select dropdown
-      // uses option values from the API companies list. We find the matching
-      // entry so the select renders correctly, or fall back to the raw string
-      // and show a plain text input instead (handled in JSX below).
-      const ocrCompany = extractedFields.insuredCompany || responseData.insuredCompany || "";
+      const ocrCompany     = extractedFields.insuredCompany || responseData.insuredCompany || "";
       const matchedCompany = companies.find((c) => {
         const name = typeof c === "object" ? c.name : c;
         return name?.trim().toLowerCase() === ocrCompany?.trim().toLowerCase();
       });
       const resolvedCompany = matchedCompany
         ? (typeof matchedCompany === "object" ? matchedCompany.name : matchedCompany)
-        : ocrCompany; // use raw OCR string — text input shown in JSX
+        : ocrCompany;
 
       setForm2((prev) => ({
         policy:  extractedFields.policyNumber || responseData.policyNumber || prev.policy,
@@ -270,7 +264,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
 
     fd.append("policySource", selectedPolicy ? "coverkraft" : "external");
     if (selectedPolicy) {
-      fd.append("policyId", selectedPolicy.id);
+      fd.append("policyId", selectedPolicy.policyId);
     } else {
       fd.append("policyNumber",     form2.policy);
       fd.append("insuranceCompany", form2.company);
@@ -304,11 +298,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
       setSubmitting(false);
     }
   }
-
-  // ── Filter policies by category ───────────────────────────────────────────
-  const filteredPolicies = policies.filter(
-    (p) => (p.insuranceType || p.type || p.category) === category
-  );
 
   // ── Locked field style (shown after OCR / prefill) ────────────────────────
   const lockedSx = {
@@ -390,8 +379,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
                       <i className="fa-solid fa-spinner fa-spin" />
                       <span>Loading your policies…</span>
                     </div>
-                  ) : filteredPolicies.length > 0 ? (
-                    filteredPolicies.map((p) => (
+                  ) : policies.length > 0 ? (
+                    policies.map((p) => (
                       <PolicyItem
                         key={p._id || p.id}
                         policy={p}
@@ -440,16 +429,16 @@ export default function NewClaimWizard({ navigate, showToast }) {
               </>
             )}
 
-            {/* Prefill / OCR loading indicator */}
-            {(prefilling || ocrScanning) && (
+            {/* OCR loading indicator */}
+            {ocrScanning && (
               <div style={{ display: "flex", alignItems: "center", gap: 10, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13, color: T.muted }}>
                 <i className="fa-solid fa-spinner fa-spin" />
-                <span>{ocrScanning ? "Scanning document…" : "Loading policy details…"}</span>
+                <span>Scanning document…</span>
               </div>
             )}
 
             {/* Auto-fill success banner */}
-            {ocrDone && !prefilling && !ocrScanning && (
+            {ocrDone && !ocrScanning && (
               <div style={{ display: "flex", alignItems: "center", gap: 10, background: T.successBg, border: "1px solid rgba(196,237,63,.2)", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13, color: T.accent }}>
                 <i className="fa-solid fa-circle-check" />
                 <span>
@@ -460,12 +449,12 @@ export default function NewClaimWizard({ navigate, showToast }) {
               </div>
             )}
 
-            <fieldset disabled={prefilling || ocrScanning} style={{ border: "none", padding: 0, margin: 0 }}>
+            <fieldset disabled={ocrScanning} style={{ border: "none", padding: 0, margin: 0 }}>
 
               {/* Row 1: Policy Number + Insurance Company */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
 
-                {/* Policy Number — locked after OCR */}
+                {/* Policy Number — locked after OCR / prefill */}
                 <CustomInput
                   label="Policy Number"
                   name="policy"
@@ -478,13 +467,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
                   disabled={ocrDone}
                 />
 
-                {/*
-                  Insurance Company:
-                  - If OCR has filled a value (ocrDone), show a plain text input so
-                    the raw OCR company name is always visible regardless of whether
-                    it matches an option in the dropdown list.
-                  - Otherwise show the select dropdown for manual entry.
-                */}
                 {ocrDone && form2.company ? (
                   <div>
                     <CustomInput
@@ -497,7 +479,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
                       required
                       disabled={ocrDone}
                     />
-                    {/* Small hint so user knows it came from OCR */}
                     <p style={{ fontSize: 10, color: T.muted, marginTop: 4 }}>
                       <i className="fa-solid fa-wand-magic-sparkles" style={{ marginRight: 4, fontSize: 9 }} />
                       Auto-detected from document
@@ -529,7 +510,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
                 )}
               </div>
 
-              {/* Row 2: Insurance Type + Proposer Name — both locked after OCR */}
+              {/* Row 2: Insurance Type + Proposer Name — both locked after prefill */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
                 {ocrDone ? (
                   <CustomInput
@@ -570,7 +551,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
                 />
               </div>
 
-              {/* Row 3: Mobile + Email — always editable (OCR doesn't fill these) */}
+              {/* Row 3: Mobile + Email — always editable */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
                 <CustomInput
                   type="tel"
@@ -599,7 +580,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
 
             <div style={stepNav()}>
               <Button text="Back"     onClick={() => goStep(1)}     bgcolor="transparent" color={T.muted} borderColor={T.border} />
-              <Button text="Continue" onClick={handleContinueStep2} bgcolor={T.accent}    color="#000"    disabled={prefilling || ocrScanning} />
+              <Button text="Continue" onClick={handleContinueStep2} bgcolor={T.accent}    color="#000"    disabled={ocrScanning} />
             </div>
           </div>
         )}

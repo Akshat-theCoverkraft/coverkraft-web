@@ -86,6 +86,7 @@ export function TypeCard({ selected, onClick, children }) {
 // ─── Policy Item ──────────────────────────────────────────────────────────────
 export function PolicyItem({ policy: p, selected, onClick }) {
   const [hov, setHov] = useState(false);
+
   return (
     <div
       onClick={onClick}
@@ -102,6 +103,7 @@ export function PolicyItem({ policy: p, selected, onClick }) {
         transition: "all 0.2s ease",
       }}
     >
+      {/* Header */}
       <div
         style={{
           display: "flex",
@@ -111,9 +113,14 @@ export function PolicyItem({ policy: p, selected, onClick }) {
         }}
       >
         <div>
-          <h5 style={{ fontSize: 15, fontWeight: 700 }}>{p.policyNumber}</h5>
-          <p style={{ fontSize: 11, color: T.muted }}>{p.company}</p>
+          <h5 style={{ fontSize: 15, fontWeight: 700 }}>
+            {p.policyNumber}
+          </h5>
+          <p style={{ fontSize: 11, color: T.muted }}>
+            {p.insuranceCompany} {/* ✅ FIXED */}
+          </p>
         </div>
+
         <div
           style={{
             fontSize: 9,
@@ -123,9 +130,11 @@ export function PolicyItem({ policy: p, selected, onClick }) {
             letterSpacing: 1,
           }}
         >
-          ACTIVE
+          {p.status?.toUpperCase()} {/* ✅ dynamic */}
         </div>
       </div>
+
+      {/* Details */}
       <div
         style={{
           paddingTop: 12,
@@ -140,24 +149,27 @@ export function PolicyItem({ policy: p, selected, onClick }) {
           }}
         >
           {[
-            { lbl: "Insured", val: p.holder },
-            { lbl: "Expiry",  val: p.endDate },
-            ...(p.type === "Motor"
+            { lbl: "Insured", val: p.insuredName },          // ✅ FIXED
+            { lbl: "Expiry",  val: p.policyEndDate },        // ✅ FIXED
+
+            ...(p.insuranceType === "other_vehicle"
               ? [
-                  { lbl: "Vehicle", val: p.model },
-                  { lbl: "Reg No",  val: p.detail },
+                  { lbl: "Vehicle", val: p.model },          // ✅ OK
+                  { lbl: "Reg No",  val: p.registrationNumber }, // ✅ FIXED
                 ]
               : []),
-            ...(p.type === "Health"
+
+            ...(p.insuranceType === "health"
               ? [
-                  { lbl: "Limit", val: p.sumInsured },
-                  { lbl: "Plan",  val: p.subType },
+                  { lbl: "Limit", val: p.coverAmount },
+                  { lbl: "Plan",  val: p.insuranceType },
                 ]
               : []),
-            ...(p.type === "Life"
+
+            ...(p.insuranceType === "life"
               ? [
-                  { lbl: "Assured", val: p.sumAssured },
-                  { lbl: "Plan",    val: p.subType },
+                  { lbl: "Assured", val: p.coverAmount },
+                  { lbl: "Plan",    val: p.insuranceType },
                 ]
               : []),
           ].map(({ lbl, val }) => (
@@ -174,7 +186,9 @@ export function PolicyItem({ policy: p, selected, onClick }) {
               >
                 {lbl}
               </label>
-              <div style={{ fontSize: 12, fontWeight: 600 }}>{val}</div>
+              <div style={{ fontSize: 12, fontWeight: 600 }}>
+                {val || "-"} {/* ✅ safe fallback */}
+              </div>
             </div>
           ))}
         </div>

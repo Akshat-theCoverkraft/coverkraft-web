@@ -112,6 +112,10 @@ export const TRACK_CLAIM_REQUEST = "TRACK_CLAIM_REQUEST";
 export const TRACK_CLAIM_SUCCESS = "TRACK_CLAIM_SUCCESS";
 export const TRACK_CLAIM_FAILURE = "TRACK_CLAIM_FAILURE";
 
+export const GET_MY_CLAIMS_REQUEST = "GET_MY_CLAIMS_REQUEST";
+export const GET_MY_CLAIMS_SUCCESS = "GET_MY_CLAIMS_SUCCESS";
+export const GET_MY_CLAIMS_FAILURE = "GET_MY_CLAIMS_FAILURE";
+
 // delete account api
 export const deleteAccount = (API_URL, userId) => {
   return (dispatch) => {
@@ -528,7 +532,6 @@ export const submitAgent = (API_URL, formData) => {
 
 const getAuthHeader = () => {
   const token = sessionStorage.getItem("token");
-  console.log("Retrieved token:", token); // Debug log
   return { Authorization: `Bearer ${token}` };
 };
 
@@ -561,14 +564,15 @@ export const submitClaim = (API_URL, formData) => {
   };
 };
 
-// ── 2. Fetch My Policies ──────────────────────────────────────────────────────
-export const fetchMyPolicies = (API_URL) => {
+export const fetchPoliciesByType = (API_URL, insuranceType, token) => {
   return (dispatch) => {
     dispatch({ type: FETCH_POLICIES_REQUEST });
 
     return axios
-      .get(`${API_URL}api/claims/my-claims`, {
-        headers: getAuthHeader(),
+      .get(`${API_URL}api/claims/policies/${insuranceType}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((response) => {
         dispatch({ type: FETCH_POLICIES_SUCCESS, payload: response.data });
@@ -601,26 +605,6 @@ export const fetchInsuranceCompanies = (API_URL) => {
   };
 };
 
-// ── 4. Prefill Policy Data (Step 2 auto-fill) ─────────────────────────────────
-export const prefillPolicyData = (API_URL, policyId) => {
-  return (dispatch) => {
-    dispatch({ type: PREFILL_POLICY_REQUEST });
-
-    return axios
-      .get(`${API_URL}api/claims/prefill/${policyId}`, {
-        headers: getAuthHeader(),
-      })
-      .then((response) => {
-        dispatch({ type: PREFILL_POLICY_SUCCESS, payload: response.data.data });
-        return response.data;
-      })
-      .catch((error) => {
-        const errorMessage = error.response?.data?.message || error.message;
-        dispatch({ type: PREFILL_POLICY_FAILURE, payload: errorMessage });
-        return { success: false, message: errorMessage };
-      });
-  };
-};
 
 export const trackClaim = (API_URL, claimRefNo) => {
   return (dispatch) => {
@@ -641,3 +625,23 @@ export const trackClaim = (API_URL, claimRefNo) => {
   };
 };
  
+// ── Get My Claims ─────────────────────────────────────────────────────────────
+export const getMyClaims = (API_URL) => {
+  return (dispatch) => {
+    dispatch({ type: GET_MY_CLAIMS_REQUEST });
+
+    return axios
+      .get(`${API_URL}api/claims/my-claims`, {
+        headers: getAuthHeader(),
+      })
+      .then((response) => {
+        dispatch({ type: GET_MY_CLAIMS_SUCCESS, payload: response.data });
+        return response.data;
+      })
+      .catch((error) => {
+        const errorMessage = error.response?.data?.message || error.message;
+        dispatch({ type: GET_MY_CLAIMS_FAILURE, payload: errorMessage });
+        return { success: false, message: errorMessage };
+      });
+  };
+};
