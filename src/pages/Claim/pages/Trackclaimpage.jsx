@@ -560,7 +560,7 @@ function MyClaimsSection({ onTrack }) {
     (async () => {
       try {
         const res = await dispatch(getMyClaims(API_URL));
-        if (res?.success && Array.isArray(res.data)) setClaims(res.data);
+        if (res?.success && Array.isArray(res.data?.claims)) setClaims(res.data?.claims);
         else setError(res?.message || "Could not load claims.");
       } catch {
         setError("Something went wrong while loading your claims.");
