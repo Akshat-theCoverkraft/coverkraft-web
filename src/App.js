@@ -1,9 +1,14 @@
 //
 import React, { useState, useEffect } from "react";
-import './App.css';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import "./App.css";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { setupOnMessageListener } from "./fcm"; 
+import { setupOnMessageListener } from "./fcm";
 import { Toaster } from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
 import { HelmetProvider } from "react-helmet-async";
@@ -25,8 +30,8 @@ import Feeds from "./Landing/component/blogs/Feeds";
 import PrivacyPolicy from "./PrivacyPolicy";
 import LegalPoliciesPage from "../src/pages/LegalPoliciesPage.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
-import PolicyType from './Landing/component/PolicyType';
-import PolicyDetails from './pages/Policies/PolicyDetails.jsx';
+import PolicyType from "./Landing/component/PolicyType";
+import PolicyDetails from "./pages/Policies/PolicyDetails.jsx";
 import UniversalHomeButton from "./component/UniversalHomeButton.jsx";
 import GmailSyncPage from "./Vault/component/GmailSyncPage.jsx";
 import BackToTop from "./component/BackToTop.js";
@@ -34,6 +39,12 @@ import { PolicyProvider } from "./store/policyContext.js";
 import LeaderShip from "./About/LeaderShip.js";
 import JoinUs from "./pages/JoinUs.jsx";
 import PlayStoreTesting from "./pages/PlayStoreTesting.jsx";
+import ProductsRouter from "./component/ProductsRouter.jsx";
+import InsurancePage from "./component/InsurancePage.jsx";
+import CarThirdParty from "./component/CarThirdParty.jsx";
+import ProductDetail from "./component/ProductDetail.jsx";
+import InsuranceCategoryPage from "./component/InsuranceCategoryPage.jsx";
+import Claim from "./pages/Claim/Claim.jsx";
 
 function App() {
   useEffect(() => {
@@ -60,8 +71,8 @@ function App() {
     const SESSION_DURATION = 48 * 60 * 60 * 1000; // 48 hours
     const excludedPages = ["", "/login", "/register"];
 
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
     }
 
     const loginTime = sessionStorage.getItem("loginTime");
@@ -132,6 +143,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/joinUs" element={<JoinUs />} />
+          <Route path="/claim" element={<Claim />} />
           <Route path="/vault" element={<Vault />} />
           <Route path="/motor-policy" element={<MotorPolicyForm />} />
           <Route path="/health-policy" element={<HealthPolicyForm />} />
@@ -151,6 +163,8 @@ function App() {
           <Route path="/gmail-sync" element={<GmailSyncPage />} />
           <Route path="/Our-LeaderShip" element={<LeaderShip />} />
           <Route path="/user-deletion" element={<PlayStoreTesting />} />
+          <Route path="/products" element={<ProductsRouter />} />
+          <Route path="/products/:slug" element={<ProductsRouter />} />
         </Routes>
       </PolicyProvider>
     </HelmetProvider>

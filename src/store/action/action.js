@@ -91,6 +91,31 @@ export const SUBMIT_AGENT_REQUEST = "SUBMIT_AGENT_REQUEST";
 export const SUBMIT_AGENT_SUCCESS = "SUBMIT_AGENT_SUCCESS";
 export const SUBMIT_AGENT_FAILURE = "SUBMIT_AGENT_FAILURE";
 
+//Claim
+export const SUBMIT_CLAIM_REQUEST  = "SUBMIT_CLAIM_REQUEST";
+export const SUBMIT_CLAIM_SUCCESS  = "SUBMIT_CLAIM_SUCCESS";
+export const SUBMIT_CLAIM_FAILURE  = "SUBMIT_CLAIM_FAILURE";
+
+export const FETCH_POLICIES_REQUEST = "FETCH_POLICIES_REQUEST";
+export const FETCH_POLICIES_SUCCESS = "FETCH_POLICIES_SUCCESS";
+export const FETCH_POLICIES_FAILURE = "FETCH_POLICIES_FAILURE";
+
+export const FETCH_COMPANIES_REQUEST = "FETCH_COMPANIES_REQUEST";
+export const FETCH_COMPANIES_SUCCESS = "FETCH_COMPANIES_SUCCESS";
+export const FETCH_COMPANIES_FAILURE = "FETCH_COMPANIES_FAILURE";
+
+export const PREFILL_POLICY_REQUEST = "PREFILL_POLICY_REQUEST";
+export const PREFILL_POLICY_SUCCESS = "PREFILL_POLICY_SUCCESS";
+export const PREFILL_POLICY_FAILURE = "PREFILL_POLICY_FAILURE";
+
+export const TRACK_CLAIM_REQUEST = "TRACK_CLAIM_REQUEST";
+export const TRACK_CLAIM_SUCCESS = "TRACK_CLAIM_SUCCESS";
+export const TRACK_CLAIM_FAILURE = "TRACK_CLAIM_FAILURE";
+
+export const GET_MY_CLAIMS_REQUEST = "GET_MY_CLAIMS_REQUEST";
+export const GET_MY_CLAIMS_SUCCESS = "GET_MY_CLAIMS_SUCCESS";
+export const GET_MY_CLAIMS_FAILURE = "GET_MY_CLAIMS_FAILURE";
+
 // delete account api
 export const deleteAccount = (API_URL, userId) => {
   return (dispatch) => {
@@ -229,30 +254,29 @@ export const verifyUser = (API_URL, data) => {
   };
 };
 
-//OCR data extract
 export const extractData = (API_URL, data) => {
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch({ type: OCR_DATA_REQUEST });
     const token = sessionStorage.getItem("token");
-    axios
-      .post(
+    try {
+      const response = await axios.post(
         API_URL + "document/ocrExtractData",
-        data, // Pass the data directly as the body of the POST request
+        data,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the headers
+            Authorization: `Bearer ${token}`,
           },
         }
-      )
-      .then((response) => {
-        dispatch({ type: OCR_DATA_SUCCESS, payload: response.data });
-        return response.data;
-      })
-      .catch((error) => {
-        dispatch({ type: OCR_DATA_FAILURE, payload: error.message });
-      });
+      );
+      dispatch({ type: OCR_DATA_SUCCESS, payload: response.data });
+      return response.data; // ← returned to component: await dispatch(extractData(...))
+    } catch (error) {
+      dispatch({ type: OCR_DATA_FAILURE, payload: error.message });
+      return { success: false, message: error?.response?.data?.message || error.message };
+    }
   };
 };
+ 
 //Save data
 // export const saveDocument = (API_URL, data) => {
 //     return (dispatch) => {
@@ -501,6 +525,123 @@ export const submitAgent = (API_URL, formData) => {
         });
 
         return { status: false, message: errorMessage }; // ✅ Return consistent structure
+      });
+  };
+};
+
+
+const getAuthHeader = () => {
+  const token = sessionStorage.getItem("token");
+  return { Authorization: `Bearer ${token}` };
+};
+
+// ── 1. Submit Claim ───────────────────────────────────────────────────────────
+export const submitClaim = (API_URL, formData) => {
+  return (dispatch) => {
+    dispatch({ type: SUBMIT_CLAIM_REQUEST });
+
+    return axios
+      .post(`${API_URL}api/claims/intimate`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          ...getAuthHeader(),
+        },
+      })
+      .then((response) => {
+        if (response.data.success === false) {
+          dispatch({ type: SUBMIT_CLAIM_FAILURE, payload: response.data.message });
+        } else {
+          dispatch({ type: SUBMIT_CLAIM_SUCCESS, payload: response.data });
+        }
+        return response.data;
+      })
+      .catch((error) => {
+        const errorMessage =
+          error.response?.data?.message || error.message || "Failed to submit claim";
+        dispatch({ type: SUBMIT_CLAIM_FAILURE, payload: errorMessage });
+        return { success: false, message: errorMessage };
+      });
+  };
+};
+
+export const fetchPoliciesByType = (API_URL, insuranceType, token) => {
+  return (dispatch) => {
+    dispatch({ type: FETCH_POLICIES_REQUEST });
+
+    return axios
+      .get(`${API_URL}api/claims/policies/${insuranceType}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        dispatch({ type: FETCH_POLICIES_SUCCESS, payload: response.data });
+        return response.data;
+      })
+      .catch((error) => {
+        const errorMessage = error.response?.data?.message || error.message;
+        dispatch({ type: FETCH_POLICIES_FAILURE, payload: errorMessage });
+        return { success: false, message: errorMessage };
+      });
+  };
+};
+
+// ── 3. Fetch Insurance Companies (Master Dropdown) ────────────────────────────
+export const fetchInsuranceCompanies = (API_URL) => {
+  return (dispatch) => {
+    dispatch({ type: FETCH_COMPANIES_REQUEST });
+
+    return axios
+      .get(`${API_URL}api/claims/master/insurance-companies`)
+      .then((response) => {
+        dispatch({ type: FETCH_COMPANIES_SUCCESS, payload: response.data.data });
+        return response.data;
+      })
+      .catch((error) => {
+        const errorMessage = error.response?.data?.message || error.message;
+        dispatch({ type: FETCH_COMPANIES_FAILURE, payload: errorMessage });
+        return { success: false, message: errorMessage };
+      });
+  };
+};
+
+
+export const trackClaim = (API_URL, claimRefNo) => {
+  return (dispatch) => {
+    dispatch({ type: TRACK_CLAIM_REQUEST });
+ 
+    // Public API — no auth header required
+    return axios
+      .get(`${API_URL}api/claims/track/${claimRefNo}`)
+      .then((response) => {
+        dispatch({ type: TRACK_CLAIM_SUCCESS, payload: response.data });
+        return response.data;
+      })
+      .catch((error) => {
+        const errorMessage = error.response?.data?.message || error.message;
+        dispatch({ type: TRACK_CLAIM_FAILURE, payload: errorMessage });
+        return { success: false, message: errorMessage };
+      });
+  };
+};
+ 
+// ── Get My Claims ─────────────────────────────────────────────────────────────
+export const getMyClaims = (API_URL) => {
+  return (dispatch) => {
+    dispatch({ type: GET_MY_CLAIMS_REQUEST });
+
+    return axios
+      .get(`${API_URL}api/claims/my-claims`, {
+        headers: getAuthHeader(),
+      })
+      .then((response) => {
+        dispatch({ type: GET_MY_CLAIMS_SUCCESS, payload: response.data });
+        return response.data;
+      })
+      .catch((error) => {
+        const errorMessage = error.response?.data?.message || error.message;
+        dispatch({ type: GET_MY_CLAIMS_FAILURE, payload: errorMessage });
+        return { success: false, message: errorMessage };
       });
   };
 };
