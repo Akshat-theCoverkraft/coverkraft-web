@@ -45,6 +45,8 @@ import CarThirdParty from "./component/CarThirdParty.jsx";
 import ProductDetail from "./component/ProductDetail.jsx";
 import InsuranceCategoryPage from "./component/InsuranceCategoryPage.jsx";
 import Claim from "./pages/Claim/Claim.jsx";
+import NotFound from "./component/NotFound";
+
 
 function App() {
   useEffect(() => {
@@ -139,6 +141,7 @@ function App() {
 
       <PolicyProvider>
         <Routes>
+          <Route path="*" element={<NotFound />} />
           <Route path="" element={<Landing />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
@@ -165,6 +168,7 @@ function App() {
           <Route path="/user-deletion" element={<PlayStoreTesting />} />
           <Route path="/products" element={<ProductsRouter />} />
           <Route path="/products/:slug" element={<ProductsRouter />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </PolicyProvider>
     </HelmetProvider>
