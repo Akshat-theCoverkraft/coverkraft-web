@@ -93,16 +93,43 @@ export function PolicyItem({ policy: p, selected, onClick }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: selected ? T.primaryBg : T.bg,
-        border: `1px solid ${
-          selected ? T.primary : hov ? T.muted : T.border
-        }`,
+        background: selected ? "rgba(255,179,0,0.08)" : T.bg,
+        border: `2px solid ${selected ? T.accent : hov ? T.muted : T.border}`,
         borderRadius: 12,
         padding: 16,
         cursor: "pointer",
         transition: "all 0.2s ease",
+        boxShadow: selected
+          ? "0 0 0 3px rgba(255,179,0,0.15), 0 4px 16px rgba(255,179,0,0.10)"
+          : "none",
+        position: "relative",
       }}
     >
+      {/* Badge */}
+      {selected && (
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 12,
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            background: T.accent,
+            color: "#000",
+            borderRadius: 20,
+            padding: "3px 10px",
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: 0.3,
+            pointerEvents: "none",
+          }}
+        >
+          <i className="fa-solid fa-circle-check" style={{ fontSize: 10 }} />
+          Selected
+        </div>
+      )}
+
       {/* Header */}
       <div
         style={{
@@ -113,12 +140,17 @@ export function PolicyItem({ policy: p, selected, onClick }) {
         }}
       >
         <div>
-          <h5 style={{ fontSize: 15, fontWeight: 700 }}>
+          <h5
+            style={{
+              fontSize: 15,
+              fontWeight: 700,
+              color: selected ? T.accent : T.text,
+              transition: "color 0.2s ease",
+            }}
+          >
             {p.policyNumber}
           </h5>
-          <p style={{ fontSize: 11, color: T.muted }}>
-            {p.insuranceCompany} {/* ✅ FIXED */}
-          </p>
+          <p style={{ fontSize: 11, color: T.muted }}>{p.insuranceCompany}</p>
         </div>
 
         <div
@@ -128,49 +160,28 @@ export function PolicyItem({ policy: p, selected, onClick }) {
             color: T.accent,
             textTransform: "uppercase",
             letterSpacing: 1,
+            marginRight: selected ? 84 : 0,
+            transition: "margin 0.2s ease",
           }}
         >
-          {p.status?.toUpperCase()} {/* ✅ dynamic */}
+          {p.status?.toUpperCase()}
         </div>
       </div>
 
       {/* Details */}
-      <div
-        style={{
-          paddingTop: 12,
-          borderTop: "1px solid rgba(255,179,0,0.08)",
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4,1fr)",
-            gap: 12,
-          }}
-        >
+      <div style={{ paddingTop: 12, borderTop: "1px solid rgba(255,179,0,0.08)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
           {[
-            { lbl: "Insured", val: p.insuredName },          // ✅ FIXED
-            { lbl: "Expiry",  val: p.policyEndDate },        // ✅ FIXED
-
+            { lbl: "Insured", val: p.insuredName },
+            { lbl: "Expiry",  val: p.policyEndDate },
             ...(p.insuranceType === "other_vehicle"
-              ? [
-                  { lbl: "Vehicle", val: p.model },          // ✅ OK
-                  { lbl: "Reg No",  val: p.registrationNumber }, // ✅ FIXED
-                ]
+              ? [{ lbl: "Vehicle", val: p.model }, { lbl: "Reg No", val: p.registrationNumber }]
               : []),
-
             ...(p.insuranceType === "health"
-              ? [
-                  { lbl: "Limit", val: p.coverAmount },
-                  { lbl: "Plan",  val: p.insuranceType },
-                ]
+              ? [{ lbl: "Limit", val: p.coverAmount }, { lbl: "Plan", val: p.insuranceType }]
               : []),
-
             ...(p.insuranceType === "life"
-              ? [
-                  { lbl: "Assured", val: p.coverAmount },
-                  { lbl: "Plan",    val: p.insuranceType },
-                ]
+              ? [{ lbl: "Assured", val: p.coverAmount }, { lbl: "Plan", val: p.insuranceType }]
               : []),
           ].map(({ lbl, val }) => (
             <div key={lbl}>
@@ -186,9 +197,7 @@ export function PolicyItem({ policy: p, selected, onClick }) {
               >
                 {lbl}
               </label>
-              <div style={{ fontSize: 12, fontWeight: 600 }}>
-                {val || "-"} {/* ✅ safe fallback */}
-              </div>
+              <div style={{ fontSize: 12, fontWeight: 600 }}>{val || "-"}</div>
             </div>
           ))}
         </div>

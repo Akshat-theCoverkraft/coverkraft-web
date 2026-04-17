@@ -57,6 +57,7 @@ const REQUIRED_DOCS = {
 
 const ALLOWED_MIME = ["application/pdf", "image/jpeg", "image/png", "image/jpg", "image/webp"];
 const MAX_FILE_MB  = 10;
+const TODAY        = () => new Date().toISOString().slice(0, 10);
 
 // ─── NewClaimWizard ───────────────────────────────────────────────────────────
 export default function NewClaimWizard({ navigate, showToast }) {
@@ -78,8 +79,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
   const [companies,       setCompanies]       = useState([]);
   const [policies,        setPolicies]        = useState([]);
   const [policiesLoading, setPoliciesLoading] = useState(false);
-  const [uploadedFiles,   setUploadedFiles]   = useState({});   // { [docKey]: File }
-  const [dragOver,        setDragOver]        = useState({});   // { [docKey]: bool }
+  const [uploadedFiles,   setUploadedFiles]   = useState({});
+  const [dragOver,        setDragOver]        = useState({});
 
   const [form2, setForm2] = useState({
     policy: "", company: "", type: "Motor", holder: "", mobile: "", email: "",
@@ -87,7 +88,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
 
   const [form3, setForm3] = useState({
     date: "", time: "", place: "", desc: "", estimatedClaimAmount: "",
-    // Motor
     vehicleDrivable: "", vehicleDrivenAtAccident: "",
     driverName: "", drivingLicenseNumber: "",
     typeOfLoss: "", firLodged: "", vehicleAtGarage: "",
@@ -95,7 +95,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
     garageDistrict: "", garageState: "", garageContact: "", garageContactPerson: "",
     surveyAddress: "", surveyCity: "", surveyDistrict: "",
     surveyState: "", surveyContact: "", surveyContactPerson: "",
-    // Health
     patientName: "", hospitalName: "", hospitalAddress: "",
     hospitalContact: "", city: "", hospitalizationType: "",
     dateOfAdmission: "", diagnosis: "",
@@ -127,7 +126,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
   const clearErr = (field) => setErrors((p) => ({ ...p, [field]: "" }));
   const f3Set    = (field, value) => { setForm3((p) => ({ ...p, [field]: value })); clearErr(field); };
 
-  /** Map a raw policyType string (e.g. "car_policy") → display label ("Motor") */
   function normalizeInsuranceType(raw) {
     const s = (raw || "").toLowerCase().trim();
     for (const [label, cfg] of Object.entries(INSURANCE_TYPE_MAP)) {
@@ -159,7 +157,11 @@ export default function NewClaimWizard({ navigate, showToast }) {
   }
 
   function pickCategory(cat) { setCategory(cat); setSelectedPolicy(null); setIsManual(false); }
-  function selectPolicy(p)   { setSelectedPolicy(p); setIsManual(false); }
+
+  function selectPolicy(p) {
+    setSelectedPolicy((prev) => prev?.policyId === p.policyId ? null : p);
+    setIsManual(false);
+  }
 
   function goToStep2WithPolicy(policy) {
     setOcrDone(false); setErrors({});
@@ -276,6 +278,34 @@ export default function NewClaimWizard({ navigate, showToast }) {
     return "fa-file";
   }
 
+  // ── Shared date/time guard (used in validate AND submitFinal) ─────────────
+function checkDateTimeErrors(date, time) {
+  const errs = {};
+
+  if (!date) return errs;
+
+  // Compare date strings directly — no timezone issues
+  const todayStr = new Date().toLocaleDateString("en-CA"); // "YYYY-MM-DD" in local time
+
+  if (date > todayStr) {
+    errs.date = "Date of incident cannot be a future date";
+    return errs; // no point checking time if date itself is invalid
+  }
+
+  // Only check time if today's date is selected
+  if (date === todayStr && time) {
+    const now = new Date();
+    const [hours, minutes] = time.split(":").map(Number);
+    const incidentMinutes = hours * 60 + minutes;
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    if (incidentMinutes > nowMinutes) {
+      errs.time = "Time of incident cannot be a future time for today's date";
+    }
+  }
+
+  return errs;
+}
+
   // ── Validation ────────────────────────────────────────────────────────────
   function validateStep2() {
     const errs = {};
@@ -293,9 +323,14 @@ export default function NewClaimWizard({ navigate, showToast }) {
   function validateStep3() {
     const errs = {};
     const req  = (val, key, label) => { if (!val?.trim()) errs[key] = `${label} is required`; };
+
     req(form3.date,  "date",  "Date of incident");
     req(form3.place, "place", "Place of incident");
     req(form3.desc,  "desc",  "Description of loss");
+
+    // Date / time future checks
+    const dtErrs = checkDateTimeErrors(form3.date, form3.time);
+    Object.assign(errs, dtErrs);
 
     if (form2.type === "Motor") {
       if (!form3.vehicleDrivable)         errs.vehicleDrivable         = "Please indicate if the vehicle is drivable";
@@ -304,8 +339,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
         req(form3.driverName,           "driverName",           "Driver name");
         req(form3.drivingLicenseNumber, "drivingLicenseNumber", "Driving licence number");
       }
-      if (!form3.typeOfLoss)    errs.typeOfLoss    = "Please select the type of loss";
-      if (!form3.firLodged)     errs.firLodged     = "Please indicate FIR status";
+      if (!form3.typeOfLoss)      errs.typeOfLoss      = "Please select the type of loss";
+      if (!form3.firLodged)       errs.firLodged       = "Please indicate FIR status";
       if (!form3.vehicleAtGarage) errs.vehicleAtGarage = "Please indicate vehicle location";
       if (form3.vehicleAtGarage === "yes") {
         req(form3.garageName,    "garageName",    "Garage name");
@@ -334,8 +369,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
   }
 
   function validateStep4() {
-    const errs   = {};
-    const docs   = REQUIRED_DOCS[form2.type] || [];
+    const errs = {};
+    const docs = REQUIRED_DOCS[form2.type] || [];
     docs.filter((d) => d.required).forEach((d) => {
       if (!uploadedFiles[d.key]) errs[`doc_${d.key}`] = `${d.label} is required`;
     });
@@ -363,11 +398,20 @@ export default function NewClaimWizard({ navigate, showToast }) {
   // ── Submit ────────────────────────────────────────────────────────────────
   async function submitFinal() {
     if (!decl) { showToast("Please accept the declaration to proceed.", "err"); return; }
+
+    // Final date/time guard before submission
+    const dtErrs = checkDateTimeErrors(form3.date, form3.time);
+    if (Object.keys(dtErrs).length) {
+      setErrors((prev) => ({ ...prev, ...dtErrs }));
+      showToast("Please fix the date/time errors before submitting.", "err");
+      return;
+    }
+
     setSubmitting(true);
     const fd = new FormData();
 
-    fd.append("policySource",     selectedPolicy ? "coverkraft" : "external");
-    if (selectedPolicy) fd.append("policyId", selectedPolicy._id || selectedPolicy.policyId);
+    fd.append("policySource",       selectedPolicy ? "coverkraft" : "external");
+    if (selectedPolicy) fd.append("policyId", selectedPolicy.policyId);
     fd.append("policyNumber",        form2.policy);
     fd.append("insuranceCompany",    form2.company);
     fd.append("insuranceType",       form2.type.toLowerCase());
@@ -389,9 +433,9 @@ export default function NewClaimWizard({ navigate, showToast }) {
         fd.append("driverName",           form3.driverName);
         fd.append("drivingLicenseNumber", form3.drivingLicenseNumber);
       }
-      fd.append("typeOfLoss",     form3.typeOfLoss);
-      fd.append("firLodged",      form3.firLodged);
-      fd.append("vehicleAtGarage",form3.vehicleAtGarage);
+      fd.append("typeOfLoss",      form3.typeOfLoss);
+      fd.append("firLodged",       form3.firLodged);
+      fd.append("vehicleAtGarage", form3.vehicleAtGarage);
       if (form3.vehicleAtGarage === "yes") {
         fd.append("garageName",          form3.garageName);
         fd.append("garageAddress",       form3.garageAddress);
@@ -422,7 +466,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
       if (form3.diagnosis) fd.append("diagnosis", form3.diagnosis);
     }
 
-    // Attach uploaded documents
     Object.entries(uploadedFiles).forEach(([key, file]) => fd.append(key, file));
 
     try {
@@ -487,7 +530,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
     );
   }
 
-  // ── Document upload card (self-contained with own file ref) ───────────────
   function DocUploadCard({ docKey, label, hint, required: req }) {
     const fileRef  = useRef(null);
     const file     = uploadedFiles[docKey];
@@ -496,7 +538,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
 
     return (
       <div style={{ marginBottom: 14 }}>
-        {/* Label row */}
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
           <span className="ck-label" style={{ margin: 0 }}>{label}</span>
           {req
@@ -506,7 +547,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
         </div>
 
         {file ? (
-          /* Uploaded state */
           <div style={{
             display: "flex", alignItems: "center", gap: 12,
             padding: "12px 16px",
@@ -532,7 +572,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
             </button>
           </div>
         ) : (
-          /* Drop zone */
           <div
             role="button"
             tabIndex={0}
@@ -594,7 +633,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "48px 24px" }}>
 
-      {/* Hidden OCR file input */}
       <input
         ref={ocrInputRef}
         type="file"
@@ -624,7 +662,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
 
       <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: 24, padding: 42 }}>
 
-        {/* ════════════════════════════ STEP 1 — Type ═════════════════════════ */}
+        {/* ════════════════════════════ STEP 1 ═════════════════════════ */}
         {step === 1 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Select Claim Type</h2>
@@ -656,9 +694,9 @@ export default function NewClaimWizard({ navigate, showToast }) {
                   ) : policies.length > 0 ? (
                     policies.map((p) => (
                       <PolicyItem
-                        key={p._id || p.id}
+                        key={p.policyId}
                         policy={p}
-                        selected={(selectedPolicy?._id || selectedPolicy?.id) === (p._id || p.id)}
+                        selected={selectedPolicy?.policyId === p.policyId}
                         onClick={() => selectPolicy(p)}
                       />
                     ))
@@ -687,7 +725,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
           </div>
         )}
 
-        {/* ═══════════════════════════ STEP 2 — Policy ════════════════════════ */}
+        {/* ═══════════════════════════ STEP 2 ════════════════════════ */}
         {step === 2 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Policy Details</h2>
@@ -847,19 +885,19 @@ export default function NewClaimWizard({ navigate, showToast }) {
           </div>
         )}
 
-        {/* ═══════════════════════════ STEP 3 — Claim ═════════════════════════ */}
+        {/* ═══════════════════════════ STEP 3 ═════════════════════════ */}
         {step === 3 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Incident Details</h2>
             <p style={{ color: T.muted, fontSize: 14, marginBottom: 24 }}>Tell us when, where and what happened.</p>
 
-            {/* Common */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
               <CustomInput
                 type="date"
                 label="Date of Incident"
                 name="date"
                 value={form3.date}
+                max={TODAY()}
                 onChange={(e) => f3Set("date", e.target.value)}
                 validationMessage={errors.date}
                 sx={inputSx}
@@ -872,6 +910,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
                 value={form3.time}
                 onChange={(e) => f3Set("time", e.target.value)}
                 placeholder="Approximate time of incident"
+                validationMessage={errors.time}
                 sx={inputSx}
               />
             </div>
@@ -917,7 +956,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
             {form2.type === "Motor" && (
               <>
                 <SectionLabel text="Vehicle Condition" />
-
                 <ToggleGroup
                   field="vehicleDrivable"
                   label="Is the vehicle drivable?"
@@ -928,7 +966,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
                     { value: "no",  label: "No — not drivable"  },
                   ]}
                 />
-
                 <ToggleGroup
                   field="vehicleDrivenAtAccident"
                   label="Was the vehicle being driven at the time of the accident?"
@@ -936,7 +973,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
                   error={errors.vehicleDrivenAtAccident}
                   options={[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }]}
                 />
-
                 {form3.vehicleDrivenAtAccident === "yes" && (
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
                     <CustomInput
@@ -963,7 +999,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
                 )}
 
                 <SectionLabel text="Claim Information" />
-
                 <div style={{ marginBottom: 16 }}>
                   <label className="ck-label">Type of Loss <span style={{ color: T.danger }}>*</span></label>
                   <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -1000,97 +1035,37 @@ export default function NewClaimWizard({ navigate, showToast }) {
                 />
 
                 <SectionLabel text="Vehicle Current Location" />
-
                 <ToggleGroup
                   field="vehicleAtGarage"
                   label="Is the vehicle currently at a garage?"
                   required
                   error={errors.vehicleAtGarage}
                   options={[
-                    { value: "yes", label: "Yes — at a garage"          },
-                    { value: "no",  label: "No — needs surveyor visit"  },
+                    { value: "yes", label: "Yes — at a garage"         },
+                    { value: "no",  label: "No — needs surveyor visit" },
                   ]}
                 />
 
-                {/* Garage details */}
                 {form3.vehicleAtGarage === "yes" && (
                   <>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                      <CustomInput
-                        label="Garage Name"
-                        name="garageName"
-                        value={form3.garageName}
-                        onChange={(e) => f3Set("garageName", e.target.value)}
-                        placeholder="e.g. Krishna Auto Workshop"
-                        validationMessage={errors.garageName}
-                        sx={inputSx}
-                        required
-                      />
-                      <CustomInput
-                        label="Garage Contact Number"
-                        name="garageContact"
-                        value={form3.garageContact}
-                        onChange={(e) => f3Set("garageContact", e.target.value)}
-                        placeholder="Garage phone number"
-                        validationMessage={errors.garageContact}
-                        sx={inputSx}
-                        required
-                      />
+                      <CustomInput label="Garage Name" name="garageName" value={form3.garageName} onChange={(e) => f3Set("garageName", e.target.value)} placeholder="e.g. Krishna Auto Workshop" validationMessage={errors.garageName} sx={inputSx} required />
+                      <CustomInput label="Garage Contact Number" name="garageContact" value={form3.garageContact} onChange={(e) => f3Set("garageContact", e.target.value)} placeholder="Garage phone number" validationMessage={errors.garageContact} sx={inputSx} required />
                     </div>
                     <div style={{ marginBottom: 16 }}>
-                      <CustomInput
-                        label="Garage Address"
-                        name="garageAddress"
-                        value={form3.garageAddress}
-                        onChange={(e) => f3Set("garageAddress", e.target.value)}
-                        placeholder="Street address or landmark near garage"
-                        sx={inputSx}
-                      />
+                      <CustomInput label="Garage Address" name="garageAddress" value={form3.garageAddress} onChange={(e) => f3Set("garageAddress", e.target.value)} placeholder="Street address or landmark near garage" sx={inputSx} />
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
-                      <CustomInput
-                        label="City"
-                        name="garageCity"
-                        value={form3.garageCity}
-                        onChange={(e) => f3Set("garageCity", e.target.value)}
-                        placeholder="e.g. Pune"
-                        validationMessage={errors.garageCity}
-                        sx={inputSx}
-                        required
-                      />
-                      <CustomInput
-                        label="District"
-                        name="garageDistrict"
-                        value={form3.garageDistrict}
-                        onChange={(e) => f3Set("garageDistrict", e.target.value)}
-                        placeholder="e.g. Pune"
-                        sx={inputSx}
-                      />
-                      <CustomInput
-                        label="State"
-                        name="garageState"
-                        value={form3.garageState}
-                        onChange={(e) => f3Set("garageState", e.target.value)}
-                        placeholder="e.g. Maharashtra"
-                        validationMessage={errors.garageState}
-                        sx={inputSx}
-                        required
-                      />
+                      <CustomInput label="City" name="garageCity" value={form3.garageCity} onChange={(e) => f3Set("garageCity", e.target.value)} placeholder="e.g. Pune" validationMessage={errors.garageCity} sx={inputSx} required />
+                      <CustomInput label="District" name="garageDistrict" value={form3.garageDistrict} onChange={(e) => f3Set("garageDistrict", e.target.value)} placeholder="e.g. Pune" sx={inputSx} />
+                      <CustomInput label="State" name="garageState" value={form3.garageState} onChange={(e) => f3Set("garageState", e.target.value)} placeholder="e.g. Maharashtra" validationMessage={errors.garageState} sx={inputSx} required />
                     </div>
                     <div style={{ marginBottom: 16 }}>
-                      <CustomInput
-                        label="Contact Person at Garage"
-                        name="garageContactPerson"
-                        value={form3.garageContactPerson}
-                        onChange={(e) => f3Set("garageContactPerson", e.target.value)}
-                        placeholder="Name of person to coordinate with at garage"
-                        sx={inputSx}
-                      />
+                      <CustomInput label="Contact Person at Garage" name="garageContactPerson" value={form3.garageContactPerson} onChange={(e) => f3Set("garageContactPerson", e.target.value)} placeholder="Name of person to coordinate with at garage" sx={inputSx} />
                     </div>
                   </>
                 )}
 
-                {/* Survey location */}
                 {form3.vehicleAtGarage === "no" && (
                   <>
                     <p style={{ fontSize: 13, color: T.muted, marginBottom: 14, lineHeight: 1.6, display: "flex", gap: 8 }}>
@@ -1098,64 +1073,16 @@ export default function NewClaimWizard({ navigate, showToast }) {
                       Provide the vehicle's current location so our surveyor can visit and assess the damage.
                     </p>
                     <div style={{ marginBottom: 16 }}>
-                      <CustomInput
-                        label="Vehicle Location / Address"
-                        name="surveyAddress"
-                        value={form3.surveyAddress}
-                        onChange={(e) => f3Set("surveyAddress", e.target.value)}
-                        placeholder="Street address, colony or GPS landmark"
-                        sx={inputSx}
-                      />
+                      <CustomInput label="Vehicle Location / Address" name="surveyAddress" value={form3.surveyAddress} onChange={(e) => f3Set("surveyAddress", e.target.value)} placeholder="Street address, colony or GPS landmark" sx={inputSx} />
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
-                      <CustomInput
-                        label="City"
-                        name="surveyCity"
-                        value={form3.surveyCity}
-                        onChange={(e) => f3Set("surveyCity", e.target.value)}
-                        placeholder="e.g. Mumbai"
-                        validationMessage={errors.surveyCity}
-                        sx={inputSx}
-                        required
-                      />
-                      <CustomInput
-                        label="District"
-                        name="surveyDistrict"
-                        value={form3.surveyDistrict}
-                        onChange={(e) => f3Set("surveyDistrict", e.target.value)}
-                        placeholder="e.g. Mumbai Suburban"
-                        sx={inputSx}
-                      />
-                      <CustomInput
-                        label="State"
-                        name="surveyState"
-                        value={form3.surveyState}
-                        onChange={(e) => f3Set("surveyState", e.target.value)}
-                        placeholder="e.g. Maharashtra"
-                        validationMessage={errors.surveyState}
-                        sx={inputSx}
-                        required
-                      />
+                      <CustomInput label="City" name="surveyCity" value={form3.surveyCity} onChange={(e) => f3Set("surveyCity", e.target.value)} placeholder="e.g. Mumbai" validationMessage={errors.surveyCity} sx={inputSx} required />
+                      <CustomInput label="District" name="surveyDistrict" value={form3.surveyDistrict} onChange={(e) => f3Set("surveyDistrict", e.target.value)} placeholder="e.g. Mumbai Suburban" sx={inputSx} />
+                      <CustomInput label="State" name="surveyState" value={form3.surveyState} onChange={(e) => f3Set("surveyState", e.target.value)} placeholder="e.g. Maharashtra" validationMessage={errors.surveyState} sx={inputSx} required />
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                      <CustomInput
-                        label="Contact Number at Location"
-                        name="surveyContact"
-                        value={form3.surveyContact}
-                        onChange={(e) => f3Set("surveyContact", e.target.value)}
-                        placeholder="Reachable number at vehicle's location"
-                        validationMessage={errors.surveyContact}
-                        sx={inputSx}
-                        required
-                      />
-                      <CustomInput
-                        label="Contact Person at Location"
-                        name="surveyContactPerson"
-                        value={form3.surveyContactPerson}
-                        onChange={(e) => f3Set("surveyContactPerson", e.target.value)}
-                        placeholder="Name of person available at location"
-                        sx={inputSx}
-                      />
+                      <CustomInput label="Contact Number at Location" name="surveyContact" value={form3.surveyContact} onChange={(e) => f3Set("surveyContact", e.target.value)} placeholder="Reachable number at vehicle's location" validationMessage={errors.surveyContact} sx={inputSx} required />
+                      <CustomInput label="Contact Person at Location" name="surveyContactPerson" value={form3.surveyContactPerson} onChange={(e) => f3Set("surveyContactPerson", e.target.value)} placeholder="Name of person available at location" sx={inputSx} />
                     </div>
                   </>
                 )}
@@ -1166,30 +1093,10 @@ export default function NewClaimWizard({ navigate, showToast }) {
             {form2.type === "Health" && (
               <>
                 <SectionLabel text="Patient Details" />
-
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                  <CustomInput
-                    label="Patient Name"
-                    name="patientName"
-                    value={form3.patientName}
-                    onChange={(e) => f3Set("patientName", e.target.value)}
-                    placeholder="Full name of the patient"
-                    validationMessage={errors.patientName}
-                    sx={inputSx}
-                    required
-                  />
-                  <CustomInput
-                    type="date"
-                    label="Date of Admission"
-                    name="dateOfAdmission"
-                    value={form3.dateOfAdmission}
-                    onChange={(e) => f3Set("dateOfAdmission", e.target.value)}
-                    validationMessage={errors.dateOfAdmission}
-                    sx={inputSx}
-                    required
-                  />
+                  <CustomInput label="Patient Name" name="patientName" value={form3.patientName} onChange={(e) => f3Set("patientName", e.target.value)} placeholder="Full name of the patient" validationMessage={errors.patientName} sx={inputSx} required />
+                  <CustomInput type="date" label="Date of Admission" name="dateOfAdmission" value={form3.dateOfAdmission} max={TODAY()} onChange={(e) => f3Set("dateOfAdmission", e.target.value)} validationMessage={errors.dateOfAdmission} sx={inputSx} required />
                 </div>
-
                 <ToggleGroup
                   field="hospitalizationType"
                   label="Hospitalization Type"
@@ -1202,62 +1109,16 @@ export default function NewClaimWizard({ navigate, showToast }) {
                 />
 
                 <SectionLabel text="Hospital Details" />
-
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                  <CustomInput
-                    label="Hospital Name"
-                    name="hospitalName"
-                    value={form3.hospitalName}
-                    onChange={(e) => f3Set("hospitalName", e.target.value)}
-                    placeholder="e.g. Kokilaben Dhirubhai Ambani Hospital"
-                    validationMessage={errors.hospitalName}
-                    sx={inputSx}
-                    required
-                  />
-                  <CustomInput
-                    label="Hospital Contact Number"
-                    name="hospitalContact"
-                    value={form3.hospitalContact}
-                    onChange={(e) => f3Set("hospitalContact", e.target.value)}
-                    placeholder="Hospital's main phone / helpdesk number"
-                    validationMessage={errors.hospitalContact}
-                    sx={inputSx}
-                    required
-                  />
+                  <CustomInput label="Hospital Name" name="hospitalName" value={form3.hospitalName} onChange={(e) => f3Set("hospitalName", e.target.value)} placeholder="e.g. Kokilaben Dhirubhai Ambani Hospital" validationMessage={errors.hospitalName} sx={inputSx} required />
+                  <CustomInput label="Hospital Contact Number" name="hospitalContact" value={form3.hospitalContact} onChange={(e) => f3Set("hospitalContact", e.target.value)} placeholder="Hospital's main phone / helpdesk number" validationMessage={errors.hospitalContact} sx={inputSx} required />
                 </div>
-
                 <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginBottom: 16 }}>
-                  <CustomInput
-                    label="Hospital Address"
-                    name="hospitalAddress"
-                    value={form3.hospitalAddress}
-                    onChange={(e) => f3Set("hospitalAddress", e.target.value)}
-                    placeholder="Full street address of the hospital"
-                    validationMessage={errors.hospitalAddress}
-                    sx={inputSx}
-                    required
-                  />
-                  <CustomInput
-                    label="City"
-                    name="city"
-                    value={form3.city}
-                    onChange={(e) => f3Set("city", e.target.value)}
-                    placeholder="e.g. Mumbai"
-                    validationMessage={errors.city}
-                    sx={inputSx}
-                    required
-                  />
+                  <CustomInput label="Hospital Address" name="hospitalAddress" value={form3.hospitalAddress} onChange={(e) => f3Set("hospitalAddress", e.target.value)} placeholder="Full street address of the hospital" validationMessage={errors.hospitalAddress} sx={inputSx} required />
+                  <CustomInput label="City" name="city" value={form3.city} onChange={(e) => f3Set("city", e.target.value)} placeholder="e.g. Mumbai" validationMessage={errors.city} sx={inputSx} required />
                 </div>
-
                 <div style={{ marginBottom: 16 }}>
-                  <CustomInput
-                    label="Diagnosis / Reason for Admission"
-                    name="diagnosis"
-                    value={form3.diagnosis}
-                    onChange={(e) => f3Set("diagnosis", e.target.value)}
-                    placeholder="e.g. Acute appendicitis, fracture of femur, dengue fever with thrombocytopenia"
-                    sx={inputSx}
-                  />
+                  <CustomInput label="Diagnosis / Reason for Admission" name="diagnosis" value={form3.diagnosis} onChange={(e) => f3Set("diagnosis", e.target.value)} placeholder="e.g. Acute appendicitis, fracture of femur, dengue fever with thrombocytopenia" sx={inputSx} />
                 </div>
               </>
             )}
@@ -1282,7 +1143,7 @@ export default function NewClaimWizard({ navigate, showToast }) {
           </div>
         )}
 
-        {/* ═══════════════════════════ STEP 4 — Docs ══════════════════════════ */}
+        {/* ═══════════════════════════ STEP 4 ══════════════════════════ */}
         {step === 4 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Upload Documents</h2>
@@ -1290,24 +1151,15 @@ export default function NewClaimWizard({ navigate, showToast }) {
               Upload supporting documents for your {form2.type.toLowerCase()} claim.
               Fields marked <span style={{ color: T.danger }}>*</span> are mandatory.
             </p>
-
             {(REQUIRED_DOCS[form2.type] || []).map((doc) => (
-              <DocUploadCard
-                key={doc.key}
-                docKey={doc.key}
-                label={doc.label}
-                hint={doc.hint}
-                required={doc.required}
-              />
+              <DocUploadCard key={doc.key} docKey={doc.key} label={doc.label} hint={doc.hint} required={doc.required} />
             ))}
-
             {Object.keys(uploadedFiles).length > 0 && (
               <div style={{ marginTop: 4, padding: "10px 14px", background: T.successBg, border: "1px solid rgba(196,237,63,.15)", borderRadius: 10, fontSize: 12, color: T.accent }}>
                 <i className="fa-solid fa-circle-check" style={{ marginRight: 6 }} />
                 {Object.keys(uploadedFiles).length} document{Object.keys(uploadedFiles).length !== 1 ? "s" : ""} attached
               </div>
             )}
-
             <div style={stepNav()}>
               <Button text="Back"   onClick={() => goStep(3)}     bgcolor="transparent" color={T.muted} borderColor={T.border} />
               <Button text="Review" onClick={handleContinueStep4} bgcolor={T.accent}    color="#000" />
@@ -1315,13 +1167,12 @@ export default function NewClaimWizard({ navigate, showToast }) {
           </div>
         )}
 
-        {/* ═══════════════════════════ STEP 5 — Finish ════════════════════════ */}
+        {/* ═══════════════════════════ STEP 5 ════════════════════════ */}
         {step === 5 && (
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Review & Submit</h2>
             <p style={{ color: T.muted, fontSize: 14, marginBottom: 24 }}>Verify your details before final submission.</p>
 
-            {/* Summary */}
             <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 16, padding: "18px 22px", marginBottom: 24 }}>
               {[
                 { label: "Policy Number",    value: form2.policy  },
@@ -1340,7 +1191,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
               ))}
             </div>
 
-            {/* Declaration */}
             <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
               <input
                 type="checkbox"
