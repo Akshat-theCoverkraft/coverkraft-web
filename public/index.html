@@ -1,66 +1,171 @@
 <!doctype html>
 <html lang="en">
-
+ 
 <head>
+  <!-- Basic Meta -->
   <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>Cover Kraft | Manage All Your Insurance Policies</title>
-
-  <!-- SEO -->
+ 
+  <!-- Title & SEO -->
+  <title>Cover Kraft | Manage All Your Insurance Policies in One Place</title>
   <meta name="description"
-    content="Cover Kraft helps you organize and manage all your insurance policies in one secure platform." />
-
-  <!-- Favicon -->
-  <link rel="icon" href="/fav.png" />
-
-  <!-- Google Fonts (allowed without SRI) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <!-- ✅ Bootstrap CSS (with correct SRI) -->
-  <link 
-    href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" 
-    rel="stylesheet"
-    integrity="sha384-LtrjvnR4/Jqs6Jd8f7g9sYjzG1zWXT14BMWrMUR3pvN8I2c2MvmFo0xSg6u40qCM"
-    crossorigin="anonymous"
-  >
-
-  <!-- ✅ Font Awesome (with correct SRI) -->
-  <link 
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" 
-    rel="stylesheet"
-    integrity="sha512-iBBXm8fW90+nuLcSKVBdW3rYyYhZ+7H4p6k9E6c1kG4E6k5F5Z7Y6X0Xb4bF0p5F5l5p5F5F5F5F5F5F5F5F5g=="
-    crossorigin="anonymous"
-  >
-
+    content="Cover Kraft helps you organize and manage all your insurance policies in one secure digital platform. Accessible anytime, anywhere." />
+  <meta name="keywords"
+    content="insurance app, policy management, Cover Kraft, insurance tracker, digital insurance storage, policy organizer, insurance management app" />
+  <meta name="author" content="Cover Kraft Team" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0a8f0a" />
+ 
+  <!-- Canonical -->
+  <link rel="canonical" href="https://www.thecoverkraft.com/" />
+ 
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Cover Kraft - All Your Insurance in One Place" />
+  <meta property="og:description"
+    content="Track and manage all your insurance policies easily with Cover Kraft. Secure. Smart. Simple." />
+  <meta property="og:image" content="https://www.thecoverkraft.com/images/coverkraft-og.jpg" />
+  <meta property="og:url" content="https://www.thecoverkraft.com/" />
+  <meta property="og:site_name" content="Cover Kraft" />
+ 
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cover Kraft - Manage All Your Insurance Policies in One Place" />
+  <meta name="twitter:description"
+    content="Your digital insurance hub. Store, manage, and access policies with ease." />
+  <meta name="twitter:image" content="https://www.thecoverkraft.com/images/coverkraft-twitter.jpg" />
+  <meta name="twitter:site" content="@coverkraft" />
+ 
+  <!-- Favicons -->
+  <link rel="icon" href="/fav.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/coverkraft/manifest.json" />
+ 
+  <!-- Sitemap -->
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+ 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+    rel="stylesheet" />
+ 
+  <!-- Bootstrap & Icons -->
+   <link 
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+  rel="stylesheet"
+  integrity="sha384-LtrjvnR4/Jqs6o5p2nF3R9GqQ8K/uxMxDPZWS9Vyuk3F7S3w7Dnk3a1JpN96CBr+" 
+  crossorigin="anonymous">
+<link 
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" 
+  rel="stylesheet"
+  integrity="sha512-iBBXm8fW90+nuLcSKVBfQg8C7b4Q0M1p4z9O+V40YkD5tZT3y1rHVY0x7b5R5l5yE7+4W0p5r9j0z8K3y0p1dQ==" 
+  crossorigin="anonymous"> 
+  <!-- Hide Scrollbar -->
   <style>
+    html,
     body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      font-family: 'Inter', 'DM Sans', sans-serif;
+      background-color: #fff;
+    }
+ 
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
     }
   </style>
+ 
+  <!-- Structured Data for Organization + Navigation -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Cover Kraft",
+    "url": "https://www.thecoverkraft.com",
+    "logo": "https://www.thecoverkraft.com/logo.png",
+    "sameAs": [
+      "https://www.linkedin.com/company/thecoverkraft"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+91-7247724735",
+      "contactType": "Customer Support",
+      "areaServed": "IN"
+    }
+  }
+  </script>
+ 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://www.thecoverkraft.com/",
+    "name": "Cover Kraft",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.thecoverkraft.com/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+ 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+      {
+        "@type": "SiteNavigationElement",
+        "position": 1,
+        "name": "Home",
+        "url": "https://www.thecoverkraft.com/"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "position": 2,
+        "name": "About",
+        "url": "https://www.thecoverkraft.com/about"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "position": 3,
+        "name": "Vault",
+        "url": "https://www.thecoverkraft.com/vault"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "position": 4,
+        "name": "Contact",
+        "url": "https://www.thecoverkraft.com/contactus"
+      }
+    ]
+  }
+  </script>
 </head>
-
+ 
 <body>
-
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+ 
   <div id="root"></div>
-
-  <!-- ✅ jQuery (with correct SRI) -->
-  <script 
-    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha384-DfXdXjqk09RmUp7ZciV06P88GJEqn3Ejj6inUeJ8V+RaH59RUW2KIiMzZ6I0X58F"
-    crossorigin="anonymous">
-  </script>
-
-  <!-- ✅ Bootstrap JS (with correct SRI) -->
-  <script 
-    src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc5e5r5qX6Ch12RSaxDTXiiMHDL/95B2S/bR5CV2w"
-    crossorigin="anonymous">
-  </script>
-
+ 
+  <!-- Bootstrap JS -->
+   <script 
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha384-DfXdXjqk09RmUp7ZciV06P88GJEqn3Ejj6inUeJ8V+RaH59RUW2KIiMzZ6I0X58F"
+  crossorigin="anonymous">
+</script>
+<script 
+  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc5e5r5qX6Ch12RSaxDTXiiMHDL/95B2S/bR5CV2w"
+  crossorigin="anonymous">
+</script>
 </body>
-
+ 
 </html>
