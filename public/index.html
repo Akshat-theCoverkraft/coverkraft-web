@@ -45,17 +45,39 @@
   <!-- Sitemap -->
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
-  <!-- Fonts -->
+  <!-- Fonts (self-hosted recommended; Google Fonts does not support SRI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!--
+    NOTE: Google Fonts dynamically generates CSS so SRI hashes cannot be applied reliably.
+    To fully resolve the CASA finding for these, self-host the fonts instead.
+    Steps:
+      1. Go to https://google-webfonts-helper.herokuapp.com
+      2. Download Inter & DM Sans font files
+      3. Host them in /static/fonts/ and create a local CSS file
+      4. Replace these two links with: <link rel="stylesheet" href="/static/css/fonts.css" />
+    Until then, these two remain without SRI (low risk — fonts only affect appearance):
+  -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
     rel="stylesheet" />
 
-  <!-- Bootstrap & Icons -->
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <!-- Bootstrap CSS with SRI -->
+  <link
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGIn6nzKSX"
+    crossorigin="anonymous"
+  />
+
+  <!-- Font Awesome with SRI -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI=="
+    crossorigin="anonymous"
+  />
 
   <!-- Hide Scrollbar -->
   <style>
@@ -153,9 +175,20 @@
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- jQuery with SRI -->
+  <script
+    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous">
+  </script>
+
+  <!-- Bootstrap JS with SRI -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyF"
+    crossorigin="anonymous">
+  </script>
+
   <script defer src="/static/js/main.js"></script>
 </body>
 
