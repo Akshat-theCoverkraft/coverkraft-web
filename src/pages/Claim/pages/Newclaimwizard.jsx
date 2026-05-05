@@ -21,15 +21,19 @@ import API_URL from "../../../ServiceModule/Service";
 const INSURANCE_TYPE_MAP = {
   Motor: {
     apiKey: "motor",
-    policyTypes: ["car_policy", "bike_policy", "other_vehicle", "motor"],
+    policyTypes: [
+      "car_policy", "bike_policy", "other_vehicle", "motor",
+    ],
   },
   Health: {
     apiKey: "health",
-    policyTypes: ["health", "other_health", "health/other_health"],
+    policyTypes: [
+      "health", "other_health", "health/other_health", "accident",
+    ],
   },
   Life: {
     apiKey: "life",
-    policyTypes: ["life", "accident"],
+    policyTypes: ["life"],
   },
 };
 
@@ -78,8 +82,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
   const [companies,       setCompanies]       = useState([]);
   const [policies,        setPolicies]        = useState([]);
   const [policiesLoading, setPoliciesLoading] = useState(false);
-  const [uploadedFiles,   setUploadedFiles]   = useState({});   // { [docKey]: File }
-  const [dragOver,        setDragOver]        = useState({});   // { [docKey]: bool }
+  const [uploadedFiles,   setUploadedFiles]   = useState({});
+  const [dragOver,        setDragOver]        = useState({});
 
   const [form2, setForm2] = useState({
     policy: "", company: "", type: "Motor", holder: "", mobile: "", email: "",
@@ -95,6 +99,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
     garageDistrict: "", garageState: "", garageContact: "", garageContactPerson: "",
     surveyAddress: "", surveyCity: "", surveyDistrict: "",
     surveyState: "", surveyContact: "", surveyContactPerson: "",
+    // ── NEW: surveyor availability ────────────────────────────────────────────
+    surveyAvailableDate: "", surveyAvailableTime: "",
     // Health
     patientName: "", hospitalName: "", hospitalAddress: "",
     hospitalContact: "", city: "", hospitalizationType: "",
@@ -127,12 +133,15 @@ export default function NewClaimWizard({ navigate, showToast }) {
   const clearErr = (field) => setErrors((p) => ({ ...p, [field]: "" }));
   const f3Set    = (field, value) => { setForm3((p) => ({ ...p, [field]: value })); clearErr(field); };
 
-  /** Map a raw policyType string (e.g. "car_policy") → display label ("Motor") */
+  /** Map a raw policyType string → display label ("Motor" / "Health" / "Life") */
   function normalizeInsuranceType(raw) {
     const s = (raw || "").toLowerCase().trim();
     for (const [label, cfg] of Object.entries(INSURANCE_TYPE_MAP)) {
-      if (cfg.policyTypes.includes(s) || cfg.apiKey === s || label.toLowerCase() === s)
-        return label;
+      if (
+        cfg.policyTypes.includes(s) ||
+        cfg.apiKey === s             ||
+        label.toLowerCase() === s
+      ) return label;
     }
     return "Motor";
   }
@@ -152,28 +161,41 @@ export default function NewClaimWizard({ navigate, showToast }) {
       garageDistrict: "", garageState: "", garageContact: "", garageContactPerson: "",
       surveyAddress: "", surveyCity: "", surveyDistrict: "",
       surveyState: "", surveyContact: "", surveyContactPerson: "",
+      surveyAvailableDate: "", surveyAvailableTime: "",       // ← reset too
       patientName: "", hospitalName: "", hospitalAddress: "",
       hospitalContact: "", city: "", hospitalizationType: "",
       dateOfAdmission: "", diagnosis: "",
     });
   }
 
-  function pickCategory(cat) { setCategory(cat); setSelectedPolicy(null); setIsManual(false); }
-  function selectPolicy(p)   { setSelectedPolicy(p); setIsManual(false); }
-
-  function goToStep2WithPolicy(policy) {
-    setOcrDone(false); setErrors({});
-    setForm2({
-      policy:  policy.policyNumber     || policy.policy_number || "",
-      company: policy.insuranceCompany || policy.company       || "",
-      type:    normalizeInsuranceType(policy.insuranceType || policy.type || category || "Motor"),
-      holder:  policy.insuredName      || policy.holderName    || policy.proposerName || "",
-      mobile:  policy.registeredMobile || policy.mobile        || "",
-      email:   policy.registeredEmail  || policy.email         || "",
-    });
-    setOcrDone(true);
-    setStep(2);
+ // ── Replace these two functions ───────────────────────────────────────────────
+function pickCategory(cat) {
+  if (cat !== category) {
+    setSelectedPolicy(null);
+    setIsManual(false);
   }
+  setCategory(cat);
+}
+
+function selectPolicy(p) {
+  setSelectedPolicy(p);
+  setIsManual(false);
+}
+
+// AFTER — correct
+function goToStep2WithPolicy(policy) {
+  setOcrDone(false); setErrors({});
+  setForm2({
+    policy:  policy.policyNumber     || policy.policy_number || "",
+    company: policy.insuranceCompany || policy.company       || "",
+    type:    normalizeInsuranceType(policy.insuranceType || policy.type || category || "Motor"),
+    holder:  policy.insuredName      || policy.holderName    || policy.proposerName || "",
+    mobile:  policy.registeredMobile || policy.mobile        || "",
+    email:   policy.registeredEmail  || policy.email         || "",
+  });
+  setOcrDone(true);
+  setStep(2);
+}
 
   function goStep(n) {
     if (n === 2 && selectedPolicy) { goToStep2WithPolicy(selectedPolicy); return; }
@@ -304,8 +326,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
         req(form3.driverName,           "driverName",           "Driver name");
         req(form3.drivingLicenseNumber, "drivingLicenseNumber", "Driving licence number");
       }
-      if (!form3.typeOfLoss)    errs.typeOfLoss    = "Please select the type of loss";
-      if (!form3.firLodged)     errs.firLodged     = "Please indicate FIR status";
+      if (!form3.typeOfLoss)      errs.typeOfLoss      = "Please select the type of loss";
+      if (!form3.firLodged)       errs.firLodged       = "Please indicate FIR status";
       if (!form3.vehicleAtGarage) errs.vehicleAtGarage = "Please indicate vehicle location";
       if (form3.vehicleAtGarage === "yes") {
         req(form3.garageName,    "garageName",    "Garage name");
@@ -334,8 +356,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
   }
 
   function validateStep4() {
-    const errs   = {};
-    const docs   = REQUIRED_DOCS[form2.type] || [];
+    const errs = {};
+    const docs  = REQUIRED_DOCS[form2.type] || [];
     docs.filter((d) => d.required).forEach((d) => {
       if (!uploadedFiles[d.key]) errs[`doc_${d.key}`] = `${d.label} is required`;
     });
@@ -367,7 +389,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
     const fd = new FormData();
 
     fd.append("policySource",     selectedPolicy ? "coverkraft" : "external");
-    if (selectedPolicy) fd.append("policyId", selectedPolicy._id || selectedPolicy.policyId);
+// was: fd.append("policyId", selectedPolicy._id || selectedPolicy.policyId);
+fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedPolicy.id);
     fd.append("policyNumber",        form2.policy);
     fd.append("insuranceCompany",    form2.company);
     fd.append("insuranceType",       form2.type.toLowerCase());
@@ -389,9 +412,10 @@ export default function NewClaimWizard({ navigate, showToast }) {
         fd.append("driverName",           form3.driverName);
         fd.append("drivingLicenseNumber", form3.drivingLicenseNumber);
       }
-      fd.append("typeOfLoss",     form3.typeOfLoss);
-      fd.append("firLodged",      form3.firLodged);
-      fd.append("vehicleAtGarage",form3.vehicleAtGarage);
+      fd.append("typeOfLoss",      form3.typeOfLoss);
+      fd.append("firLodged",       form3.firLodged);
+      fd.append("vehicleAtGarage", form3.vehicleAtGarage);
+
       if (form3.vehicleAtGarage === "yes") {
         fd.append("garageName",          form3.garageName);
         fd.append("garageAddress",       form3.garageAddress);
@@ -401,13 +425,19 @@ export default function NewClaimWizard({ navigate, showToast }) {
         fd.append("garageContact",       form3.garageContact);
         fd.append("garageContactPerson", form3.garageContactPerson);
       }
+
       if (form3.vehicleAtGarage === "no") {
-        fd.append("surveyAddress",       form3.surveyAddress);
-        fd.append("surveyCity",          form3.surveyCity);
-        fd.append("surveyDistrict",      form3.surveyDistrict);
-        fd.append("surveyState",         form3.surveyState);
-        fd.append("surveyContact",       form3.surveyContact);
-        fd.append("surveyContactPerson", form3.surveyContactPerson);
+        fd.append("surveyAddress",         form3.surveyAddress);
+        fd.append("surveyCity",            form3.surveyCity);
+        fd.append("surveyDistrict",        form3.surveyDistrict);
+        fd.append("surveyState",           form3.surveyState);
+        fd.append("surveyContact",         form3.surveyContact);
+        fd.append("surveyContactPerson",   form3.surveyContactPerson);
+        // ── NEW: surveyor availability ────────────────────────────────────
+        if (form3.surveyAvailableDate)
+          fd.append("surveyAvailableDate", form3.surveyAvailableDate);
+        if (form3.surveyAvailableTime)
+          fd.append("surveyAvailableTime", form3.surveyAvailableTime);
       }
     }
 
@@ -422,7 +452,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
       if (form3.diagnosis) fd.append("diagnosis", form3.diagnosis);
     }
 
-    // Attach uploaded documents
     Object.entries(uploadedFiles).forEach(([key, file]) => fd.append(key, file));
 
     try {
@@ -487,7 +516,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
     );
   }
 
-  // ── Document upload card (self-contained with own file ref) ───────────────
   function DocUploadCard({ docKey, label, hint, required: req }) {
     const fileRef  = useRef(null);
     const file     = uploadedFiles[docKey];
@@ -496,7 +524,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
 
     return (
       <div style={{ marginBottom: 14 }}>
-        {/* Label row */}
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
           <span className="ck-label" style={{ margin: 0 }}>{label}</span>
           {req
@@ -506,7 +533,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
         </div>
 
         {file ? (
-          /* Uploaded state */
           <div style={{
             display: "flex", alignItems: "center", gap: 12,
             padding: "12px 16px",
@@ -532,7 +558,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
             </button>
           </div>
         ) : (
-          /* Drop zone */
           <div
             role="button"
             tabIndex={0}
@@ -594,7 +619,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "48px 24px" }}>
 
-      {/* Hidden OCR file input */}
       <input
         ref={ocrInputRef}
         type="file"
@@ -644,42 +668,47 @@ export default function NewClaimWizard({ navigate, showToast }) {
               ))}
             </div>
 
-            {category && (
-              <div style={{ marginTop: 32, borderTop: `1px solid ${T.border}`, paddingTop: 32 }}>
-                <label className="ck-label">Your Active {category} Policies</label>
-                <div style={{ display: "grid", gap: 12, marginBottom: 20 }}>
-                  {policiesLoading ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 0", color: T.muted, fontSize: 13 }}>
-                      <i className="fa-solid fa-spinner fa-spin" />
-                      <span>Loading your {category.toLowerCase()} policies…</span>
-                    </div>
-                  ) : policies.length > 0 ? (
-                    policies.map((p) => (
-                      <PolicyItem
-                        key={p._id || p.id}
-                        policy={p}
-                        selected={(selectedPolicy?._id || selectedPolicy?.id) === (p._id || p.id)}
-                        onClick={() => selectPolicy(p)}
-                      />
-                    ))
-                  ) : (
-                    <p style={{ color: T.muted, fontSize: 13, padding: "12px 0" }}>
-                      No active {category.toLowerCase()} policies found in your account.
-                    </p>
-                  )}
-                </div>
-                <Button
-                  text="My policy isn't listed — add it manually"
-                  onClick={() => { setIsManual(true); setSelectedPolicy(null); goStep(2); }}
-                  bgcolor="transparent"
-                  color={T.muted}
-                  borderColor={T.border}
-                  width="100%"
-                  customStyle={{ borderStyle: "dashed", borderRadius: "14px" }}
-                />
-              </div>
-            )}
+      {category && (
+  <div style={{ marginTop: 32, borderTop: `1px solid ${T.border}`, paddingTop: 32 }}>
+    <label className="ck-label">Your Active {category} Policies</label>
+    <div style={{ display: "grid", gap: 12, marginBottom: 20 }}>
+      {policiesLoading ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 0", color: T.muted, fontSize: 13 }}>
+          <i className="fa-solid fa-spinner fa-spin" />
+          <span>Loading your {category.toLowerCase()} policies…</span>
+        </div>
+      ) : policies.length > 0 ? (
+       policies.map((p) => {
+  const pId        = String(p.policyId || p._id || p.id || "");
+  const selectedId = String(selectedPolicy?.policyId || selectedPolicy?._id || selectedPolicy?.id || "");
+  const isSelected = pId !== "" && selectedId !== "" && pId === selectedId;
 
+  return (
+    <PolicyItem
+      key={pId}
+      policy={p}
+      selected={isSelected}
+      onClick={() => selectPolicy(p)}
+    />
+  );
+})
+      ) : (
+        <p style={{ color: T.muted, fontSize: 13, padding: "12px 0" }}>
+          No active {category.toLowerCase()} policies found in your account.
+        </p>
+      )}
+    </div>
+    <Button
+      text="My policy isn't listed — add it manually"
+      onClick={() => { setIsManual(true); setSelectedPolicy(null); goStep(2); }}
+      bgcolor="transparent"
+      color={T.muted}
+      borderColor={T.border}
+      width="100%"
+      customStyle={{ borderStyle: "dashed", borderRadius: "14px" }}
+    />
+  </div>
+)}
             <div style={stepNav()}>
               <Button text="Cancel"   onClick={() => navigate("home")} bgcolor="transparent" color={T.muted} borderColor={T.border} />
               <Button text="Continue" onClick={() => goStep(2)}        bgcolor={T.accent}    color="#000"    disabled={!selectedPolicy} />
@@ -853,29 +882,67 @@ export default function NewClaimWizard({ navigate, showToast }) {
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Incident Details</h2>
             <p style={{ color: T.muted, fontSize: 14, marginBottom: 24 }}>Tell us when, where and what happened.</p>
 
-            {/* Common */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-              <CustomInput
-                type="date"
-                label="Date of Incident"
-                name="date"
-                value={form3.date}
-                onChange={(e) => f3Set("date", e.target.value)}
-                validationMessage={errors.date}
-                sx={inputSx}
-                required
-              />
-              <CustomInput
-                type="time"
-                label="Time of Incident"
-                name="time"
-                value={form3.time}
-                onChange={(e) => f3Set("time", e.target.value)}
-                placeholder="Approximate time of incident"
-                sx={inputSx}
-              />
-            </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+  
+  {/* Date of Incident */}
+  <div>
+    <label className="ck-label">
+      Date of Incident <span style={{ color: T.danger }}>*</span>
+    </label>
+    <input
+      type="date"
+      name="date"
+      value={form3.date}
+      max={new Date().toISOString().split("T")[0]}
+      onKeyDown={(e) => e.preventDefault()}      
+      onChange={(e) => {
+        const chosen = e.target.value;
+        const today  = new Date().toISOString().split("T")[0];
+        if (chosen > today) return;                {/* hard block future */}
+        f3Set("date", chosen);
+        f3Set("time", "");                         {/* reset time on date change */}
+      }}
+      style={{
+        ...inputSx,
+        width: "100%",
+        boxSizing: "border-box",
+        colorScheme: "dark",
+      }}
+    />
+    {errors.date && <span className="ck-err-msg">{errors.date}</span>}
+  </div>
 
+  {/* Time of Incident */}
+  <div>
+    <label className="ck-label">Time of Incident</label>
+    <input
+      type="time"
+      name="time"
+      value={form3.time}
+      max={
+        form3.date === new Date().toISOString().split("T")[0]
+          ? new Date().toTimeString().slice(0, 5)
+          : undefined
+      }
+      onKeyDown={(e) => e.preventDefault()}        
+      onChange={(e) => {
+        const chosen    = e.target.value;
+        const today     = new Date().toISOString().split("T")[0];
+        const liveNow   = new Date().toTimeString().slice(0, 5);
+        if (form3.date === today && chosen > liveNow) return;  
+        f3Set("time", chosen);
+      }}
+      style={{
+        ...inputSx,
+        width: "100%",
+        boxSizing: "border-box",
+        colorScheme: "dark",
+      }}
+    />
+    {errors.time && <span className="ck-err-msg">{errors.time}</span>}
+  </div>
+
+</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
               <CustomInput
                 label="Place of Incident"
@@ -1007,8 +1074,8 @@ export default function NewClaimWizard({ navigate, showToast }) {
                   required
                   error={errors.vehicleAtGarage}
                   options={[
-                    { value: "yes", label: "Yes — at a garage"          },
-                    { value: "no",  label: "No — needs surveyor visit"  },
+                    { value: "yes", label: "Yes — at a garage"         },
+                    { value: "no",  label: "No — needs surveyor visit" },
                   ]}
                 />
 
@@ -1154,6 +1221,31 @@ export default function NewClaimWizard({ navigate, showToast }) {
                         value={form3.surveyContactPerson}
                         onChange={(e) => f3Set("surveyContactPerson", e.target.value)}
                         placeholder="Name of person available at location"
+                        sx={inputSx}
+                      />
+                    </div>
+
+                    {/* ── NEW: Surveyor availability ── */}
+                    <SectionLabel text="Surveyor Availability" />
+                    <p style={{ fontSize: 13, color: T.muted, marginBottom: 14, lineHeight: 1.6, display: "flex", gap: 8 }}>
+                      <i className="fa-solid fa-calendar-check" style={{ color: T.primary, marginTop: 1 }} />
+                      When will the vehicle be available for the surveyor to inspect?
+                    </p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                      <CustomInput
+                        type="date"
+                        label="Available Date"
+                        name="surveyAvailableDate"
+                        value={form3.surveyAvailableDate}
+                        onChange={(e) => f3Set("surveyAvailableDate", e.target.value)}
+                        sx={inputSx}
+                      />
+                      <CustomInput
+                        type="time"
+                        label="Available Time"
+                        name="surveyAvailableTime"
+                        value={form3.surveyAvailableTime}
+                        onChange={(e) => f3Set("surveyAvailableTime", e.target.value)}
                         sx={inputSx}
                       />
                     </div>
@@ -1321,7 +1413,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Review & Submit</h2>
             <p style={{ color: T.muted, fontSize: 14, marginBottom: 24 }}>Verify your details before final submission.</p>
 
-            {/* Summary */}
             <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 16, padding: "18px 22px", marginBottom: 24 }}>
               {[
                 { label: "Policy Number",    value: form2.policy  },
@@ -1331,6 +1422,10 @@ export default function NewClaimWizard({ navigate, showToast }) {
                 { label: "Mobile",           value: form2.mobile  },
                 { label: "Date of Incident", value: form3.date    },
                 { label: "Place",            value: form3.place   },
+                ...(form2.type === "Motor" && form3.vehicleAtGarage === "no" && form3.surveyAvailableDate
+                  ? [{ label: "Survey Available", value: `${form3.surveyAvailableDate}${form3.surveyAvailableTime ? " at " + form3.surveyAvailableTime : ""}` }]
+                  : []
+                ),
                 { label: "Documents",        value: `${Object.keys(uploadedFiles).length} file(s) attached` },
               ].map((row) => (
                 <div key={row.label} style={{ display: "flex", gap: 12, marginBottom: 10, fontSize: 13 }}>
@@ -1340,7 +1435,6 @@ export default function NewClaimWizard({ navigate, showToast }) {
               ))}
             </div>
 
-            {/* Declaration */}
             <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
               <input
                 type="checkbox"

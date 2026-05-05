@@ -22,27 +22,537 @@ const heroContent = {
 };
 
 const procSteps = {
-  health: [
-    {
-      n: 1,
-      h: "Hospitalization",
-      p: "Admit to any hospital network or otherwise.",
-    },
-    { n: 2, h: "Intimation", p: "Notify us via portal or phone within 24hrs." },
-    { n: 3, h: "Processing", p: "Documents verified by our TPA partner." },
-    { n: 4, h: "Settlement", p: "Claim paid to provider or your account." },
-  ],
-  motor: [
-    {
-      n: 1,
-      h: "Accident/Loss",
-      p: "Secure vehicle. Note third-party details.",
-    },
-    { n: 2, h: "Registration", p: "Register claim & get reference number." },
-    { n: 3, h: "Survey", p: "Licensed surveyor inspects within 48hrs." },
-    { n: 4, h: "Repair/Pay", p: "Vehicle repaired or reimbursement paid." },
+  health: {
+    cashless: [
+      { n: 1, h: "Admission", p: "Admit to network hospital." },
+      { n: 2, h: "Notification", p: "Notify insurer / TPA." },
+      { n: 3, h: "Authorisation", p: "Cashless auth approved." },
+      { n: 4, h: "Treatment", p: "Receive treatment." },
+      { n: 5, h: "Pay Difference", p: "Pay any excess to hospital." },
+      { n: 6, h: "Discharge", p: "Discharged after treatment." },
+      { n: 7, h: "Settlement", p: "Claim paid directly to hospital." },
+    ],
+    reimbursement: [
+      { n: 1, h: "Admission", p: "Admit to any hospital." },
+      { n: 2, h: "Notification", p: "Notify insurer / TPA." },
+      { n: 3, h: "Treatment", p: "Receive treatment." },
+      { n: 4, h: "Pay Bills", p: "Pay hospital bills yourself." },
+      { n: 5, h: "Discharge", p: "Discharged after treatment." },
+      { n: 6, h: "Submit Docs", p: "Submit all documents to insurer / TPA." },
+      { n: 7, h: "Reimbursement", p: "Claim amount reimbursed." },
+    ],
+  },
+  motor: {
+    cashless: [
+      { n: 1, h: "Accident", p: "Secure vehicle & note details." },
+      { n: 2, h: "Notification", p: "Notify insurer." },
+      { n: 3, h: "Estimate", p: "Network garage prepares estimate." },
+      { n: 4, h: "Survey", p: "Surveyor assesses & approves." },
+      { n: 5, h: "Repairs", p: "Garage carries out repairs." },
+      { n: 6, h: "Pay Difference", p: "Pay any unapproved amount." },
+      { n: 7, h: "Settlement", p: "Approved amount paid to garage." },
+    ],
+    reimbursement: [
+      { n: 1, h: "Accident", p: "Secure vehicle & note details." },
+      { n: 2, h: "Notification", p: "Notify insurer." },
+      { n: 3, h: "Estimate", p: "Network garage prepares estimate." },
+      { n: 4, h: "Survey", p: "Surveyor assesses & approves." },
+      { n: 5, h: "Repairs", p: "Garage carries out repairs." },
+      { n: 6, h: "Pay Garage", p: "Pay garage yourself." },
+      { n: 7, h: "Submit Docs", p: "Submit docs to insurer / surveyor." },
+      { n: 8, h: "Reimbursement", p: "Claim amount reimbursed." },
+    ],
+  },
+  life: [
+    { n: 1, h: "Incident", p: "Death, maturity, or rider event occurs." },
+    { n: 2, h: "Intimate", p: "Inform the insurance company." },
+    { n: 3, h: "Documents", p: "Submit all documents as required." },
+    { n: 4, h: "Claim Paid", p: "Benefit paid to nominee / policyholder." },
   ],
 };
+
+// ─── Documents Center Data ────────────────────────────────────────────────────
+const DISCLAIMER =
+  "Apart from the documents mentioned here, Insurance company or TPA may ask any further relevant document for claims processing.";
+
+const docsByCategory = {
+  Motor: {
+    subTypes: [
+      {
+        key: "own-damage",
+        label: "Own Damage of Vehicle",
+        icon: "fa-car-burst",
+        docs: [
+          "Claim form duly filled and signed by insured",
+          "Policy copy",
+          "Copy of Registration Certificate",
+          "Copy of Driving License (if vehicle is driven at the time of loss)",
+          "Copy of permit (commercial vehicles)",
+          "Copy of fitness certificate (commercial vehicles)",
+          "Copy of load challan (commercial vehicles)",
+          "Repair Estimates",
+          "Damage Photographs",
+          "Repair bills",
+          "Payment receipts (in case of reimbursement case)",
+          "Discharge Voucher signed by Insured in case of Cashless claim",
+          "IRDAI Licensed Surveyor Report (Mandatory for claims beyond ₹50,000)",
+          "Original Registration Certificate (in case of total loss)",
+          "NOC from financier if hypothecated (in case of total loss)",
+          "All transfer documents duly signed by insured (in case of total loss)",
+          "Original Keys (in case of total loss)",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured / beneficiary (in case of reimbursement case)",
+        ],
+      },
+      {
+        key: "theft",
+        label: "Theft of Vehicle",
+        icon: "fa-car-on",
+        docs: [
+          "Claim form duly filled and signed by insured",
+          "Policy",
+          "Original Registration Certificate",
+          "Copy of Driving License (if vehicle is driven at the time of loss)",
+          "Copy of permit (commercial vehicles)",
+          "Copy of fitness certificate (commercial vehicles)",
+          "Copy of load challan (commercial vehicles)",
+          "Police FIR",
+          "Police Final Report",
+          "No Trace Certificate",
+          "NOC from financier if hypothecated (in case of total loss)",
+          "All transfer documents duly signed by insured (in case of total loss)",
+          "Original Keys (in case of total loss)",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured / beneficiary",
+        ],
+      },
+      {
+        key: "personal-accident-motor",
+        label: "Personal Accident in Motor Policy",
+        icon: "fa-person-falling-burst",
+        docs: [
+          "Claim form duly filled and signed by insured / claimant",
+          "Policy copy",
+          "Copy of Registration Certificate",
+          "Copy of Driving License",
+          "Police FIR",
+          "Disability Certificate from treating doctor",
+          "Hospital Discharge Summary",
+          "MLC Document",
+          "Death Certificate (In case of death)",
+          "Legal Heir Certificate (In case of death)",
+          "Indemnity bond signed by insured / beneficiary",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured / beneficiary",
+        ],
+      },
+      {
+        key: "third-party",
+        label: "Third Party",
+        icon: "fa-gavel",
+        docs: [
+          "This claim is handled in court – MACT (Motor Accident Claims Tribunal).",
+          "A lawyer from the Insurance company may ask for required information from the Insured.",
+        ],
+        isInfo: true,
+      },
+    ],
+  },
+  Health: {
+    subTypes: [
+      {
+        key: "health-claim",
+        label: "Health Claim",
+        icon: "fa-heart-pulse",
+        docs: [
+          "Claim Form duly filled and signed by insured",
+          "Policy Copy",
+          "All diagnostic reports",
+          "All prescriptions / advise by treating doctor",
+          "All Indoor case papers",
+          "All pharmacy bills",
+          "Hospital Discharge summary",
+          "Hospital Bill/s",
+          "Payment receipt/s",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured / beneficiary (in case of reimbursement claim)",
+        ],
+      },
+      {
+        key: "personal-accident",
+        label: "Personal Accident",
+        icon: "fa-person-falling-burst",
+        docs: [
+          "Claim form duly filled and signed by insured / claimant",
+          "Policy copy",
+          "Police FIR",
+          "Disability Certificate from treating doctor",
+          "Hospital Discharge Summary",
+          "MLC Document",
+          "Death Certificate (In case of death)",
+          "Legal Heir Certificate / succession certificate (In case of death and no nominee in policy)",
+          "Indemnity bond signed by insured / beneficiary",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured / beneficiary",
+        ],
+      },
+    ],
+  },
+  Life: {
+    subTypes: [
+      {
+        key: "surrender",
+        label: "Surrender",
+        icon: "fa-file-circle-xmark",
+        docs: [
+          "Original Policy Bond",
+          "Surrender Request Form",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured",
+        ],
+      },
+      {
+        key: "death",
+        label: "Death Claim",
+        icon: "fa-file-medical",
+        docs: [
+          "Claim form duly filled and signed by beneficiary",
+          "Original Policy",
+          "Death Certificate",
+          "Cause of death certificate",
+          "Attending physician statement",
+          "Medical records",
+          "Police FIR (in case of unnatural death)",
+          "Post Mortem Report if applicable (in case of unnatural death)",
+          "Panchnama / Inquest Report (in case of unnatural death)",
+          "Police Final Investigation report (in case of unnatural death)",
+          "Legal heir certificate / Succession certificate (where there is no nominee in policy)",
+          "Indemnity bond",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured / beneficiary",
+        ],
+      },
+      {
+        key: "maturity",
+        label: "Maturity",
+        icon: "fa-calendar-check",
+        docs: [
+          "Original Policy",
+          "Discharge Voucher",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured / beneficiary",
+        ],
+      },
+      {
+        key: "others",
+        label: "Others",
+        icon: "fa-folder-open",
+        docs: [
+          "Claim form duly filled and signed by Insured",
+          "Policy copy",
+          "Other documents as required by Insurance Company or Surveyor or insurer authorised investigator",
+          "KYC Documents",
+          "Bank details / Cancelled cheque of insured / beneficiary",
+        ],
+      },
+    ],
+  },
+};
+
+// ─── Reusable Process Row ─────────────────────────────────────────────────────
+function ProcessRow({ steps, accentColor, label, badgeBg, badgeColor }) {
+  const cols = steps.length;
+  return (
+    <div style={{ marginBottom: 32 }}>
+      <div
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          background: badgeBg,
+          color: badgeColor,
+          fontSize: 11,
+          fontWeight: 600,
+          padding: "4px 12px",
+          borderRadius: 20,
+          marginBottom: 18,
+          border: `1px solid ${badgeColor}33`,
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${cols}, 1fr)`,
+          gap: 12,
+          textAlign: "center",
+          position: "relative",
+        }}
+      >
+        {/* Connector line */}
+        <div
+          style={{
+            position: "absolute",
+            top: 21,
+            left: `${(0.5 / cols) * 100}%`,
+            right: `${(0.5 / cols) * 100}%`,
+            height: 1,
+            background: T.border,
+            zIndex: 1,
+          }}
+        />
+        {steps.map((s) => (
+          <div key={s.n} style={{ position: "relative", zIndex: 2 }}>
+            <div
+              style={{
+                width: 42,
+                height: 42,
+                background: T.bgCard,
+                color: accentColor,
+                border: `2px solid ${accentColor}`,
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: 700,
+                fontSize: 15,
+                margin: "0 auto 10px",
+              }}
+            >
+              {s.n}
+            </div>
+            <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
+              {s.h}
+            </h4>
+            <p style={{ fontSize: 11.5, color: T.muted, lineHeight: 1.4 }}>
+              {s.p}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Documents Center Section ─────────────────────────────────────────────────
+function DocumentsCenter() {
+  const [activeCategory, setActiveCategory] = useState("Motor");
+  const [activeSubType, setActiveSubType] = useState("own-damage");
+
+  const categoryData = docsByCategory[activeCategory];
+  const subTypeData = categoryData.subTypes.find((s) => s.key === activeSubType)
+    || categoryData.subTypes[0];
+
+  const handleCategoryChange = (cat) => {
+    setActiveCategory(cat);
+    setActiveSubType(docsByCategory[cat].subTypes[0].key);
+  };
+
+  return (
+    <section
+      style={{
+        padding: "56px 0",
+        background: T.bg,
+        borderTop: `1px solid ${T.border}`,
+        borderBottom: `1px solid ${T.border}`,
+      }}
+    >
+      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
+        {/* Header */}
+        <div style={{ marginBottom: 32 }}>
+          <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 6 }}>
+            Documents Center
+          </h2>
+          <p style={{ color: T.muted }}>
+            Know exactly which documents you need for your claim type
+          </p>
+        </div>
+
+        {/* Main Category Tabs */}
+        <div
+          style={{
+            display: "flex",
+            gap: 0,
+            borderBottom: `1px solid ${T.border}`,
+            marginBottom: 0,
+          }}
+        >
+          {Object.keys(docsByCategory).map((cat) => (
+            <button
+              key={cat}
+              onClick={() => handleCategoryChange(cat)}
+              style={{
+                padding: "12px 28px",
+                background: activeCategory === cat ? T.bgCard : "transparent",
+                color: activeCategory === cat ? T.text : T.muted,
+                border: "none",
+                borderBottom:
+                  activeCategory === cat
+                    ? `2px solid ${T.accent}`
+                    : "2px solid transparent",
+                cursor: "pointer",
+                fontSize: 14,
+                fontWeight: activeCategory === cat ? 700 : 500,
+                transition: "all 0.15s",
+              }}
+            >
+              {cat} Insurance
+            </button>
+          ))}
+        </div>
+
+        {/* Card container */}
+        <div
+          style={{
+            background: T.bgCard,
+            border: `1px solid ${T.border}`,
+            borderTop: "none",
+            borderRadius: "0 0 18px 18px",
+            overflow: "hidden",
+          }}
+        >
+          {/* Sub-type selector */}
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              padding: "20px 28px",
+              borderBottom: `1px solid ${T.border}`,
+              flexWrap: "wrap",
+            }}
+          >
+            {categoryData.subTypes.map((st) => (
+              <button
+                key={st.key}
+                onClick={() => setActiveSubType(st.key)}
+                style={{
+                  padding: "8px 18px",
+                  borderRadius: 30,
+                  border: `1px solid ${
+                    activeSubType === st.key ? T.accent : T.border
+                  }`,
+                  background:
+                    activeSubType === st.key ? `${T.accent}18` : "transparent",
+                  color: activeSubType === st.key ? T.accent : T.muted,
+                  fontSize: 13,
+                  fontWeight: activeSubType === st.key ? 600 : 400,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 7,
+                  transition: "all 0.15s",
+                }}
+              >
+                <i className={`fa-solid ${st.icon}`} style={{ fontSize: 11 }} />
+                {st.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Document list */}
+          <div style={{ padding: "28px 28px 8px" }}>
+            {subTypeData.isInfo ? (
+              /* Info-only sub type (Third Party) */
+              <div
+                style={{
+                  background: `${T.primary}10`,
+                  border: `1px solid ${T.primary}33`,
+                  borderRadius: 12,
+                  padding: "22px 26px",
+                  marginBottom: 20,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  <i
+                    className="fa-solid fa-circle-info"
+                    style={{ color: T.primary, fontSize: 18 }}
+                  />
+                  <span
+                    style={{ fontWeight: 700, fontSize: 15, color: T.primary }}
+                  >
+                    Handled via Court – MACT
+                  </span>
+                </div>
+                {subTypeData.docs.map((d, i) => (
+                  <p
+                    key={i}
+                    style={{ color: T.muted, fontSize: 13.5, lineHeight: 1.6 }}
+                  >
+                    {d}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              /* Regular doc list */
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "8px 24px",
+                  marginBottom: 20,
+                }}
+              >
+                {subTypeData.docs.map((doc, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 10,
+                      padding: "10px 0",
+                      borderBottom: `1px solid ${T.border}`,
+                    }}
+                  >
+                    <i
+                      className="fa-solid fa-circle-check"
+                      style={{
+                        color: T.accent,
+                        fontSize: 13,
+                        marginTop: 2,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: 13, lineHeight: 1.5 }}>{doc}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Disclaimer */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 10,
+                background: `${T.primary}0d`,
+                border: `1px solid ${T.primary}28`,
+                borderRadius: 10,
+                padding: "14px 18px",
+                marginBottom: 24,
+              }}
+            >
+              <i
+                className="fa-solid fa-triangle-exclamation"
+                style={{ color: T.primary, fontSize: 14, marginTop: 1, flexShrink: 0 }}
+              />
+              <p style={{ fontSize: 12.5, color: T.muted, margin: 0, lineHeight: 1.6 }}>
+                {DISCLAIMER}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 // ─── HomePage ─────────────────────────────────────────────────────────────────
 export default function HomePage({ navigate, loggedIn }) {
@@ -52,10 +562,17 @@ export default function HomePage({ navigate, loggedIn }) {
 
   const docs = DOC_DATA[docFilter] || [];
 
-  // Logic applied here
   const handleClaim = useCallback(() => {
     if (loggedIn) {
       navigate("new-claim");
+    } else {
+      window.location.assign("/login");
+    }
+  }, [navigate, loggedIn]);
+
+  const handleTrack = useCallback(() => {
+    if (loggedIn) {
+      navigate("track-claim");
     } else {
       window.location.assign("/login");
     }
@@ -109,7 +626,6 @@ export default function HomePage({ navigate, loggedIn }) {
             marginTop: 32,
           }}
         >
-          {/* Hero Button with Logic */}
           <Button
             text="Intimate a Claim"
             onClick={handleClaim}
@@ -118,7 +634,7 @@ export default function HomePage({ navigate, loggedIn }) {
           />
           <Button
             text="Track Claim Status"
-            onClick={() => navigate("track-claim")}
+            onClick={handleTrack}
             bgcolor="transparent"
             color={T.text}
             borderColor={T.border}
@@ -134,43 +650,7 @@ export default function HomePage({ navigate, loggedIn }) {
           borderBottom: `1px solid ${T.border}`,
           padding: "22px 0",
         }}
-      >
-        <div
-          style={{
-            maxWidth: 1240,
-            margin: "0 auto",
-            padding: "0 24px",
-            display: "flex",
-            justifyContent: "center",
-            gap: 56,
-            flexWrap: "wrap",
-          }}
-        >
-          {[
-            ["98.2%", "Settlement Ratio"],
-            ["2.4h", "Avg. Approval"],
-            ["50K+", "Network Hospitals"],
-            ["24/7", "Claims Support"],
-          ].map(([n, l]) => (
-            <div key={l} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 25, fontWeight: 700, color: T.accent }}>
-                {n}
-              </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: T.muted,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                  marginTop: 4,
-                }}
-              >
-                {l}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      />
 
       {/* ── Process ── */}
       <section
@@ -194,6 +674,7 @@ export default function HomePage({ navigate, loggedIn }) {
             marginBottom: 56,
           }}
         >
+          {/* Tab bar */}
           <div
             style={{ display: "flex", borderBottom: `1px solid ${T.border}` }}
           >
@@ -209,69 +690,41 @@ export default function HomePage({ navigate, loggedIn }) {
           </div>
 
           <div style={{ padding: 42 }}>
+            {/* ── Health & Motor: two process rows ── */}
             {activeTab !== "life" ? (
               <>
+                <ProcessRow
+                  steps={procSteps[activeTab].cashless}
+                  accentColor={T.accent}
+                  label="Cashless Process — Network Hospital / Garage Route"
+                  badgeBg={T.successBg}
+                  badgeColor={T.accent}
+                />
+
                 <div
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(4,1fr)",
-                    gap: 20,
-                    textAlign: "center",
-                    position: "relative",
-                    marginBottom: 42,
+                    borderTop: `1px dashed ${T.border}`,
+                    margin: "8px 0 28px",
                   }}
-                >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 23,
-                      left: "12%",
-                      right: "12%",
-                      height: 1,
-                      background: T.border,
-                      zIndex: 1,
-                    }}
-                  />
-                  {procSteps[activeTab].map((s) => (
-                    <div key={s.n} style={{ position: "relative", zIndex: 2 }}>
-                      <div
-                        style={{
-                          width: 46,
-                          height: 46,
-                          background: T.bgCard,
-                          color: T.primary,
-                          border: `2px solid ${T.border}`,
-                          borderRadius: "50%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: 700,
-                          fontSize: 17,
-                          margin: "0 auto 13px",
-                        }}
-                      >
-                        {s.n}
-                      </div>
-                      <h4
-                        style={{
-                          fontSize: 15,
-                          fontWeight: 600,
-                          marginBottom: 5,
-                        }}
-                      >
-                        {s.h}
-                      </h4>
-                      <p style={{ fontSize: 12.5, color: T.muted }}>{s.p}</p>
-                    </div>
-                  ))}
-                </div>
+                />
+
+                <ProcessRow
+                  steps={procSteps[activeTab].reimbursement}
+                  accentColor={T.primary}
+                  label="Reimbursement Process — Any Provider Route"
+                  badgeBg={T.primaryBg}
+                  badgeColor={T.primary}
+                />
+
+                {/* Solution cards */}
                 <div
                   style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr",
                     gap: 18,
                     borderTop: `1px solid ${T.border}`,
-                    paddingTop: 38,
+                    paddingTop: 32,
+                    marginTop: 8,
                   }}
                 >
                   {[
@@ -355,137 +808,128 @@ export default function HomePage({ navigate, loggedIn }) {
                 </div>
               </>
             ) : (
-              <div style={{ textAlign: "center", padding: "20px 0" }}>
-                <p style={{ color: T.muted, marginBottom: 24 }}>
-                  Process flow varies by claim type (Death / Maturity / Rider).
-                </p>
+              /* ── Life: single 4-step process ── */
+              <>
                 <div
-                  style={{ display: "flex", justifyContent: "center", gap: 12 }}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    background: T.primaryBg,
+                    color: T.primary,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    padding: "4px 12px",
+                    borderRadius: 20,
+                    marginBottom: 24,
+                    border: `1px solid ${T.primary}33`,
+                  }}
                 >
-                  <Button
-                    text="Death Claim"
-                    bgcolor="transparent"
-                    color={T.accent}
-                    borderColor={T.accent}
-                    padding="9px 18px"
-                    fontSize="13px"
-                  />
-                  <Button
-                    text="Maturity Claim"
-                    bgcolor="transparent"
-                    color={T.text}
-                    borderColor={T.border}
-                    padding="9px 18px"
-                    fontSize="13px"
-                  />
+                  Life Claim Process — All Claim Types
                 </div>
-              </div>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(4, 1fr)",
+                    gap: 20,
+                    textAlign: "center",
+                    position: "relative",
+                    marginBottom: 40,
+                  }}
+                >
+                  {/* Connector line */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 21,
+                      left: "12%",
+                      right: "12%",
+                      height: 1,
+                      background: T.border,
+                      zIndex: 1,
+                    }}
+                  />
+                  {procSteps.life.map((s) => (
+                    <div key={s.n} style={{ position: "relative", zIndex: 2 }}>
+                      <div
+                        style={{
+                          width: 42,
+                          height: 42,
+                          background: T.bgCard,
+                          color: T.primary,
+                          border: `2px solid ${T.primary}`,
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontWeight: 700,
+                          fontSize: 15,
+                          margin: "0 auto 10px",
+                        }}
+                      >
+                        {s.n}
+                      </div>
+                      <h4
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 600,
+                          marginBottom: 5,
+                        }}
+                      >
+                        {s.h}
+                      </h4>
+                      <p
+                        style={{
+                          fontSize: 12.5,
+                          color: T.muted,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {s.p}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Life claim type buttons */}
+                <div
+                  style={{
+                    borderTop: `1px solid ${T.border}`,
+                    paddingTop: 28,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span
+                    style={{ fontSize: 13, color: T.muted, marginRight: 4 }}
+                  >
+                    Applies to:
+                  </span>
+                  {["Death Claim", "Maturity Claim", "Rider Claim"].map(
+                    (label) => (
+                      <Button
+                        key={label}
+                        text={label}
+                        bgcolor="transparent"
+                        color={T.text}
+                        borderColor={T.border}
+                        padding="9px 18px"
+                        fontSize="13px"
+                      />
+                    )
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>
       </section>
 
-      {/* ── Doc Center ── */}
-      <section
-        style={{
-          padding: "56px 0",
-          background: T.bg,
-          borderTop: `1px solid ${T.border}`,
-          borderBottom: `1px solid ${T.border}`,
-        }}
-      >
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
-              marginBottom: 28,
-            }}
-          >
-            <div>
-              <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 6 }}>
-                Document Center
-              </h2>
-              <p style={{ color: T.muted }}>
-                Download checklists and claim forms instantly
-              </p>
-            </div>
-            <CustomInput
-              type="select"
-              name="docFilter"
-              value={docFilter}
-              onChange={(e) => setDocFilter(e.target.value)}
-              fullWidth={false}
-              sx={{ ...inputSx, width: "auto" }}
-            >
-              <option>Health</option>
-              <option>Motor</option>
-              <option>Life</option>
-            </CustomInput>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3,1fr)",
-              gap: 18,
-            }}
-          >
-            {docs.map((d) => (
-              <HoverCard key={d.title}>
-                <div>
-                  <div
-                    style={{ color: T.primary, fontSize: 21, marginBottom: 14 }}
-                  >
-                    <i className={`fa-solid ${d.icon}`} />
-                  </div>
-                  <h4
-                    style={{ fontSize: 14.5, fontWeight: 600, marginBottom: 5 }}
-                  >
-                    {d.title}
-                  </h4>
-                  <p
-                    style={{
-                      fontSize: 12.5,
-                      color: T.muted,
-                      marginBottom: 20,
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {d.desc}
-                  </p>
-                </div>
-                <a
-                  href="#"
-                  style={{
-                    color: T.accent,
-                    textDecoration: "none",
-                    fontSize: 13.5,
-                    fontWeight: 500,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                  }}
-                >
-                  {d.link} <i className="fa-solid fa-download" />
-                </a>
-              </HoverCard>
-            ))}
-          </div>
-
-          <div style={{ textAlign: "center", marginTop: 32 }}>
-            <Button
-              text="View all documents"
-              onClick={() => navigate("documents")}
-              bgcolor="transparent"
-              color={T.muted}
-              padding="9px 18px"
-              fontSize="13px"
-            />
-          </div>
-        </div>
-      </section>
+      {/* ── Documents Center (replaces old Doc Center) ── */}
+      <DocumentsCenter />
 
       {/* ── Action Grid ── */}
       <section style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
@@ -559,8 +1003,6 @@ export default function HomePage({ navigate, loggedIn }) {
                 </div>
               ))}
             </div>
-
-            {/* Action Grid Button with Logic */}
             <Button
               text="Start Intimation"
               onClick={handleClaim}
@@ -575,7 +1017,7 @@ export default function HomePage({ navigate, loggedIn }) {
 
           <div>
             <div
-              onClick={() => navigate("track-claim")}
+              onClick={handleTrack}
               style={{
                 background: T.bgCard,
                 border: `1px solid ${T.border}`,
@@ -587,7 +1029,9 @@ export default function HomePage({ navigate, loggedIn }) {
               onMouseEnter={(e) =>
                 (e.currentTarget.style.boxShadow = `0 4px 24px ${T.primary}22`)
               }
-              onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.boxShadow = "none")
+              }
             >
               <div
                 style={{
@@ -596,7 +1040,9 @@ export default function HomePage({ navigate, loggedIn }) {
                   justifyContent: "space-between",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: 16 }}
+                >
                   <div
                     style={{
                       background: `${T.primary}18`,
@@ -615,7 +1061,11 @@ export default function HomePage({ navigate, loggedIn }) {
                   </div>
                   <div>
                     <h3
-                      style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}
+                      style={{
+                        fontSize: 18,
+                        fontWeight: 700,
+                        marginBottom: 4,
+                      }}
                     >
                       My Claims
                     </h3>
@@ -700,19 +1150,17 @@ export default function HomePage({ navigate, loggedIn }) {
                   flexWrap: "wrap",
                 }}
               >
-                {[
-                  "Rejection Review",
-                  "Legal Guidance",
-                  "Documentation Aid",
-                ].map((f) => (
-                  <span key={f}>
-                    <i
-                      className="fa-solid fa-check"
-                      style={{ color: T.accent, marginRight: 5 }}
-                    />
-                    {f}
-                  </span>
-                ))}
+                {["Rejection Review", "Legal Guidance", "Documentation Aid"].map(
+                  (f) => (
+                    <span key={f}>
+                      <i
+                        className="fa-solid fa-check"
+                        style={{ color: T.accent, marginRight: 5 }}
+                      />
+                      {f}
+                    </span>
+                  )
+                )}
               </div>
             </div>
           </div>
