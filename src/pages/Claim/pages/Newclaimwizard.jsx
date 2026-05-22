@@ -44,18 +44,18 @@ const REQUIRED_DOCS = {
     { key: "idProof",             label: "ID Proof",                  hint: "Aadhaar, PAN, Passport or Driving Licence",             required: true  },
     { key: "repairEstimate",      label: "Repair Estimate",           hint: "Estimate letter from garage / authorised repair shop",   required: false },
     { key: "firCopy",             label: "FIR Copy",                  hint: "Police FIR — required if FIR was lodged",               required: false },
-    { key: "supportingDocuments", label: "Supporting Documents",      hint: "Photos of damage, RC copy or any other relevant docs",  required: false },
+    { key: "supportingDocuments", label: "Claim Form",                hint: "Photos of damage, RC copy or any other relevant docs",  required: true  },
   ],
   Health: [
     { key: "policyCopy",          label: "Policy Copy",               hint: "Your health insurance policy document",                 required: true  },
     { key: "idProof",             label: "ID Proof",                  hint: "Aadhaar, PAN, Passport or Voter ID",                   required: true  },
     { key: "hospitalEstimate",    label: "Hospital Estimate / Bills", hint: "Pre-auth letter, discharge summary or hospital bills",  required: true  },
-    { key: "supportingDocuments", label: "Supporting Documents",      hint: "Lab reports, prescriptions or doctor's certificates",   required: false },
+    { key: "supportingDocuments", label: "Claim Form",                hint: "Lab reports, prescriptions or doctor's certificates",   required: true  },
   ],
   Life: [
     { key: "policyCopy",          label: "Policy Copy",               hint: "Original or attested copy of your life policy",         required: true  },
     { key: "idProof",             label: "ID Proof of Nominee",       hint: "Aadhaar, PAN or Passport of the nominee",              required: true  },
-    { key: "supportingDocuments", label: "Supporting Documents",      hint: "Death certificate, legal heir certificate, etc.",       required: false },
+    { key: "supportingDocuments", label: "Claim Form",                hint: "Death certificate, legal heir certificate, etc.",       required: true  },
   ],
 };
 
@@ -339,6 +339,8 @@ function goToStep2WithPolicy(policy) {
         req(form3.surveyCity,    "surveyCity",    "City");
         req(form3.surveyState,   "surveyState",   "State");
         req(form3.surveyContact, "surveyContact", "Contact number at vehicle location");
+        req(form3.surveyAvailableDate, "surveyAvailableDate", "Available date");
+        req(form3.surveyAvailableTime, "surveyAvailableTime", "Available time");
       }
     }
 
@@ -1238,7 +1240,9 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
                         name="surveyAvailableDate"
                         value={form3.surveyAvailableDate}
                         onChange={(e) => f3Set("surveyAvailableDate", e.target.value)}
+                        validationMessage={errors.surveyAvailableDate}
                         sx={inputSx}
+                        required
                       />
                       <CustomInput
                         type="time"
@@ -1246,7 +1250,9 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
                         name="surveyAvailableTime"
                         value={form3.surveyAvailableTime}
                         onChange={(e) => f3Set("surveyAvailableTime", e.target.value)}
+                        validationMessage={errors.surveyAvailableTime}
                         sx={inputSx}
+                        required
                       />
                     </div>
                   </>
@@ -1473,10 +1479,28 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
             </p>
             {refNum && (
               <div style={{ margin: "24px auto 0", display: "inline-block", padding: "10px 28px", background: "rgba(255,179,0,0.08)", border: "1px solid rgba(255,179,0,0.2)", borderRadius: 12 }}>
-                <p style={{ color: T.muted, fontSize: 11, margin: 0, letterSpacing: 1, textTransform: "uppercase" }}>Claim Reference Number</p>
+                <p style={{ color: T.muted, fontSize: 11, margin: 0, letterSpacing: 1, textTransform: "uppercase" }}>Reference Number</p>
                 <p style={{ color: T.primary, fontWeight: 800, fontSize: 20, margin: "4px 0 0" }}>{refNum}</p>
               </div>
             )}
+            <div
+              style={{
+                background: "rgba(255, 179, 0, 0.05)",
+                border: "1px solid rgba(255, 179, 0, 0.22)",
+                borderRadius: 14,
+                padding: "14px 16px",
+                margin: "22px auto 0",
+                textAlign: "left",
+              }}
+            >
+              <p style={{ color: "#c9c9c9", fontSize: 12.5, lineHeight: 1.6, marginBottom: 0 }}>
+                <strong style={{ color: T.text }}>Disclaimer: </strong>
+                Claim intimation is registered based on the information and documents provided by the
+                customer. Coverkraft Insurance Brokers Private Limited acts only as a facilitator and shall
+                not be liable for any claim rejection, dispute, delay, or loss arising due to incorrect,
+                incomplete, misleading, or subsequently changed information during insurer assessment.
+              </p>
+            </div>
             <div>
               <Button
                 text="Return to Home"
@@ -1490,6 +1514,30 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
         )}
 
       </div>
+      {step === 1 && (
+        <div
+          style={{
+            background: "rgba(255, 179, 0, 0.05)",
+            border: "1px solid rgba(255, 179, 0, 0.22)",
+            borderRadius: 14,
+            padding: "14px 16px",
+            marginTop: 18,
+            color: T.text,
+          }}
+        >
+          <p style={{ color: "#c9c9c9", fontSize: 12.5, lineHeight: 1.6, marginBottom: 0 }}>
+            <strong style={{ color: T.text }}>Disclaimer: </strong>
+            Please ensure that all information and documents submitted for claim intimation are true,
+            accurate, and complete. Any incorrect, incomplete, misleading, or subsequently changed
+            information may result in delay, investigation, or rejection of the claim by the Insurance
+            Company. Coverkraft Insurance Brokers Private Limited acts only as a facilitator for claim
+            intimation and registers the claim strictly based on the details provided by the customer.
+            Coverkraft shall not be liable for any claim rejection, dispute, or loss arising due to any
+            change in facts, statements, or documents during the claim assessment or settlement process
+            by the insurer.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
