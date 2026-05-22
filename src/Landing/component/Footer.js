@@ -56,7 +56,7 @@ const Footer = () => {
   const companyLinks = [
     { label: "About Us", to: "/about" },
     {label: "Our-Leaders", to: "/Our-LeaderShip" },
-    { label: "Privacy Policy", to: "/legal#PrivacyPolicy" },
+    { label: "Privacy Policy", to: "https://www.thecoverkraft.com/privacy-policy", external: true },
     { label: "Legal And Admin Policies", to: "/legal" },
     { label: "Disclaimer", to: "/legal#disclaimer" },
     { label: "Terms of Use", to: "/legal#TermsOfUse" },
@@ -316,8 +316,6 @@ const Footer = () => {
                   <a
                     key={label}
                     href={to}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="footer-link text-color d-inline-block"
                     style={{ fontSize: "1.2rem", textDecoration: "none" }}
                   >

@@ -158,6 +158,7 @@ function App() {
           <Route path="/notification" element={<NotificationPage />} />
           <Route path="/feed/:type" element={<Feeds />} />
           <Route path="/feed/:type/:id" element={<BlogDetails />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/legal" element={<LegalPoliciesPage />} />
           <Route path="/contactus" element={<ContactUs />} />
