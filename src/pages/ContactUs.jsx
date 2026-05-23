@@ -391,7 +391,7 @@ function ContactUs() {
 
                     <p>
                       <CallIcon className="me-2 text-success text-size-md" />
-                      +91 7247724735
+                      +91 7247724739
                     </p>
                     <p>
                       <MailIcon className="me-2 text-success" />

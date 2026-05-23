@@ -119,7 +119,7 @@ const policies = [
                     16 D-1, Danish Nagar, Hoshangabad Road,<br />
                     Bhopal, Madhya Pradesh, 462026<br />
                     Email: <a href="mailto:grievance@thecoverkraft.com" style={{ color: '#8BC642' }}>grievance@thecoverkraft.com</a><br />
-                    Phone: +91 7247724735
+                    Phone: +91 7247724739
                 </p>
 
                <h2 style={{ color: '#8BC642' }}>Consent</h2>
@@ -819,7 +819,7 @@ const policies = [
                     16 D-1, Danish Nagar, Hoshangabad Road,<br />
                     Bhopal, Madhya Pradesh, PIN - 462026<br />
                     <strong>Email:</strong> <a href="mailto:contact@thecoverkraft.com" style={{ color: '#8BC642' }}>contact@thecoverkraft.com</a><br />
-                    <strong>Phone:</strong> +91 7247724735
+                    <strong>Phone:</strong> +91 7247724739
                 </p>
 
                 <h3 style={{ color: '#8BC642' }}>Shape</h3>

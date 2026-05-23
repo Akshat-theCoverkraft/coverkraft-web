@@ -252,7 +252,7 @@ const Footer = () => {
                 className="footer-link text-decoration-none"
                 style={{ fontSize: "1.3rem" }}
               > */}
-              <span style={{ fontSize: "1.2rem" }}>+91 7247724735</span>
+              <span style={{ fontSize: "1.2rem" }}>+91 7247724739</span>
 
               {/* </a> */}
             </div>

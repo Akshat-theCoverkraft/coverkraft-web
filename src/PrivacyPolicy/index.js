@@ -154,7 +154,7 @@ const PrivacyPolicy = () => {
                         grievance@thecoverkraft.com
                       </a>
                     </p>
-                    <p>Phone: +91 7247724735</p>
+                    <p>Phone: +91 7247724739</p>
                   </Section>
 
                   <Section title="✍️ Consent">
