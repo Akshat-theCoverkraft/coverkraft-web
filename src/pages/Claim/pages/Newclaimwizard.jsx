@@ -37,25 +37,25 @@ const INSURANCE_TYPE_MAP = {
   },
 };
 
-// ─── Required docs per type ───────────────────────────────────────────────────
+// ─── Optional docs per type ───────────────────────────────────────────────────
 const REQUIRED_DOCS = {
   Motor: [
-    { key: "policyCopy",          label: "Policy Copy",               hint: "Your motor insurance policy document",                  required: true  },
-    { key: "idProof",             label: "ID Proof",                  hint: "Aadhaar, PAN, Passport or Driving Licence",             required: true  },
+    { key: "policyCopy",          label: "Policy Copy",               hint: "Your motor insurance policy document",                  required: false },
+    { key: "idProof",             label: "ID Proof",                  hint: "Aadhaar, PAN, Passport or Driving Licence",             required: false },
     { key: "repairEstimate",      label: "Repair Estimate",           hint: "Estimate letter from garage / authorised repair shop",   required: false },
     { key: "firCopy",             label: "FIR Copy",                  hint: "Police FIR — required if FIR was lodged",               required: false },
-    { key: "supportingDocuments", label: "Claim Form",                hint: "Photos of damage, RC copy or any other relevant docs",  required: true  },
+    { key: "supportingDocuments", label: "Claim Form",                hint: "Photos of damage, RC copy or any other relevant docs",  required: false },
   ],
   Health: [
-    { key: "policyCopy",          label: "Policy Copy",               hint: "Your health insurance policy document",                 required: true  },
-    { key: "idProof",             label: "ID Proof",                  hint: "Aadhaar, PAN, Passport or Voter ID",                   required: true  },
-    { key: "hospitalEstimate",    label: "Hospital Estimate / Bills", hint: "Pre-auth letter, discharge summary or hospital bills",  required: true  },
-    { key: "supportingDocuments", label: "Claim Form",                hint: "Lab reports, prescriptions or doctor's certificates",   required: true  },
+    { key: "policyCopy",          label: "Policy Copy",               hint: "Your health insurance policy document",                 required: false },
+    { key: "idProof",             label: "ID Proof",                  hint: "Aadhaar, PAN, Passport or Voter ID",                   required: false },
+    { key: "hospitalEstimate",    label: "Hospital Estimate / Bills", hint: "Pre-auth letter, discharge summary or hospital bills",  required: false },
+    { key: "supportingDocuments", label: "Claim Form",                hint: "Lab reports, prescriptions or doctor's certificates",   required: false },
   ],
   Life: [
-    { key: "policyCopy",          label: "Policy Copy",               hint: "Original or attested copy of your life policy",         required: true  },
-    { key: "idProof",             label: "ID Proof of Nominee",       hint: "Aadhaar, PAN or Passport of the nominee",              required: true  },
-    { key: "supportingDocuments", label: "Claim Form",                hint: "Death certificate, legal heir certificate, etc.",       required: true  },
+    { key: "policyCopy",          label: "Policy Copy",               hint: "Original or attested copy of your life policy",         required: false },
+    { key: "idProof",             label: "ID Proof of Nominee",       hint: "Aadhaar, PAN or Passport of the nominee",              required: false },
+    { key: "supportingDocuments", label: "Claim Form",                hint: "Death certificate, legal heir certificate, etc.",       required: false },
   ],
 };
 
@@ -358,12 +358,7 @@ function goToStep2WithPolicy(policy) {
   }
 
   function validateStep4() {
-    const errs = {};
-    const docs  = REQUIRED_DOCS[form2.type] || [];
-    docs.filter((d) => d.required).forEach((d) => {
-      if (!uploadedFiles[d.key]) errs[`doc_${d.key}`] = `${d.label} is required`;
-    });
-    return errs;
+    return {};
   }
 
   function handleContinueStep2() {
@@ -1385,8 +1380,8 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Upload Documents</h2>
             <p style={{ color: T.muted, fontSize: 14, marginBottom: 28 }}>
-              Upload supporting documents for your {form2.type.toLowerCase()} claim.
-              Fields marked <span style={{ color: T.danger }}>*</span> are mandatory.
+              Upload supporting documents for your {form2.type.toLowerCase()} claim if available.
+              All documents are optional.
             </p>
 
             {(REQUIRED_DOCS[form2.type] || []).map((doc) => (
