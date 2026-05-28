@@ -107,12 +107,10 @@ const GmailSyncPage = () => {
       const provider = new GoogleAuthProvider();
       provider.addScope('https://www.googleapis.com/auth/gmail.readonly');
       
-      // Set custom parameters
       provider.setCustomParameters({
-        prompt: 'select_account',
-        access_type: 'offline'
-      });
-
+  prompt: "consent select_account",
+  include_granted_scopes: "false",
+});
       console.log("🔐 Opening sign-in popup...");
       
       // Attempt sign in with popup
@@ -1296,8 +1294,19 @@ return (
             )
           }
         >
-          {signingIn ? "Syncing..." : "Sign in with Gmail"}
+          {signingIn ? "Syncing..." : "Connect Gmail to Import Policy Documents"}
         </Button>
+
+        <Typography sx={{ mt: 2, fontSize: 14, color: "#ccc" }}>
+          We request Gmail read-only access only to find insurance policy emails and PDF attachments.
+          CoverKraft cannot send, delete, or modify your emails.
+        </Typography>
+
+        {collectedFiles.length > 0 && (
+          <Typography sx={{ mt: 2, color: "#7ED957", fontWeight: 600 }}>
+            Gmail connected successfully. Policy documents were fetched and uploaded.
+          </Typography>
+        )}
       </div>
 
       {/* Promise Card */}
