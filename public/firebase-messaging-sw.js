@@ -3,7 +3,7 @@ importScripts("https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"
 importScripts("https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-apiKey: "AIzaSyDsRJ8VAapehDLayHpN5Ho1fbjXZNvIr78",
+  apiKey: "AIzaSyDsRJ8VAapehDLayHpN5Ho1fbjXZNvIr78",
   authDomain: "coverkraft-uat-5a09e.firebaseapp.com",
   projectId: "coverkraft-uat-5a09e",
   storageBucket: "coverkraft-uat-5a09e.firebasestorage.app",
