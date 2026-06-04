@@ -84,6 +84,14 @@ export default function NewClaimWizard({ navigate, showToast }) {
   const [policiesLoading, setPoliciesLoading] = useState(false);
   const [uploadedFiles,   setUploadedFiles]   = useState({});
   const [dragOver,        setDragOver]        = useState({});
+  const [otpSent,             setOtpSent]             = useState(false);
+const [otpValue,            setOtpValue]            = useState("");
+const [otpVerified,         setOtpVerified]         = useState(false);
+const [verifiedMobile,      setVerifiedMobile]      = useState("");
+const [verificationToken,   setVerificationToken]   = useState("");
+const [otpLoading,          setOtpLoading]          = useState(false);
+const [resendTimer,         setResendTimer]         = useState(0);
+  
 
   const [form2, setForm2] = useState({
     policy: "", company: "", type: "Motor", holder: "", mobile: "", email: "",
@@ -128,6 +136,13 @@ export default function NewClaimWizard({ navigate, showToast }) {
       })
       .finally(() => setPoliciesLoading(false));
   }, [category]);
+
+  // ── Resend countdown timer ────────────────────────────────────────────────
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const t = setTimeout(() => setResendTimer((p) => p - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendTimer]);
 
   // ── Utilities ─────────────────────────────────────────────────────────────
   const clearErr = (field) => setErrors((p) => ({ ...p, [field]: "" }));
@@ -190,8 +205,8 @@ function goToStep2WithPolicy(policy) {
     company: policy.insuranceCompany || policy.company       || "",
     type:    normalizeInsuranceType(policy.insuranceType || policy.type || category || "Motor"),
     holder:  policy.insuredName      || policy.holderName    || policy.proposerName || "",
-    mobile:  policy.registeredMobile || policy.mobile        || "",
-    email:   policy.registeredEmail  || policy.email         || "",
+    mobile:  policy.registeredMobile || policy.mobile || form2.mobile || "",
+    email:   policy.registeredEmail  || policy.email  || form2.email  || "",
   });
   setOcrDone(true);
   setStep(2);
@@ -205,6 +220,81 @@ function goToStep2WithPolicy(policy) {
     }
     setErrors({});
     setStep(n);
+  }
+
+  // ── Mobile change — reset OTP if number changed ───────────────────────────
+  function handleMobileChange(val) {
+    setForm2((f) => ({ ...f, mobile: val }));
+    clearErr("mobile");
+    if (val !== verifiedMobile) {
+      setOtpSent(false);
+      setOtpValue("");
+      setOtpVerified(false);
+      setVerifiedMobile("");
+      setVerificationToken("");
+    }
+  }
+
+  // ── Send OTP ──────────────────────────────────────────────────────────────
+  async function handleSendOtp() {
+    const check = validatePhoneNumber(form2.mobile);
+    if (!check.valid) { setErrors((p) => ({ ...p, mobile: check.error })); return; }
+
+    setOtpLoading(true);
+    try {
+      const res = await fetch(`${API_URL}api/claims/send-otp`, {
+        method:  "POST",
+        headers: {
+          "Content-Type":  "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ mobile: form2.mobile }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOtpSent(true);
+        setOtpValue("");
+        setResendTimer(60);
+        showToast("OTP sent to your mobile number");
+      } else {
+        showToast(data.message || "Failed to send OTP", "err");
+      }
+    } catch (e) {
+      showToast("Network error. Please try again.", "err");
+    } finally {
+      setOtpLoading(false);
+    }
+  }
+
+   // ── Verify OTP ────────────────────────────────────────────────────────────
+  async function handleVerifyOtp() {
+    if (!otpValue || otpValue.length !== 6) {
+      showToast("Please enter the 6-digit OTP", "err"); return;
+    }
+    setOtpLoading(true);
+    try {
+      const res = await fetch(`${API_URL}api/claims/verify-otp`, {
+        method:  "POST",
+        headers: {
+          "Content-Type":  "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ mobile: form2.mobile, otp: otpValue }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOtpVerified(true);
+        setVerifiedMobile(form2.mobile);
+        setVerificationToken(data.data.verificationToken);
+        showToast("Mobile verified successfully ✓");
+      } else {
+        showToast(data.message || "Invalid OTP", "err");
+      }
+    } catch (e) {
+      showToast("Network error. Please try again.", "err");
+    } finally {
+      setOtpLoading(false);
+    }
   }
 
   // ── OCR ───────────────────────────────────────────────────────────────────
@@ -309,6 +399,11 @@ function goToStep2WithPolicy(policy) {
       email:   validateEmail(form2.email),
     };
     Object.entries(checks).forEach(([f, r]) => { if (!r.valid) errs[f] = r.error; });
+
+    if (!otpVerified) {
+      errs.mobile = "Please verify your mobile number with OTP to continue";
+    }
+    
     return errs;
   }
 
@@ -399,6 +494,7 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
     fd.append("placeOfIncident",     form3.place);
     fd.append("descriptionOfLoss",   form3.desc);
     fd.append("declarationAccepted", "true");
+     fd.append("verificationToken",   verificationToken);
     if (form3.estimatedClaimAmount)
       fd.append("estimatedClaimAmount", form3.estimatedClaimAmount);
 
@@ -474,6 +570,25 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
     cursor: "not-allowed",
     opacity: 0.85,
   };
+
+    // ── OTP button style helper ───────────────────────────────────────────────
+  const otpBtnSx = (disabled, verified) => ({
+    padding:      "0 18px",
+    height:       "100%",
+    minHeight:    44,
+    borderRadius: 10,
+    border:       `1.5px solid ${verified ? "#22c55e" : T.accent}`,
+    background:   verified ? "rgba(34,197,94,0.08)" : T.accent,
+    color:        verified ? "#22c55e" : "#000",
+    fontWeight:   700,
+    fontSize:     13,
+    cursor:       disabled ? "not-allowed" : "pointer",
+    whiteSpace:   "nowrap",
+    opacity:      disabled && !verified ? 0.6 : 1,
+    transition:   "all 0.2s",
+    flexShrink:   0,
+  });
+
 
   // ── Sub-components ────────────────────────────────────────────────────────
   function ToggleGroup({ field, options, label, required: req, error }) {
@@ -840,18 +955,112 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
                 />
               </div>
 
+              {/* ── Mobile with OTP ── */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                <CustomInput
-                  type="tel"
-                  label="Registered Mobile"
-                  name="mobile"
-                  value={form2.mobile}
-                  onChange={(e) => { setForm2((f) => ({ ...f, mobile: e.target.value })); clearErr("mobile"); }}
-                  placeholder="10-digit mobile number"
-                  validationMessage={errors.mobile}
-                  sx={inputSx}
-                  required
-                />
+
+                {/* Mobile + Send OTP */}
+                <div>
+                  <label className="ck-label">
+                    Registered Mobile <span style={{ color: T.danger }}>*</span>
+                  </label>
+
+                  {/* Row 1: input + button */}
+                  <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+                    <input
+                      type="tel"
+                      value={form2.mobile}
+                      onChange={(e) => handleMobileChange(e.target.value)}
+                      placeholder="10-digit mobile number"
+                      maxLength={10}
+                      disabled={otpVerified}
+                      style={{
+                        ...inputSx,
+                        flex:    1,
+                        opacity: otpVerified ? 0.7 : 1,
+                        cursor:  otpVerified ? "not-allowed" : "auto",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSendOtp}
+                      disabled={otpLoading || otpVerified || resendTimer > 0 || !form2.mobile}
+                      style={otpBtnSx(otpLoading || otpVerified || resendTimer > 0 || !form2.mobile, otpVerified)}
+                    >
+                      {otpVerified
+                        ? "✓ Verified"
+                        : otpLoading
+                          ? "Sending…"
+                          : resendTimer > 0
+                            ? `Resend ${resendTimer}s`
+                            : otpSent
+                              ? "Resend OTP"
+                              : "Send OTP"
+                      }
+                    </button>
+                  </div>
+
+                  {/* Error */}
+                  {errors.mobile && <span className="ck-err-msg">{errors.mobile}</span>}
+
+                  {/* Row 2: OTP input (shown after send) */}
+                  {otpSent && !otpVerified && (
+                    <div style={{ marginTop: 10 }}>
+                      <label className="ck-label" style={{ fontSize: 11, marginBottom: 6 }}>
+                        Enter OTP sent to {form2.mobile}
+                      </label>
+                      <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          value={otpValue}
+                          onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ""))}
+                          placeholder="6-digit OTP"
+                          style={{
+                            ...inputSx,
+                            flex:          1,
+                            letterSpacing: 6,
+                            fontSize:      18,
+                            textAlign:     "center",
+                            fontWeight:    700,
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleVerifyOtp}
+                          disabled={otpLoading || otpValue.length !== 6}
+                          style={otpBtnSx(otpLoading || otpValue.length !== 6, false)}
+                        >
+                          {otpLoading ? "Verifying…" : "Verify"}
+                        </button>
+                      </div>
+                      <p style={{ fontSize: 11, color: T.muted, marginTop: 5 }}>
+                        ⏳ OTP valid for 5 minutes
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Verified badge */}
+                  {otpVerified && (
+                    <div style={{
+                      display:      "flex",
+                      alignItems:   "center",
+                      gap:          6,
+                      marginTop:    8,
+                      fontSize:     12,
+                      color:        "#22c55e",
+                      background:   "rgba(34,197,94,0.06)",
+                      border:       "1px solid rgba(34,197,94,0.2)",
+                      borderRadius: 8,
+                      padding:      "6px 12px",
+                    }}>
+                      <i className="fa-solid fa-circle-check" />
+                      Mobile number verified successfully
+                    </div>
+                  )}
+                </div>
+
+                {/* Email */}
                 <CustomInput
                   type="email"
                   label="Registered Email"
@@ -864,6 +1073,7 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
                   required
                 />
               </div>
+
             </fieldset>
 
             <div style={stepNav()}>
@@ -1223,7 +1433,7 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
                     </div>
 
                     {/* ── NEW: Surveyor availability ── */}
-                    <SectionLabel text="Surveyor Availability" />
+                    <SectionLabel text="VEHICLE AVAILABILITY FOR SURVEY" />
                     <p style={{ fontSize: 13, color: T.muted, marginBottom: 14, lineHeight: 1.6, display: "flex", gap: 8 }}>
                       <i className="fa-solid fa-calendar-check" style={{ color: T.primary, marginTop: 1 }} />
                       When will the vehicle be available for the surveyor to inspect?
@@ -1370,7 +1580,7 @@ fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedP
 
             <div style={stepNav()}>
               <Button text="Back"     onClick={() => goStep(2)}     bgcolor="transparent" color={T.muted} borderColor={T.border} />
-              <Button text="Continue" onClick={handleContinueStep3} bgcolor={T.accent}    color="#000" />
+              <Button text="Continue" onClick={handleContinueStep3} bgcolor={T.accent}    color="#000"  disabled={ocrScanning || !otpVerified}/>
             </div>
           </div>
         )}

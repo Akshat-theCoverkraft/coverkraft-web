@@ -60,13 +60,7 @@ const Register = () => {
   }
 
   // 🔍 Full name must be at least 3 characters & in Title Case
-  if (
-    fullName.trim().length < 3 ||
-    !/^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/.test(fullName.trim())
-  ) {
-    toast.error("Full name must be in Title Case and at least 3 characters long");
-    return;
-  }
+
 
   if (!valid) {
     toast.error("Please enter a valid 10-digit mobile number");
