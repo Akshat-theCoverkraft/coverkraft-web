@@ -12,29 +12,22 @@ const STATUS_CONFIG = {
     color: "#3B82F6",
     bg: "rgba(59,130,246,0.08)",
   },
-  under_review: {
+  internal_intimated: {
     label: "Under Review",
     color: "#F59E0B",
     bg: "rgba(245,158,11,0.08)",
   },
-  forwarded: {
+  intimated_to_ic: {
     label: "Forwarded to Insurer",
     color: "#8B5CF6",
     bg: "rgba(139,92,246,0.08)",
   },
-  resolved: {
-    label: "Resolved",
-    color: "#10B981",
-    bg: "rgba(16,185,129,0.08)",
-  },
-  rejected: { label: "Rejected", color: "#EF4444", bg: "rgba(239,68,68,0.08)" },
 };
 
 const TIMELINE_STEP_ORDER = [
   "submitted",
-  "under_review",
-  "forwarded",
-  "resolved",
+  "internal_intimated",
+  "intimated_to_ic",
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -100,145 +93,64 @@ function StatusBadge({ status }) {
 // ─── Timeline ─────────────────────────────────────────────────────────────────
 function ClaimTimeline({ timeline }) {
   if (!timeline?.length) return null;
-  const stepsMap = {};
-  timeline.forEach((t) => {
-    stepsMap[t.key] = t;
-  });
-  const steps = TIMELINE_STEP_ORDER.map(
-    (key) => stepsMap[key] || { key, label: key, status: "pending" },
-  );
-  if (stepsMap.rejected) steps.push(stepsMap.rejected);
 
   return (
     <div style={{ marginTop: 32 }}>
-      <p
-        style={{
-          fontSize: 11,
-          fontWeight: 800,
-          color: T.muted,
-          textTransform: "uppercase",
-          letterSpacing: 1,
-          marginBottom: 20,
-        }}
-      >
+      <p style={{
+        fontSize: 11, fontWeight: 800, color: T.muted,
+        textTransform: "uppercase", letterSpacing: 1, marginBottom: 20,
+      }}>
         Claim Timeline
       </p>
       <div style={{ position: "relative" }}>
-        <div
-          style={{
-            position: "absolute",
-            left: 15,
-            top: 8,
-            width: 2,
-            height: `calc(100% - 16px)`,
-            background: T.border,
-          }}
-        />
+        <div style={{
+          position: "absolute", left: 15, top: 8, width: 2,
+          height: `calc(100% - 16px)`, background: T.border,
+        }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-          {steps.map((step, idx) => {
-            const isDone = step.status === "completed";
+          {timeline.map((step, idx) => {        // ← use API timeline directly
+            const isDone    = step.status === "completed";
             const isCurrent = step.status === "current";
             const isPending = step.status === "pending";
-            const isRejected = step.key === "rejected";
-            const dotColor = isRejected
-              ? "#EF4444"
-              : isDone
-                ? T.accent
-                : isCurrent
-                  ? T.primary
-                  : T.border;
+            const dotColor  = isDone ? T.accent : isCurrent ? T.primary : T.border;
 
             return (
-              <div
-                key={step.key}
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 18,
-                  paddingBottom: idx < steps.length - 1 ? 24 : 0,
-                }}
-              >
+              <div key={step.key} style={{
+                display: "flex", alignItems: "flex-start", gap: 18,
+                paddingBottom: idx < timeline.length - 1 ? 24 : 0,
+              }}>
                 <div style={{ flexShrink: 0, position: "relative", zIndex: 1 }}>
-                  <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: "50%",
-                      background: isDone ? T.accent : T.bgCard,
-                      border: `2px solid ${dotColor}`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      boxShadow: isCurrent
-                        ? `0 0 0 4px rgba(255,179,0,0.15)`
-                        : "none",
-                      transition: "all 0.2s",
-                    }}
-                  >
+                  <div style={{
+                    width: 32, height: 32, borderRadius: "50%",
+                    background: isDone ? T.accent : T.bgCard,
+                    border: `2px solid ${dotColor}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    boxShadow: isCurrent ? `0 0 0 4px rgba(255,179,0,0.15)` : "none",
+                    transition: "all 0.2s",
+                  }}>
                     {isDone ? (
-                      <i
-                        className="fa-solid fa-check"
-                        style={{ fontSize: 11, color: "#000" }}
-                      />
+                      <i className="fa-solid fa-check" style={{ fontSize: 11, color: "#000" }} />
                     ) : isCurrent ? (
-                      <div
-                        style={{
-                          width: 10,
-                          height: 10,
-                          borderRadius: "50%",
-                          background: T.primary,
-                        }}
-                      />
-                    ) : isRejected ? (
-                      <i
-                        className="fa-solid fa-xmark"
-                        style={{ fontSize: 11, color: "#EF4444" }}
-                      />
+                      <div style={{ width: 10, height: 10, borderRadius: "50%", background: T.primary }} />
                     ) : (
-                      <div
-                        style={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: "50%",
-                          background: T.border,
-                        }}
-                      />
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: T.border }} />
                     )}
                   </div>
                 </div>
                 <div style={{ paddingTop: 4, flex: 1 }}>
-                  <p
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 700,
-                      margin: 0,
-                      color: isPending ? T.muted : T.text,
-                    }}
-                  >
-                    {step.label}
+                  <p style={{ fontSize: 14, fontWeight: 700, margin: 0, color: isPending ? T.muted : T.text }}>
+                    {step.label}           {/* ← label comes from API, always correct */}
                   </p>
                   {isCurrent && (
-                    <p
-                      style={{
-                        fontSize: 12,
-                        color: T.primary,
-                        fontWeight: 600,
-                        margin: "3px 0 0",
-                      }}
-                    >
+                    <p style={{ fontSize: 12, color: T.primary, fontWeight: 600, margin: "3px 0 0" }}>
                       In progress
                     </p>
                   )}
-                  {isPending && !isRejected && (
-                    <p
-                      style={{
-                        fontSize: 12,
-                        color: T.muted,
-                        margin: "3px 0 0",
-                      }}
-                    >
-                      Pending
-                    </p>
+                  {isPending && (
+                    <p style={{ fontSize: 12, color: T.muted, margin: "3px 0 0" }}>Pending</p>
+                  )}
+                  {isDone && step.description && (
+                    <p style={{ fontSize: 12, color: T.muted, margin: "3px 0 0" }}>{step.description}</p>
                   )}
                 </div>
               </div>
@@ -570,13 +482,12 @@ function MyClaimsSection({ onTrack }) {
     })();
   }, []); // ← empty deps, runs once on mount
 
-  const tabs = [
-    { key: "all", label: "All" },
-    { key: "submitted", label: "Submitted" },
-    { key: "under_review", label: "Under Review" },
-    { key: "resolved", label: "Resolved" },
-    { key: "rejected", label: "Rejected" },
-  ];
+const tabs = [
+  { key: "all",                label: "All"                  },
+  { key: "submitted",          label: "Submitted"            },
+  { key: "internal_intimated", label: "Under Review"         },
+  { key: "intimated_to_ic",    label: "Forwarded to Insurer" },
+];
 
   const filtered =
     filter === "all"
