@@ -482,7 +482,9 @@ function goToStep2WithPolicy(policy) {
 
     fd.append("policySource",     selectedPolicy ? "coverkraft" : "external");
 // was: fd.append("policyId", selectedPolicy._id || selectedPolicy.policyId);
-fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedPolicy.id);
+if (selectedPolicy) {
+  fd.append("policyId", selectedPolicy.policyId || selectedPolicy._id || selectedPolicy.id || "");
+}
     fd.append("policyNumber",        form2.policy);
     fd.append("insuranceCompany",    form2.company);
     fd.append("insuranceType",       form2.type.toLowerCase());
