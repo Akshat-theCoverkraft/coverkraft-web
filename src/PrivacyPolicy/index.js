@@ -29,7 +29,7 @@ const PrivacyPolicy = () => {
                     <span className="text-secondary">
                       This Privacy Policy describes how <strong>CoverKraft Insurance Brokers Private Limited</strong> ("we", "our", or "us") 
                       collects, uses, shares, and protects your information through our website{" "}
-                      <a href="http://www.TheCoverKraft.com" target="_blank" rel="noopener noreferrer" className="text-success">
+                      <a href="https://www.thecoverkraft.com" target="_blank" rel="noopener noreferrer" className="text-success">
                         www.TheCoverKraft.com
                       </a>{" "}
                       and the "CoverKraft" mobile application.
