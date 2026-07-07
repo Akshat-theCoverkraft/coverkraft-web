@@ -22,6 +22,7 @@ import scooty from "../../Images/new_bike.png";
 import family from "../../Images/new_health.png";
 import car from "../../Images/ic_car.png";
 import Health from "../../Images/new_health.png";
+import travelPlane from "../../Images/new_travel.png";
 import premium from "../../Images/premium.png";
 import value from "../../Images/value.png";
 import startDate from "../../Images/startDate.png";
@@ -79,6 +80,26 @@ const PolicyDetail = ({ policyId }) => {
     navigate("/login");
     localStorage.clear();
     sessionStorage.clear();
+  };
+
+  const handleIntimateTravelClaim = () => {
+    const policy = policyDetails[0];
+    const companyDetails = policy?.companyDetails;
+
+    navigate("/claim", {
+      state: {
+        page: "travel-claim",
+        companyDetails,
+        policy: {
+          policyNumber: policy?.policyNumber,
+          policyType: policy?.policyType,
+          insuredCompany: policy?.insuredCompany,
+          policyEndDate: policy?.policyEndDate,
+          policyStartDate: policy?.policyStartDate,
+          policyDetails: policy?.policyDetails,
+        },
+      },
+    });
   };
 
     // Map assetType string to vehicle_type number
@@ -242,6 +263,7 @@ const showToastOnce = (message, type = "success") => {
       accident: family,
       health: Health,
       other_health: Health,
+      travel: travelPlane,
     };
     return imageMap[policyType] || scooty;
   };
@@ -287,6 +309,7 @@ const showToastOnce = (message, type = "success") => {
       other_health: "/health-policy",
       life: "/life-policy",
       accident: "/life-policy",
+      travel: "/travel-policy",
     };
 
     const route = routeMap[policyType];
@@ -295,7 +318,7 @@ const showToastOnce = (message, type = "success") => {
     }
   };
 
-const handleDocument = async (documentPath, action) => {
+  const handleDocument = async (documentPath, action) => {
   if (!documentPath) {
     console.error("Document path is missing");
 
@@ -355,7 +378,6 @@ const handleDocument = async (documentPath, action) => {
   }
   return;
 }
-
 
     // Unknown action
     console.warn(`Unknown action: ${action}`);
@@ -706,11 +728,14 @@ const { setValue, setActiveTab } = usePolicyContext();
               </div>
             </div>
 
-            <div className="d-flex justify-content-between align-items-start px-4">
-              <div style={{ flex: 1 }}>
+            <div
+              className="d-flex justify-content-between align-items-start px-4"
+              style={{ gap: 16, flexWrap: "wrap" }}
+            >
+              <div style={{ flex: "1 1 320px", minWidth: 0 }}>
                 <p
                   style={{
-                    width: "400px",
+                    width: "100%",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -746,7 +771,9 @@ const { setValue, setActiveTab } = usePolicyContext();
                     marginBottom: "2px",
                   }}
                 >
-                  {policy?.insuredCompany}
+                  {policy?.policyType === "travel"
+                    ? policy?.policyDetails?.countryVisited || policy?.policyDetails?.geographicalScope || "-"
+                    : policy?.insuredCompany}
                 </p>
                 <p
                   style={{
@@ -767,14 +794,12 @@ const { setValue, setActiveTab } = usePolicyContext();
                 </p>
               </div>
 
-              <div className="d-flex align-items-center">
-                {/* Progress Bar positioned to the left of car */}
-
-                <div>
+              <div className="d-flex align-items-center" style={{ flex: "0 0 auto" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <img
                     src={getPolicyImage(policy?.policyType)}
                     alt="Policy Type"
-                    style={{ maxWidth: "70px", height: "auto" }}
+                    style={{ width: "58px", height: "58px", objectFit: "contain" }}
                   />
                 </div>
               </div>
@@ -815,7 +840,7 @@ const { setValue, setActiveTab } = usePolicyContext();
               <Card
                 className="rounded-5"
                 style={{
-                  marginTop: "48px",
+                  marginTop: "36px",
                   paddingTop: "5px",
                   width: "100%",
                   height: "396px",
@@ -826,6 +851,30 @@ const { setValue, setActiveTab } = usePolicyContext();
                 }}
               >
                 <div className=" d-flex justify-content-end my-4">
+                  {policy?.policyType === "travel" && (
+                    <button
+                      type="button"
+                      onClick={handleIntimateTravelClaim}
+                      style={{
+                        marginRight: 12,
+                        border: "1px solid #ff4d4f",
+                        background: "#ff4d4f",
+                        color: "#fff",
+                        borderRadius: 999,
+                        padding: "8px 13px",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        boxShadow: "0 10px 24px rgba(255,77,79,0.22)",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <i className="fa-solid fa-phone-volume" />
+                      Intimate your claim
+                    </button>
+                  )}
                   <OverlayTrigger
                     placement="top"
                     overlay={renderTooltip("View Policy")}

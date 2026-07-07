@@ -132,6 +132,7 @@ const Vault = () => {
     other_health: "/health-policy",
     life: "/life-policy",
     accident: "/life-policy",
+    travel: "/travel-policy",
   };
 
 

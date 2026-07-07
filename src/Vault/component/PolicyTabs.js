@@ -34,6 +34,7 @@ import HealthInsurance from "../../Images/new_health.png";
 import car from "../../Images/ic_car.png";
 import Health from "../../Images/new_health.png";
 import Life from "../../Images/new_life.png";
+import Travel from "../../Images/img_travelCard.png";
 import arrow from "../../Images/right-arrow.png";
 import emptyImage from "../../Images/NoData.png";
 import "./policy.css";
@@ -149,6 +150,7 @@ const POLICY_CONFIGS = {
   life: { label: "Life Insurance", image: Life, category: "life" },
   accident: { label: "Accident Insurance", image: Health, category: "health" },
   health: { label: "Health Insurance", image: Health, category: "health" },
+  travel: { label: "Travel Insurance", image: Travel, category: "travel" },
   other_health: {
     label: "Other Health Insurance",
     image: HealthInsurance,
@@ -168,6 +170,7 @@ const POLICY_TYPE_FILTERS = [
   { key: "motor", label: "Motor" },
   { key: "life", label: "Life" },
   { key: "health", label: "Health" },
+  { key: "travel", label: "Travel" },
   { key: "pending", label: "Pending" },
 ];
 
@@ -213,6 +216,19 @@ const getInputFieldsByPolicyType = (policy) => {
         policy?.insuredName,
         policy?.insuredCompany,
         policy?.policyDetails?.policyName,
+      ];
+    case "travel":
+      return [
+        policy?.policyNumber,
+        policy?.policyStartDate,
+        policy?.policyEndDate,
+        policy?.premiumPaid,
+        policy?.insuredCompany,
+        policy?.policyDetails?.policyCoverAmount,
+        policy?.policyDetails?.travelType,
+        policy?.policyDetails?.countryVisited,
+        policy?.policyDetails?.tripType,
+        policy?.policyDetails?.planName,
       ];
     default:
       return [
@@ -760,17 +776,19 @@ const PolicyCard = ({
                 </Typography>
               </Box>
 
-              <Typography
-                sx={{
-                  fontSize: "1.6rem",
-                  color: "#fff !important",
-                  fontWeight: "800",
-                  wordBreak: "break-word",
-                  mb: 0.4,
-                }}
-              >
-                {getSafeValue(policy.insuredName, "")}
-              </Typography>
+              {policy.policyType !== "travel" && (
+                <Typography
+                  sx={{
+                    fontSize: "1.6rem",
+                    color: "#fff !important",
+                    fontWeight: "800",
+                    wordBreak: "break-word",
+                    mb: 0.4,
+                  }}
+                >
+                  {getSafeValue(policy.insuredName, "")}
+                </Typography>
+              )}
 
               {/* Don't show policy number for pending policies */}
               {!isPendingPolicy && (

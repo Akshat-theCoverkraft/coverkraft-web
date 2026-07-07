@@ -22,6 +22,8 @@ import ProfileDrawer from "./component/profile";
 import MotorPolicyForm from "./Vault/policyForms/MotorPolicyForm";
 import HealthPolicyForm from "./Vault/policyForms/HealthPolicyForm";
 import LifePolicyForm from "./Vault/policyForms/LifePolicyForm";
+import TravelPolicyForm from "./Vault/policyForms/TravelPolicyForm";
+import TravelSOSDetails from "./Vault/component/TravelSOSDetails";
 import Family from "./profile/Family";
 import About from "./About/About";
 import NotificationPage from "./Notification/Notification";
@@ -151,6 +153,8 @@ function App() {
           <Route path="/motor-policy" element={<MotorPolicyForm />} />
           <Route path="/health-policy" element={<HealthPolicyForm />} />
           <Route path="/life-policy" element={<LifePolicyForm />} />
+          <Route path="/travel-policy" element={<TravelPolicyForm />} />
+          <Route path="/travel-sos/:id" element={<TravelSOSDetails />} />
           <Route path="/add-policy" element={<AddPolicy />} />
           <Route path="/profile" element={<ProfileDrawer />} />
           <Route path="/family" element={<Family />} />

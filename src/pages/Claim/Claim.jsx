@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react"; // Added useMemo
+import { useState, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { GLOBAL_CSS, T } from "./tokens";
 
 // ── Pages ────────────────────────────────────────────────────────────────────
@@ -7,13 +8,16 @@ import NewClaimWizard from "./pages/Newclaimwizard";
 import TrackClaimPage from "./pages/Trackclaimpage";
 import AdvisoryPage   from "./pages/Advisorypage";
 import DocumentsPage  from "./pages/Documentspage";
+import TravelClaimPage from "./pages/TravelClaimPage";
 
 // ── Shared UI ────────────────────────────────────────────────────────────────
 import Toast from "./Toast";
 import Navbar from "../../component/Navbar";
 
 export default function CoverKraft() {
-  const [page,  setPage]  = useState("home");
+  const location = useLocation();
+  const locationState = location.state || {};
+  const [page,  setPage]  = useState(locationState.page || "home");
   const [toast, setToast] = useState({ show: false, msg: "", type: "" });
   
   const loggedIn = useMemo(() => {
@@ -46,6 +50,7 @@ export default function CoverKraft() {
       {page === "track-claim" && <TrackClaimPage navigate={navigate} />}
       {page === "advisory"    && <AdvisoryPage   navigate={navigate} />}
       {page === "documents"   && <DocumentsPage  navigate={navigate} />}
+      {page === "travel-claim" && <TravelClaimPage navigate={navigate} locationState={locationState} />}
       
       {/* Fallback for Login Page */}
       {page === "login" && (
