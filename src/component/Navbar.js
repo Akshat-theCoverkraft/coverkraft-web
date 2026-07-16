@@ -109,7 +109,7 @@ const StyledButton = styled("button")(() => ({
   border: "1.5px solid #8AC642",
   borderRadius: "20px",
   padding: "8px 16px",
-  fontSize: "1.4rem",
+  fontSize: "1.6rem",
   fontWeight: "600",
   minWidth: "100px",
   cursor: "pointer",
@@ -120,7 +120,7 @@ const StyledButton = styled("button")(() => ({
     color: "#000",
   },
   "@media (max-width: 768px)": {
-    fontSize: "1.2rem",
+    fontSize: "1.65rem",
     padding: "6px 12px",
     minWidth: "80px",
   },
@@ -143,14 +143,14 @@ const NavItem = styled("div")(({ active }) => ({
   cursor: "pointer",
   color: active ? "#8AC642" : "white",
   fontWeight: active ? "600" : "400",
-  fontSize: "1.7rem",
+  fontSize: "1.9rem",
   padding: "4px 10px",
   transition: "all 0.2s ease",
   "&:hover": {
     color: "#8AC642",
   },
   "@media (max-width: 1024px)": {
-    fontSize: "1.5rem",
+    fontSize: "1.8rem",
   },
 }));
 
@@ -160,12 +160,24 @@ const MenuSection = styled("div")(() => ({
 
 const SectionTitle = styled("div")(() => ({
   padding: "8px 16px 4px",
-  fontSize: "0.9rem",
+  fontSize: "1.25rem",
   fontWeight: "600",
   color: "#8AC642",
   textTransform: "uppercase",
   letterSpacing: "0.5px",
 }));
+
+const mobileMenuItemSx = {
+  fontSize: { xs: "1.7rem", sm: "1.6rem" },
+  py: 1.55,
+};
+
+const mobileSubMenuItemSx = {
+  fontSize: { xs: "1.5rem", sm: "1.4rem" },
+  pl: 4,
+  py: 1.15,
+  color: "rgba(255,255,255,0.8)",
+};
 
 // ─── MEGA MENU STYLED ───────────────────────────────────────────────────────────
 const MegaMenuWrapper = styled("div")(() => ({
@@ -204,7 +216,7 @@ const MegaColTitle = styled("div")(({ color }) => ({
   gap: 7,
   color: color || "#8AC642",
   fontWeight: 700,
-  fontSize: "1.2rem",
+  fontSize: "1.35rem",
   textTransform: "uppercase",
   letterSpacing: "0.07em",
   marginBottom: 12,
@@ -215,7 +227,7 @@ const MegaColTitle = styled("div")(({ color }) => ({
 const MegaLink = styled("div")(({ isViewAll, color }) => ({
   padding: "7px 10px",
   borderRadius: 6,
-  fontSize: "1.25rem",
+  fontSize: "1.4rem",
   fontWeight: isViewAll ? 700 : 400,
   color: isViewAll ? (color || "#8AC642") : "rgba(255,255,255,0.82)",
   cursor: "pointer",
@@ -232,8 +244,9 @@ function Navbar({ scrollToContactBottom }) {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isCompactNav = useMediaQuery(theme.breakpoints.down("lg"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("lg", "xl"));
   const megaRef = useRef(null);
   const [anchorEls, setAnchorEls] = useState({
     profile: null,
@@ -319,6 +332,7 @@ function Navbar({ scrollToContactBottom }) {
 
   const handleMoreItemClick = useCallback((id) => {
     setAnchor('more', null);
+    setAnchor('mobile', null);
     const element = document.getElementById(id);
     if (element) element.scrollIntoView({ behavior: "smooth" });
   }, [setAnchor]);
@@ -385,40 +399,6 @@ function Navbar({ scrollToContactBottom }) {
   const renderMobileMenuSections = () => {
     const sections = [];
 
-    sections.push(
-      <MenuSection key="insurance-products">
-        <SectionTitle>Insurance Products</SectionTitle>
-        {MEGA_MENU_DATA.map((cat) => (
-          <React.Fragment key={cat.key}>
-            <MenuItem
-              sx={{
-                fontSize: "1.3rem",
-                py: 1,
-                color: cat.color,
-                fontWeight: 700,
-              }}
-            >
-              {cat.label}
-            </MenuItem>
-            {cat.items.filter((i) => !i.isViewAll).map((item) => (
-              <MenuItem
-                key={item.label}
-                onClick={() => {
-                  navigate(item.path);
-                  closeAllMenus();
-                }}
-                sx={{ fontSize: "1.15rem", pl: 4, py: 0.8, color: "rgba(255,255,255,0.8)" }}
-              >
-                {item.label}
-              </MenuItem>
-            ))}
-          </React.Fragment>
-        ))}
-      </MenuSection>
-    );
-
-    sections.push(<Divider key="div-ins" sx={{ borderColor: "#333" }} />);
-
     if (loggedIn) {
       // Quick Actions Section
       sections.push(
@@ -426,10 +406,19 @@ function Navbar({ scrollToContactBottom }) {
           <SectionTitle>Quick Actions</SectionTitle>
           <MenuItem
             onClick={() => {
+              navigate("/joinUs");
+              closeAllMenus();
+            }}
+            sx={mobileMenuItemSx}
+          >
+            Join Us
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
               handleVault();
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             <VaultIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Policy Vault
@@ -440,7 +429,7 @@ function Navbar({ scrollToContactBottom }) {
               handleClaim();
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             <ClaimIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Claim
@@ -450,7 +439,7 @@ function Navbar({ scrollToContactBottom }) {
               handlePrivacyPolicy();
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             Privacy Policy
           </MenuItem>
@@ -459,7 +448,7 @@ function Navbar({ scrollToContactBottom }) {
               navigate("/notification");
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             <Badge
               badgeContent={unreadPolicyCount}
@@ -468,7 +457,7 @@ function Navbar({ scrollToContactBottom }) {
                 "& .MuiBadge-badge": {
                   backgroundColor: "#8AC642",
                   color: "black",
-                  fontSize: "0.7rem",
+                  fontSize: "1rem",
                 },
               }}
             >
@@ -490,14 +479,14 @@ function Navbar({ scrollToContactBottom }) {
               setDrawerOpen(true);
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             <AccountCircleOutlinedIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             My Profile
           </MenuItem>
           <MenuItem
             onClick={handleLogout}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             <LogoutIcon sx={{ mr: 1.5, color: "#f44336" }} />
             Logout
@@ -516,16 +505,25 @@ function Navbar({ scrollToContactBottom }) {
               navigate("/login");
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             Login
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              navigate("/joinUs");
+              closeAllMenus();
+            }}
+            sx={mobileMenuItemSx}
+          >
+            Join Us
           </MenuItem>
           <MenuItem
             onClick={() => {
               handleVault();
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             <VaultIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Policy Vault
@@ -536,7 +534,7 @@ function Navbar({ scrollToContactBottom }) {
               handleClaim();
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             <ClaimIcon sx={{ mr: 1.5, color: "#8AC642" }} />
             Claim
@@ -546,7 +544,7 @@ function Navbar({ scrollToContactBottom }) {
               handlePrivacyPolicy();
               closeAllMenus();
             }}
-            sx={{ fontSize: "1.3rem", py: 1.5 }}
+            sx={mobileMenuItemSx}
           >
             Privacy Policy
           </MenuItem>
@@ -554,6 +552,25 @@ function Navbar({ scrollToContactBottom }) {
       );
 
       sections.push(<Divider key="divider3" sx={{ borderColor: "#333" }} />);
+    }
+
+    if (isHomePage) {
+      sections.push(
+        <MenuSection key="home-sections">
+          <SectionTitle>Home Sections</SectionTitle>
+          {MORE_MENU_ITEMS.map((item) => (
+            <MenuItem
+              key={item.key}
+              onClick={() => handleMoreItemClick(item.id)}
+              sx={mobileMenuItemSx}
+            >
+              {item.label}
+            </MenuItem>
+          ))}
+        </MenuSection>
+      );
+
+      sections.push(<Divider key="divider-home-sections" sx={{ borderColor: "#333" }} />);
     }
 
     // Navigation Section
@@ -568,7 +585,7 @@ function Navbar({ scrollToContactBottom }) {
                   handleNavigation(item);
                   closeAllMenus();
                 }}
-                sx={{ fontSize: "1.3rem", py: 1.5 }}
+                sx={mobileMenuItemSx}
               >
                 {item.label}
               </MenuItem>
@@ -579,7 +596,7 @@ function Navbar({ scrollToContactBottom }) {
                     navigate(child.path);
                     closeAllMenus();
                   }}
-                  sx={{ fontSize: "1.2rem", pl: 4, py: 1 }}
+                  sx={mobileSubMenuItemSx}
                 >
                   {child.label}
                 </MenuItem>
@@ -589,6 +606,39 @@ function Navbar({ scrollToContactBottom }) {
         </MenuSection>
       );
     }
+
+    sections.push(<Divider key="div-ins" sx={{ borderColor: "#333" }} />);
+
+    sections.push(
+      <MenuSection key="insurance-products">
+        <SectionTitle>Insurance Products</SectionTitle>
+        {MEGA_MENU_DATA.map((cat) => (
+          <React.Fragment key={cat.key}>
+            <MenuItem
+              sx={{
+                ...mobileMenuItemSx,
+                color: cat.color,
+                fontWeight: 700,
+              }}
+            >
+              {cat.label}
+            </MenuItem>
+            {cat.items.filter((i) => !i.isViewAll).map((item) => (
+              <MenuItem
+                key={item.label}
+                onClick={() => {
+                  navigate(item.path);
+                  closeAllMenus();
+                }}
+                sx={mobileSubMenuItemSx}
+              >
+                {item.label}
+              </MenuItem>
+            ))}
+          </React.Fragment>
+        ))}
+      </MenuSection>
+    );
 
     return sections;
   };
@@ -602,7 +652,7 @@ function Navbar({ scrollToContactBottom }) {
           left: 0,
           right: 0,
           zIndex: 1200,
-          padding: isMobile ? "10px 20px" : "10px 70px",
+          padding: isMobile ? "10px 14px" : isCompactNav ? "10px 28px" : "10px 70px",
           backgroundColor: "black",
           boxShadow: "0px 4px 6px rgba(0,0,0,0.3)",
         }}
@@ -611,19 +661,19 @@ function Navbar({ scrollToContactBottom }) {
           <img
             src={Logo}
             alt="Logo"
-            height={isMobile ? 50 : 70}
-            width={isMobile ? 200 : 280}
-            style={{ cursor: "pointer" }}
+            height={isMobile ? 44 : isCompactNav ? 56 : 70}
+            width={isMobile ? 176 : isCompactNav ? 224 : 280}
+            style={{ cursor: "pointer", maxWidth: "72vw", objectFit: "contain" }}
             onClick={handleHomeClick}
           />
 
-          {isMobile ? (
+          {isCompactNav ? (
             <>
               <IconButton onClick={(e) => setAnchor('mobile', anchorEls.mobile ? null : e.currentTarget)}>
                 {anchorEls.mobile ? (
-                  <CloseIcon sx={{ color: THEME_COLOR.COLOR }} />
+                  <CloseIcon sx={{ color: THEME_COLOR.COLOR, fontSize: 32 }} />
                 ) : (
-                  <MenuIcon sx={{ color: THEME_COLOR.COLOR }} />
+                  <MenuIcon sx={{ color: THEME_COLOR.COLOR, fontSize: 32 }} />
                 )}
               </IconButton>
               <DarkMenu
@@ -632,8 +682,9 @@ function Navbar({ scrollToContactBottom }) {
                 onClose={() => setAnchor('mobile', null)}
                 PaperProps={{
                   sx: {
-                    maxHeight: "80vh",
-                    width: "280px",
+                    maxHeight: "calc(100vh - 76px)",
+                    width: { xs: "calc(100vw - 24px)", sm: "360px" },
+                    maxWidth: "420px",
                     overflowY: "auto",
                   },
                 }}
@@ -689,7 +740,7 @@ function Navbar({ scrollToContactBottom }) {
                             navigate(item.path);
                             setAnchor('submenu', null);
                           }}
-                          sx={{ fontSize: "1.3rem" }}
+                          sx={{ fontSize: "1.5rem" }}
                         >
                           {item.label}
                         </MenuItem>
@@ -700,7 +751,7 @@ function Navbar({ scrollToContactBottom }) {
                               navigate(child.path);
                               setAnchor('submenu', null);
                             }}
-                            sx={{ fontSize: "1.3rem" }}
+                            sx={{ fontSize: "1.5rem" }}
                           >
                             {child.label}
                           </MenuItem>
@@ -745,7 +796,7 @@ function Navbar({ scrollToContactBottom }) {
                       "& .MuiBadge-badge": {
                         backgroundColor: "#8AC642",
                         color: "black",
-                        fontSize: "0.8rem",
+                        fontSize: "0.95rem",
                         fontWeight: "bold",
                       },
                     }}
@@ -820,11 +871,11 @@ function Navbar({ scrollToContactBottom }) {
                         setDrawerOpen(true);
                         setAnchor('profile', null);
                       }}
-                      sx={{ fontSize: "1.3rem" }}
+                      sx={{ fontSize: "1.5rem" }}
                     >
                       <AccountCircleOutlinedIcon sx={{ mr: 1 }} /> My Profile
                     </MenuItem>
-                    <MenuItem onClick={handleLogout} sx={{ fontSize: "1.3rem" }}>
+                    <MenuItem onClick={handleLogout} sx={{ fontSize: "1.5rem" }}>
                       <LogoutIcon sx={{ mr: 1 }} /> Logout
                     </MenuItem>
                   </DarkMenu>
@@ -856,7 +907,7 @@ function Navbar({ scrollToContactBottom }) {
                   <MenuItem
                     key={item.key}
                     onClick={() => handleMoreItemClick(item.id)}
-                    sx={{ fontSize: "1.3rem" }}
+                    sx={{ fontSize: "1.5rem" }}
                   >
                     {item.label}
                   </MenuItem>
@@ -867,7 +918,7 @@ function Navbar({ scrollToContactBottom }) {
         </div>
       </div>
 
-      <div style={{ height: isMobile ? "80px" : "95px" }} />
+      <div style={{ height: isMobile ? "72px" : isCompactNav ? "82px" : "95px" }} />
       
       <ProfileDrawer 
         open={drawerOpen} 
