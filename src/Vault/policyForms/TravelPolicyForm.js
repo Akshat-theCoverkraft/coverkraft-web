@@ -19,6 +19,7 @@ import DateTimePicker from "../../component/DateTimePicker";
 import { formatDate } from "../../utils/dateUtils";
 import { THEME_COLOR } from "../../constants";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";
 
 const TravelPolicyForm = () => {
   const location = useLocation();
@@ -417,6 +418,16 @@ const TravelPolicyForm = () => {
                   onChange={(e) => setPremiumPaid(e.target.value)}
                   required
                   inputStyle={fieldStyle}
+                />
+                <InsuranceDropdown
+                  onCompanySelect={(company) => setInsuredCompany(company)}
+                  initialValue={
+                    insuredCompany ||
+                    responseData?.insuranceCompany ||
+                    responseData?.insuredCompany ||
+                    policyDetails?.insuredCompany ||
+                    parsedOcrText?.insuredCompany
+                  }
                 />
                 <CustomInput
                   type="text"
