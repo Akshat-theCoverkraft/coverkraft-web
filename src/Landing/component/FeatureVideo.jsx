@@ -44,8 +44,10 @@ export default function CaseStudiesCarousel() {
   const [autoScrollPaused, setAutoScrollPaused] = useState(false);
 
   const totalSlides = caseStudies.length;
-  const totalPages = Math.ceil(totalSlides / cardsPerView);
+  const visibleCards = Math.min(cardsPerView, totalSlides) || 1;
+  const totalPages = Math.ceil(totalSlides / visibleCards);
   const showNavButtons = true; // Always show navigation buttons
+  const cardGap = 24;
 
   // Fetch case studies
   useEffect(() => {
@@ -134,7 +136,7 @@ export default function CaseStudiesCarousel() {
   // Move carousel
   const moveCarousel = (dir) => {
     stopAllVideos();
-    const maxIndex = Math.max(totalSlides - cardsPerView, 0);
+    const maxIndex = Math.max(totalSlides - visibleCards, 0);
     let newIndex = currentIndex + dir;
     if (newIndex < 0) newIndex = maxIndex;
     if (newIndex > maxIndex) newIndex = 0;
@@ -143,8 +145,8 @@ export default function CaseStudiesCarousel() {
 
   const goToPage = (page) => {
     stopAllVideos();
-    let idx = page * cardsPerView;
-    if (idx > totalSlides - cardsPerView) idx = totalSlides - cardsPerView;
+    let idx = page * visibleCards;
+    if (idx > totalSlides - visibleCards) idx = totalSlides - visibleCards;
     if (idx < 0) idx = 0;
     setCurrentIndex(idx);
   };
@@ -152,34 +154,48 @@ export default function CaseStudiesCarousel() {
   // Scroll transform
   useEffect(() => {
     if (!trackRef.current || !wrapperRef.current) return;
-    const cardWidth = wrapperRef.current.offsetWidth / cardsPerView;
-    trackRef.current.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-  }, [currentIndex, cardsPerView]);
+    const totalGapWidth = cardGap * Math.max(visibleCards - 1, 0);
+    const cardWidth = (wrapperRef.current.offsetWidth - totalGapWidth) / visibleCards;
+    trackRef.current.style.transform = `translateX(-${currentIndex * (cardWidth + cardGap)}px)`;
+  }, [currentIndex, visibleCards]);
 
   // Auto-scroll
   useEffect(() => {
-    if (!loading && totalSlides > cardsPerView && !autoScrollPaused) {
+    if (!loading && totalSlides > visibleCards && !autoScrollPaused) {
       const timer = setInterval(() => moveCarousel(1), 4500);
       return () => clearInterval(timer);
     }
-  }, [loading, autoScrollPaused, currentIndex, cardsPerView, totalSlides]);
+  }, [loading, autoScrollPaused, currentIndex, visibleCards, totalSlides]);
 
   // YouTube detection
   const isYouTubeUrl = (url) =>
-    url?.includes("youtube.com") || url?.includes("youtu.be");
+    typeof url === "string" &&
+    (url.includes("youtube.com") ||
+      url.includes("youtu.be") ||
+      url.includes("youtube-nocookie.com"));
 
   const extractYouTubeVideoId = (url) => {
     try {
-      if (url.includes("youtu.be")) {
-        return url.split("/").pop().split("?")[0];
+      if (!isYouTubeUrl(url)) return null;
+
+      const parsedUrl = new URL(url);
+      const host = parsedUrl.hostname.replace(/^www\./, "");
+
+      if (host === "youtu.be") {
+        return parsedUrl.pathname.split("/").filter(Boolean)[0] || null;
       }
-      if (url.includes("watch?v=")) {
-        return new URL(url).searchParams.get("v");
+
+      if (parsedUrl.pathname === "/watch") {
+        return parsedUrl.searchParams.get("v");
       }
-      if (url.includes("/embed/")) {
-        return url.split("/embed/")[1].split("?")[0];
+
+      const [, type, id] = parsedUrl.pathname.split("/");
+      if (["embed", "shorts", "live"].includes(type)) {
+        return id || null;
       }
-    } catch {}
+    } catch (err) {
+      console.error("Invalid YouTube URL:", err);
+    }
     return null;
   };
 
@@ -207,14 +223,14 @@ export default function CaseStudiesCarousel() {
   }
 
   return (
-    <div className="py-16 px-4 bg-black relative">
-      <div className="relative max-w-[1600px] mx-auto px-3 sm:px-8">
+    <div className="py-16 bg-black relative w-full overflow-hidden">
+      <div className="relative w-full mx-auto">
         {/* LEFT ARROW */}
         <button
           onClick={() => moveCarousel(-1)}
-          disabled={totalSlides <= cardsPerView}
+          disabled={totalSlides <= visibleCards}
           className={`absolute left-0 top-1/2 -translate-y-1/2 text-white w-14 h-14 rounded-full flex items-center justify-center transition-all z-30 border-2 
-            ${totalSlides <= cardsPerView 
+            ${totalSlides <= visibleCards 
               ? 'bg-gray-700 border-gray-600 cursor-not-allowed opacity-50' 
               : 'bg-gradient-to-br from-[#5a9e1e] to-[#4a8519] hover:from-[#6bb023] hover:to-[#5a9e1e] shadow-[0_8px_20px_rgba(90,158,30,0.5)] hover:scale-110 hover:shadow-[0_12px_30px_rgba(90,158,30,0.7)] border-[#6bb023]/30'
             }`}
@@ -224,15 +240,16 @@ export default function CaseStudiesCarousel() {
 
         {/* CAROUSEL */}
         <div className="pt-20 pb-10">
-          <div ref={wrapperRef} className="overflow-visible">
+          <div ref={wrapperRef} className="overflow-hidden w-full">
             <div
               ref={trackRef}
-              className="flex gap-6 transition-all duration-500 ease-in-out"
-              style={{ touchAction: "pan-y" }}
+              className="flex transition-all duration-500 ease-in-out"
+              style={{ gap: `${cardGap}px`, touchAction: "pan-y" }}
             >
               {caseStudies.map((card, i) => {
-                const src = (card.video !== "null" && card.video) ? card.video : card.youTubeLink;
+                const src = card.video && card.video !== "null" ? card.video : card.youTubeLink;
                 const isYT = isYouTubeUrl(src) || card.mediaType === "youtubelink";
+                const youtubeVideoId = isYT ? extractYouTubeVideoId(src) : null;
 
                 return (
                   <div
@@ -247,9 +264,11 @@ export default function CaseStudiesCarousel() {
                       hover:scale-105 hover:z-40 
                       hover:shadow-[0_20px_60px_rgba(90,158,30,0.4),0_0_40px_rgba(90,158,30,0.2)] 
                       border-2 border-gray-700/50 hover:border-[#5a9e1e]/50`}
-                    style={{ width: `${100 / cardsPerView}%` }}
+                    style={{
+                      width: `calc((100% - ${cardGap * Math.max(visibleCards - 1, 0)}px) / ${visibleCards})`,
+                    }}
                   >
-                    {isYT ? (
+                    {isYT && youtubeVideoId ? (
                       <div 
                         className="w-full h-full bg-gray-900"
                         ref={(containerEl) => {
@@ -268,14 +287,11 @@ export default function CaseStudiesCarousel() {
                               const targetDiv = document.getElementById(divId);
                               if (!targetDiv || ytPlayersRef.current[i]) return;
 
-                              const videoId = extractYouTubeVideoId(src);
-                              if (!videoId) return;
-
                               try {
                                 const player = new window.YT.Player(divId, {
                                   height: '100%',
                                   width: '100%',
-                                  videoId: videoId,
+                                  videoId: youtubeVideoId,
                                   playerVars: {
                                     enablejsapi: 1,
                                     origin: window.location.origin,
@@ -346,9 +362,9 @@ export default function CaseStudiesCarousel() {
         {/* RIGHT ARROW */}
         <button
           onClick={() => moveCarousel(1)}
-          disabled={totalSlides <= cardsPerView}
+          disabled={totalSlides <= visibleCards}
           className={`absolute right-0 top-1/2 -translate-y-1/2 text-white w-14 h-14 rounded-full flex items-center justify-center transition-all z-30 border-2 
-            ${totalSlides <= cardsPerView 
+            ${totalSlides <= visibleCards 
               ? 'bg-gray-700 border-gray-600 cursor-not-allowed opacity-50' 
               : 'bg-gradient-to-br from-[#5a9e1e] to-[#4a8519] hover:from-[#6bb023] hover:to-[#5a9e1e] shadow-[0_8px_20px_rgba(90,158,30,0.5)] hover:scale-110 hover:shadow-[0_12px_30px_rgba(90,158,30,0.7)] border-[#6bb023]/30'
             }`}
@@ -361,7 +377,7 @@ export default function CaseStudiesCarousel() {
       {totalPages > 1 && (
         <div className="flex justify-center mt-6 gap-3">
           {Array.from({ length: totalPages }).map((_, i) => {
-            const active = Math.floor(currentIndex / cardsPerView) === i;
+            const active = Math.floor(currentIndex / visibleCards) === i;
             return (
               <div
                 key={i}
