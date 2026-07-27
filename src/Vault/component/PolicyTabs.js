@@ -28,6 +28,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Loader from "../../component/Loader";
 import scooty from "../../Images/new_bike.png";
 import HealthInsurance from "../../Images/new_health.png";
@@ -37,6 +39,7 @@ import Life from "../../Images/new_life.png";
 import Travel from "../../Images/img_travelCard.png";
 import arrow from "../../Images/right-arrow.png";
 import emptyImage from "../../Images/NoData.png";
+import gmailIcon from "../../Images/logos_google-gmail.png";
 import "./policy.css";
 import API_URL from "../../ServiceModule/Service";
 import { THEME_COLOR } from "../../constants";
@@ -463,6 +466,7 @@ const PolicyCard = ({
   selectedPolicies,
   handleCheckboxChange,
   handleCardClick,
+  onPendingPolicyClick,
   showStatus = false,
   isExpired = false,
   isSelected = false,
@@ -577,6 +581,207 @@ const PolicyCard = ({
     .substring(0, 2)
     .toUpperCase();
 };
+
+  const pendingReasonTitle =
+    policy.reason === "password_protected"
+      ? "Password protected policy"
+      : "Policy document pending";
+  const pendingReasonLabel = getSafeValue(policy.reason, "pending").replace(
+    /_/g,
+    " "
+  );
+  const pendingEmail = getSafeValue(policy.senderEmail || policy.gmailAddress, "");
+  const pendingPolicyNumber = getSafeValue(policy.policyNumber, "Policy number not found");
+
+  if (isPendingPolicy) {
+    return (
+      <Card
+        className="mb-4"
+        onClick={() =>
+          onPendingPolicyClick
+            ? onPendingPolicyClick(policy)
+            : handleCardClick(policy._id)
+        }
+        sx={{
+          backgroundColor: "#252936 !important",
+          color: "#fff",
+          cursor: "pointer",
+          border: isSelected ? "2px solid #8AC642" : "1px solid #464b5c",
+          borderRadius: "20px !important",
+          boxShadow: isSelected
+            ? "0 0 10px rgba(138, 198, 66, 0.35)"
+            : "0 14px 30px rgba(0, 0, 0, 0.28)",
+          overflow: "hidden",
+          transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+        }}
+      >
+        <CardContent sx={{ p: "0 !important" }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "96px 1fr", sm: "126px 1fr" },
+              minHeight: { xs: 116, sm: 132 },
+            }}
+          >
+            <Box
+              sx={{
+                backgroundColor: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                borderRight: "2px solid #cfd3df",
+              }}
+            >
+              <img
+                src={gmailIcon}
+                alt="Gmail"
+                style={{
+                  width: "52%",
+                  maxWidth: 64,
+                  height: "auto",
+                  objectFit: "contain",
+                }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  right: { xs: 10, sm: 14 },
+                  bottom: { xs: 22, sm: 28 },
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  backgroundColor: "#ffe1a2",
+                  border: "3px solid #fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#5a4116",
+                }}
+              >
+                <LockOutlinedIcon sx={{ fontSize: 18 }} />
+              </Box>
+            </Box>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "1fr auto",
+                gap: { xs: 1.5, sm: 2 },
+                alignItems: "center",
+                p: { xs: 1.6, sm: 2.2 },
+              }}
+            >
+              <Box sx={{ minWidth: 0 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 1.5,
+                    mb: 0.6,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "1.15rem", sm: "1.35rem" },
+                      fontWeight: 800,
+                      lineHeight: 1.15,
+                      color: "#f6f7fb",
+                    }}
+                  >
+                    {pendingReasonTitle}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: { xs: "none", md: "inline-flex" },
+                      alignItems: "center",
+                      gap: 0.8,
+                      color: "#ffc76b",
+                      border: "2px solid rgba(255, 199, 107, 0.42)",
+                      backgroundColor: "rgba(255, 179, 68, 0.12)",
+                      borderRadius: "999px",
+                      px: 1.6,
+                      py: 0.45,
+                      fontSize: "1.1rem",
+                      fontWeight: 800,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <LockOutlinedIcon sx={{ fontSize: 17 }} />
+                    {pendingReasonLabel}
+                  </Box>
+                </Box>
+
+                <Typography
+                  sx={{
+                    fontSize: { xs: "1.25rem", sm: "1.55rem" },
+                    fontWeight: 800,
+                    color: "#fff",
+                    lineHeight: 1.15,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {pendingPolicyNumber}
+                </Typography>
+
+                <Typography
+                  sx={{
+                    fontSize: { xs: "0.95rem", sm: "1.15rem" },
+                    color: "#c5cad6",
+                    mt: 0.4,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: { xs: "normal", sm: "nowrap" },
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {pendingEmail}
+                </Typography>
+
+              </Box>
+
+              <IconButton
+                aria-label="Open Add Policy"
+                sx={{
+                  width: { xs: 36, sm: 44 },
+                  height: { xs: 36, sm: 44 },
+                  backgroundColor: "#445066",
+                  color: "#fff",
+                  "&:hover": { backgroundColor: "#53617a" },
+                }}
+              >
+                <ChevronRightIcon sx={{ fontSize: { xs: 24, sm: 30 } }} />
+              </IconButton>
+            </Box>
+          </Box>
+        </CardContent>
+
+        <Dialog open={openConfirm} onClose={handleCloseConfirm}>
+          <DialogTitle variant="h5">Confirm Delete</DialogTitle>
+          <DialogContent>
+            <DialogContentText variant="h5">
+              Are you sure you want to delete this policy?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseConfirm} color="inherit" sx={{ fontSize: 12 }}>
+              Cancel
+            </Button>
+            <Button
+              fontSize="1rem"
+              onClick={confirmDelete}
+              color="error"
+              variant="contained"
+              sx={{ fontSize: 12 }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Card>
+    );
+  }
 
   return (
     <Card
@@ -969,6 +1174,7 @@ const CustomPagination = ({
 );
 export default function PolicyTabs({
   handleCardClick,
+  onPendingPolicyClick,
   shareAllPolicy,
   selectedPolicies,
   handleCheckboxChange,
@@ -1213,6 +1419,7 @@ export default function PolicyTabs({
             selectedPolicies={selectedPolicies}
             handleCheckboxChange={handleCheckboxChange}
             handleCardClick={handleCardClickWithState}
+            onPendingPolicyClick={onPendingPolicyClick}
             showStatus={showStatus}
             isExpired={isExpired}
             isSelected={policy._id === selectedPolicyId}

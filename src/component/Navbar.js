@@ -10,6 +10,12 @@ import {
   useTheme,
   Badge,
   Divider,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
@@ -258,6 +264,7 @@ function Navbar({ scrollToContactBottom }) {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const userName = useMemo(() => sessionStorage.getItem("userName"), []);
 
   // Memoized values
@@ -337,13 +344,20 @@ function Navbar({ scrollToContactBottom }) {
     if (element) element.scrollIntoView({ behavior: "smooth" });
   }, [setAnchor]);
 
-  const handleLogout = useCallback(() => {
+  const performLogout = useCallback(() => {
     sessionStorage.clear();
     setAnchor('profile', null);
     setAnchor('mobile', null);
+    setLogoutConfirmOpen(false);
     navigate("/");
     setTimeout(() => window.location.reload(), 100);
   }, [navigate, setAnchor]);
+
+  const handleLogout = useCallback(() => {
+    setAnchor('profile', null);
+    setAnchor('mobile', null);
+    setLogoutConfirmOpen(true);
+  }, [setAnchor]);
 
   const handleVault = useCallback(() => {
     navigate(sessionStorage.getItem("token") ? "/vault" : "/login");
@@ -924,6 +938,56 @@ function Navbar({ scrollToContactBottom }) {
         open={drawerOpen} 
         onClose={() => setDrawerOpen(false)} 
       />
+
+      <Dialog
+        open={logoutConfirmOpen}
+        onClose={() => setLogoutConfirmOpen(false)}
+        PaperProps={{
+          sx: {
+            backgroundColor: "#212121",
+            color: "#fff",
+            borderRadius: "16px",
+            border: "1px solid #444",
+            minWidth: { xs: "86vw", sm: 380 },
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontSize: "1.8rem", fontWeight: 700 }}>
+          Confirm Logout
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ color: "#d6d6d6", fontSize: "1.25rem" }}>
+            Are you sure you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button
+            onClick={() => setLogoutConfirmOpen(false)}
+            sx={{
+              color: "#fff",
+              borderColor: "#666",
+              fontSize: "1.1rem",
+              textTransform: "none",
+            }}
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={performLogout}
+            sx={{
+              backgroundColor: "#f44336",
+              color: "#fff",
+              fontSize: "1.1rem",
+              textTransform: "none",
+              "&:hover": { backgroundColor: "#d32f2f" },
+            }}
+            variant="contained"
+          >
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
