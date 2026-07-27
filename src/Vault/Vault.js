@@ -251,6 +251,12 @@ const Vault = () => {
     sessionStorage.setItem("selectedPolicyId", policyId);
   };
 
+  const handlePendingPolicyClick = () => {
+    setSelectedPolicyId("");
+    sessionStorage.removeItem("selectedPolicyId");
+    toggleDialog("addPolicy", true);
+  };
+
 
   const handleExport = (exportFunc) => {
     if (selectedPolicies.length === 0) {
@@ -606,6 +612,7 @@ const exportToPDF = async () => {
           >
             <PolicyTabs
               handleCardClick={handleCardClick}
+              onPendingPolicyClick={handlePendingPolicyClick}
               shareAllPolicy={shareAllPolicy}
               selectedPolicies={selectedPolicies}
               handleCheckboxChange={handleCheckboxChange}
