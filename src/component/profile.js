@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Drawer, Box, Typography, IconButton, Dialog, DialogContent, DialogActions, Card, Grid } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
+import LoginIcon from "@mui/icons-material/Login";
 
 // Components
 import Button from "../component/Button";
@@ -210,6 +211,19 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
 
   const [validationErrors, setValidationErrors] = useState({});
   const [returnPath, setReturnPath] = useState("/");
+  const userProfileResponse = userbyId.getUserById;
+  const userProfile = userProfileResponse?.data;
+  const isPospLogin =
+    userProfileResponse?.pospLogin === true || userProfile?.pospLogin === true;
+  const menuItems = useMemo(
+    () => [
+      ...(isPospLogin
+        ? [{ label: "POSP Login", action: "posp", iconComponent: LoginIcon }]
+        : []),
+      ...MENU_ITEMS,
+    ],
+    [isPospLogin]
+  );
 
   // Memoized values
   const commonInputStyle = useMemo(() => ({
@@ -322,6 +336,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
     communication: () => handleDrawerToggle('communication', true),
     help: () => navigate("/contactus"),
     about: () => { onClose(); navigate("/about"); },
+    posp: () => { onClose(); navigate("/posp-login"); },
     logout: () => {
       try {
         // ✅ Clear all storage (both session & local)
@@ -692,7 +707,11 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
       }}
     >
       <Grid item xs={2}>
-        <img src={item.icon} style={{ maxHeight: "2.5rem" }} alt={item.label} />
+        {item.iconComponent ? (
+          <item.iconComponent sx={{ color: "#8AC642", fontSize: "2.5rem" }} />
+        ) : (
+          <img src={item.icon} style={{ maxHeight: "2.5rem" }} alt={item.label} />
+        )}
       </Grid>
       <Grid item xs={8} >
         <span>{item.label}</span>
@@ -960,7 +979,7 @@ const ProfileDrawer = ({ open, onClose, userName }) => {
               color: THEME_COLOR.COLOR,
             }}
           >
-            {MENU_ITEMS.map(renderMenuItem)}
+            {menuItems.map(renderMenuItem)}
           </Card>
         ) : (
           renderUpdateForm()

@@ -41,6 +41,7 @@ import { PolicyProvider } from "./store/policyContext.js";
 import LeaderShip from "./About/LeaderShip.js";
 import JoinUs from "./pages/JoinUs.jsx";
 import PlayStoreTesting from "./pages/PlayStoreTesting.jsx";
+import PospLogin from "./pages/PospLogin.jsx";
 import ProductsRouter from "./component/ProductsRouter.jsx";
 import InsurancePage from "./component/InsurancePage.jsx";
 import CarThirdParty from "./component/CarThirdParty.jsx";
@@ -169,6 +170,7 @@ function App() {
           <Route path="/policy-type" element={<PolicyType />} />
           <Route path="/policy-details/:id" element={<PolicyDetails />} />
           <Route path="/gmail-sync" element={<GmailSyncPage />} />
+          <Route path="/posp-login" element={<PospLogin />} />
           <Route path="/Our-LeaderShip" element={<LeaderShip />} />
           <Route path="/user-deletion" element={<PlayStoreTesting />} />
           <Route path="/products" element={<ProductsRouter />} />

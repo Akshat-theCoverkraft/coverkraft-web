@@ -1,0 +1,124 @@
+.posp-login-page {
+  min-height: 100vh;
+  background: #121212;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.posp-login-header {
+  height: 46px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: #181818;
+}
+
+.posp-login-header h1 {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.posp-icon-button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: #242424;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.posp-icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.posp-login-content {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: #121212;
+}
+
+.posp-centered {
+  min-height: calc(100vh - 46px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.posp-centered p {
+  margin: 0;
+  max-width: 520px;
+  color: #f2f2f2;
+  font-size: 1.05rem;
+}
+
+.posp-retry-button {
+  min-width: 128px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: #8ac642;
+  color: #111111;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.posp-frame-loader {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(28, 28, 28, 0.9);
+}
+
+.posp-login-frame {
+  width: 100%;
+  height: calc(100vh - 46px);
+  border: 0;
+  background: #ffffff;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .posp-login-header {
+    height: 42px;
+    padding: 0 8px;
+  }
+
+  .posp-login-header h1 {
+    font-size: 0.92rem;
+  }
+
+  .posp-icon-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .posp-login-frame {
+    height: calc(100vh - 42px);
+  }
+
+  .posp-centered {
+    min-height: calc(100vh - 42px);
+  }
+}
