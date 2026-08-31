@@ -16,7 +16,6 @@
     "@mui/x-date-pickers": "^6.20.0",
     "@react-spring/web": "^10.0.3",
     "@sentry/react": "^10.38.0",
-    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/grecaptcha": "^3.0.9",
@@ -62,7 +61,10 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "browserslist": {
     "production": [
@@ -77,12 +79,16 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@testing-library/jest-dom": "^6.9.1",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.22",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "jsdom": "^29.1.1",
     "postcss": "^8.5.6",
     "style-loader": "^4.0.0",
     "tailwindcss": "^3.4.13",
-    "vite": "^7.1.0"
+    "vite": "^7.1.0",
+    "vitest": "^4.1.11"
   }
 }
