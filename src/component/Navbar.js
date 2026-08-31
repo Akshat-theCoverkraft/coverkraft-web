@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   IconButton,
   Menu,
@@ -20,20 +21,14 @@ import {
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
-  MoreVert as MoreVertIcon,
   AccountCircleOutlined as AccountCircleOutlinedIcon,
   Logout as LogoutIcon,
   Notifications as NotificationsIcon,
   Security as VaultIcon,
   KeyboardArrowDown as ArrowDownIcon,
-  DirectionsCar as CarIcon,
-  TwoWheeler as BikeIcon,
-  Favorite as HealthIcon,
-  FlightTakeoff as TravelIcon,
   Assignment as ClaimIcon,
 } from "@mui/icons-material";
 import Logo from "../Images/CKbig.png";
-import profileIcon from "../Images/ic-profile.png";
 import notificationIcon from "../Images/ic-notification.png";
 import ProfileDrawer from "../component/profile";
 import { THEME_COLOR } from "../constants";
@@ -46,7 +41,6 @@ const MEGA_MENU_DATA = [
   {
     key: "car",
     label: "Car Insurance",
-    icon: <CarIcon sx={{ fontSize: 16 }} />,
     color: "#FF5A1F",
     items: [
       { label: "Third-Party Car Insurance", path: "/products/car-third-party" },
@@ -59,7 +53,6 @@ const MEGA_MENU_DATA = [
   {
     key: "bike",
     label: "Two-Wheeler",
-    icon: <BikeIcon sx={{ fontSize: 16 }} />,
     color: "#00A8E8",
     items: [
       { label: "Third-Party Bike Insurance", path: "/products/bike-third-party" },
@@ -72,7 +65,6 @@ const MEGA_MENU_DATA = [
   {
     key: "health",
     label: "Health Insurance",
-    icon: <HealthIcon sx={{ fontSize: 16 }} />,
     color: "#E53935",
     items: [
       { label: "Individual Health Plan", path: "/products/health-individual" },
@@ -85,7 +77,6 @@ const MEGA_MENU_DATA = [
   {
     key: "travel",
     label: "Travel Insurance",
-    icon: <TravelIcon sx={{ fontSize: 16 }} />,
     color: "#00C48C",
     items: [
       { label: "International Travel", path: "/products/travel-international" },
@@ -111,33 +102,36 @@ const MORE_MENU_ITEMS = [
 
 const StyledButton = styled("button")(() => ({
   backgroundColor: "transparent",
-  color: "#8AC642",
-  border: "1.5px solid #8AC642",
-  borderRadius: "20px",
-  padding: "8px 16px",
-  fontSize: "1.6rem",
-  fontWeight: "600",
-  minWidth: "100px",
+  color: "rgba(255,255,255,0.9)",
+  border: "0",
+  borderRadius: "999px",
+  padding: "clamp(7px, 0.7vw, 10px) clamp(7px, 0.8vw, 11px)",
+  fontSize: "clamp(1.08rem, 0.86vw, 1.32rem)",
+  fontWeight: "700",
+  minWidth: "auto",
   cursor: "pointer",
   userSelect: "none",
-  transition: "all 0.25s ease",
+  whiteSpace: "nowrap",
+  transition: "color 0.28s ease, background 0.28s ease, transform 0.28s ease",
   "&:hover": {
-    backgroundColor: "#8AC642",
-    color: "#000",
+    background: "linear-gradient(135deg, rgba(138,198,66,0.13), rgba(45,212,191,0.1))",
+    color: "#B8FF62",
+    transform: "translateY(-0.5px)",
   },
   "@media (max-width: 768px)": {
-    fontSize: "1.65rem",
-    padding: "6px 12px",
+    fontSize: "1.4rem",
+    padding: "9px 12px",
     minWidth: "80px",
   },
 }));
 
 const DarkMenu = styled(Menu)(({ theme }) => ({
   "& .MuiMenu-paper": {
-    backgroundColor: "#212121",
+    background: "linear-gradient(145deg, rgba(7,15,19,0.98), rgba(11,21,28,0.98))",
     color: "white",
-    borderRadius: "8px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    borderRadius: "18px",
+    border: "1px solid rgba(126,231,55,0.13)",
+    boxShadow: "0 18px 46px rgba(0,0,0,0.36), 0 0 28px rgba(45,212,191,0.08)",
     minWidth: 150,
   },
   "& .MuiModal-root": {
@@ -147,16 +141,26 @@ const DarkMenu = styled(Menu)(({ theme }) => ({
 
 const NavItem = styled("div")(({ active }) => ({
   cursor: "pointer",
-  color: active ? "#8AC642" : "white",
-  fontWeight: active ? "600" : "400",
-  fontSize: "1.9rem",
-  padding: "4px 10px",
-  transition: "all 0.2s ease",
+  color: active ? "#B8FF62" : "rgba(255,255,255,0.88)",
+  fontWeight: 800,
+  fontSize: "clamp(1.08rem, 0.86vw, 1.32rem)",
+  padding: "clamp(7px, 0.7vw, 10px) clamp(9px, 1vw, 14px)",
+  borderRadius: "999px",
+  border: "0",
+  background: active ? "linear-gradient(135deg, rgba(138,198,66,0.14), rgba(45,212,191,0.1))" : "transparent",
+  boxShadow: active ? "0 0 16px rgba(45,212,191,0.13)" : "none",
+  display: "flex",
+  alignItems: "center",
+  gap: 5,
+  transition: "color 0.28s ease, background 0.28s ease, box-shadow 0.28s ease, transform 0.28s ease",
   "&:hover": {
-    color: "#8AC642",
+    color: "#B8FF62",
+    background: "linear-gradient(135deg, rgba(138,198,66,0.12), rgba(45,212,191,0.09))",
+    boxShadow: "0 0 14px rgba(45,212,191,0.12)",
+    transform: "translateY(-0.5px)",
   },
   "@media (max-width: 1024px)": {
-    fontSize: "1.8rem",
+    fontSize: "1.28rem",
   },
 }));
 
@@ -188,25 +192,20 @@ const mobileSubMenuItemSx = {
 // ─── MEGA MENU STYLED ───────────────────────────────────────────────────────────
 const MegaMenuWrapper = styled("div")(() => ({
   position: "absolute",
-  top: "100%",
+  top: "calc(100% + 16px)",
   left: "50%",
   transform: "translateX(-50%)",
-  width: 880,
-  background: "#1a1a1a",
-  borderRadius: "0 0 16px 16px",
-  border: "1px solid #2a2a2a",
-  borderTop: "2px solid #8AC642",
-  boxShadow: "0 16px 48px rgba(0,0,0,0.5)",
-  padding: "24px 28px 28px",
+  width: "min(880px, calc(100vw - 48px))",
+  background: "linear-gradient(145deg, rgba(6,14,18,0.97), rgba(10,22,30,0.97))",
+  backdropFilter: "blur(18px)",
+  borderRadius: "22px",
+  border: "1px solid rgba(126,231,55,0.18)",
+  boxShadow: "0 24px 60px rgba(0,0,0,0.42), 0 0 34px rgba(45,212,191,0.1)",
+  padding: "22px 24px 24px",
   zIndex: 1300,
   display: "grid",
   gridTemplateColumns: "repeat(4, 1fr)",
   gap: 0,
-  animation: "fadeSlideDown 0.18s ease",
-  "@keyframes fadeSlideDown": {
-    from: { opacity: 0, transform: "translateX(-50%) translateY(-8px)" },
-    to: { opacity: 1, transform: "translateX(-50%) translateY(0)" },
-  },
 }));
 
 const MegaCol = styled("div")(({ isLast }) => ({
@@ -227,7 +226,7 @@ const MegaColTitle = styled("div")(({ color }) => ({
   letterSpacing: "0.07em",
   marginBottom: 12,
   paddingBottom: 8,
-  borderBottom: `2px solid ${color ? color + "33" : "#8AC64233"}`,
+  borderBottom: `1px solid ${color ? color + "2d" : "#8AC6422d"}`,
 }));
 
 const MegaLink = styled("div")(({ isViewAll, color }) => ({
@@ -261,6 +260,7 @@ function Navbar({ scrollToContactBottom }) {
     submenu: null,
   });
   const [megaOpen, setMegaOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [unreadPolicyCount, setUnreadPolicyCount] = useState(0);
@@ -295,6 +295,34 @@ function Navbar({ scrollToContactBottom }) {
   useEffect(() => {
     setMegaOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    let frameId = null;
+    let currentScrolled = window.scrollY > 12;
+
+    const updateScrolled = () => {
+      const nextScrolled = window.scrollY > 12;
+      if (nextScrolled !== currentScrolled) {
+        currentScrolled = nextScrolled;
+        setHasScrolled(nextScrolled);
+      }
+      frameId = null;
+    };
+
+    const handleScroll = () => {
+      if (frameId === null) {
+        frameId = window.requestAnimationFrame(updateScrolled);
+      }
+    };
+
+    updateScrolled();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
+  }, []);
 
   // Fetch unread notifications
   const fetchUnreadPolicyCount = useCallback(async () => {
@@ -383,12 +411,17 @@ function Navbar({ scrollToContactBottom }) {
 
   // ── MEGA MENU COMPONENT (inline) ──────────────────────────────────────────
   const MegaMenuDropdown = () => (
-    <MegaMenuWrapper>
+    <MegaMenuWrapper
+      as={motion.div}
+      initial={{ opacity: 0, y: -8, x: "-50%" }}
+      animate={{ opacity: 1, y: 0, x: "-50%" }}
+      exit={{ opacity: 0, y: -8, x: "-50%" }}
+      transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+    >
       {MEGA_MENU_DATA.map((col, idx) => (
         <MegaCol key={col.key} isLast={idx === MEGA_MENU_DATA.length - 1}
           style={{ paddingLeft: idx === 0 ? 0 : 18 }}>
           <MegaColTitle color={col.color}>
-            {col.icon}
             {col.label}
           </MegaColTitle>
           {col.items.map((item) => (
@@ -659,35 +692,74 @@ function Navbar({ scrollToContactBottom }) {
 
   return (
     <>
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: -14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
         style={{
           position: "fixed",
-          top: 0,
+          top: isMobile ? 6 : "clamp(6px, 0.8vw, 10px)",
           left: 0,
           right: 0,
           zIndex: 1200,
-          padding: isMobile ? "10px 14px" : isCompactNav ? "10px 28px" : "10px 70px",
-          backgroundColor: "black",
-          boxShadow: "0px 4px 6px rgba(0,0,0,0.3)",
+          padding: isMobile ? "0 8px" : isCompactNav ? "0 clamp(10px, 1.8vw, 20px)" : "0 clamp(10px, 1.6vw, 28px)",
+          pointerEvents: "none",
         }}
       >
-        <div className="d-flex justify-content-between align-items-center">
+        <motion.div
+          className="d-flex justify-content-between align-items-center"
+          style={{
+            width: "100%",
+            minHeight: isMobile ? 56 : isCompactNav ? 62 : "clamp(62px, 5.2vw, 72px)",
+            paddingTop: hasScrolled ? (isMobile ? 5 : 7) : (isMobile ? 7 : 8),
+            paddingBottom: hasScrolled ? (isMobile ? 5 : 7) : (isMobile ? 7 : 8),
+            paddingLeft: isMobile ? 12 : isCompactNav ? 14 : "clamp(14px, 1.5vw, 20px)",
+            paddingRight: isMobile ? 8 : isCompactNav ? 12 : "clamp(10px, 1.2vw, 16px)",
+            borderRadius: isMobile ? 30 : 999,
+            background: hasScrolled
+              ? "linear-gradient(135deg, rgba(4,10,14,0.93), rgba(7,17,22,0.93))"
+              : "radial-gradient(circle at 8% 50%, rgba(126,231,55,0.16), transparent 24%), radial-gradient(circle at 92% 50%, rgba(45,212,191,0.12), transparent 24%), linear-gradient(135deg, rgba(5,12,16,0.98), rgba(8,18,25,0.97))",
+            border: "1px solid rgba(255,255,255,0.07)",
+            boxShadow: hasScrolled
+              ? "0 12px 30px rgba(0,0,0,0.3), 0 0 18px rgba(45,212,191,0.08), inset 0 1px 0 rgba(255,255,255,0.06)"
+              : "0 12px 26px rgba(0,0,0,0.23), 0 0 24px rgba(126,231,55,0.11), 0 0 28px rgba(45,212,191,0.08), inset 0 1px 0 rgba(255,255,255,0.07)",
+            backdropFilter: "blur(18px)",
+            transition: "padding 0.22s ease, background 0.22s ease, box-shadow 0.22s ease",
+            pointerEvents: "auto",
+          }}
+        >
           <img
             src={Logo}
             alt="Logo"
-            height={isMobile ? 44 : isCompactNav ? 56 : 70}
-            width={isMobile ? 176 : isCompactNav ? 224 : 280}
-            style={{ cursor: "pointer", maxWidth: "72vw", objectFit: "contain" }}
+            style={{
+              cursor: "pointer",
+              width: isMobile ? "min(164px, 66vw)" : isCompactNav ? "clamp(176px, 19vw, 204px)" : "clamp(188px, 16vw, 238px)",
+              height: "auto",
+              maxHeight: isMobile ? 42 : isCompactNav ? 50 : hasScrolled ? 52 : 58,
+              maxWidth: isMobile ? "66vw" : "22vw",
+              objectFit: "contain",
+              transition: "max-height 0.3s ease, width 0.3s ease",
+            }}
             onClick={handleHomeClick}
           />
 
           {isCompactNav ? (
             <>
-              <IconButton onClick={(e) => setAnchor('mobile', anchorEls.mobile ? null : e.currentTarget)}>
+              <IconButton
+                onClick={(e) => setAnchor('mobile', anchorEls.mobile ? null : e.currentTarget)}
+                sx={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, rgba(126,231,55,0.13), rgba(45,212,191,0.1))",
+                  border: "1px solid rgba(255,255,255,0.09)",
+                  boxShadow: "0 0 18px rgba(45,212,191,0.12), inset 0 0 16px rgba(255,255,255,0.04)",
+                }}
+              >
                 {anchorEls.mobile ? (
-                  <CloseIcon sx={{ color: THEME_COLOR.COLOR, fontSize: 32 }} />
+                  <CloseIcon sx={{ color: "#B8FF62", fontSize: 32 }} />
                 ) : (
-                  <MenuIcon sx={{ color: THEME_COLOR.COLOR, fontSize: 32 }} />
+                  <MenuIcon sx={{ color: "#B8FF62", fontSize: 32 }} />
                 )}
               </IconButton>
               <DarkMenu
@@ -697,9 +769,13 @@ function Navbar({ scrollToContactBottom }) {
                 PaperProps={{
                   sx: {
                     maxHeight: "calc(100vh - 76px)",
-                    width: { xs: "calc(100vw - 24px)", sm: "360px" },
+                    width: { xs: "calc(100vw - 20px)", sm: "380px" },
                     maxWidth: "420px",
                     overflowY: "auto",
+                    borderRadius: "20px",
+                    mt: 1.4,
+                    background: "linear-gradient(145deg, rgba(6,14,18,0.98), rgba(10,22,30,0.98))",
+                    border: "1px solid rgba(126,231,55,0.16)",
                   },
                 }}
               >
@@ -707,7 +783,7 @@ function Navbar({ scrollToContactBottom }) {
               </DarkMenu>
             </>
           ) : (
-            <div className="d-flex align-items-center" style={{ gap: isTablet ? 16 : 24 }}>
+            <div className="d-flex align-items-center" style={{ gap: isTablet ? "clamp(5px, 0.55vw, 8px)" : "clamp(6px, 0.6vw, 10px)", minWidth: 0 }}>
               {/* ── INSURANCE PRODUCTS MEGA TRIGGER ── */}
               <div
                 ref={megaRef}
@@ -722,13 +798,13 @@ function Navbar({ scrollToContactBottom }) {
                   Insurance Products
                   <ArrowDownIcon
                     sx={{
-                      fontSize: 18,
-                      transition: "transform 0.2s",
+                      fontSize: 17,
+                      transition: "transform 0.28s ease",
                       transform: megaOpen ? "rotate(180deg)" : "rotate(0deg)",
                     }}
                   />
                 </NavItem>
-                {megaOpen && <MegaMenuDropdown />}
+                <AnimatePresence>{megaOpen && <MegaMenuDropdown />}</AnimatePresence>
               </div>
 
               {visibleNavItems.map((item) => {
@@ -895,7 +971,17 @@ function Navbar({ scrollToContactBottom }) {
                   </DarkMenu>
                 </>
               ) : (
-                <StyledButton onClick={() => navigate("/login")}>
+                <StyledButton
+                  onClick={() => navigate("/login")}
+                  style={{
+                    color: "#06100d",
+                    background: "linear-gradient(135deg, #D3FF55 0%, #8AE63D 52%, #43E0CF 100%)",
+                    boxShadow: "0 10px 26px rgba(126,231,55,0.3), 0 0 16px rgba(45,212,191,0.16)",
+                    minWidth: "clamp(88px, 7.6vw, 104px)",
+                    paddingLeft: "clamp(14px, 1.4vw, 18px)",
+                    paddingRight: "clamp(14px, 1.4vw, 18px)",
+                  }}
+                >
                   Login
                 </StyledButton>
               )}
@@ -903,9 +989,21 @@ function Navbar({ scrollToContactBottom }) {
               {isHomePage && (
                 <IconButton
                   onClick={(e) => setAnchor('more', e.currentTarget)}
-                  sx={{ color: THEME_COLOR.COLOR }}
+                  sx={{
+                    color: "rgba(255,255,255,0.88)",
+                    width: "clamp(38px, 3.4vw, 44px)",
+                    height: "clamp(38px, 3.4vw, 44px)",
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, rgba(126,231,55,0.11), rgba(45,212,191,0.09))",
+                    border: "1px solid rgba(255,255,255,0.09)",
+                    boxShadow: "0 0 16px rgba(45,212,191,0.1), inset 0 0 16px rgba(255,255,255,0.04)",
+                    "&:hover": {
+                      color: "#B8FF62",
+                      background: "linear-gradient(135deg, rgba(126,231,55,0.18), rgba(45,212,191,0.14))",
+                    },
+                  }}
                 >
-                  <MoreVertIcon />
+                  <MenuIcon sx={{ fontSize: 26 }} />
                 </IconButton>
               )}
 
@@ -929,10 +1027,10 @@ function Navbar({ scrollToContactBottom }) {
               </DarkMenu>
             </div>
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      <div style={{ height: isMobile ? "72px" : isCompactNav ? "82px" : "95px" }} />
+      <div style={{ height: isHomePage ? "0px" : isMobile ? "66px" : isCompactNav ? "76px" : "82px" }} />
       
       <ProfileDrawer 
         open={drawerOpen} 

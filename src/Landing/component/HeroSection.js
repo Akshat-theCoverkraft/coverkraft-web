@@ -21,7 +21,7 @@ function PlaceholderDiv() {
 
 // // Policy Vault icon: shield with keyhole (large, illustrated)
  const PolicyVaultIllustration = () => (
-   <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+   <svg width="128" height="128" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
      <defs>
       <filter id="glow-pv" x="-30%" y="-30%" width="160%" height="160%">
         <feGaussianBlur stdDeviation="3" result="b"/>
@@ -140,34 +140,35 @@ function PlaceholderDiv() {
    },
  ];
 
- function USPRow() {
+function USPRow() {
    return (
      <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.38 }}
+      transition={{ duration: 0.65, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
        style={{
          display: 'flex',
-         gap: 20,
-         marginBottom: 32,
+         gap: 'clamp(10px, 1.4vw, 18px)',
+         marginBottom: 'clamp(18px, 2.3vw, 30px)',
+        justifyContent: 'flex-start',
         flexWrap: 'wrap',
       }}
     >
        {USP_CARDS.map(({ Illustration, title, desc, gradient, border, glow, textColor }, i) => (
         <motion.div
           key={title}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 14 }}
          animate={{ opacity: 1, y: 0 }}
-     transition={{ duration: 0.45, delay: 0.42 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-           whileHover={{ y: -3, boxShadow: `0 12px 32px ${glow}, 0 0 0 1px ${border}` }}
+     transition={{ duration: 0.58, delay: 0.38 + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+           whileHover={{ y: -2, boxShadow: `0 12px 30px ${glow}, 0 0 0 1px ${border}` }}
          style={{
-            flex: '1 1 140px',
-           minWidth: 155,
-            maxWidth: 185,
+            flex: '0 1 clamp(132px, 10vw, 168px)',
+           minWidth: 138,
+            maxWidth: 178,
             background: gradient,
             border: `1px solid ${border}`,
-            borderRadius: 16,
-          padding: '20px 14px 24px',
+            borderRadius: 14,
+          padding: 'clamp(15px, 1.5vw, 19px) clamp(12px, 1.1vw, 14px) clamp(18px, 1.8vw, 23px)',
            position: 'relative',
            overflow: 'hidden',
            boxShadow: `0 4px 20px ${glow}`,
@@ -219,12 +220,12 @@ function PlaceholderDiv() {
 
 // ─── Feature card ─────────────────────────────────────────────────────────────
 function Feature({ heading, body, dir = 'left', delay = 0, visible }) {
-  const fromX = dir === 'right' ? 50 : -50;
+  const fromX = dir === 'right' ? 34 : -34;
   return (
     <motion.div
       style={{ textAlign: dir === 'right' ? 'right' : 'left', willChange: 'transform, opacity' }}
       animate={visible ? { opacity: 1, x: 0 } : { opacity: 0, x: fromX }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: visible ? delay : 0 }}
+      transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1], delay: visible ? delay : 0 }}
     >
       <h3 style={{
         fontSize: 'clamp(18px, 2vw, 28px)',
@@ -323,31 +324,35 @@ export default function HeroSection() {
   const [screenWidth, setScreenWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1440
   );
+  const [screenHeight, setScreenHeight] = useState(
+    typeof window !== 'undefined' ? window.innerHeight : 820
+  );
   const [slide, setSlide] = useState(0);   // 0 = headline, 1 = features
   const slideRef   = useRef(0);            // same value, safe inside event handlers
   const busyRef    = useRef(false);        // cooldown — stops momentum scroll double-fire
 
   // ── NEW: track when slide 1 was first entered so we can hold it long enough ──
   const slide1EnteredAt = useRef(null);    // timestamp (ms) when slide 1 became active
-  const HOLD_MS = 900;                     // ms user must see slide 1 before scroll-through
+  const HOLD_MS = 620;                     // ms user must see slide 1 before scroll-through
 
   const wrapperRef = useRef(null);
 
   const logoProgress = useMotionValue(0);
-  const maxShift     = Math.min(screenWidth * 0.22, 400);
-  const baseLogoSize = Math.min(screenWidth * 0.36, 520);
-  const logoX        = useTransform(logoProgress, [0, 1], [0, -maxShift]);
+  const logoRightDrift = Math.min(screenWidth * 0.22, 360);
+  const baseLogoSize = Math.min(screenWidth * 0.31, screenHeight * 0.54, 470);
+  const logoX        = useTransform(logoProgress, [0, 1], [logoRightDrift, 0]);
 
   // ── Resize ────────────────────────────────────────────────────────────────
   useEffect(() => {
     let raf = null;
     const handler = () => {
       if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        setScreenWidth(window.innerWidth);
-        setIsDesktop(window.innerWidth >= 1024);
-      });
+        raf = requestAnimationFrame(() => {
+          raf = null;
+          setScreenWidth(window.innerWidth);
+          setScreenHeight(window.innerHeight);
+          setIsDesktop(window.innerWidth >= 1024);
+        });
     };
     window.addEventListener('resize', handler, { passive: true });
     return () => { window.removeEventListener('resize', handler); if (raf) cancelAnimationFrame(raf); };
@@ -355,7 +360,7 @@ export default function HeroSection() {
 
   // ── Animate logo on slide change ──────────────────────────────────────────
   useEffect(() => {
-    animate(logoProgress, slide === 1 ? 1 : 0, { duration: 0.55, ease: [0.22, 1, 0.36, 1] });
+    animate(logoProgress, slide === 1 ? 1 : 0, { duration: 0.78, ease: [0.16, 1, 0.3, 1] });
   }, [slide]);
 
   // ── goToSlide ─────────────────────────────────────────────────────────────
@@ -368,7 +373,7 @@ export default function HeroSection() {
     if (n === 1) {
       slide1EnteredAt.current = performance.now();
     }
-    setTimeout(() => { busyRef.current = false; }, 700);
+    setTimeout(() => { busyRef.current = false; }, 520);
   }, []);
 
   // ── Unified event listener (wheel + touch + keyboard) ────────────────────
@@ -451,24 +456,25 @@ export default function HeroSection() {
   // ── MOBILE ────────────────────────────────────────────────────────────────
   if (!isDesktop) {
     return (
-      <div style={{ background: '#000' }}>
-        <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '100px 24px 60px' }}>
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      <div style={{ background: 'linear-gradient(180deg,#020608 0%,#050b0f 58%,#0d1115 100%)' }}>
+        <section style={{ minHeight: '100svh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(90px, 15vh, 122px) clamp(16px, 5vw, 28px) clamp(24px, 4vh, 42px)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 12%, rgba(144,219,120,0.16), transparent 28%), radial-gradient(circle at 82% 46%, rgba(63,200,238,0.12), transparent 32%)', pointerEvents: 'none' }} />
+          <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
             style={{ textAlign: 'center', maxWidth: 600, width: '100%' }}
           >
             <h1 style={{ fontFamily: 'Gotham, sans-serif', fontWeight: 700, lineHeight: 0.95, marginBottom: 24 }}>
               {['Insurance Simplified,', 'Secured & Supported'].map((line, i) => (
                 <motion.span key={line}
-                  initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 + i * 0.1 }}
-                  style={{ display: 'block', fontSize: 'clamp(30px,7vw,58px)', marginBottom: 4, backgroundImage: 'linear-gradient(90deg,#90DB78 0%,#5FD4BE 40%,#3FC8EE 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                  initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1], delay: 0.08 + i * 0.08 }}
+                  style={{ display: 'block', fontSize: 'clamp(30px,9vw,56px)', marginBottom: 4, backgroundImage: 'linear-gradient(90deg,#B8FF62 0%,#5FD4BE 46%,#3FC8EE 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
                 >{line}</motion.span>
               ))}
             </h1>
-            <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-              style={{ fontFamily: 'Gotham, sans-serif', fontSize: 'clamp(14px,4vw,19px)', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, marginBottom: 36 }}
+            <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.64, delay: 0.26, ease: [0.22, 1, 0.36, 1] }}
+              style={{ fontFamily: 'Gotham, sans-serif', fontSize: 'clamp(14px,4vw,18px)', color: 'rgba(255,255,255,0.84)', lineHeight: 1.58, marginBottom: 'clamp(26px, 6vh, 34px)' }}
             >Your trusted digital vault to manage policies, track renewals, and receive expert claim assistance — all in one secure ecosystem.</motion.p>
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.64, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
               style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}
             >
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }}
@@ -482,7 +488,7 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
         </section>
-        <section style={{ padding: '60px 24px 80px', background: '#000' }}>
+        <section style={{ padding: 'clamp(42px, 9vh, 60px) clamp(16px, 5vw, 24px) clamp(62px, 10vh, 82px)', background: '#020608' }}>
           <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6 }}
             style={{ fontFamily: 'Gotham, sans-serif', fontWeight: 800, fontSize: 'clamp(24px,7vw,42px)', textAlign: 'center', marginBottom: 36, backgroundImage: 'linear-gradient(135deg,#90DB78 0%,#5FD4BE 50%,#3FC8EE 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
           >Your Personal Insurance Policy Vault</motion.h2>
@@ -509,8 +515,9 @@ export default function HeroSection() {
     <div
       ref={wrapperRef}
       style={{
-        height: '100vh',
-         background: 'linear-gradient(to bottom, #000000 0%, #111111 60%, #212121 100%)',
+        minHeight: '100svh',
+        height: '100svh',
+         background: 'radial-gradient(circle at 76% 48%, rgba(63,200,238,0.12), transparent 30%), radial-gradient(circle at 22% 28%, rgba(144,219,120,0.13), transparent 24%), linear-gradient(to bottom, #020608 0%, #080d11 62%, #15191d 100%)',
         position: 'relative',
         overflow: 'hidden',
         willChange: 'transform',
@@ -520,45 +527,46 @@ export default function HeroSection() {
       {/* ── SLIDE 0: Headline ─────────────────────────────────────────────── */}
       <motion.div
         aria-hidden={!onS1}
-        animate={{ opacity: onS1 ? 1 : 0, x: onS1 ? 0 : -70 }}
-        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+        animate={{ opacity: onS1 ? 1 : 0, x: onS1 ? 0 : -42 }}
+        transition={{ duration: 0.68, ease: [0.22, 1, 0.36, 1] }}
         style={{
           position: 'absolute', inset: 0,
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+          gridTemplateColumns: 'minmax(430px, 0.92fr) minmax(360px, 1.08fr)',
           alignItems: 'center',
-          padding: '0 clamp(32px,5vw,90px)',
-          paddingBottom: '8vh',
-          gap: 40,
+          gap: 'clamp(24px, 4vw, 58px)',
+          padding: 'clamp(94px, 13vh, 126px) clamp(28px,4.4vw,78px) clamp(26px, 4vh, 48px)',
           pointerEvents: onS1 ? 'auto' : 'none',
           willChange: 'transform, opacity',
         }}
       >
         <motion.div
-          initial={{ opacity: 0, x: -60 }}
+          initial={{ opacity: 0, x: -34 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          transition={{ duration: 0.74, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+          style={{ maxWidth: 880, width: '100%', textAlign: 'left', justifySelf: 'start' }}
         >
-          <h1 style={{ fontFamily: 'Gotham, sans-serif', fontWeight: 800, lineHeight: 0.95, letterSpacing: '-0.02em', margin: 0 }}>
+          <h1 style={{ fontFamily: 'Gotham, sans-serif', fontWeight: 800, lineHeight: 0.96, letterSpacing: 0, margin: 0 }}>
             {['Insurance Simplified,', 'Secured & Supported'].map((line, i) => (
               <motion.span key={line}
-                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.18 + i * 0.1 }}
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1], delay: 0.16 + i * 0.08 }}
                 style={{
                   display: 'block',
-                  fontSize: 'clamp(28px,3.5vw,60px)',
+                  fontSize: 'clamp(38px,3.45vw,58px)',
                   marginBottom: 4,
-                  backgroundImage: 'linear-gradient(90deg,#90DB78 0%,#5FD4BE 40%,#3FC8EE 100%)',
+                  backgroundImage: 'linear-gradient(90deg,#B8FF62 0%,#5FD4BE 44%,#3FC8EE 100%)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                  whiteSpace: 'nowrap',
                 }}
               >{line}</motion.span>
             ))}
           </h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.34 }}
-            style={{ fontFamily: 'Gotham, sans-serif', fontSize: 'clamp(14px,1.2vw,22px)', color: 'rgba(255,255,255,0.82)', lineHeight: 1.6, marginTop: 24, marginBottom: 22 }}
+            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.66, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            style={{ fontFamily: 'Gotham, sans-serif', fontSize: 'clamp(14px,1.2vw,20px)', color: 'rgba(255,255,255,0.82)', lineHeight: 1.58, marginTop: 'clamp(16px, 2vh, 24px)', marginBottom: 'clamp(16px, 2vh, 22px)' }}
           >
             Your trusted digital vault to manage policies, track renewals,<br />and receive expert claim assistance — all in one secure ecosystem.
           </motion.p>
@@ -577,14 +585,15 @@ export default function HeroSection() {
           </motion.div> */}
         </motion.div>
 
-        <div /> {/* logo floats here */}
+        <div aria-hidden="true" />
+
       </motion.div>
 
       {/* ── SLIDE 1: Features ─────────────────────────────────────────────── */}
       <motion.div
         aria-hidden={!onS2}
-        animate={{ opacity: onS2 ? 1 : 0, y: onS2 ? 0 : 35 }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        animate={{ opacity: onS2 ? 1 : 0, y: onS2 ? 0 : 24 }}
+        transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
         style={{
           position: 'absolute', inset: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -594,27 +603,27 @@ export default function HeroSection() {
       >
         {/* Heading */}
         <motion.div
-          animate={{ opacity: onS2 ? 1 : 0, y: onS2 ? 0 : -24 }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.06 }}
-          style={{ position: 'absolute', top: '10%', left: 0, right: 0, textAlign: 'center', zIndex: 10 }}
+          animate={{ opacity: onS2 ? 1 : 0, y: onS2 ? 0 : -18 }}
+          transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1], delay: 0.06 }}
+          style={{ position: 'absolute', top: 'clamp(102px, 15vh, 138px)', left: 0, right: 0, textAlign: 'center', zIndex: 10, padding: '0 24px' }}
         >
           <h2 style={{
             fontFamily: 'Gotham, sans-serif', fontWeight: 800,
-            fontSize: 'clamp(26px,3.6vw,50px)', lineHeight: 1.1,
-            backgroundImage: 'linear-gradient(135deg,#90DB78 0%,#5FD4BE 50%,#3FC8EE 100%)',
+            fontSize: 'clamp(28px,3.5vw,50px)', lineHeight: 1.1,
+            backgroundImage: 'linear-gradient(135deg,#B8FF62 0%,#5FD4BE 50%,#3FC8EE 100%)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             margin: 0,
           }}>Your Personal Insurance Policy Vault</h2>
         </motion.div>
 
         {/* Left features */}
-        <div style={{ position: 'absolute', left: '8%', top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 56, maxWidth: 280, zIndex: 10 }}>
+        <div style={{ position: 'absolute', left: 'clamp(44px, 6vw, 96px)', top: 'clamp(34px, 5vh, 56px)', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 'clamp(34px, 6vh, 56px)', maxWidth: 'clamp(230px, 20vw, 290px)', zIndex: 10 }}>
           <Feature heading={<>Centralised<br />Storage</>}  body={<>All policies in one<br />secure place</>}          dir="left"  delay={0.12} visible={onS2} />
           <Feature heading={<>Easy Sharing &<br />Access</>} body={<>Share policy details<br />with family instantly</>} dir="left"  delay={0.24} visible={onS2} />
         </div>
 
         {/* Right features */}
-        <div style={{ position: 'absolute', right: '8%', top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 56, maxWidth: 280, zIndex: 10 }}>
+        <div style={{ position: 'absolute', right: 'clamp(44px, 6vw, 96px)', top: 'clamp(34px, 5vh, 56px)', bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 'clamp(34px, 6vh, 56px)', maxWidth: 'clamp(230px, 20vw, 290px)', zIndex: 10 }}>
           <Feature heading={<>Smart Renewals</>} body={<>Reminders, renewals &<br />claim assistance</>}    dir="right" delay={0.12} visible={onS2} />
           <Feature heading={<>Reminders</>}      body={<>Stay updated on policy<br />status & due dates</>} dir="right" delay={0.24} visible={onS2} />
         </div>
@@ -628,7 +637,8 @@ export default function HeroSection() {
         transition={{ duration: 0.6, delay: 0.25 }}
         style={{
           position: 'absolute',
-          top: '50%', right: '10%',
+          top: '53%', left: '50%',
+          translateX: '-50%',
           translateY: '-50%',
           x: logoX,
           zIndex: 50,
