@@ -8,6 +8,7 @@ import { THEME_COLOR } from "../../constants";
 import { Typography, Modal, Box, Grid } from "@mui/material";
 import TRight from "../../Images/TRight.png";
 import TLeft from "../../Images/TLeft.png";
+import defaultProfileImage from "../../Images/ic_default_profile.png";
 import API_URL from "../../ServiceModule/Service";
 import Loader from "../../component/Loader";
 import { headingStyle } from "../../theme/themeStyles";
@@ -292,8 +293,7 @@ export default function Testimonials() {
                             >
                               <img
                                 src={
-                                  testimonial.pfp ||
-                                  require("../../Images/ic_default_profile.png")
+                                  testimonial.pfp || defaultProfileImage
                                 }
                                 height={50}
                                 width={50}
@@ -395,8 +395,7 @@ export default function Testimonials() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
             <img
               src={
-                selectedTestimonial?.pfp ||
-                require("../../Images/ic_default_profile.png")
+                selectedTestimonial?.pfp || defaultProfileImage
               }
               alt={`${selectedTestimonial?.author} profile`}
               style={{

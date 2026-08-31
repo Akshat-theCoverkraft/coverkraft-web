@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Box, Typography, IconButton, Dialog, DialogContent, DialogActions } from "@mui/material";
-import { Card, Grid } from "@material-ui/core";
+import { Drawer, Box, Typography, IconButton, Dialog, DialogContent, DialogActions, Card, Grid } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
 

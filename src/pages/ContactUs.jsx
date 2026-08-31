@@ -9,6 +9,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Logo from "../Images/CKbig.png";
+import contactDecor from "../Images/objects.png";
 import API_URL from "../ServiceModule/Service";
 
 const StyledSubmitButton = styled("button")(() => ({
@@ -371,7 +372,7 @@ function ContactUs() {
 
                 <div className="col-md-6 d-flex flex-column align-items-center justify-content-center text-light text-center">
                   <img
-                    src={require("../Images/objects.png")}
+                    src={contactDecor}
                     alt="Decor"
                     className="img-fluid mb-4"
                     style={{ maxWidth: "230px" }}

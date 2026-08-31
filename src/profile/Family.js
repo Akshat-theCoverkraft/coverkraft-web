@@ -1,8 +1,7 @@
 // Inside Family.jsx — FULL UPDATED VERSION
 
 import React, { useState, useEffect } from "react";
-import { Drawer, Box, Button, Tooltip } from "@mui/material";
-import { Card, Grid, Typography } from "@material-ui/core";
+import { Drawer, Box, Button, Tooltip, Card, Grid, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import backArrow from "../Images/ic_back_button.png";
 import icDefaultProfile from "../Images/ic_default_profile.png";

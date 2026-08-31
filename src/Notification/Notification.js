@@ -21,6 +21,7 @@ import Navbar from "../component/Navbar";
 import Footer from "../Landing/component/Footer";
 import SessionExpiredModal from "../utils/sessionExpireModal";
 import { useNavigate } from "react-router-dom";
+import defaultNotificationImage from "../Images/CoverKraft-Logo-6.png";
 
 const Notification = () => {
     const navigate = useNavigate();
@@ -178,7 +179,7 @@ const Notification = () => {
     }
     
     // Default image
-    return require("../Images/CoverKraft-Logo-6.png");
+    return defaultNotificationImage;
   };
 
   // Get notification description
@@ -263,7 +264,7 @@ const Notification = () => {
                           objectFit: "cover"
                         }}
                         onError={(e) => {
-                          e.target.src = require("../Images/CoverKraft-Logo-6.png");
+                          e.target.src = defaultNotificationImage;
                         }}
                       />
 
@@ -374,7 +375,7 @@ const Notification = () => {
           />
         ) : (
           <img
-            src={require("../Images/CoverKraft-Logo-6.png")}
+            src={defaultNotificationImage}
             alt="Notification"
             style={{
               width: "100%",

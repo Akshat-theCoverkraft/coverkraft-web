@@ -23,7 +23,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ProgressBarCircle from "../../component/ProgressBarCircle";
-import { dateformat, formatDate } from "../../utils/dateUtils";
+import { formatDate } from "../../utils/dateUtils";
 import DateTimePicker from "../../component/DateTimePicker";
 import { THEME_COLOR } from "../../constants";
 import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";

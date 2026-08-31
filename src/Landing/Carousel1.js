@@ -5,6 +5,7 @@ import "./component/CSS/carousel1.css";
 import API_URL from "../ServiceModule/Service";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Loader from "../component/Loader";
+import fallbackAnimation from "../Images/CKanimation.gif";
 
 const Carousel1 = () => {
   const [items, setItems] = useState([]);
@@ -379,7 +380,7 @@ const Carousel1 = () => {
                       />
                     ) : (
                       <img
-                        src={require("../Images/CKanimation.gif")}
+                        src={fallbackAnimation}
                         alt={item.subtitle || `Carousel item ${idx}`}
                         style={{
                           width: "100%",

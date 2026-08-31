@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import CSS from "./PolicyDetail.css";
+import "./PolicyDetail.css";
 import Button from "../../component/Button";
 import GradientButton from "../../component/GradientButton";
 import ProgressBarCircle from "../../component/ProgressBarCircle"; // Import the component
