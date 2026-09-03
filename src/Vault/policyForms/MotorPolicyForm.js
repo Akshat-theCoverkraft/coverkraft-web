@@ -112,6 +112,14 @@ const MotorPolicyForm = () => {
   const [model, setModel] = useState(
     responseData?.model || policyDetails?.policyDetails?.model || ""
   );
+  const previousPolicyNo =
+    responseData?.previous_policy_no ||
+    responseData?.previousPolicyNumber ||
+    policyDetails?.previous_policy_no ||
+    policyDetails?.previousPolicyNumber ||
+    policyDetails?.policyDetails?.previous_policy_no ||
+    policyDetails?.policyDetails?.previousPolicyNumber ||
+    "";
 
   // const documentId = localStorage.getItem("documentId");
 
@@ -248,6 +256,7 @@ const MotorPolicyForm = () => {
     formData.append("userId", userId);
     formData.append("documentId", documentId);
     formData.append("policyType", responseData?.policyType.toLowerCase());
+    formData.append("previous_policy_no", previousPolicyNo);
     formData.append("policyNumber", policyNumber);
     formData.append("policyStartDate", policyStartDate);
     formData.append("policyEndDate", policyEndDate);
@@ -304,6 +313,7 @@ const MotorPolicyForm = () => {
     formData.append("userId", userId);
     formData.append("documentId", documentId);
     formData.append("policyType", PolicyType);
+    formData.append("previous_policy_no", previousPolicyNo);
     formData.append("policyNumber", policyNumber);
     formData.append("policyStartDate", policyStartDate);
     formData.append("policyEndDate", policyEndDate);

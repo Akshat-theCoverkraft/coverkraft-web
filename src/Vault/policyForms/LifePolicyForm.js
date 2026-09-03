@@ -88,6 +88,14 @@ const LifePolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
+  const previousPolicyNo =
+    responseData?.previous_policy_no ||
+    responseData?.previousPolicyNumber ||
+    policyDetails?.previous_policy_no ||
+    policyDetails?.previousPolicyNumber ||
+    policyDetails?.policyDetails?.previous_policy_no ||
+    policyDetails?.policyDetails?.previousPolicyNumber ||
+    "";
 
   // // ✅ Persist documentId in sessionStorage
   // const documentId = localStorage.getItem("documentId");
@@ -217,6 +225,7 @@ const LifePolicyForm = () => {
     formData.append("userId", userId);
     formData.append("documentId", documentId);
     formData.append("policyType", responseData?.policyType.toLowerCase());
+    formData.append("previous_policy_no", previousPolicyNo);
     Object.entries(payload).forEach(([key, value]) =>
       formData.append(key, value)
     );
@@ -245,6 +254,7 @@ const LifePolicyForm = () => {
     formData.append("documentId", documentId);
     formData.append("_id", policyId);
     formData.append("policyType", policyDetails?.policyType.toLowerCase());
+    formData.append("previous_policy_no", previousPolicyNo);
     Object.entries(payload).forEach(([key, value]) =>
       formData.append(key, value)
     );

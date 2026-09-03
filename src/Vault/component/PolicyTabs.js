@@ -151,9 +151,13 @@ const POLICY_CONFIGS = {
     category: "motor",
   },
   life: { label: "Life Insurance", image: Life, category: "life" },
-  accident: { label: "Accident Insurance", image: Health, category: "health" },
+  accident: { label: "Personal Accident Insurance", image: Health, category: "health" },
   health: { label: "Health Insurance", image: Health, category: "health" },
   travel: { label: "Travel Insurance", image: Travel, category: "travel" },
+  crop: { label: "Crop Insurance", image: HealthInsurance, category: "crop" },
+  crop_policy: { label: "Crop Insurance", image: HealthInsurance, category: "crop" },
+  cattle: { label: "Cattle Insurance", image: HealthInsurance, category: "cattle" },
+  cattle_policy: { label: "Cattle Insurance", image: HealthInsurance, category: "cattle" },
   other_health: {
     label: "Other Health Insurance",
     image: HealthInsurance,
@@ -170,12 +174,34 @@ const TAB_CONFIGS = [
 
 const POLICY_TYPE_FILTERS = [
   { key: "all", label: "All Policies" },
-  { key: "motor", label: "Motor" },
-  { key: "life", label: "Life" },
   { key: "health", label: "Health" },
+  { key: "life", label: "Life" },
+  { key: "car_policy", label: "Four Wheeler" },
+  { key: "bike_policy", label: "Two Wheeler" },
+  { key: "accident", label: "Accident" },
   { key: "travel", label: "Travel" },
+  { key: "crop", label: "Crop" },
+  { key: "cattle", label: "Cattle" },
   { key: "pending", label: "Pending" },
 ];
+
+const normalizePolicyType = (value) =>
+  String(value || "").toLowerCase().replace(/[\s-]+/g, "_").trim();
+
+const doesPolicyMatchFilter = (policy, filter) => {
+  const policyType = normalizePolicyType(policy?.policyType);
+  const normalizedFilter = normalizePolicyType(filter);
+
+  if (!normalizedFilter || normalizedFilter === "all") return true;
+  if (normalizedFilter === "health") return policyType.includes("health");
+  if (normalizedFilter === "life") return policyType.includes("life");
+  if (normalizedFilter === "accident") return policyType.includes("accident");
+  if (normalizedFilter === "travel") return policyType.includes("travel");
+  if (normalizedFilter === "crop") return policyType.includes("crop");
+  if (normalizedFilter === "cattle") return policyType.includes("cattle");
+
+  return policyType === normalizedFilter || policyType.includes(normalizedFilter);
+};
 
 // Progress calculation logic from React Native version
 const getInputFieldsByPolicyType = (policy) => {
@@ -232,6 +258,32 @@ const getInputFieldsByPolicyType = (policy) => {
         policy?.policyDetails?.countryVisited,
         policy?.policyDetails?.tripType,
         policy?.policyDetails?.planName,
+      ];
+    case "crop":
+    case "crop_policy":
+      return [
+        policy?.policyNumber,
+        policy?.policyStartDate,
+        policy?.policyEndDate,
+        policy?.premiumPaid,
+        policy?.insuredCompany,
+        policy?.policyDetails?.policyName || policy?.policyName,
+        policy?.policyDetails?.farmerName || policy?.farmerName,
+        policy?.policyDetails?.season || policy?.season,
+        policy?.policyDetails?.sumInsured || policy?.sumInsured,
+      ];
+    case "cattle":
+    case "cattle_policy":
+      return [
+        policy?.policyNumber,
+        policy?.policyStartDate,
+        policy?.policyEndDate,
+        policy?.premiumPaid,
+        policy?.insuredCompany,
+        policy?.policyDetails?.policyName || policy?.policyName,
+        policy?.policyDetails?.ownerName || policy?.ownerName,
+        policy?.policyDetails?.cattleType || policy?.cattleType,
+        policy?.policyDetails?.sumInsured || policy?.sumInsured,
       ];
     default:
       return [
@@ -343,7 +395,7 @@ const filterPolicies = (
       if (selectedTypeFilter === "all" || selectedTypeFilter === "pending") {
         matchesTypeFilter = true;
       } else {
-        matchesTypeFilter = config.category === selectedTypeFilter;
+        matchesTypeFilter = doesPolicyMatchFilter(policy, selectedTypeFilter);
       }
     } else {
       // For other tabs, use normal category filtering
@@ -352,7 +404,7 @@ const filterPolicies = (
       } else if (selectedTypeFilter === "pending") {
         matchesTypeFilter = isPendingPolicy(policy);
       } else {
-        matchesTypeFilter = config.category === selectedTypeFilter;
+        matchesTypeFilter = doesPolicyMatchFilter(policy, selectedTypeFilter);
       }
     }
 

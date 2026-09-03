@@ -23,6 +23,7 @@ import MotorPolicyForm from "./Vault/policyForms/MotorPolicyForm";
 import HealthPolicyForm from "./Vault/policyForms/HealthPolicyForm";
 import LifePolicyForm from "./Vault/policyForms/LifePolicyForm";
 import TravelPolicyForm from "./Vault/policyForms/TravelPolicyForm";
+import RuralPolicyForm from "./Vault/policyForms/RuralPolicyForm";
 import TravelSOSDetails from "./Vault/component/TravelSOSDetails";
 import Family from "./profile/Family";
 import About from "./About/About";
@@ -155,6 +156,9 @@ function App() {
           <Route path="/health-policy" element={<HealthPolicyForm />} />
           <Route path="/life-policy" element={<LifePolicyForm />} />
           <Route path="/travel-policy" element={<TravelPolicyForm />} />
+          <Route path="/accident-policy" element={<RuralPolicyForm type="accident" />} />
+          <Route path="/crop-policy" element={<RuralPolicyForm type="crop" />} />
+          <Route path="/cattle-policy" element={<RuralPolicyForm type="cattle" />} />
           <Route path="/travel-sos/:id" element={<TravelSOSDetails />} />
           <Route path="/add-policy" element={<AddPolicy />} />
           <Route path="/profile" element={<ProfileDrawer />} />

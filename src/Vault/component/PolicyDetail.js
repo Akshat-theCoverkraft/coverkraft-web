@@ -159,6 +159,30 @@ console.log("policy---", policy)
         policy.policyDetails?.policyName,
         policy.policyDetails?.sumInsured
       );
+    } else if (policyType === "crop" || policyType === "crop_policy") {
+      requiredFields.push(
+        policy.policyNumber,
+        policy.policyStartDate,
+        policy.policyEndDate,
+        policy.premiumPaid,
+        policy.insuredCompany,
+        policy.policyDetails?.policyName || policy.policyName,
+        policy.policyDetails?.farmerName || policy.farmerName,
+        policy.policyDetails?.season || policy.season,
+        policy.policyDetails?.sumInsured || policy.sumInsured
+      );
+    } else if (policyType === "cattle" || policyType === "cattle_policy") {
+      requiredFields.push(
+        policy.policyNumber,
+        policy.policyStartDate,
+        policy.policyEndDate,
+        policy.premiumPaid,
+        policy.insuredCompany,
+        policy.policyDetails?.policyName || policy.policyName,
+        policy.policyDetails?.ownerName || policy.ownerName,
+        policy.policyDetails?.cattleType || policy.cattleType,
+        policy.policyDetails?.sumInsured || policy.sumInsured
+      );
     }
 
     const filledFields = requiredFields.filter(
@@ -264,6 +288,10 @@ const showToastOnce = (message, type = "success") => {
       health: Health,
       other_health: Health,
       travel: travelPlane,
+      crop: Health,
+      crop_policy: Health,
+      cattle: Health,
+      cattle_policy: Health,
     };
     return imageMap[policyType] || scooty;
   };
@@ -308,8 +336,12 @@ const showToastOnce = (message, type = "success") => {
       health: "/health-policy",
       other_health: "/health-policy",
       life: "/life-policy",
-      accident: "/life-policy",
+      accident: "/accident-policy",
       travel: "/travel-policy",
+      crop: "/crop-policy",
+      crop_policy: "/crop-policy",
+      cattle: "/cattle-policy",
+      cattle_policy: "/cattle-policy",
     };
 
     const route = routeMap[policyType];

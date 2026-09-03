@@ -72,6 +72,14 @@ const TravelPolicyForm = () => {
       return {};
     }
   })();
+  const previousPolicyNo =
+    record?.previous_policy_no ||
+    record?.previousPolicyNumber ||
+    record?.policyDetails?.previous_policy_no ||
+    record?.policyDetails?.previousPolicyNumber ||
+    parsedOcrText?.previous_policy_no ||
+    parsedOcrText?.previousPolicyNumber ||
+    "";
 
   const headingText = mode === "edit" ? "Edit Travel Policy" : "Add Travel Policy";
 
@@ -189,6 +197,7 @@ const TravelPolicyForm = () => {
     formData.append("userId", userId || "");
     formData.append("documentId", sessionStorage.getItem("documentId") || "");
     formData.append("policyType", (record?.policyType || parsedOcrText?.policyType || "travel").toLowerCase());
+    formData.append("previous_policy_no", previousPolicyNo);
     formData.append("policyNumber", policyNumber);
     formData.append("policyStartDate", policyStartDate);
     formData.append("policyEndDate", policyEndDate);
@@ -216,6 +225,7 @@ const TravelPolicyForm = () => {
     formData.append("userId", userId || "");
     formData.append("documentId", sessionStorage.getItem("documentId") || "");
     formData.append("policyType", (record?.policyType || parsedOcrText?.policyType || "travel").toLowerCase());
+    formData.append("previous_policy_no", previousPolicyNo);
     formData.append("policyNumber", policyNumber);
     formData.append("policyStartDate", policyStartDate);
     formData.append("policyEndDate", policyEndDate);

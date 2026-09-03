@@ -81,6 +81,14 @@ const HealthPolicyForm = () => {
   const [policyName, setPolicyName] = useState(
     responseData?.policyName || policyDetails?.policyDetails?.policyName || ""
   );
+  const previousPolicyNo =
+    responseData?.previous_policy_no ||
+    responseData?.previousPolicyNumber ||
+    policyDetails?.previous_policy_no ||
+    policyDetails?.previousPolicyNumber ||
+    policyDetails?.policyDetails?.previous_policy_no ||
+    policyDetails?.policyDetails?.previousPolicyNumber ||
+    "";
   // const documentId = localStorage.getItem("documentId");
   // const [idv, setIdv] = useState(responseData.idv || "");
   const commonItemStyle = {
@@ -195,6 +203,7 @@ const HealthPolicyForm = () => {
     formData.append("userId", userId);
     formData.append("documentId", documentId);
     formData.append("policyType", responseData?.policyType.toLowerCase());
+    formData.append("previous_policy_no", previousPolicyNo);
     formData.append("policyNumber", policyNumber);
     formData.append("policyStartDate", policyStartDate);
     formData.append("policyEndDate", policyEndDate);
@@ -223,6 +232,7 @@ const HealthPolicyForm = () => {
     formData.append("userId", userId);
     formData.append("documentId", documentId);
     formData.append("policyType", policyDetails?.policyType.toLowerCase());
+    formData.append("previous_policy_no", previousPolicyNo);
     formData.append("policyNumber", policyNumber);
     formData.append("policyStartDate", policyStartDate);
     formData.append("policyEndDate", policyEndDate);

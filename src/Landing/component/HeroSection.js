@@ -456,9 +456,9 @@ export default function HeroSection() {
   // ── MOBILE ────────────────────────────────────────────────────────────────
   if (!isDesktop) {
     return (
-      <div style={{ background: 'linear-gradient(180deg,#020608 0%,#050b0f 58%,#0d1115 100%)' }}>
+      <div style={{ background: '#000' }}>
         <section style={{ minHeight: '100svh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(90px, 15vh, 122px) clamp(16px, 5vw, 28px) clamp(24px, 4vh, 42px)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 12%, rgba(144,219,120,0.16), transparent 28%), radial-gradient(circle at 82% 46%, rgba(63,200,238,0.12), transparent 32%)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', inset: 0, background: '#000', pointerEvents: 'none' }} />
           <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
             style={{ textAlign: 'center', maxWidth: 600, width: '100%' }}
           >
@@ -517,7 +517,7 @@ export default function HeroSection() {
       style={{
         minHeight: '100svh',
         height: '100svh',
-         background: 'radial-gradient(circle at 76% 48%, rgba(63,200,238,0.12), transparent 30%), radial-gradient(circle at 22% 28%, rgba(144,219,120,0.13), transparent 24%), linear-gradient(to bottom, #020608 0%, #080d11 62%, #15191d 100%)',
+        background: '#000',
         position: 'relative',
         overflow: 'hidden',
         willChange: 'transform',
