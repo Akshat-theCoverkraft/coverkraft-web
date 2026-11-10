@@ -35,6 +35,7 @@ import emptyImage from "../../Images/NoData.png";
 import moment from "moment";
 import SessionExpiredModal from "../../utils/sessionExpireModal";
 import { usePolicyContext } from "../../store/policyContext";
+import { getSumAssured } from "../utils/policyValues";
 
 const PolicyDetail = ({ policyId }) => {
   const [policyDetails, setPolicyDetails] = useState([]);
@@ -142,7 +143,7 @@ console.log("policy---", policy)
         policy.policyNumber,
         policy.policyStartDate,
         policy.policyEndDate,
-        policy.sumInsured || policy?.policyDetails?.sumInsured || "",
+        getSumAssured(policy),
         policy?.totalPremium || policy?.policyDetails?.totalPremium || policy?.premiumPaid || "",
         policy.insuredName,
         policy.insuredCompany,
@@ -157,7 +158,7 @@ console.log("policy---", policy)
         policy.insuredName,
         policy.insuredCompany,
         policy.policyDetails?.policyName,
-        policy.policyDetails?.sumInsured
+        getSumAssured(policy)
       );
     } else if (policyType === "crop" || policyType === "crop_policy") {
       requiredFields.push(
@@ -169,7 +170,7 @@ console.log("policy---", policy)
         policy.policyDetails?.policyName || policy.policyName,
         policy.policyDetails?.farmerName || policy.farmerName,
         policy.policyDetails?.season || policy.season,
-        policy.policyDetails?.sumInsured || policy.sumInsured
+        getSumAssured(policy)
       );
     } else if (policyType === "cattle" || policyType === "cattle_policy") {
       requiredFields.push(
@@ -181,7 +182,7 @@ console.log("policy---", policy)
         policy.policyDetails?.policyName || policy.policyName,
         policy.policyDetails?.ownerName || policy.ownerName,
         policy.policyDetails?.cattleType || policy.cattleType,
-        policy.policyDetails?.sumInsured || policy.sumInsured
+        getSumAssured(policy)
       );
     }
 
@@ -996,12 +997,12 @@ const { setValue, setActiveTab } = usePolicyContext();
                       >
                         {isMotorPolicy(policy?.policyType)
                           ? "Value (IDV)"
+                          : ["life", "accident"].includes(policy?.policyType)
+                          ? "Sum Assured"
                           : "Sum Insured"}
                       </p>
                       <p className="fw-bolder">
-                        {policy?.policyDetails?.idv ||
-                          policy?.policyDetails?.sumInsured ||
-                          "Pending"}
+                        {policy?.policyDetails?.idv || getSumAssured(policy) || "Pending"}
                       </p>
                     </div>
                   </Grid>

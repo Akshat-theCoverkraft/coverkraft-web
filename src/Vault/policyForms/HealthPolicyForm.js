@@ -10,6 +10,7 @@ import CustomInput from "../../component/CustomInput";
 import Button from "../../component/Button";
 import { useLocation } from "react-router-dom";
 import Vault from "../Vault";
+import { getSumAssured } from "../utils/policyValues";
 import { useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import API_URL from "../../ServiceModule/Service";
@@ -55,7 +56,7 @@ const HealthPolicyForm = () => {
     responseData?.policyEndDate || policyDetails?.policyEndDate || ""
   );
   const [sumAssured, setSumAssured] = useState(
-    responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || ""
+    getSumAssured(responseData) || getSumAssured(policyDetails)
   );
   const [totalSumAssured, setTotalSumAssured] = useState(
     responseData?.totalSumInsured ||

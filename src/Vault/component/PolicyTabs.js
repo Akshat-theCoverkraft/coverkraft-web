@@ -55,6 +55,7 @@ import {
   isValid,
 } from "date-fns";
 import { usePolicyContext } from "../../store/policyContext";
+import { getSumAssured } from "../utils/policyValues";
 
 const useStyles = makeStyles(() => ({
   searchContainer: {
@@ -228,7 +229,7 @@ const getInputFieldsByPolicyType = (policy) => {
         policy?.policyNumber,
         policy?.policyStartDate,
         policy?.policyEndDate,
-        policy?.policyDetails?.sumInsured,
+        getSumAssured(policy),
         policy?.premiumPaid,
         policy?.insuredName,
         policy?.insuredCompany,
@@ -240,7 +241,7 @@ const getInputFieldsByPolicyType = (policy) => {
         policy?.policyNumber,
         policy?.policyStartDate,
         policy?.policyEndDate,
-        policy?.policyDetails?.sumInsured,
+        getSumAssured(policy),
         policy?.premiumPaid,
         policy?.insuredName,
         policy?.insuredCompany,
@@ -270,7 +271,7 @@ const getInputFieldsByPolicyType = (policy) => {
         policy?.policyDetails?.policyName || policy?.policyName,
         policy?.policyDetails?.farmerName || policy?.farmerName,
         policy?.policyDetails?.season || policy?.season,
-        policy?.policyDetails?.sumInsured || policy?.sumInsured,
+        getSumAssured(policy),
       ];
     case "cattle":
     case "cattle_policy":
@@ -283,7 +284,7 @@ const getInputFieldsByPolicyType = (policy) => {
         policy?.policyDetails?.policyName || policy?.policyName,
         policy?.policyDetails?.ownerName || policy?.ownerName,
         policy?.policyDetails?.cattleType || policy?.cattleType,
-        policy?.policyDetails?.sumInsured || policy?.sumInsured,
+        getSumAssured(policy),
       ];
     default:
       return [

@@ -18,6 +18,7 @@ import DateTimePicker from "../../component/DateTimePicker";
 import { formatDate } from "../../utils/dateUtils";
 import InsuranceDropdown from "../../component/InsurannceCompanyDropDown";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { getSumAssured } from "../utils/policyValues";
 
 const LifePolicyForm = () => {
   const location = useLocation();
@@ -40,7 +41,7 @@ const LifePolicyForm = () => {
     responseData?.policyEndDate || policyDetails?.policyEndDate || ""
   );
   const [sumAssured, setSumAssured] = useState(
-    responseData?.sumInsured || policyDetails?.policyDetails?.sumInsured || ""
+    getSumAssured(responseData) || getSumAssured(policyDetails)
   );
   const [premiumPaid, setPremiumPaid] = useState(
     responseData?.totalPremium || policyDetails?.policyDetails?.totalPremium || policyDetails?.premiumPaid || ""
